@@ -1,0 +1,3766 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Planet Rift Defense: Cosmic Plates</title>
+<!-- Build: v5 cache-fixed planet unit sprites + animated starfield + upgraded BGM -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#fbbf24;
+  --cyan:#38bdf8;
+  --red:#fb7185;
+  --green:#22c55e;
+  --panel:rgba(15,23,42,.86);
+}
+*{box-sizing:border-box;user-select:none;-webkit-tap-highlight-color:transparent}
+html,body{
+  margin:0;width:100%;height:100%;overflow:hidden;
+  background:#020617;color:#f8fafc;
+  font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+#bg{
+  position:fixed;inset:0;z-index:-4;
+  background:url("space_bg.png") center/cover no-repeat;
+  filter:brightness(.38) saturate(1.25);
+}
+#nebula{
+  position:fixed;inset:-20%;z-index:-3;
+  background:
+    radial-gradient(circle at 25% 28%,rgba(56,189,248,.22),transparent 30%),
+    radial-gradient(circle at 72% 55%,rgba(168,85,247,.20),transparent 34%),
+    radial-gradient(circle at 45% 70%,rgba(34,197,94,.12),transparent 30%);
+  animation:nebula 42s ease-in-out infinite alternate;
+}
+#starfield{
+  position:fixed;inset:0;z-index:-2;opacity:.9;
+  pointer-events:none;
+}
+#vignette{
+  position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(circle at center,transparent 0%,rgba(0,0,0,.45) 62%,#000 100%);
+}
+@keyframes nebula{from{transform:translate3d(-2%,1%,0) scale(1)}to{transform:translate3d(2%,-1%,0) scale(1.08)}}
+
+#wrap{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:14px;
+}
+#game{
+  display:none;
+  gap:10px;
+  padding:10px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:28px;
+  background:linear-gradient(135deg,rgba(15,23,42,.80),rgba(2,6,23,.74));
+  backdrop-filter:blur(18px);
+  box-shadow:0 26px 90px rgba(0,0,0,.65);
+}
+#field{
+  position:relative;
+  width:748px;height:708px;
+  border-radius:22px;overflow:hidden;
+  border:1px solid rgba(148,163,184,.22);
+  box-shadow:inset 0 0 60px rgba(0,0,0,.72),0 0 45px rgba(56,189,248,.10);
+}
+canvas{
+  display:block;width:748px;height:708px;
+  background:radial-gradient(circle at 50% 110%,rgba(56,189,248,.16),transparent 42%);
+  cursor:crosshair;
+}
+#toastLayer{pointer-events:none;position:absolute;inset:0}
+
+.miniBar{height:5px;margin-top:6px;border-radius:999px;background:rgba(148,163,184,.18);overflow:hidden}
+.miniBar span{display:block;height:100%;width:0%;border-radius:inherit;background:linear-gradient(90deg,#a78bfa,#67e8f9)}
+.stageFxLabel{
+  position:absolute;top:70px;left:50%;transform:translateX(-50%);
+  z-index:9;padding:8px 14px;border-radius:999px;
+  background:rgba(2,6,23,.72);border:1px solid rgba(255,255,255,.18);
+  font-family:'Orbitron';font-size:11px;color:#e0f2fe;
+  opacity:0;pointer-events:none;transition:.22s;
+}
+
+#hangar{
+  position:absolute;left:10px;right:10px;bottom:10px;z-index:8;
+  display:flex;gap:7px;overflow-x:auto;overflow-y:hidden;
+  padding-bottom:2px;pointer-events:auto;scrollbar-width:thin;
+}
+.planetCard{
+  position:relative;display:flex;align-items:center;gap:10px;
+  min-height:84px;padding:9px 11px;border-radius:14px;
+  border:1px solid rgba(148,163,184,.18);
+  background:linear-gradient(180deg,rgba(2,6,23,.82),rgba(15,23,42,.90));
+  box-shadow:0 10px 24px rgba(0,0,0,.22), inset 0 0 18px rgba(255,255,255,.03);
+  color:#fff;cursor:default;overflow:hidden;flex:0 0 168px;
+}
+.planetCard::after{content:'';position:absolute;inset:auto 0 0 0;height:3px;background:var(--planet-color, #38bdf8);opacity:.9}
+.planetCard:hover{border-color:rgba(255,255,255,.26)}
+.planetCard.unaffordable{opacity:.45;filter:saturate(.7)}
+.planetCard.active{box-shadow:0 0 0 1px var(--planet-color), 0 0 24px rgba(255,255,255,.14)}
+.planetCard.locked{opacity:.38;filter:saturate(.15) brightness(.85)}
+.planetCard.locked .planetCardCost{color:#64748b}
+.lockTag{position:absolute;top:7px;right:8px;padding:2px 6px;border-radius:999px;background:rgba(15,23,42,.92);border:1px solid rgba(255,255,255,.12);font-size:9px;color:#cbd5e1;font-family:'Orbitron';font-weight:900;letter-spacing:.04em}
+.techHint{display:none}
+.planetThumb{width:44px;height:64px;border-radius:13px;flex:0 0 44px;background-repeat:no-repeat;background-position:center;background-size:cover;image-rendering:auto;box-shadow:inset 0 0 16px rgba(255,255,255,.04), 0 0 22px rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.08);animation:thumbFloat 4.8s ease-in-out infinite;transform-origin:center center;will-change:transform, filter}
+.planetThumb.big{width:60px;height:88px;flex-basis:60px}
+.planetCardInfo{min-width:0;display:flex;flex-direction:column;align-items:flex-start;flex:1;padding-right:46px}
+.planetCardName{font-family:'Orbitron';font-size:10px;font-weight:900;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin-bottom:4px}
+.planetCardRole{font-size:10px;color:#cbd5e1;margin-top:0;line-height:1.35;text-align:left;white-space:normal;word-break:keep-all;overflow-wrap:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.planetCardCost{position:absolute;top:9px;right:9px;margin-left:0;font-family:'Orbitron';font-size:9px;color:#fde68a;align-self:auto;letter-spacing:.04em}
+.planetCardLevel{position:absolute;right:10px;bottom:10px;padding:3px 7px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:rgba(2,6,23,.72);font-family:'Orbitron';font-size:9px;font-weight:900;letter-spacing:.05em;color:#e2e8f0}
+.planetCard.hasUnit .planetCardLevel{color:#f8fafc;border-color:color-mix(in srgb, var(--planet-color) 48%, rgba(255,255,255,.16));box-shadow:0 0 14px color-mix(in srgb, var(--planet-color) 20%, transparent)}
+.planetCardRole{max-width:100%}
+.planetThumb{background-color:rgba(10,16,33,.92)}
+.planetThumb.liveThumb{background-size:500% 100%;background-position:0% 50%}
+.choiceGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+.choice{min-height:224px;padding:20px 20px 18px;border-radius:24px;cursor:pointer;position:relative;overflow:hidden;border:1px solid rgba(148,163,184,.18);background:linear-gradient(160deg,rgba(30,41,59,.94),rgba(2,6,23,.92));transition:.18s}
+.choiceTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px;padding-right:84px}
+.choiceMode{font-family:'Orbitron';color:#67e8f9;font-size:10px;letter-spacing:1.25px;display:block;margin-bottom:8px}
+.choicePlanetName{font-family:'Orbitron';font-size:17px;font-weight:900;line-height:1.15;margin:0}
+.choiceSkillRow{display:flex;align-items:center;gap:12px;margin:12px 0 10px}
+.choiceSkillIcon{width:54px;height:54px;border-radius:16px;flex:0 0 54px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.12);background:linear-gradient(145deg,rgba(30,41,59,.84),rgba(15,23,42,.96));box-shadow:inset 0 0 18px rgba(255,255,255,.04), 0 10px 24px rgba(0,0,0,.18)}
+.choiceSkillIcon img{width:42px;height:42px;display:block;filter:drop-shadow(0 0 8px rgba(255,255,255,.14))}
+.choiceSkillMeta{min-width:0;display:flex;flex-direction:column;gap:3px}
+.choiceSkillMeta h3{margin:0;color:#fff;font-size:17px;line-height:1.16}
+.choiceSkillMeta .choiceLevel{font-family:'Orbitron';font-size:11px;color:#fde68a;letter-spacing:.08em}
+.choiceDesc{margin-top:2px;color:#dbe4f0;font-size:13px;line-height:1.58}
+.choiceBoost{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-family:'Orbitron';font-size:10px;padding:6px 10px;border-radius:999px;color:#fde68a;background:rgba(251,191,36,.14);border:1px solid rgba(251,191,36,.25)}
+.choiceBoost::before{content:'▲';font-size:9px;color:#fde68a}
+.choiceBadge{top:14px;right:14px}
+.choice small{display:none}
+.card h2.modalTitle{margin:0 0 8px;font-size:24px;line-height:1.1;color:#f8fafc;font-family:'Noto Sans KR'}
+.card p.modalLead{margin:0 0 8px;color:#94a3b8;font-size:12px;line-height:1.55}
+#selected .selectedHead{display:flex;gap:10px;align-items:center;margin-top:6px;margin-bottom:8px}
+@media(max-width:1180px){
+  #hangar{bottom:8px;left:8px;right:8px;display:flex;overflow-x:auto}
+  .planetCard{min-height:94px;padding:8px 10px;flex-basis:172px}
+  .planetThumb{width:44px;height:64px;flex-basis:44px}
+  .planetCardRole{font-size:10px}
+}
+.toast{
+  position:absolute;top:16px;left:50%;transform:translateX(-50%);
+  min-width:300px;max-width:680px;text-align:center;
+  padding:10px 16px;border-radius:999px;
+  background:rgba(2,6,23,.86);
+  border:1px solid rgba(56,189,248,.34);
+  color:#e0f2fe;font-weight:900;font-size:13px;
+  box-shadow:0 0 28px rgba(56,189,248,.20);
+  animation:toast 2.8s forwards;
+}
+@keyframes toast{
+  0%{opacity:0;transform:translate(-50%,-18px)}
+  14%,78%{opacity:1;transform:translate(-50%,0)}
+  100%{opacity:0;transform:translate(-50%,-18px)}
+}
+
+#side{width:324px;display:flex;flex-direction:column;gap:8px}
+.panel{
+  background:var(--panel);
+  border:1px solid rgba(148,163,184,.16);
+  border-radius:16px;
+  padding:10px;
+  box-shadow:inset 0 0 24px rgba(0,0,0,.22);
+}
+.title{
+  font-family:'Orbitron',sans-serif;
+  font-size:12px;font-weight:900;letter-spacing:1px;color:#e2e8f0;
+}
+.sub{font-size:10px;line-height:1.45;color:#94a3b8}
+.statGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{
+  padding:9px;border-radius:13px;
+  background:rgba(2,6,23,.45);
+  border:1px solid rgba(148,163,184,.12);
+}
+.label{font-family:'Orbitron';font-size:8px;color:#94a3b8;letter-spacing:.7px}
+.value{font-family:'Orbitron';font-size:18px;font-weight:900;line-height:1.08;margin-top:2px}
+.bar{height:8px;margin-top:10px;border-radius:999px;background:rgba(148,163,184,.18);overflow:hidden}
+.bar span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#818cf8);border-radius:inherit}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+button{
+  border:0;border-radius:12px;padding:10px 8px;
+  font-family:'Orbitron',sans-serif;font-weight:900;
+  font-size:12px;
+  color:white;cursor:pointer;
+  background:linear-gradient(135deg,#0ea5e9,#6366f1);
+  box-shadow:0 10px 22px rgba(0,0,0,.26);
+  transition:.14s;
+}
+button:hover{filter:brightness(1.08);transform:translateY(-1px)}
+button:active{transform:translateY(1px) scale(.99)}
+.btnAlt{background:linear-gradient(135deg,#334155,#0f172a);border:1px solid rgba(148,163,184,.22);box-shadow:none;color:#cbd5e1}
+.btnGreen{background:linear-gradient(135deg,#16a34a,#065f46)}
+.btnRed{background:linear-gradient(135deg,#e11d48,#7f1d1d)}
+.skill button{font-size:9px;line-height:1.2;min-height:44px}
+#selected{min-height:136px}
+.towerName{font-size:13px;font-weight:900;margin-top:4px}
+.bossPreview{margin-top:10px;padding:10px 11px;border-radius:14px;background:linear-gradient(180deg,rgba(15,23,42,.52),rgba(2,6,23,.78));border:1px solid rgba(148,163,184,.16)}
+.bossPreview .bossTier{font-family:'Orbitron';font-size:9px;letter-spacing:.12em;color:#f8fafc;opacity:.78}
+.bossPreview .bossName{margin-top:4px;font-family:'Orbitron';font-size:12px;font-weight:900;letter-spacing:.04em}
+.bossPreview .bossDesc{margin-top:6px;font-size:10px;line-height:1.45;color:#cbd5e1}
+.bossPreview .bossMeta{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.tag{
+  font-family:'Orbitron';font-size:8px;
+  border-radius:999px;padding:3px 7px;
+  color:#cbd5e1;background:rgba(15,23,42,.65);
+  border:1px solid rgba(148,163,184,.22);
+}
+#log{
+  height:88px;overflow:hidden;padding:9px;
+  border-radius:14px;background:rgba(2,6,23,.42);
+  border:1px solid rgba(148,163,184,.11);
+  font-size:10px;line-height:1.42;color:#cbd5e1;
+}
+#menu,#modal{
+  position:fixed;inset:0;z-index:30;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+  background:radial-gradient(circle at center,rgba(15,23,42,.82),rgba(0,0,0,.96));
+}
+.card{
+  width:min(940px,96vw);
+  padding:34px;
+  border-radius:32px;text-align:center;
+  border:1px solid rgba(56,189,248,.24);
+  background:linear-gradient(135deg,rgba(15,23,42,.95),rgba(2,6,23,.95));
+  box-shadow:0 0 90px rgba(56,189,248,.14);
+}
+h1{
+  margin:0;
+  font-family:'Orbitron';font-size:52px;line-height:1.02;font-weight:900;
+  background:linear-gradient(90deg,#67e8f9,#818cf8,#f0abfc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.menuSub{
+  margin:12px 0 24px;
+  font-family:'Orbitron';letter-spacing:7px;color:#64748b;font-size:13px;
+}
+.menuGrid{
+  max-width:780px;margin:24px auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left;
+}
+.info{
+  padding:16px;border-radius:18px;
+  background:rgba(2,6,23,.45);
+  border:1px solid rgba(148,163,184,.12);
+}
+#modal{display:none;z-index:60}
+
+.choice::after{content:'';position:absolute;inset:-40% -10% auto auto;width:140px;height:140px;border-radius:50%;background:rgba(56,189,248,.08);filter:blur(28px);pointer-events:none}
+.choice:hover{transform:translateY(-4px);border-color:#38bdf8;box-shadow:0 18px 40px rgba(56,189,248,.16)}
+.choice.rare{border-color:rgba(56,189,248,.34);box-shadow:inset 0 0 22px rgba(56,189,248,.08)}
+.choice.epic{border-color:rgba(192,132,252,.42);box-shadow:inset 0 0 28px rgba(168,85,247,.12)}
+.choice.legendary{border-color:rgba(251,191,36,.52);box-shadow:inset 0 0 32px rgba(251,191,36,.14),0 0 28px rgba(251,191,36,.08)}
+.choice.legendary::after{background:rgba(251,191,36,.18)}
+.choiceBadge{
+  position:absolute;right:14px;top:12px;padding:4px 8px;border-radius:999px;
+  font-family:'Orbitron';font-size:9px;font-weight:900;letter-spacing:.08em;
+  color:#f8fafc;background:rgba(15,23,42,.82);border:1px solid rgba(255,255,255,.12);
+}
+.choice.rare .choiceBadge{color:#7dd3fc;border-color:rgba(125,211,252,.35)}
+.choice.epic .choiceBadge{color:#d8b4fe;border-color:rgba(216,180,254,.38)}
+.choice.legendary .choiceBadge{color:#fde68a;border-color:rgba(253,230,138,.45)}
+
+.kbd{
+  font-family:'Orbitron';padding:1px 5px;border-radius:5px;
+  background:#0f172a;border:1px solid rgba(148,163,184,.25);
+}
+@media(max-width:1180px){
+  #wrap{padding:0}
+  #game{width:100%;height:100%;border-radius:0;padding:8px;gap:8px}
+  #field{width:calc(100vw - 16px);height:calc(100vh - 265px);min-height:430px}
+  canvas{width:100%;height:100%}
+  #game{flex-direction:column}
+  #side{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow:auto}
+  #selected,#logPanel{display:none}
+  .panel{padding:9px;border-radius:14px}
+  h1{font-size:38px}
+  .menuGrid,.choiceGrid{grid-template-columns:1fr}
+  .card{padding:24px}
+}
+
+/* ===== Stage Map Screen: added without removing existing battle code ===== */
+#stageMap{
+  position:fixed;inset:0;z-index:45;display:none;
+  overflow:hidden;background:#01040b;color:#f8fafc;
+  font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+#stageMap::before{
+  content:'';position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(0,0,0,.94) 0%, rgba(0,0,0,.90) 17%, rgba(0,0,0,.80) 28%, rgba(0,0,0,.42) 46%, transparent 70%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.085) 0 1px, transparent 1.3px) 0 0/96px 96px,
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.055) 0 1px, transparent 1.2px) 16px 28px/58px 58px;
+  pointer-events:none;
+}
+#stageMap::after{
+  content:'';position:absolute;inset:0;z-index:4;pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.58),transparent 16%,transparent 82%,rgba(0,0,0,.78)),
+    radial-gradient(circle at center,transparent 0%,rgba(0,0,0,.12) 52%,rgba(0,0,0,.58) 100%);
+}
+.stageBg{
+  position:absolute;width:82%;height:82%;z-index:0;
+  background-size:cover;background-position:center;
+  opacity:.13;filter:blur(4.2px) brightness(.13) saturate(.30) contrast(1.02);
+  mix-blend-mode:screen;pointer-events:none;
+  transition:opacity .52s ease, filter .52s ease, transform .8s ease;
+}
+.stageBg.cosmic{
+  left:-20%;bottom:-20%;background-image:url("space_bg.png");
+  -webkit-mask-image:radial-gradient(circle at 74% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
+  mask-image:radial-gradient(circle at 74% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
+}
+.stageBg.frost{
+  left:-20%;top:-20%;background-image:url("bg_ice.png");
+  -webkit-mask-image:radial-gradient(circle at 74% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
+  mask-image:radial-gradient(circle at 74% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
+}
+.stageBg.lava{
+  right:-20%;bottom:-20%;background-image:url("bg_lava.png");
+  -webkit-mask-image:radial-gradient(circle at 26% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
+  mask-image:radial-gradient(circle at 26% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
+}
+.stageBg.jungle{
+  right:-20%;top:-20%;background-image:url("bg_jungle.png");
+  -webkit-mask-image:radial-gradient(circle at 26% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
+  mask-image:radial-gradient(circle at 26% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
+}
+#stageMap[data-unlocked="1"] .stageBg.cosmic,
+#stageMap[data-unlocked="2"] .stageBg.cosmic,
+#stageMap[data-unlocked="3"] .stageBg.cosmic,
+#stageMap[data-unlocked="4"] .stageBg.cosmic{opacity:.22;filter:blur(2.2px) brightness(.34) saturate(.58) contrast(1.03)}
+#stageMap[data-unlocked="2"] .stageBg.frost,
+#stageMap[data-unlocked="3"] .stageBg.frost,
+#stageMap[data-unlocked="4"] .stageBg.frost{opacity:.17;filter:blur(2.7px) brightness(.24) saturate(.46) contrast(1.03)}
+#stageMap[data-unlocked="3"] .stageBg.lava,
+#stageMap[data-unlocked="4"] .stageBg.lava{opacity:.17;filter:blur(2.7px) brightness(.24) saturate(.48) contrast(1.03)}
+#stageMap[data-unlocked="4"] .stageBg.jungle{opacity:.17;filter:blur(2.7px) brightness(.24) saturate(.44) contrast(1.03)}
+#stageMap[data-selected="1"] .stageBg.cosmic{opacity:.36;filter:blur(.8px) brightness(.68) saturate(.92) contrast(1.06);transform:scale(1.02)}
+#stageMap[data-selected="2"] .stageBg.frost{opacity:.34;filter:blur(.8px) brightness(.64) saturate(.84) contrast(1.06);transform:scale(1.02)}
+#stageMap[data-selected="3"] .stageBg.lava{opacity:.33;filter:blur(.8px) brightness(.63) saturate(.88) contrast(1.06);transform:scale(1.02)}
+#stageMap[data-selected="4"] .stageBg.jungle{opacity:.33;filter:blur(.8px) brightness(.62) saturate(.84) contrast(1.06);transform:scale(1.02)}
+.stageBg::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at center, transparent 0%, rgba(1,4,11,.16) 54%, rgba(1,4,11,.76) 100%);
+}
+.stageFrame{
+  position:absolute;inset:18px;z-index:5;border:1px solid rgba(148,163,184,.28);
+  clip-path:polygon(2% 0, 36% 0, 38% 3%, 62% 3%, 64% 0, 98% 0, 100% 4%, 100% 96%, 98% 100%, 2% 100%, 0 96%, 0 4%);
+  box-shadow:inset 0 0 38px rgba(56,189,248,.08),0 0 40px rgba(0,0,0,.62);
+  pointer-events:none;
+}
+.stageTopTitle{
+  position:absolute;top:17px;left:50%;transform:translateX(-50%);z-index:8;
+  padding:4px 68px 10px;border-bottom:1px solid rgba(125,211,252,.22);
+  font-family:'Orbitron';font-size:20px;font-weight:900;letter-spacing:13px;color:#e0f2fe;
+  text-shadow:0 0 18px rgba(56,189,248,.44);white-space:nowrap;
+}
+.stageBackBtn{
+  position:absolute;left:38px;top:38px;z-index:9;border:1px solid rgba(148,163,184,.22);
+  background:rgba(2,6,23,.58);color:#cbd5e1;border-radius:999px;padding:9px 16px;
+  box-shadow:none;font-size:11px;letter-spacing:.05em;
+}
+.stageBackBtn:hover{transform:translateY(-1px)}
+.stageBackBtn:active{transform:translateY(1px) scale(.99)}
+.stageStatus{
+  position:absolute;right:40px;top:42px;z-index:9;text-align:right;
+  font-family:'Orbitron';font-size:12px;color:#93c5fd;letter-spacing:.08em;
+}
+.stageStatus small{display:block;margin-top:4px;color:#cbd5e1;opacity:.88;font-family:'Noto Sans KR';letter-spacing:0}
+.stageMapInner{position:absolute;inset:0;z-index:6}
+.stagePathSvg{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible}
+.mapRouteBase,.mapRouteLine{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.mapRouteBase{stroke:rgba(148,163,184,.14);stroke-width:4;stroke-dasharray:2 16}
+.mapRouteLine{
+  stroke-width:4;stroke-dasharray:100;stroke-dashoffset:100;
+  filter:drop-shadow(0 0 9px currentColor);
+  transition:stroke-dashoffset 1.05s cubic-bezier(.22,1,.36,1);
+}
+#stageMap[data-unlocked="2"] .segment-1,
+#stageMap[data-unlocked="3"] .segment-1,
+#stageMap[data-unlocked="4"] .segment-1{stroke-dashoffset:0}
+#stageMap[data-unlocked="3"] .segment-2,
+#stageMap[data-unlocked="4"] .segment-2{stroke-dashoffset:0}
+#stageMap[data-unlocked="4"] .segment-3{stroke-dashoffset:0}
+.segment-1{color:#67e8f9;stroke:#67e8f9}
+.segment-2{color:#fb923c;stroke:#fb923c}
+.segment-3{color:#22c55e;stroke:#22c55e}
+.stageArrow{font-family:'Orbitron';font-size:13px;fill:currentColor;opacity:.85;filter:drop-shadow(0 0 7px currentColor)}
+.stageNode{
+  position:absolute;z-index:6;width:170px;height:170px;transform:translate(-50%,-50%);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  padding:0;border:0;background:transparent;box-shadow:none;appearance:none;outline:none;
+}
+.stageNode:hover,.stageNode:active{transform:translate(-50%,-50%)}
+.stageNode .nodePlanet{
+  width:118px;height:118px;border-radius:50%;position:relative;
+  background:
+    radial-gradient(circle at 36% 28%, rgba(255,255,255,.26), transparent 17%),
+    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--nodeColor) 16%, rgba(255,255,255,.04)), transparent 42%),
+    radial-gradient(circle at center, var(--nodeA), var(--nodeB) 60%, #020617 100%);
+  border:1px solid color-mix(in srgb, var(--nodeColor) 55%, transparent);
+  box-shadow:0 0 0 1px rgba(255,255,255,.07),0 0 28px color-mix(in srgb, var(--nodeColor) 28%, transparent);
+  transition:transform .22s ease, box-shadow .22s ease, filter .22s ease;
+}
+.stageNode .nodePlanet::before{
+  content:'';position:absolute;inset:-14px;border-radius:50%;
+  border:1px solid color-mix(in srgb, var(--nodeColor) 55%, transparent);
+  box-shadow:inset 0 0 22px rgba(255,255,255,.05);
+}
+.stageNode .nodePlanet::after{
+  content:'';position:absolute;inset:-29px;border-radius:50%;
+  border:1px dashed color-mix(in srgb, var(--nodeColor) 36%, transparent);
+  opacity:.55;animation:stageOrbit 22s linear infinite;
+}
+@keyframes stageOrbit{to{transform:rotate(360deg)}}
+.stageNode .nodeNo{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron';font-weight:900;font-size:38px;color:#f8fafc;
+  text-shadow:0 0 16px color-mix(in srgb, var(--nodeColor) 60%, transparent);
+}
+.stageNode .nodeLock{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  font-size:18px;opacity:.86;filter:grayscale(.2);
+}
+.stageNode .nodeLabel{
+  position:absolute;top:136px;left:50%;transform:translateX(-50%);
+  font-family:'Orbitron';font-size:13px;letter-spacing:2.2px;color:color-mix(in srgb, var(--nodeColor) 82%, white 18%);
+  text-shadow:0 0 13px color-mix(in srgb, var(--nodeColor) 42%, transparent);
+  white-space:nowrap;
+}
+.stageNode .nodeKo{
+  position:absolute;top:160px;left:50%;transform:translateX(-50%);
+  font-size:12px;color:#cbd5e1;opacity:.9;white-space:nowrap;
+}
+.stageNode.locked{cursor:not-allowed;filter:saturate(.62) brightness(.7)}
+.stageNode.locked .nodePlanet{box-shadow:0 0 0 1px rgba(255,255,255,.05),0 0 14px color-mix(in srgb,var(--nodeColor) 24%,transparent)}
+.stageNode.unlocked:not(.active) .nodePlanet{filter:brightness(1.04)}
+.stageNode.unlocked:hover .nodePlanet{transform:translateY(-4px) scale(1.03);box-shadow:0 0 0 1px rgba(255,255,255,.12),0 0 36px color-mix(in srgb,var(--nodeColor) 36%,transparent)}
+.stageNode.active .nodePlanet{
+  transform:scale(1.08);box-shadow:0 0 0 1px rgba(255,255,255,.14),0 0 44px color-mix(in srgb,var(--nodeColor) 42%,transparent);
+}
+.stageNode.active:hover .nodePlanet{transform:translateY(-4px) scale(1.1)}
+.stageNode:focus-visible .nodePlanet{box-shadow:0 0 0 2px rgba(255,255,255,.16),0 0 38px color-mix(in srgb,var(--nodeColor) 36%,transparent)}
+.stageEnter{
+  position:absolute;left:50%;bottom:44px;transform:translateX(-50%);z-index:9;
+  padding:14px 42px;border-radius:999px;border:1px solid rgba(125,211,252,.28);
+  background:linear-gradient(135deg,rgba(14,165,233,.78),rgba(79,70,229,.58));
+  font-family:'Orbitron';font-size:13px;letter-spacing:.08em;
+}
+.stageEnter:hover{transform:translateX(-50%) translateY(-1px)}
+.stageEnter:active{transform:translateX(-50%) translateY(1px) scale(.99)}
+.stageHint{
+  position:absolute;left:50%;bottom:93px;transform:translateX(-50%);z-index:9;
+  color:#cbd5e1;font-size:12px;text-align:center;padding:9px 18px;border-radius:999px;
+  background:rgba(2,6,23,.66);border:1px solid rgba(148,163,184,.16);backdrop-filter:blur(8px);
+  box-shadow:0 8px 22px rgba(0,0,0,.22);pointer-events:none;
+}
+
+.stageInfoPanel{
+  position:absolute;left:50%;bottom:104px;transform:translateX(-50%);z-index:9;
+  width:min(560px,calc(100vw - 140px));padding:16px 18px 14px;border-radius:22px;
+  background:linear-gradient(180deg,rgba(3,10,24,.88),rgba(2,6,23,.78));
+  border:1px solid rgba(125,211,252,.16);backdrop-filter:blur(12px);
+  box-shadow:0 18px 50px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.03);
+}
+.stageInfoHead{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.stageInfoTitle{font-family:'Orbitron';font-size:15px;letter-spacing:.06em;color:#f8fafc}
+.stageInfoRisk{display:flex;align-items:center;gap:8px;font-family:'Orbitron';font-size:10px;color:#93c5fd}
+.stageInfoRisk b{padding:6px 10px;border-radius:999px;font-size:10px;letter-spacing:.14em;background:rgba(14,165,233,.08);border:1px solid rgba(125,211,252,.22);color:#e0f2fe}
+.stageInfoMood{margin-top:8px;font-size:12px;line-height:1.55;color:#cbd5e1}
+.stageTagRow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.stageTag{padding:5px 9px;border-radius:999px;font-family:'Orbitron';font-size:9px;letter-spacing:.10em;color:#e2e8f0;background:rgba(15,23,42,.86);border:1px solid rgba(148,163,184,.16)}
+.stageBossRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.stageBossCard{padding:10px 12px;border-radius:16px;background:rgba(15,23,42,.58);border:1px solid rgba(148,163,184,.12)}
+.stageBossCard small{display:block;font-family:'Orbitron';font-size:9px;letter-spacing:.14em;color:#93c5fd;margin-bottom:5px}
+.stageBossCard b{display:block;font-family:'Orbitron';font-size:12px;color:#fff}
+.stageBossCard span{display:block;margin-top:4px;font-size:11px;color:#cbd5e1}
+.stageBossCard em{display:block;margin-top:5px;font-style:normal;font-size:10px;color:#94a3b8}
+.stageHint{
+  bottom:258px;width:min(560px,calc(100vw - 140px));border-radius:16px;
+  background:rgba(2,6,23,.48);border:1px solid rgba(148,163,184,.11);padding:8px 14px;
+}
+.stageEnter{bottom:40px;min-width:272px}
+.stageNode .nodePlanet::before{box-shadow:inset 0 0 22px rgba(255,255,255,.05),0 0 34px color-mix(in srgb, var(--nodeColor) 14%, transparent)}
+.stageNode.active .nodePlanet{animation:premiumNodePulse 2.8s ease-in-out infinite}
+@keyframes premiumNodePulse{0%,100%{box-shadow:0 0 0 1px rgba(255,255,255,.14),0 0 40px color-mix(in srgb,var(--nodeColor) 36%,transparent)}50%{box-shadow:0 0 0 1px rgba(255,255,255,.18),0 0 52px color-mix(in srgb,var(--nodeColor) 48%,transparent)}}
+@media(max-width:900px){
+  .stageInfoPanel{width:calc(100vw - 32px);bottom:100px;padding:13px}
+  .stageBossRow{grid-template-columns:1fr}
+  .stageHint{display:none}
+  .stageEnter{bottom:28px;width:calc(100vw - 54px)}
+}
+@media(max-width:900px){
+  .stageTopTitle{font-size:14px;letter-spacing:7px;padding-left:34px;padding-right:34px}
+  .stageNode{width:132px;height:124px}.stageNode .nodePlanet{width:84px;height:84px}
+  .stageNode .nodeNo{font-size:28px}.stageNode .nodeLabel{top:104px;font-size:10px;letter-spacing:1px}
+  .stageNode .nodeKo{display:none}.stageBackBtn,.stageStatus{top:18px}
+}
+
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<div id="nebula"></div>
+<canvas id="starfield"></canvas>
+<div id="vignette"></div>
+
+<div id="wrap">
+  <div id="game">
+    <div id="field">
+      <canvas id="canvas" width="748" height="708"></canvas>
+      <div id="toastLayer"></div>
+      <div id="stageFxLabel" class="stageFxLabel"></div>
+      <div id="hangar"></div>
+    </div>
+
+    <aside id="side">
+      <section class="panel">
+        <div class="title" id="themeName">COSMIC VOID</div>
+        <div style="display:flex;align-items:end;justify-content:space-between;margin-top:4px">
+          <div class="value" id="stageLabel">1-1</div>
+          <div class="sub" id="stageType">장판 방어</div>
+        </div>
+        <div class="bar"><span id="waveBar"></span></div>
+      </section>
+
+      <section class="panel statGrid">
+        <div class="stat"><div class="label">CRYSTAL</div><div class="value" id="gold" style="color:var(--gold)">500</div></div>
+        <div class="stat"><div class="label">CORE HP</div><div class="value" id="hp" style="color:var(--red)">25</div></div>
+        <div class="stat"><div class="label">EXP</div><div class="value" id="exp" style="color:#a78bfa">0/50</div><div class="miniBar"><span id="expBar"></span></div></div>
+        <div class="stat"><div class="label">LEVEL</div><div class="value" id="level" style="color:#67e8f9">1</div></div>
+      </section>
+
+      <section class="panel">
+        <div class="row">
+          <button id="summonBtn">랜덤 소환 100</button>
+          <button id="mergeBtn" class="btnAlt">자동 병합</button>
+        </div>
+        <div class="row3" style="margin-top:8px">
+          <button id="speedBtn" class="btnAlt">1x</button>
+          <button id="pauseBtn" class="btnAlt">일시정지</button>
+          <button id="audioBtn" class="btnGreen">BGM ON</button>
+        </div>
+      </section>
+
+      <section class="panel skill">
+        <div class="title" style="margin-bottom:8px">TACTICAL PLATES</div>
+        <div class="row3">
+          <button id="blackholeBtn">Q<br>균열 포획 70</button>
+          <button id="novaBtn">W<br>궤도 포격 75</button>
+          <button id="repairBtn">E<br>코어 과충전 65</button>
+        </div>
+      </section>
+
+      <section class="panel" id="selected">
+        <div class="title">COMMAND NODE</div>
+        <div id="selectedText" class="sub" style="margin-top:9px">
+          행성 장판을 터치하면 능력과 장판 보너스가 표시됩니다.
+        </div>
+      </section>
+
+      <section class="panel" id="logPanel">
+        <div class="title">BATTLE LOG</div>
+        <div id="log"></div>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<div id="menu">
+  <div class="card">
+    <h1>PLANET RIFT DEFENSE</h1>
+    <div class="menuSub">COSMIC PLATES</div>
+    <p style="max-width:780px;margin:0 auto;color:#cbd5e1;line-height:1.68;font-size:15px">
+      행성 장판을 소환하고 병합해 균열 항로를 방어하세요.
+      적 처치 경험치로 랜덤 스킬을 얻고, 황금 보물성을 파괴하면 돈 또는 희귀 장판 스킬을 획득합니다.
+      블랙홀, 초신성, 빙결 성운, 독성 오로라가 서로 시너지를 만드는 미래형 우주 장판 디펜스입니다.
+    </p>
+    <div class="menuGrid">
+      <div class="info">
+        <b>핵심 컨셉</b><br>
+        <span class="sub">뱀파이어 서바이벌식 레벨업 선택 + 랜덤 행성 장판 + 드래그 병합 + 보물성 이벤트.</span>
+      </div>
+      <div class="info">
+        <b>모바일 UX</b><br>
+        <span class="sub">터치 드래그로 이동/병합하고, 하단 버튼으로 소환·스킬·속도 조작을 빠르게 수행합니다.</span>
+      </div>
+    </div>
+    <button id="startBtn" style="font-size:18px;padding:15px 74px;border-radius:999px">START DEFENSE</button>
+  </div>
+</div>
+
+
+<div id="stageMap" data-unlocked="1" data-selected="1">
+  <div class="stageBg cosmic"></div>
+  <div class="stageBg frost"></div>
+  <div class="stageBg lava"></div>
+  <div class="stageBg jungle"></div>
+  <div class="stageFrame"></div>
+  <button id="stageMapBack" class="stageBackBtn">← MAIN</button>
+  <div class="stageTopTitle">STAGE MAP</div>
+  <div class="stageStatus">
+    <span id="stageProgressLabel">SANCTUARY 1 / 4</span>
+    <small id="stageProgressSub">성역 클리어 시 다음 균열 항로가 열립니다</small>
+  </div>
+
+  <div class="stageMapInner">
+    <svg class="stagePathSvg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path class="mapRouteBase" d="M24 65 C21 53 22 37 30 24" pathLength="100"></path>
+      <path class="mapRouteBase" d="M30 24 C45 31 57 49 74 65" pathLength="100"></path>
+      <path class="mapRouteBase" d="M74 65 C81 53 83 37 76 24" pathLength="100"></path>
+      <path class="mapRouteLine segment-1" d="M24 65 C21 53 22 37 30 24" pathLength="100"></path>
+      <path class="mapRouteLine segment-2" d="M30 24 C45 31 57 49 74 65" pathLength="100"></path>
+      <path class="mapRouteLine segment-3" d="M74 65 C81 53 83 37 76 24" pathLength="100"></path>
+      <text class="stageArrow segment-1" x="24" y="46" style="color:#67e8f9">⌃</text>
+      <text class="stageArrow segment-2" x="52" y="45" style="color:#fb923c">›</text>
+      <text class="stageArrow segment-3" x="78" y="46" style="color:#22c55e">⌃</text>
+    </svg>
+
+    <button class="stageNode active unlocked" data-stage="1" style="left:24%;top:65%;--nodeColor:#38bdf8;--nodeA:#0284c7;--nodeB:#052238">
+      <span class="nodePlanet"><span class="nodeNo">1</span></span>
+      <span class="nodeLabel">COSMIC VOID</span>
+      <span class="nodeKo">공허 성역</span>
+    </button>
+    <button class="stageNode locked" data-stage="2" style="left:30%;top:24%;--nodeColor:#67e8f9;--nodeA:#0891b2;--nodeB:#06283a">
+      <span class="nodePlanet"><span class="nodeNo">2</span><span class="nodeLock">🔒</span></span>
+      <span class="nodeLabel">FROST EXPANSE</span>
+      <span class="nodeKo">빙결 외곽</span>
+    </button>
+    <button class="stageNode locked" data-stage="3" style="left:74%;top:65%;--nodeColor:#fb923c;--nodeA:#ea580c;--nodeB:#351006">
+      <span class="nodePlanet"><span class="nodeNo">3</span><span class="nodeLock">🔒</span></span>
+      <span class="nodeLabel">LAVA NEBULA</span>
+      <span class="nodeKo">용암 성운</span>
+    </button>
+    <button class="stageNode locked" data-stage="4" style="left:76%;top:24%;--nodeColor:#22c55e;--nodeA:#16a34a;--nodeB:#082b16">
+      <span class="nodePlanet"><span class="nodeNo">4</span><span class="nodeLock">🔒</span></span>
+      <span class="nodeLabel">JUNGLE CORE</span>
+      <span class="nodeKo">생체 정글</span>
+    </button>
+  </div>
+
+  <div id="stageHint" class="stageHint">1 COSMIC VOID부터 시작합니다. 10웨이브를 클리어하면 다음 성역 선이 그려집니다.</div>
+  <div id="stageInfoPanel" class="stageInfoPanel">
+    <div class="stageInfoHead">
+      <div id="stageInfoTitle" class="stageInfoTitle">1. COSMIC VOID</div>
+      <div class="stageInfoRisk"><span>RISK</span><b id="stageInfoRisk">LOW</b></div>
+    </div>
+    <div id="stageInfoMood" class="stageInfoMood">기본 우주 균열 · 오로라 · 공허 에너지</div>
+    <div id="stageInfoTags" class="stageTagRow"></div>
+    <div class="stageBossRow">
+      <div class="stageBossCard">
+        <small>MID BOSS</small>
+        <b id="stageMidBossName">ASTRAL WARDEN</b>
+        <span id="stageMidBossKo">성운 감시자 · 위상 수호체</span>
+        <em id="stageMidBossSkill">PHASE REGEN</em>
+      </div>
+      <div class="stageBossCard">
+        <small>FINAL BOSS</small>
+        <b id="stageFinalBossName">OBLIVION HEART</b>
+        <span id="stageFinalBossKo">공허 심핵 · 최종 균열 군주</span>
+        <em id="stageFinalBossSkill">SINGULARITY SURGE</em>
+      </div>
+    </div>
+  </div>
+  <button id="stageEnterBtn" class="stageEnter">ENTER SANCTUARY 1</button>
+</div>
+
+
+<div id="modal">
+  <div class="card" style="text-align:left">
+    <div class="title" style="font-size:26px">랜덤 스킬 선택</div>
+    <div class="sub" style="margin-top:5px">경험치 에너지가 안정되었습니다. 이번 성장 방향을 하나 선택하세요.</div>
+    <div class="choiceGrid" id="choices"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const starCanvas = document.getElementById('starfield');
+const starCtx = starCanvas.getContext('2d');
+let starField = {stars:[], last: performance.now(), raf:0};
+const field = document.getElementById('field');
+const W = canvas.width;
+const H = canvas.height;
+const $ = id => document.getElementById(id);
+const TAU = Math.PI * 2;
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+const STAR_LAYER_CONFIG = [
+  {count:110, speedX:-1.8, speedY:.9, alpha:.34},
+  {count:90, speedX:-4.2, speedY:1.7, alpha:.52},
+  {count:70, speedX:-7.6, speedY:3.0, alpha:.76}
+];
+
+function resizeStarfield(){
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  starCanvas.width = Math.floor(w * dpr);
+  starCanvas.height = Math.floor(h * dpr);
+  starCanvas.style.width = w + 'px';
+  starCanvas.style.height = h + 'px';
+  starCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  buildStarfield(w, h);
+}
+
+function buildStarfield(w, h){
+  starField.stars = [];
+  STAR_LAYER_CONFIG.forEach((layer, layerIndex) => {
+    for(let i=0;i<layer.count;i++){
+      starField.stars.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        size: 1.15,
+        alpha: layer.alpha,
+        layer: layerIndex,
+        speedX: layer.speedX,
+        speedY: layer.speedY,
+        twinkle: Math.random() * TAU,
+        twinkleSpeed: rand(.25, .85)
+      });
+    }
+  });
+}
+
+function updateStarfield(dt){
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  for(const s of starField.stars){
+    s.x += s.speedX * dt;
+    s.y += s.speedY * dt;
+    s.twinkle += s.twinkleSpeed * dt;
+    if(s.x < -8){ s.x = w + 8; s.y = Math.random() * h; }
+    if(s.x > w + 8){ s.x = -8; s.y = Math.random() * h; }
+    if(s.y < -8){ s.y = h + 8; s.x = Math.random() * w; }
+    if(s.y > h + 8){ s.y = -8; s.x = Math.random() * w; }
+  }
+}
+
+function drawStarfield(){
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  starCtx.clearRect(0, 0, w, h);
+  for(const s of starField.stars){
+    const glow = .55 + Math.sin(s.twinkle) * .28;
+    const a = Math.max(.12, Math.min(1, s.alpha * glow));
+    starCtx.globalAlpha = a;
+    starCtx.fillStyle = '#ffffff';
+    starCtx.shadowColor = 'rgba(255,255,255,.9)';
+    starCtx.shadowBlur = s.layer === 2 ? 8 : 5;
+    starCtx.beginPath();
+    starCtx.arc(s.x, s.y, s.size, 0, TAU);
+    starCtx.fill();
+  }
+  starCtx.globalAlpha = 1;
+  starCtx.shadowBlur = 0;
+}
+
+function starLoop(now){
+  const dt = Math.min((now - starField.last) / 1000, 0.05);
+  starField.last = now;
+  updateStarfield(dt);
+  drawStarfield();
+  starField.raf = requestAnimationFrame(starLoop);
+}
+
+const rand = (a,b)=>a+Math.random()*(b-a);
+
+const THEMES = [
+  {name:'COSMIC VOID', ko:'공허 성역', bg:'space_bg.png', color:'#38bdf8', starSpeed:1.0},
+  {name:'FROST EXPANSE', ko:'빙결 외곽', bg:'bg_ice.png', color:'#67e8f9', starSpeed:.82},
+  {name:'LAVA NEBULA', ko:'용암 성운', bg:'bg_lava.png', color:'#fb923c', starSpeed:1.22},
+  {name:'JUNGLE CORE', ko:'생체 정글', bg:'bg_jungle.png', color:'#22c55e', starSpeed:.95}
+];
+
+
+const STAGE_MAP_DEFS = [
+  {stage:1, key:'cosmic', name:'COSMIC VOID', ko:'공허 성역', theme:0, color:'#38bdf8', mood:'기본 우주 균열 · 오로라 · 공허 에너지'},
+  {stage:2, key:'frost', name:'FROST EXPANSE', ko:'빙결 외곽', theme:1, color:'#67e8f9', mood:'냉기 · 눈보라 · 빙결'},
+  {stage:3, key:'lava', name:'LAVA NEBULA', ko:'용암 성운', theme:2, color:'#fb923c', mood:'태양 플레어 · 열기 · 적 방어 상승'},
+  {stage:4, key:'jungle', name:'JUNGLE CORE', ko:'생체 정글', theme:3, color:'#22c55e', mood:'생체 포자 · 독성 · 공격속도 저하'}
+];
+
+const STAGE_PRESENTATION = {
+  1:{risk:'LOW', tags:['AURORA','VOID MARK','ENTRY SANCTUARY'], note:'입문 구간이지만 공허 표식과 보스 재생 때문에 방심하면 밀립니다.'},
+  2:{risk:'MEDIUM', tags:['BLIZZARD','FREEZE','CONTROL'], note:'눈보라와 빙결로 템포를 끊는 스테이지입니다.'},
+  3:{risk:'HIGH', tags:['SOLAR FLARE','ARMOR','BURST'], note:'적 장갑과 화염 보스 폭딜이 동시에 압박하는 스테이지입니다.'},
+  4:{risk:'VERY HIGH', tags:['SPORE FIELD','HEAL','DECAY'], note:'회복 군체와 포자 디버프로 장기전 성향이 강합니다.'}
+};
+
+const STAGE_BOSS_DEFS = {
+  1: {
+    mid: {tier:'MID BOSS', name:'ASTRAL WARDEN', ko:'성운 감시자', title:'위상 수호체', color:'#7dd3fc', aura:'#38bdf8', hpMul:1.55, speedMul:.98, size:34, rewardMul:2.2, expMul:2.0, armor:.05, coreDamage:1, ability:'PHASE REGEN', desc:'짧은 주기로 위상 재생을 사용해 체력을 회복하고 순간 가속합니다.', effect:'phaseRegen', interval:165},
+    final: {tier:'FINAL BOSS', name:'OBLIVION HEART', ko:'공허 심핵', title:'최종 균열 군주', color:'#a78bfa', aura:'#c084fc', hpMul:2.45, speedMul:.93, size:42, rewardMul:3.8, expMul:3.0, armor:.10, coreDamage:3, ability:'SINGULARITY SURGE', desc:'공허 파동으로 자신을 강화하며 주기적으로 체력을 대량 회복합니다.', effect:'voidSurge', interval:145}
+  },
+  2: {
+    mid: {tier:'MID BOSS', name:'GLACIER HOWLER', ko:'빙하 포효체', title:'극저온 추적자', color:'#bae6fd', aura:'#67e8f9', hpMul:1.65, speedMul:.94, size:35, rewardMul:2.3, expMul:2.0, armor:.06, coreDamage:1, ability:'FROST LOCK', desc:'가장 강한 아군 행성 하나를 잠시 얼려 공격을 멈추게 합니다.', effect:'frostLock', interval:160},
+    final: {tier:'FINAL BOSS', name:'ABSOLUTE ZERO', ko:'절대영도 핵', title:'빙결 군주', color:'#e0f2fe', aura:'#93c5fd', hpMul:2.5, speedMul:.90, size:42, rewardMul:4.0, expMul:3.0, armor:.12, coreDamage:3, ability:'BLIZZARD PRISON', desc:'복수의 행성을 동시에 얼리고 냉기 재생으로 피해를 줄입니다.', effect:'blizzardPrison', interval:148}
+  },
+  3: {
+    mid: {tier:'MID BOSS', name:'EMBER TITAN', ko:'화염 거신', title:'융해 선봉장', color:'#fdba74', aura:'#fb923c', hpMul:1.70, speedMul:.96, size:36, rewardMul:2.35, expMul:2.1, armor:.08, coreDamage:1, ability:'MAGMA SHELL', desc:'용암 갑각을 덧입어 방어력을 끌어올리고 짧게 돌진합니다.', effect:'magmaShell', interval:160},
+    final: {tier:'FINAL BOSS', name:'SOL INFERNO', ko:'태양 화옥', title:'초열 군주', color:'#fb923c', aura:'#f97316', hpMul:2.60, speedMul:.94, size:44, rewardMul:4.1, expMul:3.15, armor:.14, coreDamage:4, ability:'CATACLYSM BURST', desc:'과열 상태에서 폭발적으로 가속하며 높은 장갑을 유지합니다.', effect:'cataclysmBurst', interval:144}
+  },
+  4: {
+    mid: {tier:'MID BOSS', name:'SPORE TYRANT', ko:'포자 군체', title:'생체 포식자', color:'#86efac', aura:'#4ade80', hpMul:1.68, speedMul:.95, size:36, rewardMul:2.4, expMul:2.1, armor:.08, coreDamage:1, ability:'SPORE BLOOM', desc:'주변 적을 치유하고 스스로 회복하는 생체 포자 구름을 분출합니다.', effect:'sporeBloom', interval:162},
+    final: {tier:'FINAL BOSS', name:'WORLDROOT PRIME', ko:'월드루트 프라임', title:'생태 핵군주', color:'#4ade80', aura:'#22c55e', hpMul:2.65, speedMul:.92, size:44, rewardMul:4.2, expMul:3.2, armor:.14, coreDamage:4, ability:'OVERGROWTH', desc:'주변 군체를 급속 성장시키며 자신의 체력도 지속적으로 끌어올립니다.', effect:'overgrowth', interval:142}
+  }
+};
+
+function getStageBossDef(stageNo, tier='mid'){
+  const pack = STAGE_BOSS_DEFS[Number(stageNo)] || STAGE_BOSS_DEFS[1];
+  return tier === 'final' ? pack.final : pack.mid;
+}
+
+const StageMapState = {
+  unlocked: 1,
+  selected: 1,
+  current: 1
+};
+
+function getStageDef(stageNo){
+  return STAGE_MAP_DEFS.find(s => s.stage === Number(stageNo)) || STAGE_MAP_DEFS[0];
+}
+
+function getStagePresentation(stageNo){
+  return STAGE_PRESENTATION[Number(stageNo)] || STAGE_PRESENTATION[1];
+}
+
+function renderStageMapInfo(stageNo){
+  const def = getStageDef(stageNo);
+  const mid = getStageBossDef(stageNo, 'mid');
+  const finalBoss = getStageBossDef(stageNo, 'final');
+  const presentation = getStagePresentation(stageNo);
+  const title = $('stageInfoTitle');
+  const risk = $('stageInfoRisk');
+  const mood = $('stageInfoMood');
+  const tags = $('stageInfoTags');
+  const midName = $('stageMidBossName');
+  const midKo = $('stageMidBossKo');
+  const midSkill = $('stageMidBossSkill');
+  const finalName = $('stageFinalBossName');
+  const finalKo = $('stageFinalBossKo');
+  const finalSkill = $('stageFinalBossSkill');
+  if(title) title.textContent = `${def.stage}. ${def.name} / ${def.ko}`;
+  if(risk) risk.textContent = presentation.risk;
+  if(mood) mood.textContent = `${def.mood} · ${presentation.note}`;
+  if(tags){
+    tags.innerHTML = presentation.tags.map(tag => `<span class="stageTag">${tag}</span>`).join('');
+  }
+  if(midName) midName.textContent = mid.name;
+  if(midKo) midKo.textContent = `${mid.ko} · ${mid.title}`;
+  if(midSkill) midSkill.textContent = mid.ability;
+  if(finalName) finalName.textContent = finalBoss.name;
+  if(finalKo) finalKo.textContent = `${finalBoss.ko} · ${finalBoss.title}`;
+  if(finalSkill) finalSkill.textContent = finalBoss.ability;
+}
+
+function loadStageMapProgress(){
+  try{
+    const raw = localStorage.getItem('planetRiftStageProgressV2');
+    if(!raw) return;
+    const saved = JSON.parse(raw);
+    StageMapState.unlocked = clamp(Number(saved.unlocked || 1), 1, STAGE_MAP_DEFS.length);
+    StageMapState.selected = clamp(Number(saved.selected || StageMapState.unlocked), 1, StageMapState.unlocked);
+    StageMapState.current = clamp(Number(saved.current || StageMapState.selected), 1, STAGE_MAP_DEFS.length);
+  }catch(err){
+    StageMapState.unlocked = 1;
+    StageMapState.selected = 1;
+    StageMapState.current = 1;
+  }
+}
+
+function saveStageMapProgress(){
+  try{
+    localStorage.setItem('planetRiftStageProgressV2', JSON.stringify({
+      unlocked: StageMapState.unlocked,
+      selected: StageMapState.selected,
+      current: StageMapState.current
+    }));
+  }catch(err){}
+}
+
+function resetBattleUnitsForStageMap(){
+  grid = Array(GRID*GRID).fill(null);
+  terrain = Array(GRID*GRID).fill('empty');
+  enemies = [];
+  bullets = [];
+  particles = [];
+  beams = [];
+  floats = [];
+  anomalies = [];
+  selected = -1;
+  dragging = null;
+  spawnTimer = 0;
+}
+
+function renderStageMap(){
+  const map = $('stageMap');
+  if(!map) return;
+  const unlocked = clamp(StageMapState.unlocked, 1, STAGE_MAP_DEFS.length);
+  const selectedStage = clamp(StageMapState.selected, 1, unlocked);
+  StageMapState.unlocked = unlocked;
+  StageMapState.selected = selectedStage;
+  map.dataset.unlocked = String(unlocked);
+  map.dataset.selected = String(selectedStage);
+
+  document.querySelectorAll('#stageMap .stageNode').forEach(node => {
+    const stage = Number(node.dataset.stage);
+    const isUnlocked = stage <= unlocked;
+    const isSelected = stage === selectedStage;
+    node.classList.toggle('locked', !isUnlocked);
+    node.classList.toggle('unlocked', isUnlocked);
+    node.classList.toggle('active', isSelected);
+    const lock = node.querySelector('.nodeLock');
+    if(lock) lock.style.display = isUnlocked ? 'none' : 'block';
+  });
+
+  const def = getStageDef(selectedStage);
+  const label = $('stageProgressLabel');
+  const sub = $('stageProgressSub');
+  const enter = $('stageEnterBtn');
+  const hint = $('stageHint');
+  if(label) label.textContent = `SANCTUARY ${unlocked} / ${STAGE_MAP_DEFS.length}`;
+  if(sub) sub.textContent = `${def.stage}. ${def.name} / ${def.ko} 선택됨`;
+  if(enter) enter.textContent = `ENTER ${def.stage}. ${def.name}`;
+  if(hint) hint.textContent = `${def.stage}. ${def.name} · ${def.ko} — 10웨이브 클리어 시 다음 항로가 개방됩니다.`;
+  renderStageMapInfo(selectedStage);
+}
+
+function showStageMap(){
+  const menu = $('menu');
+  const map = $('stageMap');
+  const game = $('game');
+  if(menu) menu.style.display = 'none';
+  if(game) game.style.display = 'none';
+  if(map) map.style.display = 'block';
+  stopStageBgm();
+  renderStageMap();
+}
+
+function startSelectedStageFromMap(){
+  const stageNo = clamp(StageMapState.selected, 1, StageMapState.unlocked);
+  const def = getStageDef(stageNo);
+  StageMapState.current = stageNo;
+  StageMapState.selected = stageNo;
+  saveStageMapProgress();
+
+  const map = $('stageMap');
+  if(map) map.style.display = 'none';
+  $('game').style.display='flex';
+
+  reset();
+  S.stageNo = stageNo;
+  S.stageMapKey = def.key;
+  S.theme = def.theme;
+  S.wave = 1;
+  resetBattleUnitsForStageMap();
+  const logBox = $('log');
+  if(logBox) logBox.innerHTML = '';
+  try { renderHangar(); } catch(err) { console.error('renderHangar failed during stage entry', err); }
+  log(`${def.stage}. ${def.name} / ${def.ko} 진입 — 10웨이브 클리어 시 다음 성역이 해금됩니다`);
+  prepareWave();
+  last=performance.now();
+  cancelAnimationFrame(raf);
+  raf=requestAnimationFrame(loop);
+}
+
+function completeStageFromBattle(){
+  const cleared = clamp(Number(S.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
+  const previousUnlocked = clamp(Number(StageMapState.unlocked || 1), 1, STAGE_MAP_DEFS.length);
+  const finalUnlocked = Math.max(previousUnlocked, Math.min(STAGE_MAP_DEFS.length, cleared + 1));
+  const finalSelected = Math.min(STAGE_MAP_DEFS.length, cleared + 1);
+  const clearedDef = getStageDef(cleared);
+
+  cancelAnimationFrame(raf);
+  $('game').style.display = 'none';
+  $('stageMap').style.display = 'block';
+  stopStageBgm();
+
+  // 먼저 클리어 직전 상태를 보여준 뒤 unlock 값을 갱신해서 SVG 선이 실제로 그려지도록 한다.
+  StageMapState.current = cleared;
+  StageMapState.unlocked = previousUnlocked;
+  StageMapState.selected = cleared;
+  renderStageMap();
+  const firstHint = $('stageHint');
+  if(firstHint) firstHint.textContent = `${clearedDef.stage}. ${clearedDef.name} 클리어! 전투 유닛을 초기화하고 다음 균열 항로를 개방합니다.`;
+
+  reset();
+  resetBattleUnitsForStageMap();
+
+  setTimeout(() => {
+    StageMapState.current = finalSelected;
+    StageMapState.unlocked = finalUnlocked;
+    StageMapState.selected = finalSelected;
+    saveStageMapProgress();
+    renderStageMap();
+    const nextDef = getStageDef(finalSelected);
+    const hint = $('stageHint');
+    if(hint){
+      hint.textContent = cleared >= STAGE_MAP_DEFS.length
+        ? `모든 성역 클리어! 원하는 성역을 다시 선택해 재도전할 수 있습니다.`
+        : `${nextDef.stage}. ${nextDef.name} / ${nextDef.ko} 해금 — ENTER로 진입하세요.`;
+    }
+  }, 90);
+}
+
+const STAGE_BGS = THEMES.map(t => {
+  const img = new Image();
+  img.src = t.bg;
+  return img;
+});
+
+const PLANET_ICON_SHEET = new Image();
+PLANET_ICON_SHEET.src = 'planet_units_planet_style_v15.png?v=15';
+
+const PLANET_EVOLUTION_FILES = {
+  solar:'solar_levels.png?v=1',
+  frost:'frost_levels.png?v=1',
+  storm:'storm_levels.png?v=1',
+  toxic:'toxic_levels.png?v=1',
+  void:'void_levels.png?v=1',
+  laser:'laser_levels.png?v=1',
+  starengine:'starengine_levels.png?v=1'
+};
+const PLANET_EVOLUTION_COLS = 5;
+const PLANET_EVOLUTION_SHEETS = Object.fromEntries(Object.entries(PLANET_EVOLUTION_FILES).map(([key, src]) => {
+  const img = new Image();
+  img.src = src;
+  return [key, img];
+}));
+
+const STAGE_FX_IMAGES = ['fx_cosmic.png?v=6','fx_ice.png?v=6','fx_lava.png?v=6','fx_jungle.png?v=6'].map(src=>{
+  const img = new Image();
+  img.src = src;
+  return img;
+});
+
+const PLANET_ICON_COLS = 4;
+const PLANET_ICON_ROWS = 2;
+const PLANET_BASE_SIZE = 40;
+const PLANET_RENDER_SCALE = 0.82;
+const BASE_PLANET_COUNT = 6;
+const HIDDEN_PLANET_TYPE = 6;
+const TECH_BONUS_PER_POINT = 0.08;
+
+const AUDIO_URLS = {
+  bgm: ['audio/bgm_cosmic.wav','audio/bgm_ice.wav','audio/bgm_lava.wav','audio/bgm_jungle.wav'],
+  sfx: {
+    shot:'audio/sfx_shot.wav', beam:'audio/sfx_beam.wav', blackhole:'audio/sfx_blackhole.wav',
+    nova:'audio/sfx_nova.wav', hit:'audio/sfx_hit.wav', kill:'audio/sfx_kill.wav',
+    treasure:'audio/sfx_treasure.wav', level:'audio/sfx_level.wav', summon:'audio/sfx_summon.wav', merge:'audio/sfx_merge.wav'
+  }
+};
+
+let fieldStars = [];
+
+function buildFieldStars(){
+  fieldStars = [];
+  const layers = [
+    {count:92, speed:.18, alpha:.34},
+    {count:72, speed:.34, alpha:.55},
+    {count:42, speed:.58, alpha:.82}
+  ];
+  layers.forEach((layer, layerIndex) => {
+    for(let i=0;i<layer.count;i++){
+      fieldStars.push({
+        x: Math.random()*W, y: Math.random()*H,
+        size: 1.25,
+        layer: layerIndex,
+        alpha: layer.alpha,
+        speed: layer.speed,
+        angle: rand(-.38,.38),
+        drift: rand(.12,.42),
+        twinkle: Math.random()*TAU,
+        twinkleSpeed: rand(.035,.09)
+      });
+    }
+  });
+}
+
+function drawCoverImage(img){
+  if(!img || !img.complete || !img.naturalWidth){
+    const fallback = ctx.createLinearGradient(0,0,W,H);
+    fallback.addColorStop(0,'#020617');
+    fallback.addColorStop(1,theme().color);
+    ctx.globalAlpha=.42;
+    ctx.fillStyle=fallback;
+    ctx.fillRect(0,0,W,H);
+    ctx.globalAlpha=1;
+    return;
+  }
+  const ir = img.naturalWidth / img.naturalHeight;
+  const cr = W / H;
+  let sw = img.naturalWidth, sh = img.naturalHeight, sx = 0, sy = 0;
+  if(ir > cr){ sw = img.naturalHeight * cr; sx = (img.naturalWidth - sw) / 2; }
+  else { sh = img.naturalWidth / cr; sy = (img.naturalHeight - sh) / 2; }
+  ctx.save();
+  ctx.globalAlpha = .76;
+  ctx.drawImage(img, sx, sy, sw, sh, 0, 0, W, H);
+  ctx.restore();
+}
+
+function buildDustClouds(){
+  if(!S) return;
+  const clouds = [];
+  const count = S.theme === 0 ? 2 : 1 + (Math.random() < .45 ? 1 : 0);
+  const colors = ['rgba(244,208,118,.18)','rgba(186,230,253,.15)','rgba(203,213,225,.13)'];
+  for(let i=0;i<count;i++){
+    clouds.push({
+      x: rand(GX + 90, Math.min(CORE.x - 120, GX + GRID*CELL - 80)),
+      y: rand(GY + 80, Math.min(H - 165, GY + GRID*CELL - 80)),
+      r: rand(52, 74),
+      vx: rand(-.20, .20),
+      vy: rand(-.12, .12),
+      phase: Math.random()*TAU,
+      strength: rand(.10, .18),
+      color: colors[i % colors.length]
+    });
+  }
+  S.dustClouds = clouds;
+  if(!S.dustHintShown){
+    S.dustHintShown = true;
+    log('부유 먼지구름: 구름 안의 행성은 화력이 소폭 감소하고 재장전이 약간 느려집니다.');
+  }
+}
+
+function updateDustClouds(dt){
+  if(!S || !Array.isArray(S.dustClouds)) return;
+  for(const c of S.dustClouds){
+    c.phase += dt * .018;
+    c.x += c.vx * dt + Math.sin(c.phase) * .035;
+    c.y += c.vy * dt + Math.cos(c.phase * .9) * .025;
+    const minX = GX + 50, maxX = GX + GRID*CELL - 50;
+    const minY = GY + 50, maxY = GY + GRID*CELL - 50;
+    if(c.x < minX || c.x > maxX) c.vx *= -1;
+    if(c.y < minY || c.y > maxY) c.vy *= -1;
+    c.x = clamp(c.x, minX, maxX);
+    c.y = clamp(c.y, minY, maxY);
+  }
+}
+
+function getDustCloudPenalty(x,y){
+  if(!S || !Array.isArray(S.dustClouds)) return {damageMul:1,cooldownMul:1,alpha:0};
+  let strength = 0;
+  for(const c of S.dustClouds){
+    const d = dist(x,y,c.x,c.y);
+    if(d < c.r) strength = Math.max(strength, (1-d/c.r) * c.strength);
+  }
+  return {
+    damageMul: 1 - strength * .58,
+    cooldownMul: 1 + strength * .42,
+    alpha: strength
+  };
+}
+
+function drawDustClouds(){
+  if(!S || !Array.isArray(S.dustClouds) || !S.dustClouds.length) return;
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  for(const c of S.dustClouds){
+    const wobble = 1 + Math.sin(c.phase) * .035;
+    const r = c.r * wobble;
+    const g = ctx.createRadialGradient(c.x - r*.18, c.y - r*.12, 2, c.x, c.y, r);
+    g.addColorStop(0, 'rgba(255,248,220,.18)');
+    g.addColorStop(.45, c.color);
+    g.addColorStop(1, 'rgba(15,23,42,0)');
+    ctx.globalAlpha = .62;
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(c.x, c.y, r*1.18, r*.70, Math.sin(c.phase)*.32, 0, TAU);
+    ctx.fill();
+    ctx.globalAlpha = .16;
+    ctx.strokeStyle = 'rgba(253,230,138,.28)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6,10]);
+    ctx.beginPath();
+    ctx.ellipse(c.x, c.y, r*1.03, r*.58, Math.sin(c.phase)*.32, 0, TAU);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  ctx.restore();
+}
+
+function drawElectricArc(x1,y1,x2,y2,options={}){
+  const segments = options.segments || 8;
+  const amplitude = options.amplitude || 8;
+  const alpha = options.alpha ?? 1;
+  const glow = options.glow || '#fde047';
+  const main = options.main || '#fefce8';
+  const dx=x2-x1, dy=y2-y1;
+  const len=Math.max(1,Math.hypot(dx,dy));
+  const nx=-dy/len, ny=dx/len;
+  ctx.save();
+  ctx.globalAlpha=alpha;
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  ctx.strokeStyle=glow;
+  ctx.lineWidth=options.outerWidth || 3;
+  ctx.shadowColor=glow;
+  ctx.shadowBlur=options.blur || 14;
+  ctx.beginPath();
+  ctx.moveTo(x1,y1);
+  for(let i=1;i<segments;i++){
+    const t=i/segments;
+    const wobble=Math.sin(performance.now()*.02+i*1.37)*.28;
+    const offset=(Math.random()*2-1+wobble)*amplitude*(1-Math.abs(.5-t)*.65);
+    ctx.lineTo(x1+dx*t+nx*offset,y1+dy*t+ny*offset);
+  }
+  ctx.lineTo(x2,y2);
+  ctx.stroke();
+  ctx.strokeStyle=main;
+  ctx.lineWidth=options.innerWidth || 1.25;
+  ctx.shadowBlur=5;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function updateAndDrawFieldStars(raw){
+  const th = theme();
+  const t = performance.now() * .00032;
+  ctx.save();
+  for(const s of fieldStars){
+    const speed = s.speed * th.starSpeed * raw;
+    s.x += Math.cos(s.angle + t) * speed;
+    s.y += Math.sin(s.angle + t) * speed + s.drift * raw * .08;
+    s.twinkle += s.twinkleSpeed * raw;
+    if(s.x < -10) s.x = W + 10;
+    if(s.x > W + 10) s.x = -10;
+    if(s.y < -10) s.y = H + 10;
+    if(s.y > H + 10) s.y = -10;
+    const glow = .62 + Math.sin(s.twinkle) * .30;
+    ctx.globalAlpha = clamp(s.alpha * glow, .12, .95);
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(255,255,255,.95)';
+    ctx.shadowBlur = s.layer === 2 ? 8 : 4;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size, 0, TAU);
+    ctx.fill();
+  }
+  ctx.restore();
+  ctx.globalAlpha = 1;
+}
+
+
+const PLANETS = [
+  {id:'solar', name:'솔라 행성', color:'#fb923c', range:132, dmg:48, cd:34, kind:'splash', cost:90, card:'광역 폭발 · 연소', tags:['광역','연소','합류점']},
+  {id:'frost', name:'프로스트 행성', color:'#67e8f9', range:145, dmg:30, cd:30, kind:'slow', cost:95, card:'빙결 감속 · 제어', tags:['감속','빙결','제어']},
+  {id:'storm', name:'스톰 행성', color:'#facc15', range:128, dmg:36, cd:32, kind:'chain', cost:100, card:'연쇄 번개 · 장갑 파괴', tags:['연쇄','장갑파괴','다중경로']},
+  {id:'toxic', name:'바이오 행성', color:'#22c55e', range:126, dmg:24, cd:27, kind:'poison', cost:100, card:'독성 침식 · 지속 피해', tags:['독','지속피해','보스']},
+  {id:'void', name:'블랙홀 행성', color:'#c084fc', range:122, dmg:22, cd:48, kind:'gravity', cost:110, card:'소형 블랙홀 · 구속', tags:['끌어당김','디버프','군중제어']},
+  {id:'laser', name:'광자 행성', color:'#a78bfa', range:165, dmg:58, cd:44, kind:'beam', cost:120, card:'고출력 광자 빔', tags:['관통','저격','직선']},
+  {id:'starengine', name:'히든 스타 엔진', color:'#f8fafc', range:202, dmg:148, cd:24, cost:0, kind:'crit', card:'히든 · 초고출력 크리티컬 코어', tags:['히든','치명타','융합','최종병기'], critChance:.48, critMul:2.7, explodeChance:.12, explodeRadius:96}
+];
+
+
+const TERRAIN = {
+  empty:{name:'공허판', desc:'출력 손실: 피해 -38%, 공속 저하', color:'rgba(148,163,184,.055)'},
+  path:{name:'균열항로', desc:'적 이동 경로. 배치 불가', color:'rgba(56,189,248,.08)'},
+  blocked:{name:'운석폐허', desc:'배치 불가', color:'rgba(15,23,42,.70)'},
+  amp:{name:'증폭성운', desc:'핵심 장판: 피해 +65%', color:'rgba(251,191,36,.22)'},
+  coil:{name:'가속궤도', desc:'핵심 장판: 공격속도 대폭 증가', color:'rgba(56,189,248,.21)'},
+  lens:{name:'중력렌즈', desc:'핵심 장판: 사거리 +50', color:'rgba(125,211,252,.21)'},
+  mine:{name:'수정광맥', desc:'보상 장판: 소량 추가 보상', color:'rgba(34,197,94,.18)'},
+  rift:{name:'불안정균열', desc:'위험 장판: 피해 +95%, 과열', color:'rgba(244,114,182,.20)'}
+};
+
+const UNIT_SKILL_TREES = {
+  solar: [
+    {id:'solar_core', name:'태양 핵융합로', text:l=>`해당 솔라 행성 공격력 +${18*l}%`, apply:(t)=>{ensureAug(t).damage+=.18}},
+    {id:'solar_flare', name:'플레어 장판', text:l=>`폭발 반경 +${22*l}%`, apply:(t)=>{ensureAug(t).area+=.22}},
+    {id:'solar_burn', name:'플레어 연소', text:l=>`연소 지속피해 +${35*l}%`, apply:(t)=>{ensureAug(t).dot+=.35}}
+  ],
+  frost: [
+    {id:'frost_core', name:'극저온 냉각핵', text:l=>`해당 프로스트 행성 공격력 +${16*l}%`, apply:(t)=>{ensureAug(t).damage+=.16}},
+    {id:'frost_lock', name:'절대영도 잠금', text:l=>`빙결 확률/지속 +${20*l}%`, apply:(t)=>{const a=ensureAug(t);a.freeze+=.20;a.freezeChance+=.05}},
+    {id:'frost_range', name:'냉기 렌즈', text:l=>`사거리 +${10*l}`, apply:(t)=>{ensureAug(t).range+=10}}
+  ],
+  storm: [
+    {id:'storm_coil', name:'플라즈마 유도 코일', text:l=>`해당 스톰 행성 공격력 +${15*l}%`, apply:(t)=>{ensureAug(t).damage+=.15}},
+    {id:'storm_chain', name:'연쇄 회로 증폭', text:l=>`연쇄 대상 +${l}`, apply:(t)=>{ensureAug(t).chain+=1}},
+    {id:'storm_break', name:'전하 표식', text:l=>`표식 피해 증폭 +${8*l}%`, apply:(t)=>{ensureAug(t).markAmp+=.08}}
+  ],
+  toxic: [
+    {id:'toxic_reactor', name:'생체화학 반응로', text:l=>`독성 지속피해 +${40*l}%`, apply:(t)=>{ensureAug(t).dot+=.40}},
+    {id:'toxic_spore', name:'포자 확산막', text:l=>`독성 공격력 +${16*l}%`, apply:(t)=>{ensureAug(t).damage+=.16}},
+    {id:'toxic_slow', name:'마비 독성', text:l=>`중독 대상 둔화 +${l}`, apply:(t)=>{ensureAug(t).poisonSlow+=1}}
+  ],
+  void: [
+    {id:'void_pull', name:'중력 우물 심화', text:l=>`블랙홀 흡입력 +${25*l}%`, apply:(t)=>{ensureAug(t).gravity+=.25}},
+    {id:'void_radius', name:'사건지평 확장', text:l=>`블랙홀 반경 +${18*l}%`, apply:(t)=>{ensureAug(t).area+=.18}},
+    {id:'void_decay', name:'공간 붕괴파', text:l=>`블랙홀 피해 +${17*l}%`, apply:(t)=>{ensureAug(t).damage+=.17}}
+  ],
+  laser: [
+    {id:'laser_lens', name:'광자 렌즈 정렬', text:l=>`광자 행성 공격력 +${17*l}%`, apply:(t)=>{ensureAug(t).damage+=.17}},
+    {id:'laser_width', name:'관통 빔 확장', text:l=>`빔 폭 +${5*l}`, apply:(t)=>{ensureAug(t).beamWidth+=5}},
+    {id:'laser_cooler', name:'광자 냉각 채널', text:l=>`공격속도 +${12*l}%`, apply:(t)=>{ensureAug(t).fireRate+=.12}}
+  ],
+  starengine: [
+    {id:'star_crit', name:'쌍성 임계점', text:l=>`치명타 확률 +${6*l}%`, apply:(t)=>{ensureAug(t).critChance+=.06}},
+    {id:'star_burst', name:'STAR BURST 증폭', text:l=>`폭발 확률 +${4*l}%`, apply:(t)=>{ensureAug(t).burstChance+=.04}},
+    {id:'star_nova', name:'백색왜성 방출', text:l=>`치명타 배율 +${25*l}%`, apply:(t)=>{ensureAug(t).critMul+=.25}}
+  ]
+};
+
+const TACTICAL_COOLDOWN_MAX = {blackhole:720, nova:820, repair:900};
+
+
+let S, grid, terrain, enemies, bullets, particles, beams, floats, anomalies, route, selected, dragging;
+let raf = 0, last = performance.now(), spawnTimer = 0, shake = 0, flash = 0;
+let hangarFrame = -1;
+let nextPlanetUid = 1;
+let mouse = {x:0,y:0};
+let audio = null;
+let audioCtx = null;
+const towerSfxLimiter = {};
+
+const GRID = 8;
+const CELL = 56;
+const GX = Math.round((W - GRID*CELL)/2);
+const GY = 120;
+const CORE = {x:W-74,y:H-95};
+
+
+function currentPlanetFrameIndex(){
+  return 0;
+}
+
+function planetEvolutionColumn(level){
+  return Math.max(0, Math.min(PLANET_EVOLUTION_COLS - 1, planetEvolutionTier(level)));
+}
+
+function planetSheetImage(type){
+  const id = PLANETS[type]?.id;
+  return PLANET_EVOLUTION_SHEETS[id] || null;
+}
+
+function livePlanetLevel(type){
+  if(!Array.isArray(grid) || !grid.length) return 0;
+  let max = 0;
+  for(const tower of grid){
+    if(tower && tower.type === type) max = Math.max(max, tower.level || 1);
+  }
+  return max || 0;
+}
+
+function planetThumbColumnForLevel(level){
+  const lv = Math.max(1, Math.min(5, Number(level) || 1));
+  return lv - 1;
+}
+
+function hangarVisualSignature(){
+  if(!Array.isArray(PLANETS)) return '0';
+  return PLANETS.map((_, idx)=>livePlanetLevel(idx)).join('|') + '::' + (selected >= 0 && grid[selected] ? `${grid[selected].type}:${grid[selected].level}` : 'none');
+}
+
+function applyLiveThumb(el, type, frameIndex){
+  const img = planetSheetImage(type);
+  const forcedLevel = Number(el.dataset.level || 0);
+  const level = forcedLevel > 0 ? forcedLevel : (livePlanetLevel(type) || 1);
+  const col = (type === HIDDEN_PLANET_TYPE && isHiddenLocked()) ? 0 : planetThumbColumnForLevel(level);
+  if(img){
+    el.style.backgroundImage = `url("${img.src}")`;
+    el.style.backgroundSize = `${PLANET_EVOLUTION_COLS * 100}% 100%`;
+    el.style.backgroundPosition = `${col * 100 / Math.max(1, PLANET_EVOLUTION_COLS - 1)}% 50%`;
+    el.style.animationDelay = `${(type % 4) * .28}s`;
+    el.dataset.renderedLevel = String(level);
+    return;
+  }
+  const colIdx = type % PLANET_ICON_COLS;
+  const rowIdx = Math.floor(type / PLANET_ICON_COLS);
+  el.style.backgroundImage = `url("${PLANET_ICON_SHEET.src}")`;
+  el.style.backgroundSize = `${PLANET_ICON_COLS * 100}% ${PLANET_ICON_ROWS * 100}%`;
+  el.style.backgroundPosition = `${colIdx * 100 / (PLANET_ICON_COLS - 1)}% ${rowIdx * 100 / (PLANET_ICON_ROWS - 1)}%`;
+  el.style.animationDelay = `${(type % 4) * .28}s`;
+}
+
+
+
+function isHiddenLocked(){
+  return !S || !S.hiddenUnlocked;
+}
+
+function hangarCostText(type){
+  const p = PLANETS[type];
+  if(!p) return '-';
+  if(type === HIDDEN_PLANET_TYPE && isHiddenLocked()) return 'LOCK';
+  if(type === HIDDEN_PLANET_TYPE) return 'UNLOCKED';
+  return `COST ${p.cost || 100}`;
+}
+
+function hangarRoleText(type){
+  const p = PLANETS[type];
+  if(!p) return '';
+  if(type === HIDDEN_PLANET_TYPE && isHiddenLocked()){
+    return '기본 행성 6종 Lv.5 달성 시 각성';
+  }
+  const tags = Array.isArray(p.tags) && p.tags.length ? p.tags.slice(0,3).join(' · ') : '';
+  return `${p.card || p.kind || '전투 행성'}${tags ? `<span class="techHint">${tags}</span>` : ''}`;
+}
+
+function renderHangar(){
+  const box = $('hangar');
+  box.innerHTML = PLANETS.map((p, i) => `
+    <div class="planetCard ${i===HIDDEN_PLANET_TYPE && isHiddenLocked() ? 'locked' : ''}" data-type="${i}" style="--planet-color:${p.color}">
+      ${i===HIDDEN_PLANET_TYPE && isHiddenLocked() ? '<span class="lockTag">LOCK</span>' : ''}
+      <div class="planetThumb liveThumb" data-type="${i}"></div>
+      <div class="planetCardInfo">
+        <div class="planetCardName">${p.name}</div>
+        <div class="planetCardRole">${hangarRoleText(i)}</div>
+      </div>
+      <div class="planetCardCost">${hangarCostText(i)}</div>
+      <div class="planetCardLevel" data-level-badge="${i}">LV.1</div>
+    </div>
+  `).join('');
+  updateHangarVisuals(true);
+  updateHangarState();
+  const bh=$('blackholeBtn'), nv=$('novaBtn'), rp=$('repairBtn');
+  if(bh) bh.innerHTML = `Q<br>균열 포획 ${Math.ceil(S.tacticalCd.blackhole/60)||70}`;
+  if(nv) nv.innerHTML = `W<br>궤도 포격 ${Math.ceil(S.tacticalCd.nova/60)||75}`;
+  if(rp) rp.innerHTML = `E<br>코어 과충전 ${Math.ceil(S.tacticalCd.repair/60)||65}`;
+}
+function updateHangarVisuals(force=false){
+  const signature = hangarVisualSignature();
+  if(!force && signature === hangarFrame) return;
+  hangarFrame = signature;
+  document.querySelectorAll('.liveThumb').forEach(el => applyLiveThumb(el, Number(el.dataset.type), 0));
+}
+function updateHangarState(){
+  if(!S || !grid) return;
+  document.querySelectorAll('#hangar .planetCard').forEach(card => {
+    const type = Number(card.dataset.type);
+    const active = selected >= 0 && grid[selected] && grid[selected].type === type;
+    const highest = livePlanetLevel(type);
+    card.classList.toggle('active', active);
+    card.classList.toggle('locked', type === HIDDEN_PLANET_TYPE && isHiddenLocked());
+    card.classList.toggle('hasUnit', highest > 0);
+    const cost = card.querySelector('.planetCardCost');
+    if(cost) cost.textContent = hangarCostText(type);
+    const role = card.querySelector('.planetCardRole');
+    if(role) role.innerHTML = `${hangarRoleText(type)}`;
+    const badge = card.querySelector('.planetCardLevel');
+    if(badge) badge.textContent = highest > 0 ? `MAX Lv.${highest}` : 'LV.1';
+  });
+}
+
+function drawBulletTrail(kind, x, y, color){
+  if(kind === 'solar'){
+    particles.push({x,y,vx:rand(-.18,.18),vy:rand(-.10,.12),r:rand(1.2,2.1),life:10,maxLife:16,color});
+    particles.push({x,y,vx:rand(-.10,.10),vy:rand(-.10,.08),r:rand(.9,1.7),life:9,maxLife:14,color:'#fde68a'});
+    if(Math.random() < .55) particles.push({x,y,vx:rand(-.08,.08),vy:rand(-.18,.04),r:rand(4,6),life:10,maxLife:18,color:'rgba(251,146,60,.18)',type:'smoke',core:'rgba(255,244,214,.18)'});
+  }else if(kind === 'frost'){
+    particles.push({x,y,vx:rand(-.16,.16),vy:rand(-.16,.16),r:1.1,life:11,maxLife:18,color:'#e0f2fe',type:'shard',len:rand(4,7),w:rand(1.8,3.0),rot:Math.random()*TAU,spin:rand(-.22,.22),glow:'#bfdbfe'});
+  }else if(kind === 'storm'){
+    particles.push({x,y,vx:rand(-.20,.20),vy:rand(-.20,.20),r:1.0,life:8,maxLife:14,color:'#fde047',type:'spark',len:rand(4,8),w:rand(1.1,1.9),rot:Math.random()*TAU,spin:rand(-.30,.30),glow:'#fde047'});
+  }else if(kind === 'toxic'){
+    particles.push({x,y,vx:rand(-.12,.12),vy:rand(-.10,.08),r:rand(4.5,6.8),life:12,maxLife:20,color:'rgba(34,197,94,.20)',type:'smoke',core:'rgba(187,247,208,.18)',blur:5});
+  }else if(kind === 'laser'){
+    particles.push({x,y,vx:rand(-.18,.18),vy:rand(-.18,.18),r:1.0,life:8,maxLife:14,color:'#fff7ed',type:'spark',len:rand(4,7),w:1.4,rot:Math.random()*TAU,spin:rand(-.16,.16),glow:color});
+  }else{
+    particles.push({x,y,vx:rand(-.24,.24),vy:rand(-.24,.24),r:rand(1.5,2.6),life:14,maxLife:22,color});
+  }
+}
+function spawnImpactSparks(x,y,color,count=8,spread=1){
+  for(let i=0;i<count;i++) particles.push({x,y,vx:rand(-.42,.42)*spread,vy:rand(-.34,.34)*spread,r:1.2,life:12+Math.random()*10,maxLife:20,color,type:'spark',len:rand(5,10),w:rand(1.2,2.2),rot:Math.random()*TAU,spin:rand(-.18,.18),glow:color,blur:10});
+}
+function spawnImpactShards(x,y,color='#dbeafe',count=7){
+  for(let i=0;i<count;i++) particles.push({x,y,vx:rand(-.30,.30),vy:rand(-.30,.30),r:1.2,life:13+Math.random()*8,maxLife:24,color,type:'shard',len:rand(5,10),w:rand(2.1,4.2),rot:Math.random()*TAU,spin:rand(-.2,.2),glow:color,blur:8});
+}
+function spawnImpactMist(x,y,color='rgba(74,222,128,.24)',count=5){
+  for(let i=0;i<count;i++) particles.push({x:x+rand(-5,5),y:y+rand(-5,5),vx:rand(-.12,.12),vy:rand(-.22,.06),r:rand(7,11),life:20+Math.random()*10,maxLife:30,color,type:'smoke',core:'rgba(220,252,231,.20)',blur:6});
+}
+const SKILL_ICON_THEME = {
+  solar_core:['#fb923c','#fdba74','solarCore'], solar_flare:['#f97316','#fbbf24','solarFlare'], solar_burn:['#ef4444','#fb923c','solarBurn'],
+  frost_core:['#67e8f9','#dbeafe','frostCore'], frost_lock:['#93c5fd','#dbeafe','frostLock'], frost_range:['#38bdf8','#e0f2fe','frostRange'],
+  storm_coil:['#facc15','#fde68a','stormCoil'], storm_chain:['#f59e0b','#fde047','stormChain'], storm_break:['#fcd34d','#fff7cc','stormBreak'],
+  toxic_reactor:['#22c55e','#86efac','toxicReactor'], toxic_spore:['#4ade80','#dcfce7','toxicSpore'], toxic_slow:['#84cc16','#bef264','toxicSlow'],
+  void_pull:['#a855f7','#e9d5ff','voidPull'], void_radius:['#c084fc','#f3e8ff','voidRadius'], void_decay:['#8b5cf6','#ddd6fe','voidDecay'],
+  laser_lens:['#a78bfa','#ede9fe','laserLens'], laser_width:['#8b5cf6','#c4b5fd','laserWidth'], laser_cooler:['#7c3aed','#ddd6fe','laserCooler'],
+  star_crit:['#f8fafc','#fde68a','starCrit'], star_burst:['#fbbf24','#fff7cc','starBurst'], star_nova:['#f8fafc','#ffffff','starNova']
+};
+
+function svgDataUri(svg){ return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`; }
+
+function skillIconSvg(skillId){
+  const theme = SKILL_ICON_THEME[skillId] || ['#38bdf8','#e2e8f0','generic'];
+  const [c1,c2,kind] = theme;
+  let body = '';
+  switch(kind){
+    case 'solarCore': body = `<circle cx="32" cy="32" r="12" fill="${c2}" opacity=".95"/><path d="M32 8 L36 18 L48 16 L42 26 L52 32 L42 38 L48 48 L36 46 L32 56 L28 46 L16 48 L22 38 L12 32 L22 26 L16 16 L28 18 Z" fill="${c1}" opacity=".88"/>`; break;
+    case 'solarFlare': body = `<circle cx="32" cy="32" r="10" fill="${c2}"/><path d="M14 40 C22 26, 24 14, 34 10 C30 18, 42 20, 46 28 C52 38, 44 50, 30 50 C20 50, 14 46, 14 40 Z" fill="${c1}"/><path d="M26 28 L34 18 L33 28 L42 28 L30 42 L31 33 L22 33 Z" fill="rgba(255,255,255,.9)"/>`; break;
+    case 'solarBurn': body = `<path d="M32 12 C40 22, 46 28, 46 38 C46 47, 40 54, 32 54 C24 54, 18 47, 18 38 C18 31, 22 24, 32 12 Z" fill="${c1}"/><path d="M31 24 C36 30, 38 33, 38 38 C38 43, 35 46, 31 46 C27 46, 24 43, 24 38 C24 34, 26 30, 31 24 Z" fill="${c2}"/>`; break;
+    case 'frostCore': body = `<path d="M32 10 L35 22 L46 18 L40 28 L52 32 L40 36 L46 46 L35 42 L32 54 L29 42 L18 46 L24 36 L12 32 L24 28 L18 18 L29 22 Z" fill="${c1}"/><circle cx="32" cy="32" r="8" fill="${c2}" opacity=".85"/>`; break;
+    case 'frostLock': body = `<path d="M32 10 L35 22 L46 18 L40 28 L52 32 L40 36 L46 46 L35 42 L32 54 L29 42 L18 46 L24 36 L12 32 L24 28 L18 18 L29 22 Z" fill="${c1}" opacity=".95"/><rect x="25" y="30" width="14" height="13" rx="3" fill="${c2}"/><path d="M28 30 v-3 a4 4 0 0 1 8 0 v3" stroke="${c1}" stroke-width="3" fill="none"/>`; break;
+    case 'frostRange': body = `<circle cx="32" cy="32" r="18" stroke="${c1}" stroke-width="4" fill="none"/><circle cx="32" cy="32" r="8" stroke="${c2}" stroke-width="3" fill="none"/><circle cx="32" cy="32" r="3" fill="${c2}"/>`; break;
+    case 'stormCoil': body = `<circle cx="32" cy="32" r="18" stroke="${c1}" stroke-width="4" fill="none" opacity=".7"/><path d="M35 12 L24 31 H32 L29 52 L42 29 H34 Z" fill="${c2}"/>`; break;
+    case 'stormChain': body = `<path d="M18 24 L28 32 L18 40" stroke="${c1}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 24 L38 32 L28 40" stroke="${c2}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M38 24 L48 32 L38 40" stroke="${c1}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`; break;
+    case 'stormBreak': body = `<circle cx="32" cy="32" r="18" stroke="${c1}" stroke-width="3" fill="none"/><path d="M32 16 v32 M16 32 h32" stroke="${c2}" stroke-width="3"/><path d="M40 24 L24 40" stroke="${c1}" stroke-width="4"/>`; break;
+    case 'toxicReactor': body = `<path d="M32 12 C40 22, 44 29, 44 37 C44 46, 38 52, 32 52 C26 52, 20 46, 20 37 C20 29, 24 22, 32 12 Z" fill="${c1}"/><circle cx="27" cy="31" r="3" fill="${c2}"/><circle cx="35" cy="37" r="4" fill="${c2}" opacity=".92"/>`; break;
+    case 'toxicSpore': body = `<circle cx="24" cy="28" r="8" fill="${c1}"/><circle cx="38" cy="24" r="7" fill="${c2}"/><circle cx="40" cy="38" r="9" fill="${c1}" opacity=".88"/><circle cx="24" cy="42" r="5" fill="${c2}"/>`; break;
+    case 'toxicSlow': body = `<path d="M16 38 C22 32, 26 32, 32 38 C38 44, 42 44, 48 38" stroke="${c1}" stroke-width="4" fill="none"/><path d="M16 28 C22 22, 26 22, 32 28 C38 34, 42 34, 48 28" stroke="${c2}" stroke-width="4" fill="none"/><circle cx="18" cy="46" r="3" fill="${c1}"/><circle cx="46" cy="20" r="3" fill="${c2}"/>`; break;
+    case 'voidPull': body = `<path d="M32 14 C42 14, 50 22, 50 32 C50 42, 42 50, 32 50 C24 50, 18 44, 18 36 C18 28, 24 24, 31 24 C36 24, 40 28, 40 33 C40 37, 37 40, 33 40 C30 40, 28 38, 28 35" stroke="${c1}" stroke-width="4" fill="none" stroke-linecap="round"/>`; break;
+    case 'voidRadius': body = `<circle cx="32" cy="32" r="10" fill="${c1}" opacity=".85"/><circle cx="32" cy="32" r="18" stroke="${c2}" stroke-width="3" fill="none" opacity=".9"/><circle cx="32" cy="32" r="24" stroke="${c1}" stroke-width="2" fill="none" opacity=".5"/>`; break;
+    case 'voidDecay': body = `<circle cx="32" cy="32" r="11" fill="${c1}" opacity=".9"/><path d="M20 18 L26 24 M42 20 L36 26 M44 44 L38 38 M18 42 L24 36" stroke="${c2}" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="32" r="20" stroke="${c1}" stroke-width="2" fill="none" opacity=".5"/>`; break;
+    case 'laserLens': body = `<path d="M32 14 L48 32 L32 50 L16 32 Z" fill="none" stroke="${c1}" stroke-width="4"/><path d="M14 32 H50" stroke="${c2}" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="32" r="4" fill="${c2}"/>`; break;
+    case 'laserWidth': body = `<path d="M14 26 H50" stroke="${c1}" stroke-width="6" stroke-linecap="round"/><path d="M18 38 H46" stroke="${c2}" stroke-width="10" stroke-linecap="round" opacity=".8"/>`; break;
+    case 'laserCooler': body = `<path d="M32 14 L35 22 L44 20 L39 28 L48 32 L39 36 L44 44 L35 42 L32 50 L29 42 L20 44 L25 36 L16 32 L25 28 L20 20 L29 22 Z" fill="${c2}"/><circle cx="32" cy="32" r="17" stroke="${c1}" stroke-width="3" fill="none"/>`; break;
+    case 'starCrit': body = `<path d="M32 12 L36 26 L50 26 L38 34 L42 48 L32 39 L22 48 L26 34 L14 26 L28 26 Z" fill="${c2}"/><path d="M18 18 L46 46" stroke="${c1}" stroke-width="4" opacity=".85"/>`; break;
+    case 'starBurst': body = `<circle cx="32" cy="32" r="9" fill="${c2}"/><path d="M32 10 V18 M32 46 V54 M10 32 H18 M46 32 H54 M18 18 L23 23 M41 41 L46 46 M18 46 L23 41 M41 23 L46 18" stroke="${c1}" stroke-width="4" stroke-linecap="round"/>`; break;
+    case 'starNova': body = `<circle cx="32" cy="32" r="8" fill="${c2}"/><circle cx="32" cy="32" r="18" stroke="${c1}" stroke-width="3" fill="none"/><path d="M32 8 L35 22 L49 25 L37 32 L40 46 L32 38 L24 46 L27 32 L15 25 L29 22 Z" fill="${c1}" opacity=".88"/>`; break;
+    default: body = `<circle cx="32" cy="32" r="14" fill="${c1}"/><circle cx="32" cy="32" r="22" stroke="${c2}" stroke-width="3" fill="none" opacity=".7"/>`;
+  }
+  return svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+    <defs><radialGradient id="g" cx="50%" cy="40%" r="70%"><stop offset="0%" stop-color="rgba(255,255,255,.22)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs>
+    <rect x="4" y="4" width="56" height="56" rx="18" fill="rgba(3,7,18,.96)" stroke="${c1}" stroke-opacity=".5"/>
+    <circle cx="32" cy="32" r="24" fill="url(#g)"/>${body}</svg>`);
+}
+
+function bossSkillGlyph(effect){
+  return ({phaseRegen:'✦', voidSurge:'◎', frostLock:'❄', blizzardPrison:'❄', magmaShell:'✹', cataclysmBurst:'☄', sporeBloom:'✿', overgrowth:'❋'})[effect] || '◆';
+}
+
+let bossTelegraphs = [];
+function pushBossTelegraph(enemy, label, color){
+  bossTelegraphs.push({x:enemy.x, y:enemy.y, size:enemy.size + 16, color, label, glyph:bossSkillGlyph(enemy.bossEffect), life:40, maxLife:40, tier:enemy.bossTier || 'mid'});
+}
+
+function updateBossTelegraphs(dt){
+  bossTelegraphs = bossTelegraphs.filter(t => { t.life -= dt; return t.life > 0; });
+}
+
+function drawBossTelegraphs(){
+  if(!bossTelegraphs.length) return;
+  ctx.save();
+  bossTelegraphs.forEach(t => {
+    const p = 1 - t.life / t.maxLife;
+    const alpha = Math.max(0, t.life / t.maxLife);
+    const r = t.size + p * 46;
+    ctx.globalAlpha = alpha * .38;
+    ctx.strokeStyle = t.color;
+    ctx.lineWidth = t.tier === 'final' ? 3.6 : 2.8;
+    ctx.shadowColor = t.color;
+    ctx.shadowBlur = 20;
+    ctx.beginPath(); ctx.arc(t.x, t.y, r, 0, TAU); ctx.stroke();
+    ctx.globalAlpha = alpha * .22;
+    ctx.beginPath(); ctx.arc(t.x, t.y, t.size + p * 24, 0, TAU); ctx.stroke();
+    ctx.globalAlpha = alpha * .92;
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = `900 ${t.tier === 'final' ? 22 : 18}px Orbitron`;
+    ctx.textAlign = 'center';
+    ctx.fillText(t.glyph, t.x, t.y + 6);
+    const pillW = Math.max(120, Math.min(230, 48 + t.label.length * 8));
+    const pillX = t.x - pillW/2, pillY = t.y - r - 24;
+    ctx.globalAlpha = alpha * .86;
+    roundRect(pillX, pillY, pillW, 22, 11, 'rgba(2,6,23,.82)', 'rgba(255,255,255,.14)');
+    ctx.fillStyle = t.color;
+    ctx.font = '900 10px Orbitron';
+    ctx.fillText(t.label, t.x, pillY + 15);
+  });
+  ctx.restore();
+}
+
+function bossWarning(enemy,label,color){
+  pushBossTelegraph(enemy, label, color);
+  const node = $('stageFxLabel');
+  if(node){
+    node.textContent = `${enemy.bossTier === 'final' ? 'FINAL BOSS' : 'MID BOSS'} · ${label}`;
+    node.style.opacity = 1;
+    node.style.color = '#f8fafc';
+    node.style.borderColor = 'rgba(248,113,113,.38)';
+    node.style.boxShadow = `0 0 34px ${color}40`;
+    setTimeout(()=>{ if(node){ node.style.opacity = 0; node.style.borderColor='rgba(255,255,255,.08)'; node.style.boxShadow=''; } }, 1180);
+  }
+  ring(enemy.x, enemy.y, enemy.size + 22, color);
+  ring(enemy.x, enemy.y, enemy.size + 42, 'rgba(255,255,255,.75)');
+  toast(`${enemy.bossName} — ${label}`);
+}
+
+function impactEffect(kind, x, y, color, level){
+  if(kind === 'solar'){
+    burst(x,y,color,10,20); ring(x,y,30+level*1.2,color); spawnImpactSparks(x,y,'#fdba74',10,1.2);
+  } else if(kind === 'frost'){
+    burst(x,y,'#dbeafe',6,14); ring(x,y,24+level*1.0,'#67e8f9'); spawnImpactShards(x,y,'#dbeafe',9);
+  } else if(kind === 'storm'){
+    burst(x,y,'#fde047',6,12); ring(x,y,21+level*1.1,'#facc15'); spawnImpactSparks(x,y,'#fde047',12,1.28);
+  } else if(kind === 'toxic'){
+    burst(x,y,'#4ade80',6,11); ring(x,y,22+level*1.0,'#22c55e'); spawnImpactMist(x,y,'rgba(34,197,94,.28)',6);
+  } else if(kind === 'starengine'){
+    burst(x,y,'#fff7ed',10,18); ring(x,y,28+level*1.15,'#f8fafc'); spawnImpactSparks(x,y,'#fff7ed',12,1.2);
+  } else { burst(x,y,color,5,14); }
+}
+function drawProjectileVisual(b){
+  ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(b.rot);
+  if(b.kind === 'solar'){
+    ctx.shadowColor=b.color;ctx.shadowBlur=24;
+    const g=ctx.createRadialGradient(1,-1,1,0,0,10); g.addColorStop(0,'#fff7ed'); g.addColorStop(.42,'#fdba74'); g.addColorStop(1,b.color);
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,0,6.0,0,TAU); ctx.fill();
+    ctx.globalAlpha=1; ctx.fillStyle='rgba(255,244,214,.8)'; ctx.beginPath(); ctx.ellipse(-4.6,0,4.5,2.4,0,0,TAU); ctx.fill();
+  }else if(b.kind === 'frost'){
+    ctx.shadowColor='#67e8f9';ctx.shadowBlur=24;ctx.fillStyle='#e0f2fe';
+    ctx.beginPath(); ctx.moveTo(0,-7.4); ctx.lineTo(3.8,-1.8); ctx.lineTo(6.2,0); ctx.lineTo(3.8,1.8); ctx.lineTo(0,7.4); ctx.lineTo(-3.6,1.8); ctx.lineTo(-5.4,0); ctx.lineTo(-3.6,-1.8); ctx.closePath(); ctx.fill();
+  }else if(b.kind === 'storm'){
+    ctx.shadowColor='#fde047';ctx.shadowBlur=24;ctx.strokeStyle='#facc15';ctx.lineWidth=3.1;
+    ctx.beginPath(); ctx.moveTo(-5.2,-6.5); ctx.lineTo(-.8,-1.4); ctx.lineTo(-2.5,1.1); ctx.lineTo(5.8,6.2); ctx.stroke();
+    ctx.strokeStyle='#fff7cc';ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(-5.2,-6.5); ctx.lineTo(-.8,-1.4); ctx.lineTo(-2.5,1.1); ctx.lineTo(5.8,6.2); ctx.stroke();
+  }else if(b.kind === 'toxic'){
+    ctx.shadowColor='#4ade80';ctx.shadowBlur=20;ctx.fillStyle='#22c55e'; ctx.beginPath(); ctx.arc(0,0,5.4,0,TAU); ctx.fill();
+    ctx.globalAlpha=.92; ctx.fillStyle='rgba(187,247,208,.72)'; ctx.beginPath(); ctx.ellipse(-5,0,4.6,2.6,0,0,TAU); ctx.fill();
+  }else{
+    ctx.fillStyle='#f3e8ff';ctx.shadowColor=b.color;ctx.shadowBlur=20; ctx.beginPath();ctx.arc(0,0,5.8,0,TAU);ctx.fill(); ctx.fillStyle=b.color; ctx.beginPath(); ctx.arc(0,0,4.0,0,TAU); ctx.fill();
+  }
+  ctx.restore();
+}
+function reset(){
+  S = {
+    theme:0,wave:1,gold:420,hp:22,maxHp:22,exp:0,level:1,nextExp:140,
+    speed:1,paused:false,active:false,spawned:0,total:0,skillQueue:0,skillModalOpen:false,
+    hazardTimer:0,stageFx:null,stageArmorBonus:0,globalCooldownPenalty:0,
+    hiddenUnlocked:false,
+    tacticalCd:{blackhole:0,nova:0,repair:0},
+    tacticalBoost:0,
+    mods:{reward:0,repair:0,treasure:0},
+    queue:[],
+    currentBossInfo:null,
+    dustClouds:[],
+    dustHintShown:false,
+    combo:{kills:0,timer:0,best:0},
+    mergeCombo:{count:0,timer:0}
+  };
+  grid = Array(GRID*GRID).fill(null);
+  terrain = Array(GRID*GRID).fill('empty');
+  enemies = [];
+  bullets = [];
+  particles = [];
+  beams = [];
+  floats = [];
+  anomalies = [];
+  selected = -1;
+  dragging = null;
+  nextPlanetUid = 1;
+  buildFieldStars();
+}
+
+function theme(){return THEMES[S.theme]}
+function center(i){return {x:GX+(i%GRID)*CELL+CELL/2,y:GY+Math.floor(i/GRID)*CELL+CELL/2}}
+function gridPoint(col,row){return {x:GX+col*CELL+CELL/2,y:GY+row*CELL+CELL/2}}
+function idxAt(x,y){
+  const gx=Math.floor((x-GX)/CELL), gy=Math.floor((y-GY)/CELL);
+  if(gx<0||gx>=GRID||gy<0||gy>=GRID)return -1;
+  return gy*GRID+gx;
+}
+function dist(a,b,c,d){return Math.hypot(a-c,b-d)}
+function canBuild(i){return i>=0 && terrain[i]!=='path' && terrain[i]!=='blocked'}
+function defaultAug(){
+  return {damage:0,fireRate:0,range:0,area:0,dot:0,freeze:0,freezeChance:0,chain:0,gravity:0,beamWidth:0,markAmp:0,poisonSlow:0,critChance:0,critMul:0,burstChance:0};
+}
+function ensureAug(t){
+  if(!t.aug) t.aug = defaultAug();
+  if(!t.skillLevels) t.skillLevels = {};
+  return t.aug;
+}
+function combineAugments(a,b){
+  const out = defaultAug();
+  for(const k of Object.keys(out)) out[k] = ((a?.aug?.[k]||0) + (b?.aug?.[k]||0)) * .75;
+  return out;
+}
+function combineSkillLevels(a,b){
+  const out = {};
+  for(const src of [a?.skillLevels||{}, b?.skillLevels||{}]){
+    for(const [k,v] of Object.entries(src)) out[k] = Math.max(out[k]||0, v);
+  }
+  return out;
+}
+function createMergedPlanet(a,b,idx){
+  const p = new Planet(a.type, a.level+1, idx);
+  p.aug = combineAugments(a,b);
+  p.skillLevels = combineSkillLevels(a,b);
+  return p;
+}
+function pointSeg(px,py,x1,y1,x2,y2){
+  const dx=x2-x1,dy=y2-y1;
+  const t=clamp(((px-x1)*dx+(py-y1)*dy)/(dx*dx+dy*dy),0,1);
+  return dist(px,py,x1+t*dx,y1+t*dy);
+}
+
+function makeRoute(){
+  const p = {
+    a: gridPoint(0,1),
+    b: gridPoint(1,1),
+    c: gridPoint(2,1),
+    d: gridPoint(2,3),
+    e: gridPoint(2,5),
+    f: gridPoint(4,5),
+    g: gridPoint(5,5),
+    h: gridPoint(5,3),
+    i: gridPoint(6,3),
+    j: gridPoint(6,1),
+    k: gridPoint(1,6),
+    l: gridPoint(3,6),
+    m: gridPoint(4,2),
+    n: gridPoint(6,6)
+  };
+
+  if(S.wave < 4){
+    route = [
+      {x:-50,y:p.a.y},
+      {x:p.c.x,y:p.a.y},
+      {x:p.c.x,y:p.d.y},
+      {x:p.g.x,y:p.d.y},
+      {x:p.g.x,y:CORE.y},
+      {x:CORE.x,y:CORE.y}
+    ];
+  }else if(S.wave < 8){
+    route = [
+      {x:-50,y:p.a.y},
+      {x:p.b.x,y:p.a.y},
+      {x:p.b.x,y:p.k.y},
+      {x:p.f.x,y:p.k.y},
+      {x:p.f.x,y:p.m.y},
+      {x:CORE.x,y:p.m.y},
+      {x:CORE.x,y:CORE.y}
+    ];
+  }else{
+    route = [
+      {x:-50,y:p.e.y},
+      {x:p.d.x,y:p.e.y},
+      {x:p.d.x,y:p.b.y},
+      {x:p.j.x,y:p.b.y},
+      {x:p.j.x,y:p.n.y},
+      {x:p.l.x,y:p.n.y},
+      {x:p.l.x,y:CORE.y},
+      {x:CORE.x,y:CORE.y}
+    ];
+  }
+}
+
+function makeTerrain(){
+  terrain.fill('empty');
+  const pathWidth = CELL * .38;
+  for(let i=0;i<terrain.length;i++){
+    const c=center(i);
+    for(let j=0;j<route.length-1;j++){
+      if(pointSeg(c.x,c.y,route[j].x,route[j].y,route[j+1].x,route[j+1].y)<pathWidth) terrain[i]='path';
+    }
+  }
+  const pool = [];
+  for(let i=0;i<terrain.length;i++) if(terrain[i]==='empty') pool.push(i);
+  const blockedCount = Math.min(6, Math.floor(pool.length * .12));
+  for(let n=0;n<blockedCount;n++){
+    const k=pool.splice(Math.floor(Math.random()*pool.length),1)[0];
+    if(k!==undefined) terrain[k]='blocked';
+  }
+  for(const t of ['amp','coil','lens','mine','rift','amp','coil','lens','mine','amp']){
+    const free=pool.filter(i=>terrain[i]==='empty');
+    if(!free.length) break;
+    const pick = free[Math.floor(Math.random()*free.length)];
+    terrain[pick]=t;
+    const pidx = pool.indexOf(pick);
+    if(pidx>=0) pool.splice(pidx,1);
+  }
+}
+
+function prepareWave(){
+  makeRoute();
+  makeTerrain();
+  relocateInvalidPlanets();
+  enemies.length=0;bullets.length=0;particles.length=0;beams.length=0;floats.length=0;anomalies.length=0;
+  S.stageArmorBonus=0;
+  S.globalCooldownPenalty=0;
+  S.hazardTimer=150;
+  buildDustClouds();
+  S.queue.length=0;
+  const count = 28 + S.wave*6 + S.theme*6;
+  for(let i=0;i<count;i++){
+    let type='grunt';
+    if(i%4===1) type='runner';
+    if(i%6===3) type='brute';
+    if(S.wave>=2 && i%8===5) type='regen';
+    if(S.wave>=3 && i%5===0) type='brute';
+    if(S.wave>=6 && i%7===2) type='regen';
+    if(Math.random()<.02+S.mods.treasure) type='treasure';
+    S.queue.push(type);
+  }
+  S.currentBossInfo = null;
+  if(S.wave===5){
+    const bossData = getStageBossDef(S.stageNo || StageMapState.current || 1, 'mid');
+    S.queue.push({type:'midboss', bossTier:'mid', bossData});
+    S.currentBossInfo = bossData;
+  }else if(S.wave===10){
+    const bossData = getStageBossDef(S.stageNo || StageMapState.current || 1, 'final');
+    S.queue.push({type:'finalboss', bossTier:'final', bossData});
+    S.currentBossInfo = bossData;
+  }else if(S.wave%4===0){
+    S.queue.push('boss');
+  }
+  S.total=S.queue.length;
+  S.spawned=0;
+  S.active=true;
+  spawnTimer=13;
+  document.getElementById('bg').style.backgroundImage=`url("${theme().bg}")`;
+  triggerStageFx('enter');
+  if(audio && audio.on) playStageBgm();
+  toast(`${theme().ko} 진입 — 장판 활용이 필수입니다`);
+  if(S.currentBossInfo){
+    toast(`${S.currentBossInfo.tier} — ${S.currentBossInfo.name} / ${S.currentBossInfo.ko}`);
+    log(`보스 경보: ${S.currentBossInfo.name} / ${S.currentBossInfo.ability} — ${S.currentBossInfo.desc}`);
+  }
+  log(`웨이브 ${S.wave}: ${theme().ko} / 장판 없이 방어 어려움 / 적 ${S.total}체 접근`);
+  updateUI();
+}
+
+
+function roundRect(x,y,w,h,r,fill,stroke){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r);
+  if(fill){ ctx.fillStyle = fill; ctx.fill(); }
+  if(stroke){ ctx.strokeStyle = stroke; ctx.stroke(); }
+}
+
+function drawSpriteCover(img, sx, sy, sw, sh, dx, dy, dw, dh){
+  const ir = sw / sh;
+  const cr = dw / dh;
+  let cropW = sw, cropH = sh, cropX = sx, cropY = sy;
+  if(ir > cr){
+    cropW = sh * cr;
+    cropX = sx + (sw - cropW) / 2;
+  }else{
+    cropH = sw / cr;
+    cropY = sy + (sh - cropH) / 2;
+  }
+  ctx.drawImage(img, cropX, cropY, cropW, cropH, dx, dy, dw, dh);
+}
+
+function planetEvolutionTier(level){
+  if(level >= 10) return 4;
+  if(level >= 7) return 3;
+  if(level >= 5) return 2;
+  if(level >= 3) return 1;
+  return 0;
+}
+
+function planetEvolutionName(level){
+  return ['SEED','AWAKENED','ASCENDED','TRANSCENDENT','COSMIC'][planetEvolutionTier(level)] || 'SEED';
+}
+
+function drawPlanetEvolutionFx(tower, x, y){
+  const tier = planetEvolutionTier(tower.level);
+  if(tier <= 0) return;
+  const color = tower.def.color;
+  const pulse = 1 + Math.sin(performance.now() / (260 - tier * 20) + tower.phase) * 0.05;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(pulse, pulse);
+  ctx.globalCompositeOperation = 'screen';
+  if(tier >= 1){
+    ctx.globalAlpha = .48;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.arc(0, 0, 25 + tier * 2, 0, TAU);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, 0, 31 + tier * 2, -Math.PI * .45, Math.PI * .28);
+    ctx.stroke();
+  }
+  if(tier >= 2){
+    ctx.globalAlpha = 1;
+    for(let i=0;i<2;i++){
+      const a = tower.phase + performance.now() * .0012 * (i ? -1 : 1) + i * Math.PI;
+      const sx = Math.cos(a) * (18 + tier * 2);
+      const sy = Math.sin(a) * (10 + tier);
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 2.1 + tier * .16, 0, TAU);
+      ctx.fill();
+    }
+  }
+  if(tier >= 3){
+    ctx.globalAlpha = .56;
+    ctx.strokeStyle = 'rgba(255,255,255,.82)';
+    ctx.lineWidth = 1.1;
+    ctx.beginPath();
+    for(let i=0;i<6;i++){
+      const a = -Math.PI/2 + i * TAU / 6 + performance.now() * .0004;
+      const r1 = 34 + tier * 2;
+      const r2 = 40 + tier * 2;
+      const x1 = Math.cos(a) * r1, y1 = Math.sin(a) * r1;
+      const x2 = Math.cos(a) * r2, y2 = Math.sin(a) * r2;
+      ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+    }
+    ctx.stroke();
+  }
+  if(tier >= 4){
+    ctx.globalAlpha = .66;
+    ctx.strokeStyle = '#f8fafc';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 43, 14, .22, 0, TAU);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 35, 34, 0, 0, TAU);
+    ctx.stroke();
+    ctx.fillStyle = '#f8fafc';
+    ctx.shadowBlur = 14;
+    for(let i=0;i<5;i++){
+      const a = performance.now() * .0012 + i * TAU / 5;
+      const sx = Math.cos(a) * 28;
+      const sy = Math.sin(a) * 28;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 2.5, 0, TAU);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
+function nearestPointOnSegment(px, py, x1, y1, x2, y2){
+  const dx = x2 - x1, dy = y2 - y1;
+  const lenSq = dx*dx + dy*dy || 1;
+  const t = clamp(((px - x1) * dx + (py - y1) * dy) / lenSq, 0, 1);
+  const x = x1 + dx * t;
+  const y = y1 + dy * t;
+  const distVal = Math.hypot(px - x, py - y);
+  return {x, y, t, dist:distVal};
+}
+
+function nearestRoutePoint(px, py, preferredSeg=0){
+  let best = null;
+  const start = Math.max(0, preferredSeg - 1);
+  const end = Math.min(route.length - 2, preferredSeg + 1);
+  for(let seg=start; seg<=end; seg++){
+    const a = route[seg], b = route[seg+1];
+    const hit = nearestPointOnSegment(px, py, a.x, a.y, b.x, b.y);
+    // 코너에서는 이전 segment와 현재 segment의 거리가 동시에 0이 될 수 있다.
+    // 이때 이전 segment를 고르면 적이 첫 꺾임 지점에서 되돌아가는 것처럼 멈춘다.
+    // 따라서 현재 진행 segment를 우선하고, 동일 거리에서는 뒤쪽 segment보다 현재/앞쪽 segment를 우선한다.
+    const tiePenalty = Math.abs(seg - preferredSeg) * .001 + (seg < preferredSeg ? .002 : 0);
+    const score = hit.dist + tiePenalty;
+    if(!best || score < best.score) best = {...hit, seg, score};
+  }
+  return best;
+}
+
+function confineEnemyToRoute(enemy, maxOffset=12){
+  if(!route || route.length < 2) return;
+  const currentSeg = Math.max(0, Math.min(route.length - 2, enemy.seg || 0));
+  const hit = nearestRoutePoint(enemy.x, enemy.y, currentSeg);
+  if(!hit) return;
+  const d = hit.dist;
+  if(d > maxOffset){
+    const dx = enemy.x - hit.x;
+    const dy = enemy.y - hit.y;
+    const inv = d > 0 ? 1 / d : 0;
+    enemy.x = hit.x + dx * inv * maxOffset;
+    enemy.y = hit.y + dy * inv * maxOffset;
+  }
+  // 중요: 경로 이탈 보정은 위치만 보정한다.
+  // segment 진행은 Enemy.update()에서만 바뀌어야 코너에서 멈춤/왕복 현상이 없다.
+}
+
+function drawPlanetSprite(type, x, y, size, frameIndex, level=1){
+  const evoImg = planetSheetImage(type);
+  const evoCol = planetEvolutionColumn(level);
+  if(evoImg && evoImg.complete && evoImg.naturalWidth){
+    const cellW = evoImg.naturalWidth / PLANET_EVOLUTION_COLS;
+    const cellH = evoImg.naturalHeight;
+    const sx = evoCol * cellW;
+    const sy = 0;
+    const drawSize = size * (type === HIDDEN_PLANET_TYPE ? 1.12 : 1.00);
+    ctx.save();
+    ctx.imageSmoothingEnabled = true;
+    ctx.shadowColor = type === HIDDEN_PLANET_TYPE ? 'rgba(255,250,230,.48)' : 'rgba(255,255,255,.30)';
+    ctx.shadowBlur = type === HIDDEN_PLANET_TYPE ? 24 : 16;
+    ctx.filter = 'brightness(1.10) saturate(1.15)';
+    drawSpriteCover(evoImg, sx, sy, cellW, cellH, x - drawSize/2, y - drawSize/2, drawSize, drawSize);
+    ctx.filter = 'none';
+    ctx.restore();
+    return true;
+  }
+  const img = PLANET_ICON_SHEET;
+  if(!img || !img.complete || !img.naturalWidth) return false;
+  const cellW = img.naturalWidth / PLANET_ICON_COLS;
+  const cellH = img.naturalHeight / PLANET_ICON_ROWS;
+  const col = type % PLANET_ICON_COLS;
+  const row = Math.floor(type / PLANET_ICON_COLS);
+  const sx = col * cellW;
+  const sy = row * cellH;
+  const drawSize = size * (type === HIDDEN_PLANET_TYPE ? 1.08 : PLANET_RENDER_SCALE);
+  ctx.save();
+  ctx.imageSmoothingEnabled = true;
+  ctx.shadowColor = type === HIDDEN_PLANET_TYPE ? 'rgba(255,250,230,.44)' : 'rgba(255,255,255,.32)';
+  ctx.shadowBlur = type === HIDDEN_PLANET_TYPE ? 26 : 17;
+  ctx.filter = 'brightness(1.10) saturate(1.15)';
+  ctx.drawImage(img, sx, sy, cellW, cellH, x - drawSize/2, y - drawSize/2, drawSize, drawSize);
+  ctx.filter = 'none';
+  ctx.restore();
+  return true;
+}
+
+function drawPlanetOrbitAsteroids(type, x, y, level, phase){
+  const d = PLANETS[type];
+  const t = performance.now() * 0.001;
+  const count = type === HIDDEN_PLANET_TYPE ? 3 : 2;
+  const baseR = type === HIDDEN_PLANET_TYPE ? 30 : 24;
+  const major = baseR + level * .9;
+  const minor = (type === HIDDEN_PLANET_TYPE ? 11 : 8) + level * .22;
+  ctx.save();
+  ctx.strokeStyle = type === HIDDEN_PLANET_TYPE ? 'rgba(255,248,220,.48)' : 'rgba(255,255,255,.30)';
+  ctx.lineWidth = type === HIDDEN_PLANET_TYPE ? 1.4 : 1.0;
+  ctx.beginPath(); ctx.ellipse(x, y, major+4, minor+3, .18, 0, TAU); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(x, y, major-6, minor-1, -.42, 0, TAU); ctx.stroke();
+  for(let i=0;i<count;i++){
+    const dir = i % 2 === 0 ? 1 : -1;
+    const ang = phase + t * (.9 + i*.14) * dir + i * (TAU / count);
+    const orx = x + Math.cos(ang) * (major + i * 5);
+    const ory = y + Math.sin(ang) * (minor + i * 2) + Math.sin(t * 2.1 + phase + i) * 2.2;
+    const r = (type === HIDDEN_PLANET_TYPE ? 3.8 : 2.6) + i * .55;
+    ctx.save();
+    ctx.globalAlpha = .95;
+    ctx.shadowColor = i === 0 ? '#ffffff' : d.color;
+    ctx.shadowBlur = type === HIDDEN_PLANET_TYPE ? 10 : 6;
+    const g = ctx.createRadialGradient(orx-r*.4, ory-r*.5, 0, orx, ory, r*1.8);
+    g.addColorStop(0, 'rgba(255,255,255,.96)');
+    g.addColorStop(.28, i === 0 ? 'rgba(241,245,249,.95)' : d.color);
+    g.addColorStop(1, i === 0 ? 'rgba(71,85,105,.75)' : 'rgba(15,23,42,.86)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(orx, ory, r, 0, TAU); ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+function drawProceduralPlanetBody(tower, x, y){
+  const d = tower.def;
+  ctx.save();
+  ctx.shadowColor=d.color;ctx.shadowBlur=20;
+  const g=ctx.createRadialGradient(x-8,y-8,4,x,y,25);
+  g.addColorStop(0,'#fff');g.addColorStop(.35,d.color);g.addColorStop(1,'#020617');
+  ctx.fillStyle=g;
+  ctx.beginPath();ctx.arc(x,y,23+tower.level*.7,0,TAU);ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,.42)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.ellipse(x,y,34+tower.level,10,Math.sin(tower.phase)*.5,0,TAU);ctx.stroke();
+  if(d.id==='void'){
+    ctx.strokeStyle=d.color;ctx.lineWidth=3;
+    ctx.beginPath();ctx.arc(x,y,13+Math.sin(performance.now()/220)*3,0,TAU);ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function relocateInvalidPlanets(){
+  const available = [];
+  for(let i=0;i<grid.length;i++) if(!grid[i] && canBuild(i)) available.push(i);
+  const sortByDistance = (origin) => available.sort((a,b)=>{
+    const ca = center(a), cb = center(b), co = center(origin);
+    return dist(ca.x,ca.y,co.x,co.y) - dist(cb.x,cb.y,co.x,co.y);
+  });
+  for(let i=0;i<grid.length;i++){
+    const tower = grid[i];
+    if(!tower || canBuild(i)) continue;
+    sortByDistance(i);
+    const next = available.shift();
+    if(next == null) continue;
+    grid[i] = null;
+    tower.idx = next;
+    grid[next] = tower;
+    if(selected === i) selected = next;
+    burst(center(next).x, center(next).y, tower.def.color, 14, 22);
+  }
+}
+
+function updateAnomalies(dt){
+  for(let i=anomalies.length-1;i>=0;i--){
+    const a = anomalies[i];
+    a.life -= dt;
+    a.tick -= dt;
+    if(a.target && !a.target.dead){
+      a.x += (a.target.x - a.x) * .06 * dt;
+      a.y += (a.target.y - a.y) * .06 * dt;
+    }
+    if(a.tick <= 0){
+      a.tick = 3.5;
+      for(const e of enemies){
+        if(e.dead) continue;
+        const d = dist(e.x,e.y,a.x,a.y);
+        if(d < a.radius){
+          const pull = (1 - d / a.radius) * a.pull;
+          e.x += (a.x - e.x) * .05 * pull;
+          e.y += (a.y - e.y) * .05 * pull;
+          confineEnemyToRoute(e, e.stageBoss ? 22 : 16);
+          e.slow = Math.max(e.slow, 45);
+          e.mark = Math.max(e.mark, 70);
+          e.damage(a.damage, 'void', a.color);
+        }
+      }
+    }
+    if(a.life <= 0) anomalies.splice(i,1);
+  }
+}
+
+function drawAnomalies(){
+  for(const a of anomalies){
+    const age = (a.maxLife || 1) - a.life;
+    const lifeRatio = clamp(a.life / (a.maxLife || 1), 0, 1);
+    const isTactical = a.kind === 'tactical' || a.radius > 150;
+    const pulse = 1 + Math.sin(age * .36) * (isTactical ? .05 : .085);
+    const r = (a.visualRadius || (isTactical ? a.radius * .30 : Math.min(24, a.radius * .32))) * pulse;
+    const rim = r * (isTactical ? 1.2 : 1.12);
+    ctx.save();
+    ctx.translate(a.x, a.y);
+    ctx.rotate(age * (isTactical ? .025 : .075));
+
+    // 바깥쪽 렌즈 왜곡: 기존 큰 보라 원반보다 훨씬 얇게 보이도록 처리
+    const lens = ctx.createRadialGradient(0, 0, 1, 0, 0, rim * 1.8);
+    lens.addColorStop(0, 'rgba(2,6,23,.88)');
+    lens.addColorStop(.22, 'rgba(15,23,42,.72)');
+    lens.addColorStop(.44, 'rgba(88,28,135,.34)');
+    lens.addColorStop(.72, 'rgba(192,132,252,.10)');
+    lens.addColorStop(1, 'rgba(192,132,252,0)');
+    ctx.globalAlpha = isTactical ? .94 : .88;
+    ctx.fillStyle = lens;
+    ctx.shadowColor = a.color || '#c084fc';
+    ctx.shadowBlur = isTactical ? 26 : 15;
+    ctx.beginPath();
+    ctx.arc(0, 0, rim * 1.55, 0, TAU);
+    ctx.fill();
+
+    // 검은 중심부
+    const core = ctx.createRadialGradient(-r*.22, -r*.2, 0, 0, 0, r);
+    core.addColorStop(0, 'rgba(255,255,255,.55)');
+    core.addColorStop(.10, 'rgba(124,58,237,.38)');
+    core.addColorStop(.32, 'rgba(17,24,39,.98)');
+    core.addColorStop(.70, 'rgba(2,6,23,.98)');
+    core.addColorStop(1, 'rgba(2,6,23,.12)');
+    ctx.globalAlpha = Math.max(.25, lifeRatio);
+    ctx.fillStyle = core;
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, TAU);
+    ctx.fill();
+
+    // 고리/흡입선: 큰 원 대신 얇은 비대칭 타원으로 퀄리티 보강
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.lineCap = 'round';
+    for(let j=0;j<4;j++){
+      const k = 1 + j * .20;
+      const alpha = (.39 - j * .055) * lifeRatio;
+      ctx.rotate(.48 + j * .22 + age * .002);
+      ctx.strokeStyle = `rgba(233,213,255,${alpha})`;
+      ctx.lineWidth = Math.max(.85, (isTactical ? 1.65 : 1.18) - j*.08);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, rim * k, rim * (.36 + j*.045), 0, .18, TAU * .92);
+      ctx.stroke();
+    }
+
+    // 중심 흰색 림 포인트
+    ctx.globalAlpha = .65 * lifeRatio;
+    ctx.strokeStyle = 'rgba(255,255,255,.72)';
+    ctx.lineWidth = isTactical ? 1.5 : 1.08;
+    ctx.beginPath();
+    ctx.arc(0, 0, r * .48, age * .03, age * .03 + TAU * .72);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+class Planet{
+  constructor(type,level,idx){
+    this.type=type;this.level=level;this.idx=idx;this.cool=rand(0,20);this.phase=Math.random()*TAU;this.frozen=0;this.uid=nextPlanetUid++;this.aug=defaultAug();this.skillLevels={};
+  }
+  get def(){return PLANETS[this.type]}
+  get pos(){return center(this.idx)}
+  terrainBonus(){
+    const t=terrain[this.idx];
+    const b={dmg:.72,cd:1.16,range:-3,gold:0,over:false,plate:false};
+    if(t==='amp'){b.dmg=1.55;b.cd=.96;b.range=0;b.plate=true}
+    if(t==='coil'){b.dmg=1.02;b.cd=.62;b.range=4;b.plate=true}
+    if(t==='lens'){b.dmg=.92;b.cd=.96;b.range=50;b.plate=true}
+    if(t==='mine'){b.dmg=.82;b.cd=1.08;b.range=0;b.gold=1;b.plate=true}
+    if(t==='rift'){b.dmg=1.82;b.cd=1.10;b.range=8;b.over=true;b.plate=true}
+    return b;
+  }
+  stats(){
+    const b=this.terrainBonus();
+    const a=ensureAug(this);
+    const ambient = getDustCloudPenalty(this.pos.x, this.pos.y);
+    return {
+      dmg:(this.def.dmg+this.level*15)*b.dmg*(1+a.damage) * ambient.damageMul,
+      range:Math.max(70,this.def.range+this.level*8+b.range+a.range),
+      cd:Math.max(8,(this.def.cd-this.level*1.7)*b.cd*(1+S.globalCooldownPenalty) * ambient.cooldownMul/(1+a.fireRate+S.tacticalBoost)),
+      gold:b.gold, over:b.over,
+      critChance:(this.def.critChance||0)+a.critChance,
+      critMul:(this.def.critMul||1.8)+a.critMul,
+      area:a.area, dot:a.dot, freeze:a.freeze, freezeChance:a.freezeChance,
+      chain:a.chain, gravity:a.gravity, beamWidth:a.beamWidth, markAmp:a.markAmp,
+      poisonSlow:a.poisonSlow, burstChance:a.burstChance,
+      dustPenalty: ambient.alpha
+    };
+  }
+  target(){
+    const p=this.pos, st=this.stats();
+    const list=enemies.filter(e=>!e.dead && dist(e.x,e.y,p.x,p.y)<=st.range);
+    if(!list.length)return null;
+    list.sort((a,b)=>b.progress-a.progress);
+    return list[0];
+  }
+  update(dt){
+    if(this.frozen>0){this.frozen-=dt;return;}
+    this.cool-=dt;
+    if(this.cool>0)return;
+    const target=this.target();
+    if(!target)return;
+    const st=this.stats();
+    this.cool=st.cd;
+    if(st.over && Math.random()<.08){this.cool+=24;floatText(this.pos.x,this.pos.y-30,'OVERHEAT','#fb7185')}
+    if(this.def.kind==='beam') fireBeam(this,target,st);
+    else if(this.def.kind==='gravity') blackholePulse(this,target,st);
+    else bullets.push(new Bullet(this,target,st));
+  }
+
+  draw(){
+    const p=this.pos,d=this.def;
+    const frameIndex = currentPlanetFrameIndex();
+    const tier = planetEvolutionTier(this.level);
+    const baseSize = PLANET_BASE_SIZE + this.level * 2.8 + tier * 2.3;
+    const bobY = Math.sin(performance.now()/420 + this.phase * 1.7 + this.level * .42) * (1.6 + Math.min(3.2, this.level * .12));
+    const bobX = Math.cos(performance.now()/620 + this.phase * .9) * .9;
+    const rx = p.x + bobX, ry = p.y + bobY;
+    const st = this.stats();
+    ctx.save();
+    ctx.globalAlpha = 1;
+    const coreGlow = ctx.createRadialGradient(rx - 4, ry - 6, 2, rx, ry, Math.max(18, baseSize * .56));
+    coreGlow.addColorStop(0, 'rgba(255,255,255,.96)');
+    coreGlow.addColorStop(.22, 'rgba(255,255,255,.88)');
+    coreGlow.addColorStop(.55, d.color);
+    coreGlow.addColorStop(1, 'rgba(2,6,23,.92)');
+    ctx.fillStyle = coreGlow;
+    ctx.beginPath(); ctx.arc(rx, ry, Math.max(16, baseSize * .33), 0, TAU); ctx.fill();
+    ctx.globalAlpha = .34;
+    ctx.fillStyle = 'rgba(2,6,23,.52)';
+    ctx.beginPath(); ctx.ellipse(rx, ry + 19 + tier * .6, 17 + this.level*.34, 5.6 + tier*.25, 0, 0, TAU); ctx.fill();
+    if(tier >= 1){
+      ctx.globalAlpha = .28 + tier * .06;
+      const halo = ctx.createRadialGradient(rx, ry, 10, rx, ry, 34 + tier * 8 + this.level * .6);
+      halo.addColorStop(0, 'rgba(255,255,255,.16)');
+      halo.addColorStop(.45, d.color);
+      halo.addColorStop(1, 'rgba(2,6,23,0)');
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(rx, ry, 26 + tier * 6, 0, TAU);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    drawPlanetOrbitAsteroids(this.type, rx, ry, this.level, this.phase);
+    const ok = drawPlanetSprite(this.type, rx, ry, baseSize, frameIndex, this.level);
+    if(!ok) drawProceduralPlanetBody(this, rx, ry);
+    drawPlanetEvolutionFx(this, rx, ry);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = d.color;
+    ctx.lineWidth = 2.4 + tier * .3;
+    ctx.shadowColor = d.color;
+    ctx.shadowBlur = 18 + tier * 4;
+    ctx.beginPath(); ctx.arc(rx, ry, Math.max(16, baseSize * .42), 0, TAU); ctx.stroke();
+    ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+    ctx.strokeStyle='rgba(255,255,255,.55)';
+    ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.ellipse(rx,ry,26+this.level*.6+tier,7.5+tier*.2,0.18,0,TAU);ctx.stroke();
+    if(st.dustPenalty > 0.02){
+      ctx.globalAlpha = .22 + st.dustPenalty * .8;
+      const mist = ctx.createRadialGradient(rx - 5, ry - 7, 1, rx, ry, 26 + tier * 4);
+      mist.addColorStop(0, 'rgba(255,244,214,.35)');
+      mist.addColorStop(.5, 'rgba(255,214,102,.16)');
+      mist.addColorStop(1, 'rgba(255,214,102,0)');
+      ctx.fillStyle = mist;
+      ctx.beginPath(); ctx.arc(rx, ry, 28 + tier * 4, 0, TAU); ctx.fill();
+      ctx.globalAlpha = .75;
+      ctx.strokeStyle = 'rgba(253,230,138,.58)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(rx, ry, 21 + tier * 1.2, 0, TAU); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+    if(this.frozen>0){
+      ctx.globalAlpha=.72;ctx.strokeStyle='#bfdbfe';ctx.lineWidth=3;ctx.shadowColor='#93c5fd';ctx.shadowBlur=12;
+      ctx.beginPath();ctx.arc(rx,ry,20+this.level*1.1,0,TAU);ctx.stroke();
+      ctx.globalAlpha=1;ctx.shadowBlur=0;
+    }
+    if(d.id==='void'){
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle='rgba(216,180,254,.78)';
+      ctx.lineWidth=2.1;
+      ctx.beginPath();ctx.arc(rx,ry,12+tier,0,TAU);ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+    if(d.id==='starengine'){
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle='rgba(255,248,220,.88)';
+      ctx.lineWidth=2.2;
+      ctx.beginPath();ctx.ellipse(rx,ry,32+tier*2,10,.18,0,TAU);ctx.stroke();
+      ctx.beginPath();ctx.ellipse(rx,ry,23+tier*2,22+tier*2,0,0,TAU);ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+    ctx.fillStyle='#fff';ctx.font='900 10px Orbitron';ctx.textAlign='center';
+    ctx.fillText('Lv.'+this.level,rx,ry+31);
+    if(tier >= 2){
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = 'rgba(255,255,255,.9)';
+      ctx.font = '900 8px Orbitron';
+      ctx.fillText(planetEvolutionName(this.level), rx, ry - 27 - tier * 3);
+      ctx.globalAlpha = 1;
+    }
+    if(selected===this.idx){
+      ctx.globalAlpha=.13;ctx.strokeStyle=d.color;ctx.lineWidth=1.8;
+      ctx.beginPath();ctx.arc(rx,ry,st.range,0,TAU);ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+    ctx.restore();
+  }
+
+}
+
+class Enemy{
+  constructor(entry){
+    const payload = (entry && typeof entry === 'object') ? entry : {type: entry};
+    const type = payload.type || 'grunt';
+    this.type=type;
+    const baseMap = {
+      grunt:{hp:1.62,spd:1.08,size:13,color:'#e2e8f0',reward:.50,exp:3},
+      runner:{hp:1.05,spd:1.82,size:11,color:'#7dd3fc',reward:.50,exp:3},
+      brute:{hp:4.10,spd:.84,size:18,color:'#fbbf24',reward:.90,exp:5,armor:.23},
+      regen:{hp:2.65,spd:.98,size:15,color:'#22c55e',reward:.80,exp:5,regen:true},
+      treasure:{hp:3.75,spd:1.00,size:18,color:'#facc15',reward:2.2,exp:8,treasure:true},
+      boss:{hp:16,spd:.58,size:30,color:'#fb7185',reward:3.5,exp:18,armor:.18,boss:true},
+      midboss:{hp:21,spd:.62,size:34,color:'#f8fafc',reward:5.0,exp:26,armor:.22,boss:true},
+      finalboss:{hp:28,spd:.64,size:41,color:'#f8fafc',reward:8.0,exp:38,armor:.26,boss:true}
+    };
+    const m = {...baseMap[type]};
+    const bossData = payload.bossData || null;
+    if(bossData){
+      this.stageBoss = true;
+      this.bossTier = payload.bossTier || (type === 'finalboss' ? 'final' : 'mid');
+      this.bossName = bossData.name;
+      this.bossKo = bossData.ko;
+      this.abilityName = bossData.ability;
+      this.bossTitle = bossData.title;
+      this.bossDesc = bossData.desc;
+      this.auraColor = bossData.aura || bossData.color;
+      m.color = bossData.color || m.color;
+      m.size = bossData.size || m.size;
+      m.spd *= bossData.speedMul || 1;
+      m.reward *= bossData.rewardMul || 1;
+      m.exp *= bossData.expMul || 1;
+      m.armor = (m.armor || 0) + (bossData.armor || 0);
+      this.hpScale = bossData.hpMul || 1;
+      this.coreDamage = bossData.coreDamage || (type === 'finalboss' ? 5 : 2);
+      this.bossEffect = bossData.effect;
+      this.skillInterval = bossData.interval || 128;
+      this.skillCd = this.skillInterval * .75;
+    }
+    Object.assign(this,m);
+    this.x=route[0].x;this.y=route[0].y;this.seg=0;this.progress=0;
+    const hpScale = this.hpScale || 1;
+    this.maxHp=Math.floor(295*m.hp*(1+S.wave*.30+S.theme*.38) * hpScale);
+    this.hp=this.maxHp;
+    this.dead=false;this.slow=0;this.freeze=0;this.dot=0;this.dotTime=0;this.mark=0;
+  }
+  update(dt){
+    if(this.dotTime>0){this.hp-=this.dot*dt;this.dotTime-=dt}
+    if(this.regen)this.hp=Math.min(this.maxHp,this.hp+.18*dt*(1+S.wave*.045));
+    if(this.slow>0)this.slow-=dt;
+    if(this.freeze>0)this.freeze-=dt;
+    if(this.mark>0)this.mark-=dt;
+    if(this.stageBoss){
+      this.skillCd -= dt;
+      if(this.skillCd <= 0){
+        this.skillCd = this.skillInterval;
+        triggerBossSkill(this);
+      }
+    }
+    if(this.hp<=0){this.kill();return}
+    let speed=this.spd*(1+S.wave*.032+S.theme*.028);
+    if(this.slow>0)speed*=.55;
+    if(this.freeze>0)speed*=.12;
+    const to=route[this.seg+1];
+    if(!to){this.reachCore();return}
+    const dx=to.x-this.x,dy=to.y-this.y;
+    const step=speed*dt;
+    if(Math.abs(dx) > 0.001 && Math.abs(dy) <= 0.001){
+      const dir = Math.sign(dx);
+      if(Math.abs(dx) <= step){ this.x = to.x; this.y = to.y; this.seg++; }
+      else this.x += dir * step;
+    }else if(Math.abs(dy) > 0.001 && Math.abs(dx) <= 0.001){
+      const dir = Math.sign(dy);
+      if(Math.abs(dy) <= step){ this.x = to.x; this.y = to.y; this.seg++; }
+      else this.y += dir * step;
+    }else{
+      const d=Math.hypot(dx,dy);
+      if(d <= step){ this.x = to.x; this.y = to.y; this.seg++; }
+      else{ this.x += dx/d*step; this.y += dy/d*step; }
+    }
+    this.progress += step;
+    confineEnemyToRoute(this, this.stageBoss ? 18 : 12);
+  }
+  damage(v,source,color){
+    let final=v*(1-clamp((this.armor||0)+S.stageArmorBonus,0,.72));
+    if(this.mark>0) final*=1.22;
+    this.hp-=final;
+    if(final>18)floatText(this.x+rand(-5,5),this.y-this.size-rand(0,4),Math.round(final),color||'#fff', Math.min(15, 10 + final * .05), 50);
+  }
+  kill(){
+    if(this.dead)return;
+    this.dead=true;
+    const reward=Math.max(1,Math.floor((6+S.wave*.9)*this.reward*(1+S.mods.reward)));
+    S.gold+=reward;
+    gainExp(this.exp);
+    burst(this.x,this.y,this.color,22,38);
+    registerKillCombo(this);
+    if(this.treasure){
+      triggerTreasureImpact(this);
+      if(Math.random()<.55){
+        const bonus=45+S.wave*8;
+        S.gold+=bonus;
+        toast(`황금 보물성 파괴! 수정 +${bonus}`);
+        impactLabel(this.x,this.y-this.size-34,`+${bonus} CRYSTAL`,'#fde68a',18,78);
+        sound('treasure');
+      }else{
+        toast('황금 보물성 파괴! 희귀 스킬 선택');
+        openSkillChoice(true);
+      }
+    }else{
+      sound('kill');
+    }
+    updateUI();
+  }
+  reachCore(){
+    this.dead=true;
+    S.hp-=this.coreDamage || (this.boss?4:1);
+    shake=24;flash=.25;
+    burst(CORE.x,CORE.y,'#fb7185',34,52);
+    sound('hit');
+    if(S.hp<=0){S.hp=0;toast('코어 파괴 — 다시 시작하세요');S.paused=true}
+    updateUI();
+  }
+  draw(){
+    let c=this.color;
+    if(this.freeze>0)c='#bae6fd';
+    else if(this.dotTime>0)c='#86efac';
+    ctx.save();
+    ctx.shadowColor=c;ctx.shadowBlur=this.boss?24:13;
+    ctx.fillStyle=c;
+    ctx.beginPath();
+    if(this.boss){
+      for(let i=0;i<9;i++){
+        const a=i*TAU/9+performance.now()/1000;
+        const r=this.size*(i%2?.72:1.08);
+        const x=this.x+Math.cos(a)*r,y=this.y+Math.sin(a)*r;
+        if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+      }
+      ctx.closePath();
+    }else{
+      ctx.arc(this.x,this.y,this.size,0,TAU);
+    }
+    ctx.fill();
+    if(this.treasure){
+      ctx.strokeStyle='#fde68a';ctx.lineWidth=3;
+      ctx.beginPath();ctx.arc(this.x,this.y,this.size+6,0,TAU);ctx.stroke();
+    }
+    if(this.stageBoss){
+      ctx.strokeStyle=this.auraColor || this.color;ctx.lineWidth=2.4;ctx.globalAlpha=.9;
+      ctx.beginPath();ctx.arc(this.x,this.y,this.size+9+Math.sin(performance.now()/180)*2,0,TAU);ctx.stroke();
+      ctx.globalAlpha=1;
+    }
+    const r=clamp(this.hp/this.maxHp,0,1);
+    ctx.shadowBlur=0;
+    ctx.fillStyle='rgba(2,6,23,.9)';
+    ctx.fillRect(this.x-20,this.y-this.size-14,40,5);
+    ctx.fillStyle=r>.45?'#22c55e':'#fb7185';
+    ctx.fillRect(this.x-20,this.y-this.size-14,40*r,5);
+    if(this.mark>0){
+      ctx.strokeStyle='#60a5fa';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(this.x,this.y,this.size+7,0,TAU);ctx.stroke();
+    }
+    if(this.stageBoss){
+      ctx.fillStyle='#f8fafc';ctx.font='900 10px Orbitron';ctx.textAlign='center';
+      ctx.fillText(this.bossName, this.x, this.y - this.size - 22);
+    }
+    ctx.restore();
+  }
+}
+
+
+class Bullet{
+  constructor(tower,target,st){
+    const p=tower.pos;
+    this.x=p.x;this.y=p.y;this.tower=tower;this.target=target;this.st=st;
+    this.speed=18;this.dead=false;this.color=tower.def.color;this.kind=tower.def.id;this.rot=Math.random()*TAU;
+  }
+  update(dt){
+    if(!this.target||this.target.dead){this.dead=true;return}
+    const dx=this.target.x-this.x,dy=this.target.y-this.y,d=Math.hypot(dx,dy);
+    if(d<this.speed*dt){this.hit();this.dead=true;return}
+    this.x+=dx/d*this.speed*dt;this.y+=dy/d*this.speed*dt;this.rot += .16*dt;
+    drawBulletTrail(this.kind,this.x,this.y,this.color);
+  }
+  hit(){
+    const id=this.tower.def.id,dmg=this.st.dmg;
+    if(id==='solar'){
+      areaDamage(this.target.x,this.target.y,(58+this.tower.level*3)*(1+this.st.area),dmg,'solar',this.color);
+      for(const e of enemies) if(dist(e.x,e.y,this.target.x,this.target.y)<70*(1+this.st.area)){e.dot=(1.4+this.tower.level*.2)*(1+this.st.dot);e.dotTime=120}
+      if(signatureChance(this.tower,.10,.016)) triggerSolarNova(this.tower,this.target,this.st,dmg);
+    }else if(id==='frost'){
+      this.target.damage(dmg,'frost',this.color);this.target.slow=120*(1+this.st.freeze);
+      if(Math.random()<.18+this.tower.level*.015+this.st.freezeChance)this.target.freeze=42*(1+this.st.freeze);
+      if(this.target.freeze>0 && signatureChance(this.tower,.12,.014)) triggerFrostShatter(this.tower,this.target,this.st,dmg);
+    }else if(id==='storm'){
+      const chainCount = 2+Math.floor(this.tower.level/4)+Math.floor(this.st.chain);
+      chain(this.target,dmg,chainCount,this.color,this.st.markAmp);
+      if(signatureChance(this.tower,.11,.014)) triggerStormOverload(this.tower,this.target,this.st,dmg,chainCount);
+    }else if(id==='toxic'){
+      this.target.damage(dmg*.75,'toxic',this.color);
+      this.target.dot+=(.9+this.tower.level*.16)*(1+this.st.dot);
+      this.target.dotTime=190;
+      if(this.st.poisonSlow>0)this.target.slow=Math.max(this.target.slow,60+this.st.poisonSlow*25);
+      if(signatureChance(this.tower,.13,.013)) triggerSporeCloud(this.tower,this.target,this.st,dmg);
+    }else if(id==='starengine'){
+      const critChance = clamp(this.st.critChance + this.tower.level * 0.03, 0, 0.92);
+      const crit = Math.random() < critChance;
+      const finalDmg = crit ? dmg * this.st.critMul : dmg;
+      this.target.damage(finalDmg,'starengine',this.color);
+      if(crit){
+        floatText(this.target.x, this.target.y - this.target.size - 10, 'CRIT', '#fef3c7');
+        ring(this.target.x, this.target.y, 44 + this.tower.level * 2, '#f8fafc');
+        this.target.mark = Math.max(this.target.mark, 110);
+      }
+      const explodeChance = (this.tower.def.explodeChance || 0.1) + this.st.burstChance;
+      if(Math.random() < explodeChance){
+        const blast = dmg * 3;
+        areaDamage(this.target.x, this.target.y, this.tower.def.explodeRadius || 92, blast, 'starengine_burst', '#fff8dc');
+        burst(this.target.x, this.target.y, '#fff8dc', 46, 64);
+        ring(this.target.x, this.target.y, 112, '#fff8dc');
+        impactLabel(this.target.x, this.target.y - this.target.size - 24, 'STAR BURST x3', '#fff7cc', 22, 88);
+        shake = Math.max(shake, 16);
+        flash = Math.max(flash, .12);
+      }
+    }else{
+      this.target.damage(dmg,id,this.color);
+    }
+    impactEffect(id,this.target.x,this.target.y,this.color,this.tower.level);
+    playTowerSfx(id, id==='starengine' ? 1.08 : 1);
+    sound('shot');
+  }
+  draw(){ drawProjectileVisual(this); }
+}
+
+function fireBeam(tower,target,st){
+  const p=tower.pos,color=tower.def.color;
+  const overcharge = signatureChance(tower,.10,.012);
+  const width = 23 + tower.level * 1.1 + st.beamWidth + (overcharge ? 12 : 0);
+  beams.push({x1:p.x,y1:p.y,x2:target.x,y2:target.y,color,life:overcharge?26:18,style:'laser',width:overcharge?6:4});
+  for(const e of enemies){
+    if(!e.dead && pointSeg(e.x,e.y,p.x,p.y,target.x,target.y)<width) e.damage(st.dmg*(overcharge?1.34:1),'laser',color);
+  }
+  burst(target.x,target.y,color,overcharge?22:10,overcharge?44:25);
+  if(overcharge){
+    impactLabel(target.x,target.y-target.size-18,'OVERCHARGE',color,18,78);
+    ring(target.x,target.y,72,color);
+    shake=Math.max(shake,6);
+    flash=Math.max(flash,.06);
+  }
+  playTowerSfx('laser', overcharge ? 1.08 : 1);
+  sound('beam');
+}
+
+
+function choosePlacedPlanets(count=1){
+  const placed = grid.filter(Boolean);
+  if(!placed.length) return [];
+  const copy = [...placed];
+  const picks = [];
+  for(let i=0;i<count && copy.length;i++){
+    const idx = Math.floor(Math.random()*copy.length);
+    picks.push(copy.splice(idx,1)[0]);
+  }
+  return picks;
+}
+
+function triggerBossSkill(enemy){
+  if(!enemy || !enemy.stageBoss) return;
+  const labelColor = enemy.auraColor || enemy.color;
+  const healPct = pct => {
+    const gain = Math.floor(enemy.maxHp * pct);
+    enemy.hp = Math.min(enemy.maxHp, enemy.hp + gain);
+    impactLabel(enemy.x, enemy.y - enemy.size - 40, `+${gain} HP`, '#bbf7d0', 14, 64);
+  };
+  switch(enemy.bossEffect){
+    case 'phaseRegen':
+      bossWarning(enemy,'PHASE REGEN', labelColor);
+      healPct(.06);
+      enemy.spd *= 1.06;
+      ring(enemy.x, enemy.y, enemy.size + 28, labelColor);
+      spawnImpactSparks(enemy.x, enemy.y, labelColor, 8, 1.0);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'PHASE REGEN', labelColor, 16, 74);
+      break;
+    case 'voidSurge':
+      bossWarning(enemy,'SINGULARITY SURGE', labelColor);
+      healPct(.09);
+      enemy.armor = Math.min(.72, (enemy.armor || 0) + .03);
+      burst(enemy.x, enemy.y, labelColor, 22, 42);
+      ring(enemy.x, enemy.y, enemy.size + 34, labelColor);
+      anomalies.push({x:enemy.x,y:enemy.y,target:null,kind:'bossSurge',radius:122,visualRadius:28,damage:0,pull:0,color:labelColor,life:18,maxLife:18,tick:999});
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'SINGULARITY SURGE', labelColor, 16, 80);
+      break;
+    case 'frostLock':
+      bossWarning(enemy,'FROST LOCK', labelColor);{
+      const targets = choosePlacedPlanets(1);
+      targets.forEach(t => t.frozen = Math.max(t.frozen, 70));
+      burst(enemy.x, enemy.y, '#dbeafe', 18, 24); spawnImpactShards(enemy.x, enemy.y, '#dbeafe', 10);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'FROST LOCK', '#dbeafe', 16, 76);
+      break;
+    }
+    case 'blizzardPrison':
+      bossWarning(enemy,'BLIZZARD PRISON', labelColor);{
+      const targets = choosePlacedPlanets(2);
+      targets.forEach(t => t.frozen = Math.max(t.frozen, 96));
+      burst(enemy.x, enemy.y, '#bfdbfe', 18, 24); spawnImpactShards(enemy.x, enemy.y, '#dbeafe', 14);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'BLIZZARD PRISON', '#dbeafe', 16, 78);
+      break;
+    }
+    case 'magmaShell':
+      bossWarning(enemy,'MAGMA SHELL', labelColor);
+      enemy.armor = Math.min(.72, (enemy.armor || 0) + .05);
+      enemy.spd *= 1.05;
+      burst(enemy.x, enemy.y, '#fb923c', 18, 26); spawnImpactSparks(enemy.x, enemy.y, '#fdba74', 12, 1.15);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'MAGMA SHELL', '#fdba74', 16, 76);
+      break;
+    case 'cataclysmBurst':
+      bossWarning(enemy,'CATACLYSM BURST', labelColor);
+      enemy.armor = Math.min(.75, (enemy.armor || 0) + .06);
+      enemy.spd *= 1.08;
+      ring(enemy.x, enemy.y, enemy.size + 42, '#fb923c');
+      burst(enemy.x, enemy.y, '#fb923c', 24, 36);
+      spawnImpactSparks(enemy.x, enemy.y, '#fdba74', 16, 1.28);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'CATACLYSM BURST', '#fdba74', 16, 80);
+      break;
+    case 'sporeBloom':
+      bossWarning(enemy,'SPORE BLOOM', labelColor);
+      for(const e of enemies){
+        if(!e.dead && e !== enemy && dist(e.x,e.y,enemy.x,enemy.y) < 120){
+          e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .18));
+          e.slow = Math.max(0, e.slow - 24);
+        }
+      }
+      healPct(.05);
+      ring(enemy.x, enemy.y, enemy.size + 34, '#4ade80'); spawnImpactMist(enemy.x, enemy.y, 'rgba(34,197,94,.24)', 7);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'SPORE BLOOM', '#bbf7d0', 16, 76);
+      break;
+    case 'overgrowth':
+      bossWarning(enemy,'OVERGROWTH', labelColor);
+      for(const e of enemies){
+        if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 150){
+          e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .22));
+        }
+      }
+      healPct(.08);
+      enemy.armor = Math.min(.74, (enemy.armor || 0) + .04);
+      burst(enemy.x, enemy.y, '#4ade80', 22, 34); spawnImpactMist(enemy.x, enemy.y, 'rgba(34,197,94,.26)', 9);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'OVERGROWTH', '#86efac', 16, 80);
+      break;
+  }
+  sound('boss', { intensity: enemy.bossTier === 'final' ? 1.2 : .95 });
+  shake = Math.max(shake, enemy.bossTier === 'final' ? 7 : 4);
+}
+
+function blackholePulse(tower,target,st){
+  const color=tower.def.color;
+  const p = tower.pos;
+  const hx = target.x;
+  const hy = target.y;
+  const dx = hx - p.x;
+  const dy = hy - p.y;
+  const distToTarget = Math.max(1, Math.hypot(dx,dy));
+  // 발사 이펙트는 작고 얇게, 실제 블랙홀은 피격 지점에 생성한다.
+  const muzzleDist = Math.min(18 + tower.level * .8, distToTarget * .28);
+  const mx = p.x + dx / distToTarget * muzzleDist;
+  const my = p.y + dy / distToTarget * muzzleDist;
+  const gameRadius = (56 + tower.level * 3.2) * (1 + st.area * .70);
+  anomalies.push({
+    x: hx,
+    y: hy,
+    target,
+    kind: 'towerHit',
+    radius: gameRadius,
+    visualRadius: Math.min(40, 24 + tower.level * 1.6 + st.area * 6.0),
+    damage: st.dmg * .30 * (1 + st.gravity * .85),
+    pull: .82 + st.gravity * .82,
+    color,
+    life: 21,
+    maxLife: 21,
+    tick: 0
+  });
+  beams.push({x1:p.x,y1:p.y,x2:mx,y2:my,color,life:9,style:'voidShot',width:1.15});
+  ring(hx,hy,28 + tower.level * 1.8,color);
+  burst(hx,hy,color,14,24);
+  if(signatureChance(tower,.10,.012)) triggerVoidCollapse(tower,hx,hy,st);
+  playTowerSfx('void', .82);
+}
+
+function areaDamage(x,y,r,dmg,source,color){
+  for(const e of enemies) if(!e.dead && dist(e.x,e.y,x,y)<=r)e.damage(dmg,source,color);
+  ring(x,y,r,color);
+}
+function chain(start,dmg,count,color,markAmp=0){
+  let cur=start;
+  const hit=new Set();
+  for(let i=0;i<count;i++){
+    if(!cur||hit.has(cur))break;
+    hit.add(cur);cur.damage(dmg*(1-i*.16)*(1+markAmp),'storm',color);cur.slow=Math.max(cur.slow,25);
+    let next=null,best=9999;
+    for(const e of enemies){
+      if(e.dead||hit.has(e))continue;
+      const d=dist(e.x,e.y,cur.x,cur.y);
+      if(d<115&&d<best){best=d;next=e}
+    }
+    if(next)beams.push({x1:cur.x,y1:cur.y,x2:next.x,y2:next.y,color,life:14,style:'chain'});
+    cur=next;
+  }
+}
+function gainExp(v){
+  S.exp += v;
+  let leveled = 0;
+  while(S.exp >= S.nextExp){
+    S.exp -= S.nextExp;
+    S.level++;
+    S.nextExp = Math.floor(S.nextExp * 1.24 + 24);
+    S.skillQueue++;
+    leveled++;
+  }
+  if(leveled>0) log(`레벨 ${S.level} 도달 — 랜덤 유닛 성장 ${S.skillQueue}개 대기`);
+  if(S.skillQueue>0 && !S.skillModalOpen) openSkillChoice(false);
+  updateUI();
+}
+
+function liveTowers(){
+  return grid.map((t,idx)=>t?{t,idx}:null).filter(Boolean);
+}
+function rollSkillRarity(rare=false){
+  const r = Math.random();
+  if(rare) return r < .22 ? 'legendary' : 'epic';
+  if(r < .055) return 'epic';
+  if(r < .22) return 'rare';
+  return 'common';
+}
+function rarityLabel(r){
+  return ({common:'COMMON',rare:'RARE',epic:'EPIC',legendary:'LEGENDARY'})[r] || 'COMMON';
+}
+function rarityApplyCount(c){
+  if(c.rarity === 'legendary') return 3;
+  if(c.rarity === 'epic' || c.rarity === 'rare' || c.rare) return 2;
+  return 1;
+}
+function makeUnitSkillCandidate(rare=false){
+  const list = liveTowers();
+  if(!list.length) return null;
+  const picked = list[Math.floor(Math.random()*list.length)];
+  const tree = UNIT_SKILL_TREES[picked.t.def.id] || UNIT_SKILL_TREES.solar;
+  const skill = tree[Math.floor(Math.random()*tree.length)];
+  const current = picked.t.skillLevels?.[skill.id] || 0;
+  const rarity = rollSkillRarity(rare);
+  const step = rarity === 'legendary' ? 3 : (rarity === 'epic' || rarity === 'rare' || rare ? 2 : 1);
+  return {uid:picked.t.uid, idx:picked.idx, type:picked.t.type, planetName:picked.t.def.name, color:picked.t.def.color, skill, nextLevel:current+step, rare, rarity};
+}
+function applyUnitSkillCandidate(c){
+  let idx = grid.findIndex(t => t && t.uid === c.uid);
+  if(idx < 0){
+    const list = liveTowers();
+    if(!list.length) return false;
+    idx = list[Math.floor(Math.random()*list.length)].idx;
+  }
+  const t = grid[idx];
+  ensureAug(t);
+  const prev = t.skillLevels[c.skill.id] || 0;
+  const count = rarityApplyCount(c);
+  t.skillLevels[c.skill.id] = prev + count;
+  for(let i=0;i<count;i++) c.skill.apply(t);
+  selected = idx;
+  const p = center(idx);
+  burst(p.x,p.y,t.def.color,24 + count*10,38 + count*8);
+  ring(p.x,p.y,54 + count*10,t.def.color);
+  impactLabel(p.x,p.y-42,`${rarityLabel(c.rarity)} UPGRADE`,t.def.color,16 + count*2,82);
+  shake = Math.max(shake, 4 + count*2);
+  return true;
+}
+function openSkillChoice(rare){
+  S.paused=true;
+  S.skillModalOpen=true;
+  if(!rare && S.skillQueue>0) S.skillQueue--;
+  const modal=$('modal'), box=$('choices');
+  box.innerHTML='';
+  const picks=[];
+  let guard=0;
+  while(picks.length<3 && guard++<30){
+    const c=makeUnitSkillCandidate(rare);
+    if(!c) break;
+    const key=c.uid+'_'+c.skill.id;
+    if(!picks.some(x=>x.key===key)) picks.push({...c,key});
+  }
+  if(!picks.length){
+    box.innerHTML='<div class="choice"><div class="choiceSkillRow"><div class="choiceSkillIcon"></div><div class="choiceSkillMeta"><h3>배치된 행성이 없습니다</h3></div></div><p class="choiceDesc">먼저 랜덤 소환으로 행성을 배치하세요.</p></div>';
+  }
+  picks.forEach(c=>{
+    const div=document.createElement('div');
+    div.className=`choice ${c.rarity || 'common'}`;
+    const icon = skillIconSvg(c.skill.id);
+    div.innerHTML=`<span class="choiceBadge">${rarityLabel(c.rarity)}</span>
+      <div class="choiceTop">
+        <div>
+          <span class="choiceMode">${rare?'TREASURE UNIT SKILL':'RANDOM UNIT SKILL'}</span>
+          <div class="choicePlanetName" style="color:${c.color}">${c.planetName}</div>
+        </div>
+      </div>
+      <div class="choiceSkillRow">
+        <div class="choiceSkillIcon"><img alt="skill icon" src="${icon}"></div>
+        <div class="choiceSkillMeta">
+          <h3>${c.skill.name}</h3>
+          <div class="choiceLevel">Lv.${c.nextLevel}</div>
+        </div>
+      </div>
+      <p class="choiceDesc">${c.skill.text(c.nextLevel)}</p>
+      <span class="choiceBoost">${rarityApplyCount(c)}단계 성장 · 맵 위 아군 행성 1개만 강화</span>`;
+    div.onclick=()=>{
+      const ok=applyUnitSkillCandidate(c);
+      modal.style.display='none';
+      S.skillModalOpen=false;
+      if(ok){
+        toast(`${rarityLabel(c.rarity)} 성장: ${c.planetName} / ${c.skill.name}`);
+        log(`랜덤 성장(${rarityLabel(c.rarity)}): ${c.planetName} / ${c.skill.name} Lv.${c.nextLevel}`);
+        sound('level');
+      }
+      updateSelected(); updateUI();
+      if(S.skillQueue>0) setTimeout(()=>openSkillChoice(false),160);
+      else S.paused=false;
+    };
+    box.appendChild(div);
+  });
+  modal.style.display='flex';
+}
+
+
+function updateTacticalCooldowns(dt){
+  for(const k of Object.keys(S.tacticalCd||{})) S.tacticalCd[k]=Math.max(0,S.tacticalCd[k]-dt);
+  if(S.tacticalBoost>0) S.tacticalBoost=Math.max(0,S.tacticalBoost-.004*dt);
+}
+function canUseTactical(type,cost){
+  if(S.exp<cost){toast('EXP가 부족합니다');return false}
+  if((S.tacticalCd?.[type]||0)>0){toast('전술판 재충전 중입니다');return false}
+  S.exp-=cost;
+  S.tacticalCd[type]=TACTICAL_COOLDOWN_MAX[type]||700;
+  return true;
+}
+function useSkill(type){
+  if(type==='blackhole'){
+    if(!canUseTactical('blackhole',70))return;
+    const target=enemies.length?enemies.slice().sort((a,b)=>b.progress-a.progress)[0]:{x:W/2,y:H/2};
+    const x=target.x,y=target.y,r=230;
+    anomalies.push({x,y,target:null,kind:'tactical',radius:210,damage:28,pull:2.1,color:'#c084fc',life:130,maxLife:130,tick:0});
+    for(const e of enemies){
+      const d=dist(e.x,e.y,x,y);
+      if(d<r){
+        e.x+=(x-e.x)*.36;e.y+=(y-e.y)*.36;
+        confineEnemyToRoute(e, e.stageBoss ? 24 : 18);
+        e.slow=210;e.mark=240;e.damage(180,'skill','#c084fc');
+      }
+    }
+    ring(x,y,r,'#c084fc');shake=24;toast('균열 포획 — 선두 적군을 강제 구속');sound('blackhole');
+  }
+  if(type==='nova'){
+    if(!canUseTactical('nova',75))return;
+    const targets=enemies.slice().sort((a,b)=>b.progress-a.progress).slice(0,5);
+    if(!targets.length){toast('포격 대상이 없습니다');S.exp+=75;S.tacticalCd.nova=0;return}
+    targets.forEach((e,i)=>{
+      setTimeout(()=>{
+        areaDamage(e.x,e.y,86,230+S.wave*12,'orbital','#fb923c');
+        burst(e.x,e.y,'#fb923c',30,46);
+        ring(e.x,e.y,92,'#f97316');
+      },i*90);
+    });
+    flash=.22;shake=28;toast('궤도 포격 — 위험 목표 연속 타격');sound('nova');
+  }
+  if(type==='repair'){
+    if(!canUseTactical('repair',65))return;
+    S.hp=Math.min(S.maxHp,S.hp+3);
+    S.tacticalBoost=Math.max(S.tacticalBoost,.28);
+    grid.forEach(t=>{ if(t){ const p=t.pos; burst(p.x,p.y,t.def.color,10,22); } });
+    burst(CORE.x,CORE.y,'#22c55e',34,52);
+    toast('코어 과충전 — 소량 수리 + 행성 공격속도 일시 증가');sound('level');
+  }
+  updateUI();
+}
+
+function summon(typeOverride=null){
+  const type = Math.floor(Math.random()*BASE_PLANET_COUNT);
+  const cost = 100;
+  if(S.gold<cost)return toast('수정이 부족합니다');
+  const free=[];
+  for(let i=0;i<grid.length;i++) if(!grid[i]&&canBuild(i)) free.push(i);
+  if(!free.length)return toast('배치 가능한 장판이 없습니다');
+  const idx=free[Math.floor(Math.random()*free.length)];
+  grid[idx]=new Planet(type,1,idx);
+  S.gold-=cost;selected=idx;
+  burst(center(idx).x,center(idx).y,PLANETS[type].color,24,42);
+  toast(`랜덤 소환 — ${PLANETS[type].name} 착지 완료`);
+  sound('summon');
+  updateSelected();updateUI();
+}
+function autoMerge(){
+  for(let i=0;i<grid.length;i++){
+    const a=grid[i];if(!a)continue;
+    for(let j=i+1;j<grid.length;j++){
+      const b=grid[j];if(!b)continue;
+      if(a.type===b.type&&a.level===b.level&&a.level<12){
+        grid[i]=createMergedPlanet(a,b,i);
+        grid[j]=null;selected=i;
+        triggerMergeImpact(i,a.def.color,a.level+1);
+        updateSelected();updateUI();
+        setTimeout(autoMerge,80);
+        return;
+      }
+    }
+  }
+  toast('병합 가능한 행성이 없습니다');
+}
+
+function tryCreateHiddenPlanet(){
+  if(grid.some(t => t && t.type === HIDDEN_PLANET_TYPE)) return false;
+  const recipe = [];
+  for(let type=0; type<BASE_PLANET_COUNT; type++) {
+    const idx = grid.findIndex(t => t && t.type === type && t.level >= 5);
+    if(idx < 0) return false;
+    recipe.push(idx);
+  }
+  const avg = recipe.reduce((acc, idx) => { const c = center(idx); acc.x += c.x; acc.y += c.y; return acc; }, {x:0,y:0});
+  avg.x /= recipe.length; avg.y /= recipe.length;
+  let anchor = recipe[0], best = Infinity;
+  recipe.forEach(idx => { const c = center(idx); const d = dist(c.x,c.y,avg.x,avg.y); if(d < best){ best = d; anchor = idx; } });
+  recipe.forEach(idx => { if(idx !== anchor) grid[idx] = null; });
+  grid[anchor] = new Planet(HIDDEN_PLANET_TYPE, 1, anchor);
+  S.hiddenUnlocked = true;
+  selected = anchor;
+  const c = center(anchor);
+  burst(c.x,c.y,'#f8fafc',44,56);
+  ring(c.x,c.y,92,'#f8fafc');
+  toast('히든 행성 각성 — 스타 엔진이 출현했습니다');
+  log('히든 행성 해금: 모든 기본 행성 Lv.5 융합 성공 / 스타 엔진 활성화');
+  sound('merge');
+  renderHangar();
+  updateSelected();
+  updateUI();
+  return true;
+}
+
+function spawn(entry){
+  const enemy = new Enemy(entry);
+  enemies.push(enemy);
+  if(enemy.stageBoss){
+    impactLabel(enemy.x + 56, enemy.y - 26, enemy.bossTier === 'final' ? 'FINAL BOSS' : 'MID BOSS', enemy.auraColor || enemy.color, 16, 120);
+    toast(`${enemy.bossName} 출현 — ${enemy.abilityName}`);
+    log(`보스 출현: ${enemy.bossName} / ${enemy.abilityName}`);
+    shake = Math.max(shake, 7);
+  }
+  S.spawned++;
+}
+
+function triggerStageFx(reason){
+  const th = theme();
+  const kind = ['cosmic','ice','lava','jungle'][S.theme] || 'cosmic';
+  S.stageFx = {kind, life:150, maxLife:150, reason};
+  const label=$('stageFxLabel');
+  if(label){
+    const names={cosmic:'AURORA SHIFT', ice:'FROST BLIZZARD', lava:'SOLAR FLARE', jungle:'BIO SPORE FIELD'};
+    label.textContent=names[kind] || 'STAGE EFFECT';
+    label.style.opacity=1;
+    setTimeout(()=>{ if(label) label.style.opacity=0; }, 1400);
+  }
+
+  if(kind==='ice'){
+    const towers=grid.filter(Boolean);
+    const freezeCount=Math.min(3, Math.max(1, Math.ceil(towers.length*.22)));
+    for(let i=0;i<freezeCount;i++){
+      const t=towers[Math.floor(Math.random()*towers.length)];
+      if(t) t.frozen=Math.max(t.frozen||0, 130+S.wave*5);
+    }
+    toast('눈보라 발생 — 일부 행성이 잠시 빙결됩니다');
+    log('스테이지 효과: 눈보라 / 일부 행성 공격 정지');
+  }else if(kind==='lava'){
+    S.stageArmorBonus=.18;
+    setTimeout(()=>{ if(S) S.stageArmorBonus=0; }, 5200);
+    toast('태양 플레어 — 적 방어력이 잠시 상승합니다');
+    log('스테이지 효과: 플레어 / 적 방어력 상승');
+  }else if(kind==='jungle'){
+    S.globalCooldownPenalty=.28;
+    setTimeout(()=>{ if(S) S.globalCooldownPenalty=0; }, 5600);
+    toast('생체 포자장 — 행성 공격속도가 잠시 느려집니다');
+    log('스테이지 효과: 포자장 / 공격속도 감소');
+  }else{
+    for(const e of enemies){ if(!e.dead) e.mark=Math.max(e.mark,90); }
+    toast('오로라 균열 — 전장 전체가 흔들립니다');
+    log('스테이지 효과: 오로라 균열');
+  }
+}
+
+function updateStageHazards(dt){
+  if(S.stageFx){
+    S.stageFx.life-=dt;
+    if(S.stageFx.life<=0) S.stageFx=null;
+  }
+  S.hazardTimer-=dt;
+  if(S.hazardTimer<=0){
+    S.hazardTimer=620+rand(0,260);
+    triggerStageFx('hazard');
+  }
+}
+
+function drawStageFx(){
+  if(!S.stageFx) return;
+  const fx = S.stageFx;
+  const img = STAGE_FX_IMAGES[S.theme];
+  const lifeRatio = fx.life / fx.maxLife;
+  const fade = lifeRatio > .5 ? (1-lifeRatio)*2 : lifeRatio*2;
+  ctx.save();
+  ctx.globalAlpha = clamp(fade*.34,0,.34);
+  if(img && img.complete && img.naturalWidth){
+    ctx.drawImage(img,0,0,W,H);
+  }else{
+    ctx.fillStyle = theme().color;
+    ctx.fillRect(0,0,W,H);
+  }
+  ctx.restore();
+}
+
+function waveDone(){
+  S.active=false;
+  const bonus=150+S.wave*24+S.theme*55;
+  S.gold+=bonus;
+  S.hp=Math.min(S.maxHp,S.hp+S.mods.repair);
+  toast(`웨이브 클리어! 수정 +${bonus}`);
+  log(`웨이브 클리어 보상: 수정 ${bonus}`);
+
+  if(S.wave >= 10){
+    log(`성역 ${S.stageNo || StageMapState.current || 1} 클리어 — 유닛 초기화 및 다음 항로 개방`);
+    completeStageFromBattle();
+    return;
+  }
+
+  S.wave++;
+  prepareWave();
+}
+
+function drawBackground(raw=1){
+  const th=theme();
+  drawCoverImage(STAGE_BGS[S.theme]);
+
+  // 배경 이미지가 너무 선명하면 유닛/경로 가독성이 떨어져서, 얇은 우주 안개 레이어를 얹습니다.
+  ctx.fillStyle='rgba(2,6,23,.28)';
+  ctx.fillRect(0,0,W,H);
+
+  // 게임판 내부 전용 별 레이어. 실제 캔버스 안에서 움직이므로 스크린샷처럼 검게 비는 문제가 없습니다.
+  updateAndDrawFieldStars(raw);
+
+  const g=ctx.createRadialGradient(W/2,H+120,40,W/2,H+120,380);
+  g.addColorStop(0,th.color);
+  g.addColorStop(.45,'rgba(56,189,248,.08)');
+  g.addColorStop(1,'transparent');
+  ctx.globalAlpha=.26;
+  ctx.fillStyle=g;
+  ctx.beginPath();
+  ctx.arc(W/2,H+120,380,0,TAU);
+  ctx.fill();
+  ctx.globalAlpha=1;
+}
+function drawRouteChevron(x, y, angle, size, color, alpha=.34){
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.globalAlpha = alpha;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.moveTo(-size * .55, -size * .35);
+  ctx.lineTo(size * .1, 0);
+  ctx.lineTo(-size * .55, size * .35);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawRouteSegmentMarkers(){
+  const pulse = .18 + Math.sin(performance.now() / 520) * .03;
+  for(let i=0;i<route.length-1;i++){
+    const a = route[i], b = route[i+1];
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const angle = Math.atan2(dy, dx);
+    const count = Math.max(1, Math.floor(len / 150));
+    for(let j=1;j<=count;j++){
+      const t = j / (count + 1);
+      const x = a.x + dx * t;
+      const y = a.y + dy * t;
+      drawRouteChevron(x, y, angle, 10, '#f8fafc', pulse);
+    }
+    ctx.save();
+    ctx.globalAlpha = .11;
+    ctx.fillStyle = theme().color;
+    ctx.shadowColor = theme().color;
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, 3.5, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function drawRoute(){
+  ctx.save();
+  ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.shadowColor='rgba(0,0,0,.28)';
+  ctx.shadowBlur=9;
+  ctx.strokeStyle='rgba(3,7,18,.74)';ctx.lineWidth=42;
+  ctx.beginPath();ctx.moveTo(route[0].x,route[0].y);
+  for(let i=1;i<route.length;i++)ctx.lineTo(route[i].x,route[i].y);
+  ctx.stroke();
+
+  ctx.shadowBlur=0;
+  ctx.strokeStyle='rgba(148,163,184,.11)';ctx.lineWidth=38;
+  ctx.beginPath();ctx.moveTo(route[0].x,route[0].y);
+  for(let i=1;i<route.length;i++)ctx.lineTo(route[i].x,route[i].y);
+  ctx.stroke();
+
+  const pulse = .08 + Math.sin(performance.now()/560)*.015;
+  ctx.strokeStyle=theme().color;ctx.globalAlpha=pulse;ctx.lineWidth=23;
+  ctx.beginPath();ctx.moveTo(route[0].x,route[0].y);
+  for(let i=1;i<route.length;i++)ctx.lineTo(route[i].x,route[i].y);
+  ctx.stroke();
+
+  ctx.globalAlpha=.09;ctx.strokeStyle='rgba(255,255,255,.82)';ctx.lineWidth=14;
+  ctx.beginPath();ctx.moveTo(route[0].x,route[0].y);
+  for(let i=1;i<route.length;i++)ctx.lineTo(route[i].x,route[i].y);
+  ctx.stroke();
+
+  ctx.setLineDash([8,16]);ctx.globalAlpha=.22;ctx.strokeStyle='rgba(226,232,240,.62)';ctx.lineWidth=1.8;
+  ctx.beginPath();ctx.moveTo(route[0].x,route[0].y);
+  for(let i=1;i<route.length;i++)ctx.lineTo(route[i].x,route[i].y);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  drawRouteSegmentMarkers();
+  ctx.restore();
+}
+function drawTerrain(){
+  ctx.save();
+  for(let i=0;i<terrain.length;i++){
+    const c=center(i), t=TERRAIN[terrain[i]];
+    ctx.fillStyle=t.color;
+    ctx.fillRect(c.x-CELL/2+3,c.y-CELL/2+3,CELL-6,CELL-6);
+    if(terrain[i]==='path'){
+      const grad = ctx.createLinearGradient(c.x-CELL/2+3, c.y, c.x+CELL/2-3, c.y);
+      grad.addColorStop(0, 'rgba(255,255,255,.01)');
+      grad.addColorStop(.5, 'rgba(255,255,255,.024)');
+      grad.addColorStop(1, 'rgba(255,255,255,.01)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(c.x-CELL/2+6,c.y-CELL/2+6,CELL-12,CELL-12);
+    }
+    ctx.strokeStyle='rgba(255,255,255,.04)';ctx.strokeRect(c.x-CELL/2+3,c.y-CELL/2+3,CELL-6,CELL-6);
+    if(terrain[i]!=='empty'&&terrain[i]!=='path'){
+      ctx.fillStyle=terrain[i]==='blocked'?'#475569':theme().color;
+      ctx.font='900 16px Orbitron';ctx.textAlign='center';ctx.textBaseline='middle';
+      const s={blocked:'×',amp:'▲',coil:'»',lens:'◇',mine:'◆',rift:'!'}[terrain[i]];
+      ctx.fillText(s,c.x,c.y);
+    }
+  }
+  const idx=idxAt(mouse.x,mouse.y);
+  if(idx>=0){
+    const c=center(idx);
+    ctx.strokeStyle=canBuild(idx)?'rgba(56,189,248,.78)':'rgba(251,113,133,.78)';
+    ctx.lineWidth=2;ctx.strokeRect(c.x-CELL/2+2,c.y-CELL/2+2,CELL-4,CELL-4);
+  }
+  ctx.restore();
+}
+function drawCore(){
+  ctx.save();
+  ctx.translate(CORE.x,CORE.y);
+  ctx.shadowColor=theme().color;ctx.shadowBlur=24;
+  ctx.strokeStyle=theme().color;ctx.lineWidth=3;
+  ctx.beginPath();ctx.arc(0,0,38,0,TAU);ctx.stroke();
+  ctx.beginPath();
+  for(let i=0;i<6;i++){
+    const a=-Math.PI/2+i*TAU/6+performance.now()/2400;
+    const x=Math.cos(a)*34,y=Math.sin(a)*34;
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  }
+  ctx.closePath();ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.08)';ctx.beginPath();ctx.arc(0,0,24,0,TAU);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='900 10px Orbitron';ctx.textAlign='center';ctx.fillText('CORE',0,4);
+  ctx.restore();
+}
+function drawParticles(dt){
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];p.life-=dt;
+    if(p.life<=0){particles.splice(i,1);continue}
+    ctx.save();
+    if(p.ring){
+      p.r+=(p.max-p.r)*.12+dt*.4;
+      ctx.globalAlpha=clamp(p.life/(p.maxLife||26),0,1);
+      ctx.strokeStyle=p.color;ctx.lineWidth=1.7;ctx.shadowColor=p.color;ctx.shadowBlur=10;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,TAU);ctx.stroke();
+    }else{
+      p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.98;p.vy*=.98;
+      p.rot = (p.rot || 0) + (p.spin || 0) * dt;
+      ctx.globalAlpha=clamp(p.life/(p.maxLife||40),0,1);
+      ctx.fillStyle=p.color;ctx.strokeStyle=p.color;ctx.shadowColor=p.glow || p.color;ctx.shadowBlur=p.blur || 8;
+      if(p.type==='spark'){
+        ctx.translate(p.x,p.y);ctx.rotate(p.rot || 0);
+        const len = p.len || 8;
+        ctx.lineCap='round';ctx.lineWidth=p.w || 1.6;
+        ctx.beginPath();ctx.moveTo(-len*.55,0);ctx.lineTo(len*.55,0);ctx.stroke();
+      }else if(p.type==='shard'){
+        ctx.translate(p.x,p.y);ctx.rotate(p.rot || 0);
+        const len = p.len || 8, wide = p.w || 3.4;
+        ctx.beginPath();
+        ctx.moveTo(0,-len*.62);ctx.lineTo(wide,0);ctx.lineTo(0,len*.62);ctx.lineTo(-wide,0);ctx.closePath();
+        ctx.fill();
+      }else if(p.type==='smoke'){
+        const rr = p.r * (1 + (1 - clamp(p.life/(p.maxLife||30),0,1)) * .65);
+        ctx.globalAlpha *= .62;
+        const g = ctx.createRadialGradient(p.x - rr*.25, p.y - rr*.25, 1, p.x, p.y, rr);
+        g.addColorStop(0, p.core || 'rgba(255,255,255,.30)');
+        g.addColorStop(.55, p.color);
+        g.addColorStop(1, 'rgba(15,23,42,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();ctx.arc(p.x,p.y,rr,0,TAU);ctx.fill();
+      }else{
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,TAU);ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+}
+
+function drawBeams(dt){
+  for(let i=beams.length-1;i>=0;i--){
+    const b=beams[i];b.life-=dt;
+    if(b.life<=0){beams.splice(i,1);continue}
+    ctx.save();
+    const alpha = clamp(b.life/18,0,1);
+    if(b.style==='laser'){
+      const beamWidth = b.width || 4;
+      ctx.globalAlpha=alpha;
+      ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=Math.max(1.8,beamWidth*.38);ctx.shadowColor=b.color;ctx.shadowBlur=20 + beamWidth*1.6;
+      ctx.beginPath();ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2);ctx.stroke();
+      ctx.strokeStyle=b.color;ctx.lineWidth=beamWidth+1;ctx.globalAlpha=alpha*.72;
+      ctx.beginPath();ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2);ctx.stroke();
+    }else if(b.style==='chain'){
+      drawElectricArc(b.x1, b.y1, b.x2, b.y2, { amplitude: 12, segments: 10, alpha, glow: b.color, main: '#fefce8', outerWidth: 4.2, innerWidth: 2.0, blur: 22 });
+      ctx.save();
+      ctx.globalAlpha = alpha * .8;
+      ctx.fillStyle = '#fefce8';
+      ctx.shadowColor = b.color; ctx.shadowBlur = 10;
+      ctx.beginPath(); ctx.arc(b.x2, b.y2, 2.4, 0, TAU); ctx.fill();
+      ctx.restore();
+    }else if(b.style==='voidShot'){
+      ctx.globalAlpha=alpha*.88;
+      ctx.strokeStyle='rgba(255,255,255,.76)';ctx.lineWidth=Math.max(1.1,b.width||1.2);ctx.shadowColor=b.color;ctx.shadowBlur=11;
+      ctx.setLineDash([2,5]);
+      ctx.beginPath();ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2);ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha=alpha*.76;
+      ctx.strokeStyle=b.color;ctx.lineWidth=Math.max(1.5,(b.width||1)*1.8);
+      ctx.beginPath();ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2);ctx.stroke();
+      ctx.fillStyle='rgba(255,255,255,.96)';ctx.shadowBlur=12;
+      ctx.beginPath();ctx.arc(b.x2,b.y2,2.1,0,TAU);ctx.fill();
+    }else{
+      ctx.globalAlpha=alpha;
+      ctx.strokeStyle=b.color;ctx.lineWidth=b.style==='void'?3.4:4;ctx.shadowColor=b.color;ctx.shadowBlur=18;
+      ctx.beginPath();ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2);ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+function drawFloats(dt){
+  for(let i=floats.length-1;i>=0;i--){
+    const f=floats[i];f.life-=dt;f.y+=f.vy*dt;
+    if(f.life<=0){floats.splice(i,1);continue}
+    const maxLife = f.maxLife || 70;
+    const alpha = clamp(f.life/maxLife,0,1);
+    const size = f.size || 12;
+    ctx.save();ctx.globalAlpha=alpha;
+    ctx.fillStyle=f.color;ctx.strokeStyle='rgba(0,0,0,.72)';ctx.lineWidth=Math.max(2.2, size*.18);
+    ctx.shadowColor='rgba(0,0,0,.18)';ctx.shadowBlur=4;
+    ctx.font=`900 ${size}px Orbitron`;ctx.textAlign='center';
+    ctx.strokeText(f.text,f.x,f.y);ctx.fillText(f.text,f.x,f.y);
+    ctx.restore();
+  }
+}
+function drawDragging(){
+  if(!dragging)return;
+  ctx.save();
+  ctx.globalAlpha=.84;
+  const previewLevel = Math.max(1, Number(dragging.dragPreviewLevel ?? dragging.level ?? 1));
+  const previewType = Number.isFinite(dragging.dragPreviewType) ? dragging.dragPreviewType : dragging.type;
+  const ok = drawPlanetSprite(previewType, mouse.x, mouse.y, 46 + previewLevel*2.1, currentPlanetFrameIndex(), previewLevel);
+  if(!ok) drawProceduralPlanetBody({...dragging, type:previewType, level:previewLevel}, mouse.x, mouse.y);
+  ctx.strokeStyle='rgba(255,255,255,.5)';ctx.beginPath();ctx.ellipse(mouse.x,mouse.y,36,11,0,0,TAU);ctx.stroke();
+  ctx.restore();
+}
+
+function loop(now){
+  raf=requestAnimationFrame(loop);
+  const raw=clamp((now-last)/16.666,0,3);last=now;
+  const dt=S.paused?0:raw*S.speed;
+
+  if(!Array.isArray(route) || route.length < 2){
+    try { makeRoute(); makeTerrain(); }
+    catch(err) { console.error('battle field route recovery failed', err); }
+  }
+
+  ctx.save();
+  if(shake>0){ctx.translate(rand(-shake,shake),rand(-shake,shake));shake*=.88;if(shake<.3)shake=0}
+  ctx.clearRect(0,0,W,H);
+
+  drawBackground(raw);drawStageFx();drawDustClouds();drawRoute();drawTerrain();drawCore();
+
+  if(dt>0 && S.hp>0){
+    spawnTimer-=dt;
+    const interval=Math.max(18,54-S.wave*1.8-S.theme*3);
+    if(S.active&&S.queue.length&&spawnTimer<=0){spawn(S.queue.shift());spawnTimer=interval}
+    grid.forEach(t=>t&&t.update(dt));
+    tryCreateHiddenPlanet();
+    bullets.forEach(b=>b.update(dt));bullets=bullets.filter(b=>!b.dead);
+    enemies.forEach(e=>e.update(dt));enemies=enemies.filter(e=>!e.dead);
+    updateAnomalies(dt);
+    updateDustClouds(dt);
+    updateStageHazards(dt);
+    updateTacticalCooldowns(dt);
+    updateComboTimers(dt);
+    updateBossTelegraphs(dt);
+    if(S.active&&S.queue.length===0&&enemies.length===0)waveDone();
+  }
+
+  updateHangarVisuals();
+  drawAnomalies();
+  grid.forEach(t=>t&&t.draw());
+  enemies.sort((a,b)=>a.y-b.y).forEach(e=>e.draw());
+  drawBossTelegraphs();
+  bullets.forEach(b=>b.draw());
+  drawBeams(raw);drawParticles(raw);drawFloats(raw);drawDragging();
+
+  if(flash>0){ctx.globalAlpha=flash;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);flash=Math.max(0,flash-.035*raw);ctx.globalAlpha=1}
+  if(S.paused){
+    ctx.globalAlpha=.16;ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+    ctx.globalAlpha=1;ctx.fillStyle='#fff';ctx.font='900 32px Orbitron';ctx.textAlign='center';
+    ctx.fillText('PAUSED',W/2,90);
+  }
+  ctx.restore();
+}
+
+function updateUI(){
+  $('themeName').textContent=`${theme().name} / ${theme().ko}`;
+  $('stageLabel').textContent=`${S.theme+1}-${S.wave}`;
+  const waveLabel = S.wave===5 ? '중간 보스 웨이브' : S.wave===10 ? '최종 보스 웨이브' : (S.wave%4===0 ? '압박 웨이브' : '장판 방어');
+  $('stageType').textContent=waveLabel;
+  $('gold').textContent=S.gold;
+  $('hp').textContent=S.hp;
+  $('exp').textContent=`${S.exp}/${S.nextExp}`;
+  const expBar=$('expBar'); if(expBar) expBar.style.width=clamp(S.exp/S.nextExp*100,0,100)+'%';
+  $('level').textContent=`${S.level}`;
+  $('waveBar').style.width=S.total?Math.floor(S.spawned/S.total*100)+'%':'0%';
+  $('speedBtn').textContent=S.speed+'x';
+  $('pauseBtn').textContent=S.paused?'재개':'일시정지';
+  updateHangarState();
+}
+
+function updateSelected(){
+  const box=$('selectedText');
+  if(selected<0){
+    const bossTier = S.wave >= 10 ? 'final' : 'mid';
+    const boss = getStageBossDef(S.stageNo || StageMapState.current || 1, bossTier);
+    const bossOpen = S.wave >= (bossTier === 'final' ? 10 : 5);
+    box.innerHTML=`행성 장판을 터치하면 능력과 장판 보너스가 표시됩니다.<br><br><b>소환</b>은 랜덤만 가능하고, 레벨업 보상은 맵 위 <b>아군 행성 1개</b>에만 무작위로 붙습니다.<br><br><b>히든 행성</b>: 기본 행성 6종을 모두 Lv.5 이상으로 모으면 자동 융합됩니다.<br><br>하단 카드는 강화 버튼이 아니라 현재 행성 계열 목록입니다.
+      <div class="bossPreview">
+        <div class="bossTier">${boss.tier} PREVIEW</div>
+        <div class="bossName" style="color:${boss.color}">${boss.name} · ${boss.ko}</div>
+        <div class="bossDesc">${boss.title} · ${boss.ability}<br>${boss.desc}</div>
+        <div class="bossMeta">
+          <span class="tag">${bossOpen ? '현재 해금 구간' : (bossTier === 'final' ? '10 WAVE' : '5 WAVE')}</span>
+          <span class="tag">코어 피해 ${boss.coreDamage}</span>
+          <span class="tag">보상 배수 x${boss.rewardMul}</span>
+        </div>
+      </div>`;
+    updateHangarState();
+    return
+  }
+  const t=grid[selected], tr=TERRAIN[terrain[selected]];
+  if(!t){
+    box.innerHTML=`<b>선택 장판</b><br>${tr.name} — ${tr.desc}<br><br>${canBuild(selected)?'이곳에는 행성을 배치할 수 있습니다.':'이곳에는 배치할 수 없습니다.'}`;
+    updateHangarState();
+    return;
+  }
+  const st=t.stats();
+  const critText = t.def.id==='starengine' ? ` · <b>치명타</b> ${Math.round((st.critChance + t.level*0.03)*100)}% · <b>폭발</b> ${Math.round((t.def.explodeChance||0)*100)}%` : '';
+  box.innerHTML=`<div class="selectedHead">
+      <div class="planetThumb big liveThumb" data-type="${t.type}" data-level="${t.level}"></div>
+      <div>
+        <div class="towerName" style="color:${t.def.color}">${t.def.name} Lv.${t.level}</div>
+        <div class="sub">${t.def.card} · ${t.def.kind} 타입 유닛 · 드래그 미리보기는 현재 선택한 행성의 실제 레벨 이미지로 표시됩니다</div>
+      </div>
+    </div>
+    <div class="tags">${t.def.tags.map(x=>`<span class="tag">${x}</span>`).join('')}</div>
+    <br><b>공격력</b> ${Math.round(st.dmg)} · <b>사거리</b> ${Math.round(st.range)}${critText} · <b>장판</b> ${tr.name} / ${tr.desc}<br><b>진화 단계</b> ${planetEvolutionName(t.level)} · <b>개별 성장</b> ${Object.keys(t.skillLevels||{}).length}개 활성`;
+  updateHangarVisuals(true);
+  updateHangarState();
+}
+function log(t){
+  const box=$('log'), line=document.createElement('div');
+  line.textContent='• '+t;box.prepend(line);
+  while(box.children.length>6)box.lastChild.remove();
+}
+function toast(t){
+  const div=document.createElement('div');
+  div.className='toast';div.textContent=t;
+  $('toastLayer').appendChild(div);
+  setTimeout(()=>div.remove(),3000);
+}
+function floatText(x,y,text,color,size=12,life=54){floats.push({x,y,text:String(text),color,life,maxLife:life,vy:-.52,size})}
+function burst(x,y,color,count,force){
+  for(let i=0;i<count;i++){
+    const a=Math.random()*TAU,s=rand(.5,force/22);
+    particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,r:rand(1.5,3.0),life:rand(16,38),maxLife:38,color});
+  }
+}
+function ring(x,y,r,color){particles.push({x,y,r:2,max:r,color,life:26,maxLife:26,ring:true})}
+
+function impactLabel(x,y,text,color='#fff',size=18,life=76){
+  floats.push({x,y,text:String(text),color,life:Math.round(life*.86),maxLife:Math.round(life*.86),vy:-.48,size:Math.round(size*.92)});
+}
+function signatureChance(tower,base=.10,perLevel=.012){
+  return Math.random() < Math.min(.38, base + tower.level * perLevel);
+}
+function updateComboTimers(dt){
+  if(!S.combo) S.combo={kills:0,timer:0,best:0};
+  if(!S.mergeCombo) S.mergeCombo={count:0,timer:0};
+  if(S.combo.timer>0){
+    S.combo.timer-=dt;
+    if(S.combo.timer<=0) S.combo.kills=0;
+  }
+  if(S.mergeCombo.timer>0){
+    S.mergeCombo.timer-=dt;
+    if(S.mergeCombo.timer<=0) S.mergeCombo.count=0;
+  }
+}
+function registerKillCombo(enemy){
+  if(!S.combo) S.combo={kills:0,timer:0,best:0};
+  S.combo.kills = (S.combo.timer>0 ? S.combo.kills : 0) + 1;
+  S.combo.timer = 120;
+  S.combo.best = Math.max(S.combo.best||0, S.combo.kills);
+  if(S.combo.kills >= 3){
+    const color = S.combo.kills >= 12 ? '#fde68a' : S.combo.kills >= 7 ? '#d8b4fe' : '#7dd3fc';
+    impactLabel(enemy.x, enemy.y-enemy.size-18, `KILL x${S.combo.kills}`, color, Math.min(21, 13 + S.combo.kills*.55), 62);
+    if(S.combo.kills % 5 === 0){
+      const bonus = Math.min(38, 5 + Math.floor(S.combo.kills * 1.35));
+      S.gold += bonus;
+      impactLabel(enemy.x, enemy.y-enemy.size-34, `COMBO +${bonus}`, '#facc15', 13, 62);
+      log(`킬 콤보 보너스: x${S.combo.kills} / 수정 +${bonus}`);
+    }
+  }
+}
+function triggerMergeImpact(idx,color,level){
+  if(!S.mergeCombo) S.mergeCombo={count:0,timer:0};
+  S.mergeCombo.count = (S.mergeCombo.timer>0 ? S.mergeCombo.count : 0) + 1;
+  S.mergeCombo.timer = 165;
+  const p = center(idx);
+  burst(p.x,p.y,color,20 + S.mergeCombo.count*5,30 + S.mergeCombo.count*3);
+  ring(p.x,p.y,42 + level*3 + S.mergeCombo.count*3,color);
+  ring(p.x,p.y,20 + S.mergeCombo.count*3,'#ffffff');
+  impactLabel(p.x,p.y-38,S.mergeCombo.count>=2?`MERGE x${S.mergeCombo.count}`:'MERGE',color,16+Math.min(5,S.mergeCombo.count*1.4),66);
+  if(S.mergeCombo.count>=3){
+    const bonus=Math.min(60,8*S.mergeCombo.count);
+    S.gold+=bonus;
+    impactLabel(p.x,p.y-56,`+${bonus} CRYSTAL`,'#fde68a',13,62);
+    log(`병합 콤보: x${S.mergeCombo.count} / 수정 +${bonus}`);
+  }
+  shake=Math.max(shake,6 + Math.min(10,S.mergeCombo.count*2));
+  flash=Math.max(flash,.055);
+  sound('merge');
+}
+function triggerTreasureImpact(enemy){
+  burst(enemy.x,enemy.y,'#facc15',30,42);
+  ring(enemy.x,enemy.y,62,'#fde68a');
+  impactLabel(enemy.x,enemy.y-enemy.size-18,'TREASURE','#fde68a',17,68);
+  shake=Math.max(shake,9);
+  flash=Math.max(flash,.08);
+}
+function triggerSolarNova(tower,target,st,dmg){
+  const r=(76+tower.level*4)*(1+st.area);
+  areaDamage(target.x,target.y,r,dmg*.55,'solar_nova','#fb923c');
+  burst(target.x,target.y,'#fb923c',9,18);
+  spawnImpactSparks(target.x,target.y,'#fdba74',10,1.15);
+  impactLabel(target.x,target.y-target.size-16,'NOVA SPLASH','#fed7aa',15,62);
+  shake=Math.max(shake,6);
+}
+function triggerFrostShatter(tower,target,st,dmg){
+  areaDamage(target.x,target.y,42+tower.level*2.0,dmg*.42,'frost_shatter','#bfdbfe');
+  burst(target.x,target.y,'#bfdbfe',7,12); spawnImpactShards(target.x,target.y,'#dbeafe',9);
+  impactLabel(target.x,target.y-target.size-16,'SHATTER','#dbeafe',14,60);
+  flash=Math.max(flash,.045);
+}
+function triggerStormOverload(tower,target,st,dmg,chainCount){
+  chain(target,dmg*.52,Math.max(2,Math.floor(chainCount*.7)),tower.def.color,st.markAmp);
+  ring(target.x,target.y,34+tower.level*1.0,tower.def.color);
+  spawnImpactSparks(target.x,target.y,'#fde047',11,1.1);
+  impactLabel(target.x,target.y-target.size-16,'OVERLOAD','#fde047',14,60);
+  shake=Math.max(shake,5);
+}
+function triggerSporeCloud(tower,target,st,dmg){
+  const r=68+tower.level*1.6;
+  for(const e of enemies){
+    if(e.dead) continue;
+    if(dist(e.x,e.y,target.x,target.y)<r){
+      e.dot += (.42+tower.level*.06)*(1+st.dot);
+      e.dotTime = Math.max(e.dotTime,155);
+      e.slow = Math.max(e.slow,35);
+    }
+  }
+  ring(target.x,target.y,r*.68,'#86efac');
+  burst(target.x,target.y,'#22c55e',6,12); spawnImpactMist(target.x,target.y,'rgba(34,197,94,.22)',7);
+  impactLabel(target.x,target.y-target.size-16,'SPORE CLOUD','#bbf7d0',14,60);
+}
+function triggerVoidCollapse(tower,x,y,st){
+  const r=58+tower.level*2.2;
+  areaDamage(x,y,r,st.dmg*.48,'void_collapse',tower.def.color);
+  burst(x,y,tower.def.color,18,34);
+  ring(x,y,r,tower.def.color);
+  impactLabel(x,y-18,'COLLAPSE','#d8b4fe',14,62);
+  shake=Math.max(shake,8);
+}
+
+function pos(e){
+  const r=canvas.getBoundingClientRect();
+  const p=e.touches?e.touches[0]:e;
+  return {x:(p.clientX-r.left)*canvas.width/r.width,y:(p.clientY-r.top)*canvas.height/r.height};
+}
+function onDown(e){
+  e.preventDefault();
+  mouse=pos(e);
+  const idx=idxAt(mouse.x,mouse.y);
+  if(idx>=0&&grid[idx]){
+    dragging=grid[idx];
+    dragging.original=idx;
+    dragging.dragPreviewType=dragging.type;
+    dragging.dragPreviewLevel=Math.max(1, Number(dragging.level||1));
+    grid[idx]=null;
+    selected=idx;
+  }else if(idx>=0){selected=idx}
+  updateSelected();
+}
+function onMove(e){
+  if(e.cancelable)e.preventDefault();
+  mouse=pos(e);
+}
+function onUp(e){
+  if(!dragging)return;
+  const p=mouse, idx=idxAt(p.x,p.y), original=dragging.original;
+  if(idx>=0&&canBuild(idx)){
+    const target=grid[idx];
+    if(target&&target.type===dragging.type&&target.level===dragging.level&&target.level<12){
+      grid[idx]=createMergedPlanet(target,dragging,idx);
+      selected=idx;triggerMergeImpact(idx,target.def.color,target.level+1);
+    }else if(!target){
+      dragging.idx=idx;grid[idx]=dragging;selected=idx;
+    }else{
+      grid[original]=dragging;selected=original;
+    }
+  }else{
+    grid[original]=dragging;selected=original;
+  }
+  delete dragging.original;
+  delete dragging.dragPreviewType;
+  delete dragging.dragPreviewLevel;
+  dragging=null;updateSelected();updateUI();
+}
+canvas.addEventListener('mousedown',onDown);
+canvas.addEventListener('mousemove',onMove);
+window.addEventListener('mouseup',onUp);
+canvas.addEventListener('touchstart',onDown,{passive:false});
+canvas.addEventListener('touchmove',onMove,{passive:false});
+window.addEventListener('touchend',onUp,{passive:false});
+
+function initAudio(){
+  if(audio)return;
+  audio = {on:true, bgm:null, bgmSrc:null, unlocked:true};
+  ensureAudioContext();
+  // 브라우저 자동재생 정책 때문에 사용자가 BGM 버튼을 누른 뒤부터 재생됩니다.
+  playStageBgm();
+}
+
+function ensureAudioContext(){
+  if(audioCtx) return audioCtx;
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if(!Ctx) return null;
+  audioCtx = new Ctx();
+  return audioCtx;
+}
+
+function synthShot(kind='solar', intensity=1){
+  if(!audio || !audio.on) return;
+  const ctx = ensureAudioContext();
+  if(!ctx) return;
+  if(ctx.state === 'suspended') ctx.resume().catch(()=>{});
+  const now = ctx.currentTime;
+  const presets = {
+    solar:{type:'triangle',freq:210,end:82,gain:.041,duration:.085},
+    frost:{type:'sine',freq:690,end:260,gain:.029,duration:.072},
+    storm:{type:'square',freq:360,end:120,gain:.030,duration:.05},
+    toxic:{type:'sawtooth',freq:170,end:86,gain:.024,duration:.082},
+    void:{type:'sine',freq:102,end:44,gain:.032,duration:.10},
+    laser:{type:'triangle',freq:820,end:300,gain:.026,duration:.055},
+    starengine:{type:'triangle',freq:300,end:560,gain:.036,duration:.09},
+    boss:{type:'sawtooth',freq:90,end:52,gain:.055,duration:.16}
+  };
+  const p = presets[kind] || presets.solar;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+  osc.type = p.type;
+  osc.frequency.setValueAtTime(p.freq, now);
+  osc.frequency.exponentialRampToValueAtTime(Math.max(30, p.end), now + p.duration);
+  filter.type = kind === 'frost' ? 'bandpass' : kind === 'storm' ? 'highpass' : 'lowpass';
+  filter.frequency.setValueAtTime(kind === 'storm' ? 1800 : 1200, now);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, p.gain * intensity), now + 0.008);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + p.duration);
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + p.duration + 0.02);
+}
+
+function playTowerSfx(kind='solar', intensity=1){
+  const stamp = performance.now();
+  const last = towerSfxLimiter[kind] || 0;
+  if(stamp - last < 55) return;
+  towerSfxLimiter[kind] = stamp;
+  synthShot(kind, intensity);
+}
+
+function playStageBgm(){
+  if(!audio || !audio.on)return;
+  const src = AUDIO_URLS.bgm[S.theme % AUDIO_URLS.bgm.length];
+  if(audio.bgm && audio.bgmSrc === src){
+    audio.bgm.play().catch(()=>{});
+    return;
+  }
+  if(audio.bgm){
+    audio.bgm.pause();
+    audio.bgm.currentTime = 0;
+  }
+  const bgm = new Audio(src);
+  bgm.loop = true;
+  bgm.volume = .34;
+  bgm.preload = 'auto';
+  audio.bgm = bgm;
+  audio.bgmSrc = src;
+  bgm.play().catch(()=>{});
+}
+
+function stopStageBgm(){
+  if(audio && audio.bgm) audio.bgm.pause();
+}
+
+function sound(type, opts={}){
+  if(!audio || !audio.on)return;
+  if(type === 'boss'){
+    playTowerSfx('boss', opts.intensity || 1);
+    return;
+  }
+  const src = AUDIO_URLS.sfx[type];
+  if(!src)return;
+  const a = new Audio(src);
+  const volume = {shot:.24, beam:.26, blackhole:.40, nova:.46, treasure:.50, level:.40, hit:.32, kill:.28, summon:.26, merge:.32}[type] || .28;
+  a.volume = volume * (opts.volumeMul || 1);
+  a.play().catch(()=>{});
+}
+
+$('startBtn').onclick=()=>{
+  loadStageMapProgress();
+  showStageMap();
+};
+
+$('stageMapBack').onclick=()=>{
+  $('stageMap').style.display='none';
+  $('menu').style.display='flex';
+};
+
+$('stageEnterBtn').onclick=()=>{
+  startSelectedStageFromMap();
+};
+
+document.querySelectorAll('#stageMap .stageNode').forEach(node => {
+  node.addEventListener('click', () => {
+    const stageNo = Number(node.dataset.stage);
+    if(stageNo > StageMapState.unlocked){
+      const hint = $('stageHint');
+      if(hint) hint.textContent = `${stageNo}번 성역은 이전 성역 10웨이브 클리어 후 열립니다.`;
+      return;
+    }
+    StageMapState.selected = stageNo;
+    saveStageMapProgress();
+    renderStageMap();
+  });
+});
+$('summonBtn').onclick=summon;
+$('mergeBtn').onclick=autoMerge;
+$('speedBtn').onclick=()=>{S.speed=S.speed===1?2:S.speed===2?3:1;updateUI()};
+$('pauseBtn').onclick=()=>{S.paused=!S.paused;updateUI()};
+$('audioBtn').onclick=()=>{
+  if(!audio){
+    initAudio();
+    $('audioBtn').textContent='BGM ON';
+    toast('BGM 활성화');
+    return;
+  }
+  audio.on=!audio.on;
+  if(audio.on) playStageBgm();
+  else stopStageBgm();
+  $('audioBtn').textContent=audio.on?'BGM ON':'BGM OFF';
+  toast(audio.on?'BGM 활성화':'BGM 비활성화');
+};
+$('blackholeBtn').onclick=()=>useSkill('blackhole');
+$('novaBtn').onclick=()=>useSkill('nova');
+$('repairBtn').onclick=()=>useSkill('repair');
+
+window.addEventListener('resize', resizeStarfield);
+
+window.addEventListener('keydown',e=>{
+  if(e.repeat)return;
+  if(e.code==='Space'){e.preventDefault();S.paused=!S.paused;updateUI()}
+  if(e.key==='1')summon();
+  if(e.key==='2'){S.speed=S.speed===1?2:S.speed===2?3:1;updateUI()}
+  if(e.key.toLowerCase()==='m')autoMerge();
+  if(e.key.toLowerCase()==='q')useSkill('blackhole');
+  if(e.key.toLowerCase()==='w')useSkill('nova');
+  if(e.key.toLowerCase()==='e')useSkill('repair');
+});
+
+resizeStarfield();
+starField.last = performance.now();
+starField.raf = requestAnimationFrame(starLoop);
+
+reset();
+try { renderHangar(); } catch(err) { console.error('renderHangar failed during init', err); }
+})();
+</script>
+</body>
+</html>

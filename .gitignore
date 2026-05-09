@@ -1,0 +1,12 @@
+.DS_Store
+__MACOSX/
+*.dmg
+*.zip
+index_backup.html
+v49work/
+tower_defence/
+tower_defence_deploy/
+ssh-keygen*
+id_ed25519*
+*.pem
+.env
