@@ -3370,6 +3370,42 @@ h1{
   }
 }
 
+
+
+/* =========================================================
+   v50 Hangar Thumbnail PNG Level 1-6 Final Patch
+   - All hangar thumbnails use generated PNG assets, not sprite CSS.
+   - 7 planets x 6 levels = 42 PNGs.
+   ========================================================= */
+@media (max-width: 768px) {
+  #hangar .planetThumb.thumbPng,
+  #hangar .planetThumb.liveThumb.thumbPng {
+    width: 38px !important;
+    height: 38px !important;
+    flex: 0 0 38px !important;
+    border-radius: 10px !important;
+    background-size: contain !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    overflow: hidden !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06) !important;
+  }
+
+  #hangar .planetCard[data-type] .planetThumb.thumbPng {
+    background-size: contain !important;
+    background-position: center center !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #hangar .planetThumb.thumbPng,
+  #hangar .planetThumb.liveThumb.thumbPng {
+    width: 35px !important;
+    height: 35px !important;
+    flex-basis: 35px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -4249,7 +4285,7 @@ function applyLiveThumb(el, type, frameIndex){
   // This avoids CSS sprite bleeding and keeps icons visually centered on mobile.
   const isHangarThumb = el.closest && el.closest('#hangar');
   if(isHangarThumb && PLANETS[type]){
-    const thumbLevel = Math.max(1, Math.min(5, level || 1));
+    const thumbLevel = Math.max(1, Math.min(6, level || 1));
     const thumbId = PLANETS[type].id;
     el.style.backgroundImage = `url("thumbs/${thumbId}_lv${thumbLevel}.png")`;
     el.style.backgroundSize = 'contain';
