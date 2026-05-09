@@ -3406,6 +3406,115 @@ h1{
   }
 }
 
+
+
+/* =========================================================
+   v50 Stage Map Upward Focus Patch
+   - Move visual stage route/nodes upward so the map is not hidden by the info panel.
+   - Keep the info panel and enter button usable.
+   ========================================================= */
+@media (max-width: 768px) {
+  #stageMap {
+    --stage-map-y: -92px;
+  }
+
+  #stageMap .stageMapInner {
+    transform: translateY(var(--stage-map-y)) !important;
+    transform-origin: top center !important;
+  }
+
+  /* 배경도 맵 이동에 맞춰 살짝 위로 */
+  #stageMap .stageBg {
+    transform: translateY(-50px) scale(1.04) !important;
+    transform-origin: center top !important;
+  }
+
+  /* 설명 패널은 너무 올라가지 않게 하단 쪽에 유지 */
+  #stageMap .stageInfoPanel {
+    bottom: 94px !important;
+    width: calc(100vw - 32px) !important;
+    padding: 9px 10px !important;
+    border-radius: 15px !important;
+    max-height: 205px !important;
+    overflow: hidden !important;
+  }
+
+  #stageMap .stageInfoTitle {
+    font-size: 10.5px !important;
+    line-height: 1.15 !important;
+  }
+
+  #stageMap .stageInfoMood {
+    font-size: 8.8px !important;
+    line-height: 1.28 !important;
+    margin-top: 5px !important;
+  }
+
+  #stageMap .stageTagRow {
+    gap: 5px !important;
+    margin-top: 6px !important;
+  }
+
+  #stageMap .stageTag {
+    font-size: 7px !important;
+    padding: 3px 6px !important;
+  }
+
+  #stageMap .stageBossRow {
+    gap: 5px !important;
+    margin-top: 6px !important;
+  }
+
+  #stageMap .stageBossCard {
+    padding: 6px 7px !important;
+    border-radius: 9px !important;
+  }
+
+  #stageMap .stageBossCard small {
+    font-size: 6.8px !important;
+    margin-bottom: 2px !important;
+  }
+
+  #stageMap .stageBossCard b {
+    font-size: 8.6px !important;
+  }
+
+  #stageMap .stageBossCard span,
+  #stageMap .stageBossCard em {
+    font-size: 7.3px !important;
+    line-height: 1.2 !important;
+    margin-top: 2px !important;
+  }
+
+  #stageMap .stageEnter {
+    bottom: 20px !important;
+    width: calc(100vw - 84px) !important;
+    padding: 9px 14px !important;
+    font-size: 9.4px !important;
+  }
+
+  #stageMap .stageHint {
+    display: none !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #stageMap {
+    --stage-map-y: -82px;
+  }
+
+  #stageMap .stageInfoPanel {
+    bottom: 86px !important;
+    max-height: 190px !important;
+    padding: 8px !important;
+  }
+
+  #stageMap .stageEnter {
+    bottom: 18px !important;
+    width: calc(100vw - 72px) !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -4161,7 +4270,7 @@ const PLANETS = [
   {id:'toxic', name:'바이오 행성', color:'#22c55e', range:126, dmg:24, cd:27, kind:'poison', cost:100, card:'독성 침식 · 지속 피해', tags:['독','지속피해','보스']},
   {id:'void', name:'블랙홀 행성', color:'#c084fc', range:122, dmg:22, cd:48, kind:'gravity', cost:110, card:'소형 블랙홀 · 구속', tags:['끌어당김','디버프','군중제어']},
   {id:'laser', name:'광자 행성', color:'#a78bfa', range:165, dmg:58, cd:44, kind:'beam', cost:120, card:'고출력 광자 빔', tags:['관통','저격','직선']},
-  {id:'starengine', name:'히든 스타 엔진', color:'#f8fafc', range:202, dmg:148, cd:24, cost:0, kind:'crit', card:'히든 · 초고출력 크리티컬 코어', tags:['히든','치명타','융합','최종병기'], critChance:.48, critMul:2.7, explodeChance:.12, explodeRadius:96}
+  {id:'starengine', name:'히든 스타 엔진', color:'#f8fafc', range:230, dmg:220, cd:18, cost:0, kind:'crit', card:'히든 · 초고출력 크리티컬 코어', tags:['히든','치명타','융합','최종병기'], critChance:.68, critMul:3.6, explodeChance:.26, explodeRadius:126, bossMul:1.35}
 ];
 
 
@@ -4208,9 +4317,9 @@ const UNIT_SKILL_TREES = {
     {id:'laser_cooler', name:'광자 냉각 채널', text:l=>`공격속도 +${12*l}%`, apply:(t)=>{ensureAug(t).fireRate+=.12}}
   ],
   starengine: [
-    {id:'star_crit', name:'쌍성 임계점', text:l=>`치명타 확률 +${6*l}%`, apply:(t)=>{ensureAug(t).critChance+=.06}},
-    {id:'star_burst', name:'STAR BURST 증폭', text:l=>`폭발 확률 +${4*l}%`, apply:(t)=>{ensureAug(t).burstChance+=.04}},
-    {id:'star_nova', name:'백색왜성 방출', text:l=>`치명타 배율 +${25*l}%`, apply:(t)=>{ensureAug(t).critMul+=.25}}
+    {id:'star_crit', name:'쌍성 임계점', text:l=>`치명타 확률 +${9*l}%`, apply:(t)=>{ensureAug(t).critChance+=.09}},
+    {id:'star_burst', name:'STAR BURST 증폭', text:l=>`폭발 확률 +${7*l}%`, apply:(t)=>{ensureAug(t).burstChance+=.07}},
+    {id:'star_nova', name:'백색왜성 방출', text:l=>`치명타 배율 +${35*l}%`, apply:(t)=>{ensureAug(t).critMul+=.35}}
   ]
 };
 
@@ -5462,24 +5571,25 @@ class Bullet{
       if(this.st.poisonSlow>0)this.target.slow=Math.max(this.target.slow,60+this.st.poisonSlow*25);
       if(signatureChance(this.tower,.13,.013)) triggerSporeCloud(this.tower,this.target,this.st,dmg);
     }else if(id==='starengine'){
-      const critChance = clamp(this.st.critChance + this.tower.level * 0.03, 0, 0.92);
+      const critChance = clamp(this.st.critChance + this.tower.level * 0.04, 0, 0.96);
       const crit = Math.random() < critChance;
-      const finalDmg = crit ? dmg * this.st.critMul : dmg;
+      const bossMul = this.target.stageBoss ? (this.tower.def.bossMul || 1.35) : 1;
+      const finalDmg = (crit ? dmg * this.st.critMul : dmg) * bossMul;
       this.target.damage(finalDmg,'starengine',this.color);
       if(crit){
-        floatText(this.target.x, this.target.y - this.target.size - 10, 'CRIT', '#fef3c7');
-        ring(this.target.x, this.target.y, 44 + this.tower.level * 2, '#f8fafc');
-        this.target.mark = Math.max(this.target.mark, 110);
+        floatText(this.target.x, this.target.y - this.target.size - 10, this.target.stageBoss ? 'CORE CRIT' : 'CRIT', '#fef3c7');
+        ring(this.target.x, this.target.y, 50 + this.tower.level * 3, '#f8fafc');
+        this.target.mark = Math.max(this.target.mark, 150);
       }
-      const explodeChance = (this.tower.def.explodeChance || 0.1) + this.st.burstChance;
+      const explodeChance = clamp((this.tower.def.explodeChance || 0.1) + this.st.burstChance + this.tower.level * 0.015, 0, 0.72);
       if(Math.random() < explodeChance){
-        const blast = dmg * 3;
-        areaDamage(this.target.x, this.target.y, this.tower.def.explodeRadius || 92, blast, 'starengine_burst', '#fff8dc');
-        burst(this.target.x, this.target.y, '#fff8dc', 46, 64);
-        ring(this.target.x, this.target.y, 112, '#fff8dc');
-        impactLabel(this.target.x, this.target.y - this.target.size - 24, 'STAR BURST x3', '#fff7cc', 22, 88);
-        shake = Math.max(shake, 16);
-        flash = Math.max(flash, .12);
+        const blast = dmg * (this.target.stageBoss ? 4.8 : 3.8);
+        areaDamage(this.target.x, this.target.y, this.tower.def.explodeRadius || 126, blast, 'starengine_burst', '#fff8dc');
+        burst(this.target.x, this.target.y, '#fff8dc', 56, 76);
+        ring(this.target.x, this.target.y, this.tower.def.explodeRadius || 126, '#fff8dc');
+        impactLabel(this.target.x, this.target.y - this.target.size - 24, this.target.stageBoss ? 'BOSS BURST x4.8' : 'STAR BURST x3.8', '#fff7cc', 20, 88);
+        shake = Math.max(shake, 18);
+        flash = Math.max(flash, .16);
       }
     }else{
       this.target.damage(dmg,id,this.color);
