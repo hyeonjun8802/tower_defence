@@ -3515,6 +3515,2618 @@ h1{
   }
 }
 
+
+
+/* =========================================================
+   v50 Premium Paid App Stage Map Redesign
+   Direction: premium sci-fi navigation console, not web dashboard.
+   Map takes visual priority; info becomes translucent compact HUD.
+   ========================================================= */
+
+#stageMap.premiumStage,
+#stageMap {
+  --premium-cyan: #67e8f9;
+  --premium-blue: #38bdf8;
+  --premium-gold: #fbbf24;
+  --premium-violet: #a78bfa;
+}
+
+/* Premium cosmic depth */
+#stageMap::before {
+  background:
+    radial-gradient(circle at 50% 30%, rgba(103,232,249,.10), transparent 24%),
+    radial-gradient(circle at 18% 34%, rgba(56,189,248,.12), transparent 22%),
+    radial-gradient(circle at 82% 44%, rgba(34,197,94,.10), transparent 24%),
+    radial-gradient(circle at 55% 70%, rgba(251,146,60,.10), transparent 24%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.070) 0 1px, transparent 1.4px) 0 0/92px 92px,
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.042) 0 1px, transparent 1.2px) 18px 30px/54px 54px,
+    linear-gradient(180deg, rgba(1,4,12,.92), rgba(3,7,18,.78) 45%, rgba(1,4,12,.94));
+}
+
+#stageMap::after {
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.48),transparent 13%,transparent 82%,rgba(0,0,0,.80)),
+    radial-gradient(circle at center,transparent 0%,rgba(0,0,0,.08) 48%,rgba(0,0,0,.62) 100%),
+    linear-gradient(90deg, rgba(103,232,249,.055), transparent 20%, transparent 80%, rgba(103,232,249,.055));
+}
+
+.stageFrame {
+  inset: 22px;
+  border-color: rgba(125,211,252,.20);
+  box-shadow:
+    inset 0 0 42px rgba(56,189,248,.07),
+    inset 0 0 1px rgba(255,255,255,.16),
+    0 0 70px rgba(0,0,0,.68);
+  clip-path: polygon(3% 0, 34% 0, 36% 2.4%, 64% 2.4%, 66% 0, 97% 0, 100% 4%, 100% 96%, 97% 100%, 3% 100%, 0 96%, 0 4%);
+}
+
+/* Top header becomes compact premium console */
+.stageTopTitle {
+  top: 28px;
+  font-size: 16px;
+  letter-spacing: 10px;
+  padding: 4px 56px 11px;
+  color: #f8fafc;
+  border-bottom-color: rgba(125,211,252,.30);
+  text-shadow: 0 0 22px rgba(103,232,249,.45);
+}
+
+.stageTopTitle::before,
+.stageTopTitle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 74px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(103,232,249,.58));
+}
+
+.stageTopTitle::before {
+  right: calc(100% + 12px);
+}
+
+.stageTopTitle::after {
+  left: calc(100% + 12px);
+  transform: scaleX(-1);
+}
+
+.stageBackBtn {
+  top: 32px;
+  left: 38px;
+  padding: 7px 13px;
+  font-size: 9px;
+  background: rgba(2,6,23,.62);
+  border-color: rgba(125,211,252,.22);
+  color: #dbeafe;
+}
+
+.stageStatus {
+  top: 34px;
+  right: 38px;
+  font-size: 10px;
+  color: #93c5fd;
+}
+
+.stageStatus small {
+  margin-top: 3px;
+  font-size: 10px;
+  color: #dbeafe;
+}
+
+/* Map becomes the hero */
+.stageMapInner {
+  z-index: 6;
+}
+
+.stagePathSvg {
+  filter: drop-shadow(0 0 18px rgba(103,232,249,.10));
+}
+
+.mapRouteBase {
+  stroke: rgba(148,163,184,.20);
+  stroke-width: 5;
+  stroke-dasharray: 3 12;
+}
+
+.mapRouteLine {
+  stroke-width: 6;
+  filter:
+    drop-shadow(0 0 9px currentColor)
+    drop-shadow(0 0 18px currentColor);
+  stroke-dasharray: 100;
+}
+
+.stageArrow {
+  font-size: 18px;
+  opacity: .92;
+}
+
+/* Premium nodes */
+.stageNode {
+  width: 190px;
+  height: 190px;
+}
+
+.stageNode .nodePlanet {
+  width: 128px;
+  height: 128px;
+  border-width: 1px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.10),
+    0 0 30px color-mix(in srgb, var(--nodeColor) 34%, transparent),
+    inset 0 0 24px rgba(255,255,255,.08);
+}
+
+.stageNode .nodePlanet::before {
+  inset: -18px;
+  border-color: color-mix(in srgb, var(--nodeColor) 48%, transparent);
+  box-shadow:
+    inset 0 0 24px rgba(255,255,255,.06),
+    0 0 20px color-mix(in srgb, var(--nodeColor) 12%, transparent);
+}
+
+.stageNode .nodePlanet::after {
+  inset: -36px;
+  border-style: solid;
+  opacity: .32;
+  animation: premiumStageOrbit 18s linear infinite;
+}
+
+@keyframes premiumStageOrbit {
+  to { transform: rotate(360deg); }
+}
+
+.stageNode .nodeNo {
+  font-size: 40px;
+}
+
+.stageNode .nodeLabel {
+  top: 144px;
+  font-size: 11px;
+  letter-spacing: 1.6px;
+}
+
+.stageNode .nodeKo {
+  display: none;
+}
+
+.stageNode.active .nodePlanet {
+  transform: scale(1.12);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.18),
+    0 0 54px color-mix(in srgb,var(--nodeColor) 54%,transparent),
+    inset 0 0 28px rgba(255,255,255,.11);
+}
+
+.stageNode.unlocked:hover .nodePlanet {
+  transform: translateY(-4px) scale(1.06);
+}
+
+/* Info panel should not dominate. It becomes a translucent tactical overlay. */
+.stageInfoPanel {
+  bottom: 92px;
+  width: min(650px, calc(100vw - 140px));
+  padding: 13px 15px 12px;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(3,10,24,.66), rgba(2,6,23,.54)),
+    linear-gradient(90deg, rgba(103,232,249,.06), transparent 45%, rgba(167,139,250,.05));
+  border: 1px solid rgba(125,211,252,.18);
+  backdrop-filter: blur(9px);
+  box-shadow:
+    0 16px 46px rgba(0,0,0,.30),
+    inset 0 0 0 1px rgba(255,255,255,.035);
+}
+
+.stageInfoHead {
+  gap: 12px;
+}
+
+.stageInfoTitle {
+  font-size: 13px;
+  letter-spacing: .045em;
+}
+
+.stageInfoRisk {
+  font-size: 8px;
+}
+
+.stageInfoRisk b {
+  padding: 5px 10px;
+  font-size: 8px;
+  border-color: rgba(125,211,252,.24);
+}
+
+.stageInfoMood {
+  margin-top: 6px;
+  font-size: 10px;
+  line-height: 1.38;
+}
+
+.stageTagRow {
+  gap: 6px;
+  margin-top: 7px;
+}
+
+.stageTag {
+  padding: 4px 8px;
+  font-size: 7px;
+  letter-spacing: .08em;
+}
+
+.stageBossRow {
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.stageBossCard {
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(15,23,42,.50);
+  border-color: rgba(148,163,184,.14);
+}
+
+.stageBossCard small {
+  font-size: 7px;
+  margin-bottom: 3px;
+}
+
+.stageBossCard b {
+  font-size: 9.5px;
+}
+
+.stageBossCard span,
+.stageBossCard em {
+  font-size: 8px;
+  line-height: 1.25;
+  margin-top: 2px;
+}
+
+.stageHint {
+  display: none;
+}
+
+.stageEnter {
+  bottom: 32px;
+  min-width: 0;
+  width: min(560px, calc(100vw - 160px));
+  padding: 12px 26px;
+  font-size: 11px;
+  border-color: rgba(125,211,252,.32);
+  background:
+    linear-gradient(135deg, rgba(14,165,233,.86), rgba(79,70,229,.78)),
+    linear-gradient(90deg, rgba(255,255,255,.12), transparent 45%, rgba(255,255,255,.10));
+  box-shadow:
+    0 16px 42px rgba(14,165,233,.12),
+    inset 0 0 0 1px rgba(255,255,255,.08);
+}
+
+/* Mobile premium composition */
+@media (max-width: 768px) {
+  #stageMap {
+    --premium-map-y: -20px;
+  }
+
+  .stageFrame {
+    inset: 8px 10px 10px;
+    border-radius: 0;
+  }
+
+  .stageTopTitle {
+    top: 24px !important;
+    font-size: 13px !important;
+    letter-spacing: 5px !important;
+    padding: 3px 32px 8px !important;
+  }
+
+  .stageTopTitle::before,
+  .stageTopTitle::after {
+    width: 42px;
+  }
+
+  .stageBackBtn {
+    top: 22px !important;
+    left: 22px !important;
+    padding: 5px 9px !important;
+    font-size: 7px !important;
+  }
+
+  .stageStatus {
+    top: 24px !important;
+    right: 22px !important;
+    font-size: 8px !important;
+  }
+
+  .stageStatus small {
+    font-size: 7.5px !important;
+    max-width: 190px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Hero map layer: larger, centered higher, not dashboard-like */
+  #stageMap .stageMapInner {
+    transform: translateY(var(--premium-map-y)) scale(1.06) !important;
+    transform-origin: center 34% !important;
+  }
+
+  #stageMap .stagePathSvg {
+    overflow: visible !important;
+  }
+
+  #stageMap .mapRouteBase {
+    stroke-width: 4.8 !important;
+    opacity: .82;
+  }
+
+  #stageMap .mapRouteLine {
+    stroke-width: 5.8 !important;
+  }
+
+  #stageMap .stageArrow {
+    font-size: 16px !important;
+  }
+
+  #stageMap .stageNode {
+    width: 132px !important;
+    height: 132px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet {
+    width: 84px !important;
+    height: 84px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::before {
+    inset: -14px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::after {
+    inset: -27px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 25px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 98px !important;
+    font-size: 7px !important;
+    letter-spacing: .6px !important;
+  }
+
+  /* Premium compact glass dock */
+  #stageMap .stageInfoPanel {
+    bottom: 88px !important;
+    width: calc(100vw - 44px) !important;
+    max-height: 194px !important;
+    padding: 9px 10px !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    background:
+      linear-gradient(180deg, rgba(3,10,24,.64), rgba(2,6,23,.52)),
+      linear-gradient(90deg, rgba(103,232,249,.055), transparent 50%, rgba(167,139,250,.04)) !important;
+    backdrop-filter: blur(7px) !important;
+  }
+
+  #stageMap .stageInfoTitle {
+    font-size: 10.4px !important;
+    line-height: 1.15 !important;
+  }
+
+  #stageMap .stageInfoRisk {
+    font-size: 7px !important;
+    gap: 5px !important;
+  }
+
+  #stageMap .stageInfoRisk b {
+    padding: 4px 8px !important;
+    font-size: 7px !important;
+  }
+
+  #stageMap .stageInfoMood {
+    margin-top: 5px !important;
+    font-size: 8px !important;
+    line-height: 1.28 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #stageMap .stageTagRow {
+    gap: 4px !important;
+    margin-top: 6px !important;
+    flex-wrap: nowrap !important;
+    overflow: hidden;
+  }
+
+  #stageMap .stageTag {
+    padding: 3px 6px !important;
+    font-size: 6.4px !important;
+    white-space: nowrap;
+  }
+
+  #stageMap .stageBossRow {
+    gap: 6px !important;
+    margin-top: 7px !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  #stageMap .stageBossCard {
+    padding: 6px 7px !important;
+    border-radius: 10px !important;
+  }
+
+  #stageMap .stageBossCard small {
+    font-size: 6px !important;
+    margin-bottom: 2px !important;
+  }
+
+  #stageMap .stageBossCard b {
+    font-size: 7.8px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #stageMap .stageBossCard span,
+  #stageMap .stageBossCard em {
+    font-size: 6.8px !important;
+    line-height: 1.18 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #stageMap .stageEnter {
+    bottom: 22px !important;
+    width: calc(100vw - 88px) !important;
+    padding: 9px 18px !important;
+    font-size: 9px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #stageMap {
+    --premium-map-y: -14px;
+  }
+
+  #stageMap .stageMapInner {
+    transform: translateY(var(--premium-map-y)) scale(1.03) !important;
+  }
+
+  #stageMap .stageInfoPanel {
+    bottom: 82px !important;
+    width: calc(100vw - 34px) !important;
+    max-height: 184px !important;
+    padding: 8px !important;
+  }
+
+  #stageMap .stageEnter {
+    bottom: 18px !important;
+    width: calc(100vw - 70px) !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 Premium Feather Biome Assets Integration
+   - Uses pre-rendered feather/alpha biome images.
+   - Removes hard rectangular stage background boundaries.
+   ========================================================= */
+#stageMap .stageBg {
+  position: absolute !important;
+  top: -8% !important;
+  bottom: -8% !important;
+  height: auto !important;
+  width: 48% !important;
+
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+
+  opacity: .46 !important;
+  filter: saturate(1.12) brightness(.92) contrast(1.04) !important;
+  mix-blend-mode: screen !important;
+  pointer-events: none !important;
+
+  transform: scale(1.08) !important;
+  transition: opacity .28s ease, filter .28s ease, transform .28s ease !important;
+}
+
+/* 기존 hard-edge 배경 이미지를 feather alpha 이미지로 교체 */
+#stageMap .stageBg.cosmic {
+  left: 13% !important;
+  background-image: url("biome_cosmic_feather.webp") !important;
+}
+
+#stageMap .stageBg.frost {
+  left: -10% !important;
+  background-image: url("biome_frost_feather.webp") !important;
+}
+
+#stageMap .stageBg.lava {
+  right: 13% !important;
+  background-image: url("biome_lava_feather.webp") !important;
+}
+
+#stageMap .stageBg.jungle {
+  right: -10% !important;
+  background-image: url("biome_jungle_feather.webp") !important;
+}
+
+/* 선택된 스테이지의 바이옴은 살짝 더 선명하게 */
+#stageMap[data-selected="1"] .stageBg.cosmic,
+#stageMap[data-selected="2"] .stageBg.frost,
+#stageMap[data-selected="3"] .stageBg.lava,
+#stageMap[data-selected="4"] .stageBg.jungle {
+  opacity: .66 !important;
+  filter: saturate(1.22) brightness(1.02) contrast(1.08) !important;
+  transform: scale(1.12) !important;
+}
+
+/* 바이옴 사이를 한 번 더 섞어주는 우주 안개 레이어 */
+#stageMap .stageMapInner::before {
+  content: "";
+  position: absolute;
+  inset: -14%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 24% 34%, rgba(103,232,249,.10), transparent 22%),
+    radial-gradient(circle at 48% 50%, rgba(167,139,250,.065), transparent 30%),
+    radial-gradient(circle at 67% 62%, rgba(251,146,60,.10), transparent 24%),
+    radial-gradient(circle at 84% 32%, rgba(34,197,94,.09), transparent 24%);
+  filter: blur(36px);
+  opacity: .76;
+  mix-blend-mode: screen;
+}
+
+/* 실제 맵 노드와 경로는 fog 위에 표시 */
+#stageMap .stagePathSvg,
+#stageMap .stageNode {
+  z-index: 2 !important;
+}
+
+/* 모바일에서는 배경 경계가 더 잘 보이므로 더 넓게 겹침 */
+@media (max-width: 768px) {
+  #stageMap .stageBg {
+    width: 64% !important;
+    top: -10% !important;
+    bottom: -10% !important;
+    opacity: .40 !important;
+    transform: scale(1.12) !important;
+  }
+
+  #stageMap .stageBg.frost {
+    left: -22% !important;
+  }
+
+  #stageMap .stageBg.cosmic {
+    left: 8% !important;
+  }
+
+  #stageMap .stageBg.lava {
+    right: 8% !important;
+  }
+
+  #stageMap .stageBg.jungle {
+    right: -22% !important;
+  }
+
+  #stageMap[data-selected="1"] .stageBg.cosmic,
+  #stageMap[data-selected="2"] .stageBg.frost,
+  #stageMap[data-selected="3"] .stageBg.lava,
+  #stageMap[data-selected="4"] .stageBg.jungle {
+    opacity: .58 !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #stageMap .stageBg {
+    width: 70% !important;
+  }
+
+  #stageMap .stageBg.frost {
+    left: -28% !important;
+  }
+
+  #stageMap .stageBg.jungle {
+    right: -28% !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 Natural Fullscreen Stage Background Restore
+   - Remove vertical stripe biome look.
+   - Use fullscreen layered backgrounds like the original layout.
+   - Selected stage becomes the main cinematic backdrop.
+   ========================================================= */
+
+/* 기존 feather strip 방식 무력화: 모든 stageBg를 전체 화면 배경으로 복원 */
+#stageMap .stageBg {
+  position: absolute !important;
+  inset: -6% !important;
+  width: auto !important;
+  height: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+
+  opacity: 0 !important;
+  mix-blend-mode: screen !important;
+  filter: blur(2.6px) brightness(.46) saturate(.82) contrast(1.04) !important;
+  transform: scale(1.045) !important;
+
+  transition:
+    opacity .38s ease,
+    filter .38s ease,
+    transform .38s ease !important;
+
+  pointer-events: none !important;
+}
+
+/* 원본 배경 이미지 기반으로 자연스럽게 복원 */
+#stageMap .stageBg.cosmic {
+  background-image: url("space_bg.png") !important;
+}
+
+#stageMap .stageBg.frost {
+  background-image: url("bg_ice.png") !important;
+}
+
+#stageMap .stageBg.lava {
+  background-image: url("bg_lava.png") !important;
+}
+
+#stageMap .stageBg.jungle {
+  background-image: url("bg_jungle.png") !important;
+}
+
+/* 선택된 성역만 전체 화면 메인 배경으로 강조 */
+#stageMap[data-selected="1"] .stageBg.cosmic,
+#stageMap[data-selected="2"] .stageBg.frost,
+#stageMap[data-selected="3"] .stageBg.lava,
+#stageMap[data-selected="4"] .stageBg.jungle {
+  opacity: .42 !important;
+  filter: blur(1.7px) brightness(.58) saturate(.95) contrast(1.04) !important;
+  transform: scale(1.055) !important;
+}
+
+/* 나머지 배경은 아주 약하게 섞어서 깊이감만 제공 */
+#stageMap[data-selected="1"] .stageBg.frost,
+#stageMap[data-selected="1"] .stageBg.lava,
+#stageMap[data-selected="1"] .stageBg.jungle,
+#stageMap[data-selected="2"] .stageBg.cosmic,
+#stageMap[data-selected="2"] .stageBg.lava,
+#stageMap[data-selected="2"] .stageBg.jungle,
+#stageMap[data-selected="3"] .stageBg.cosmic,
+#stageMap[data-selected="3"] .stageBg.frost,
+#stageMap[data-selected="3"] .stageBg.jungle,
+#stageMap[data-selected="4"] .stageBg.cosmic,
+#stageMap[data-selected="4"] .stageBg.frost,
+#stageMap[data-selected="4"] .stageBg.lava {
+  opacity: .055 !important;
+  filter: blur(6px) brightness(.36) saturate(.58) contrast(1.02) !important;
+  transform: scale(1.08) !important;
+}
+
+/* 화면 중앙 경계/띠 느낌 제거용 통합 우주 그레이딩 */
+#stageMap::before {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(103,232,249,.07), transparent 26%),
+    radial-gradient(circle at 26% 30%, rgba(56,189,248,.08), transparent 24%),
+    radial-gradient(circle at 74% 46%, rgba(167,139,250,.045), transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.060) 0 1px, transparent 1.3px) 0 0/92px 92px,
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.040) 0 1px, transparent 1.1px) 18px 30px/54px 54px,
+    linear-gradient(180deg, rgba(1,4,12,.84), rgba(3,7,18,.66) 42%, rgba(1,4,12,.90)) !important;
+}
+
+/* 강한 비네팅으로 이미지 경계가 아니라 우주 심도처럼 보이게 */
+#stageMap::after {
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.52), transparent 16%, transparent 78%, rgba(0,0,0,.82)),
+    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.08) 45%, rgba(0,0,0,.62) 100%),
+    linear-gradient(90deg, rgba(0,0,0,.62), transparent 18%, transparent 82%, rgba(0,0,0,.62)) !important;
+}
+
+/* 이전 fog layer가 세로 띠를 강조할 수 있어 자연스러운 전체 안개로 교체 */
+#stageMap .stageMapInner::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: -10% !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  background:
+    radial-gradient(circle at 32% 30%, rgba(103,232,249,.055), transparent 22%),
+    radial-gradient(circle at 68% 62%, rgba(251,146,60,.040), transparent 24%),
+    radial-gradient(circle at 78% 34%, rgba(34,197,94,.038), transparent 24%),
+    radial-gradient(circle at 50% 52%, rgba(255,255,255,.030), transparent 34%) !important;
+  filter: blur(40px) !important;
+  opacity: .55 !important;
+  mix-blend-mode: screen !important;
+}
+
+/* 모바일도 전체 배경 방식 유지 */
+@media (max-width: 768px) {
+  #stageMap .stageBg {
+    inset: -8% !important;
+    width: auto !important;
+    transform: scale(1.06) !important;
+  }
+
+  #stageMap[data-selected="1"] .stageBg.cosmic,
+  #stageMap[data-selected="2"] .stageBg.frost,
+  #stageMap[data-selected="3"] .stageBg.lava,
+  #stageMap[data-selected="4"] .stageBg.jungle {
+    opacity: .40 !important;
+    filter: blur(1.9px) brightness(.54) saturate(.92) contrast(1.03) !important;
+  }
+
+  #stageMap::after {
+    background:
+      linear-gradient(180deg, rgba(0,0,0,.54), transparent 15%, transparent 76%, rgba(0,0,0,.84)),
+      radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.10) 44%, rgba(0,0,0,.66) 100%),
+      linear-gradient(90deg, rgba(0,0,0,.64), transparent 18%, transparent 82%, rgba(0,0,0,.64)) !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 CLEAN PREMIUM STAGE MAP RESET
+   기준:
+   - 과한 효과 제거
+   - 배경은 스테이지별로 확실히 변경
+   - 맵/노드는 위쪽으로 이동
+   - 정보 패널은 작고 정돈된 HUD
+   ========================================================= */
+
+/* 1) 배경: 선택된 스테이지 하나만 메인으로 선명하게 보여준다 */
+#stageMap .stageBg {
+  position: absolute !important;
+  inset: -5% !important;
+  width: auto !important;
+  height: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  opacity: 0 !important;
+  mix-blend-mode: normal !important;
+  transform: scale(1.03) !important;
+  filter: brightness(.55) saturate(.95) contrast(1.04) blur(.4px) !important;
+  transition: opacity .28s ease, filter .28s ease, transform .28s ease !important;
+  pointer-events: none !important;
+}
+
+#stageMap .stageBg.cosmic { background-image: url("space_bg.png") !important; }
+#stageMap .stageBg.frost { background-image: url("bg_ice.png") !important; }
+#stageMap .stageBg.lava { background-image: url("bg_lava.png") !important; }
+#stageMap .stageBg.jungle { background-image: url("bg_jungle.png") !important; }
+
+#stageMap[data-selected="1"] .stageBg.cosmic,
+#stageMap[data-selected="2"] .stageBg.frost,
+#stageMap[data-selected="3"] .stageBg.lava,
+#stageMap[data-selected="4"] .stageBg.jungle {
+  opacity: .76 !important;
+  filter: brightness(.74) saturate(1.14) contrast(1.08) blur(.25px) !important;
+  transform: scale(1.04) !important;
+}
+
+/* 비선택 배경은 완전히 죽인다. 섞여서 지저분해지는 문제 방지 */
+#stageMap[data-selected="1"] .stageBg:not(.cosmic),
+#stageMap[data-selected="2"] .stageBg:not(.frost),
+#stageMap[data-selected="3"] .stageBg:not(.lava),
+#stageMap[data-selected="4"] .stageBg:not(.jungle) {
+  opacity: 0 !important;
+}
+
+/* 2) 그레이딩은 간결하게 */
+#stageMap::before {
+  background:
+    radial-gradient(circle at 50% 34%, rgba(103,232,249,.08), transparent 24%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.045) 0 1px, transparent 1.2px) 0 0/88px 88px,
+    linear-gradient(180deg, rgba(1,4,12,.62), rgba(1,4,12,.30) 42%, rgba(1,4,12,.76)) !important;
+}
+
+#stageMap::after {
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.50), transparent 17%, transparent 76%, rgba(0,0,0,.82)),
+    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.08) 52%, rgba(0,0,0,.66) 100%) !important;
+}
+
+/* 3) 프레임/헤더: 과한 장식 제거 */
+#stageMap .stageFrame {
+  inset: 12px !important;
+  border-color: rgba(125,211,252,.16) !important;
+  box-shadow: inset 0 0 34px rgba(56,189,248,.05), 0 0 56px rgba(0,0,0,.62) !important;
+}
+
+#stageMap .stageTopTitle {
+  top: 22px !important;
+  font-size: 15px !important;
+  letter-spacing: 7px !important;
+  padding: 4px 44px 9px !important;
+  color: #eaf7ff !important;
+  text-shadow: 0 0 16px rgba(103,232,249,.32) !important;
+}
+
+#stageMap .stageBackBtn {
+  top: 26px !important;
+  left: 28px !important;
+  padding: 6px 12px !important;
+  font-size: 8px !important;
+  background: rgba(2,6,23,.58) !important;
+  border-color: rgba(125,211,252,.20) !important;
+}
+
+#stageMap .stageStatus {
+  top: 27px !important;
+  right: 28px !important;
+  font-size: 9px !important;
+}
+
+#stageMap .stageStatus small {
+  font-size: 8px !important;
+  margin-top: 2px !important;
+}
+
+/* 4) 맵을 명확하게 위쪽으로 이동 */
+#stageMap .stageMapInner {
+  transform: translateY(-72px) scale(.96) !important;
+  transform-origin: center 38% !important;
+  z-index: 6 !important;
+}
+
+/* 노드 배치: 아래로 처진 느낌 제거 */
+#stageMap .stageNode[data-stage="1"] { left: 25% !important; top: 58% !important; }
+#stageMap .stageNode[data-stage="2"] { left: 33% !important; top: 24% !important; }
+#stageMap .stageNode[data-stage="3"] { left: 70% !important; top: 58% !important; }
+#stageMap .stageNode[data-stage="4"] { left: 77% !important; top: 24% !important; }
+
+/* 노드 크기는 프리미엄답게 크게, 하지만 과하지 않게 */
+#stageMap .stageNode {
+  width: 150px !important;
+  height: 150px !important;
+}
+
+#stageMap .stageNode .nodePlanet {
+  width: 96px !important;
+  height: 96px !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.10),
+    0 0 30px color-mix(in srgb, var(--nodeColor) 34%, transparent),
+    inset 0 0 20px rgba(255,255,255,.08) !important;
+}
+
+#stageMap .stageNode .nodePlanet::before {
+  inset: -12px !important;
+}
+
+#stageMap .stageNode .nodePlanet::after {
+  inset: -23px !important;
+  opacity: .28 !important;
+}
+
+#stageMap .stageNode .nodeNo {
+  font-size: 30px !important;
+}
+
+#stageMap .stageNode .nodeLabel {
+  top: 112px !important;
+  font-size: 8.5px !important;
+  letter-spacing: .9px !important;
+}
+
+#stageMap .stageNode .nodeKo {
+  display: none !important;
+}
+
+#stageMap .stageNode.active .nodePlanet {
+  transform: scale(1.10) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.18),
+    0 0 48px color-mix(in srgb, var(--nodeColor) 52%, transparent),
+    inset 0 0 24px rgba(255,255,255,.12) !important;
+}
+
+/* 5) 경로를 노드 배치에 맞게 깔끔하게 */
+#stageMap .mapRouteBase {
+  stroke: rgba(190,220,255,.18) !important;
+  stroke-width: 4.2 !important;
+  stroke-dasharray: 2 12 !important;
+}
+
+#stageMap .mapRouteLine {
+  stroke-width: 5.2 !important;
+  filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 14px currentColor) !important;
+}
+
+#stageMap .stageArrow {
+  font-size: 14px !important;
+}
+
+/* 6) 설명 패널은 작고 단정하게 */
+#stageMap .stageInfoPanel {
+  bottom: 92px !important;
+  width: min(640px, calc(100vw - 160px)) !important;
+  max-height: 176px !important;
+  padding: 12px 14px !important;
+  border-radius: 16px !important;
+  background: rgba(3,10,24,.66) !important;
+  border: 1px solid rgba(125,211,252,.16) !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: 0 16px 42px rgba(0,0,0,.32), inset 0 0 0 1px rgba(255,255,255,.03) !important;
+  overflow: hidden !important;
+}
+
+#stageMap .stageInfoTitle {
+  font-size: 12px !important;
+  line-height: 1.15 !important;
+}
+
+#stageMap .stageInfoRisk {
+  font-size: 7.5px !important;
+}
+
+#stageMap .stageInfoRisk b {
+  padding: 4px 8px !important;
+  font-size: 7.5px !important;
+}
+
+#stageMap .stageInfoMood {
+  margin-top: 5px !important;
+  font-size: 9px !important;
+  line-height: 1.3 !important;
+}
+
+#stageMap .stageTagRow {
+  gap: 5px !important;
+  margin-top: 6px !important;
+}
+
+#stageMap .stageTag {
+  padding: 3px 7px !important;
+  font-size: 6.8px !important;
+}
+
+#stageMap .stageBossRow {
+  gap: 7px !important;
+  margin-top: 7px !important;
+}
+
+#stageMap .stageBossCard {
+  padding: 7px 8px !important;
+  border-radius: 10px !important;
+  background: rgba(15,23,42,.52) !important;
+}
+
+#stageMap .stageBossCard small {
+  font-size: 6.5px !important;
+}
+
+#stageMap .stageBossCard b {
+  font-size: 8.6px !important;
+}
+
+#stageMap .stageBossCard span,
+#stageMap .stageBossCard em {
+  font-size: 7.2px !important;
+  line-height: 1.2 !important;
+}
+
+#stageMap .stageHint {
+  display: none !important;
+}
+
+#stageMap .stageEnter {
+  bottom: 28px !important;
+  width: min(520px, calc(100vw - 170px)) !important;
+  padding: 10px 20px !important;
+  font-size: 10px !important;
+  border-radius: 13px !important;
+}
+
+/* 모바일에서는 더 위로 올림 */
+@media (max-width: 768px) {
+  #stageMap .stageMapInner {
+    transform: translateY(-96px) scale(.95) !important;
+    transform-origin: center 34% !important;
+  }
+
+  #stageMap .stageNode[data-stage="1"] { left: 26% !important; top: 58% !important; }
+  #stageMap .stageNode[data-stage="2"] { left: 34% !important; top: 25% !important; }
+  #stageMap .stageNode[data-stage="3"] { left: 70% !important; top: 58% !important; }
+  #stageMap .stageNode[data-stage="4"] { left: 78% !important; top: 25% !important; }
+
+  #stageMap .stageNode {
+    width: 120px !important;
+    height: 120px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet {
+    width: 76px !important;
+    height: 76px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 23px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 88px !important;
+    font-size: 6.5px !important;
+    letter-spacing: .4px !important;
+  }
+
+  #stageMap .stageInfoPanel {
+    bottom: 82px !important;
+    width: calc(100vw - 42px) !important;
+    max-height: 170px !important;
+    padding: 8px 9px !important;
+  }
+
+  #stageMap .stageInfoTitle {
+    font-size: 9.8px !important;
+  }
+
+  #stageMap .stageInfoMood {
+    font-size: 7.8px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  #stageMap .stageBossRow {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  #stageMap .stageEnter {
+    bottom: 18px !important;
+    width: calc(100vw - 78px) !important;
+    padding: 8px 14px !important;
+    font-size: 8.5px !important;
+  }
+
+  #stageMap[data-selected="1"] .stageBg.cosmic,
+  #stageMap[data-selected="2"] .stageBg.frost,
+  #stageMap[data-selected="3"] .stageBg.lava,
+  #stageMap[data-selected="4"] .stageBg.jungle {
+    opacity: .70 !important;
+    filter: brightness(.70) saturate(1.15) contrast(1.08) blur(.2px) !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #stageMap .stageMapInner {
+    transform: translateY(-88px) scale(.93) !important;
+  }
+
+  #stageMap .stageInfoPanel {
+    bottom: 78px !important;
+    width: calc(100vw - 32px) !important;
+  }
+
+  #stageMap .stageEnter {
+    bottom: 16px !important;
+    width: calc(100vw - 64px) !important;
+  }
+}
+
+
+/* ===============================
+   FINAL CINEMATIC BACKGROUND PASS
+   =============================== */
+
+#stageMap .stageBg{
+  inset:0 !important;
+  background-size:cover !important;
+  background-position:center center !important;
+  transition:opacity .35s ease, transform .45s ease, filter .35s ease !important;
+  opacity:0 !important;
+  transform:scale(1.02) !important;
+  filter:brightness(.34) saturate(.88) contrast(1.05) !important;
+}
+
+#stageMap[data-selected="1"] .stageBg.cosmic{
+  opacity:.96 !important;
+  filter:brightness(.72) saturate(1.15) contrast(1.06) !important;
+}
+
+#stageMap[data-selected="2"] .stageBg.frost{
+  opacity:.96 !important;
+  filter:brightness(.66) saturate(1.18) contrast(1.08) !important;
+}
+
+#stageMap[data-selected="3"] .stageBg.lava{
+  opacity:.96 !important;
+  filter:brightness(.70) saturate(1.22) contrast(1.12) !important;
+}
+
+#stageMap[data-selected="4"] .stageBg.jungle{
+  opacity:.96 !important;
+  filter:brightness(.62) saturate(1.18) contrast(1.05) !important;
+}
+
+#stageMap::before{
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.68), rgba(0,0,0,.18) 24%, rgba(0,0,0,.42) 72%, rgba(0,0,0,.84)),
+    radial-gradient(circle at center, rgba(255,255,255,.04), transparent 60%) !important;
+}
+
+#stageMap::after{
+  background:
+    radial-gradient(circle at center, transparent 40%, rgba(0,0,0,.58) 100%) !important;
+}
+
+/* map composition */
+#stageMap .stageMapInner{
+  transform:translateY(-118px) scale(1.03) !important;
+  transform-origin:center 30% !important;
+}
+
+#stageMap .stageNode{
+  z-index:10 !important;
+}
+
+#stageMap .stageInfoPanel{
+  bottom:78px !important;
+  background:rgba(4,10,22,.74) !important;
+  border:1px solid rgba(125,211,252,.18) !important;
+  backdrop-filter:blur(16px) !important;
+  box-shadow:
+    0 20px 80px rgba(0,0,0,.46),
+    inset 0 0 0 1px rgba(255,255,255,.04) !important;
+}
+
+#stageMap .stageEnter{
+  bottom:26px !important;
+  box-shadow:
+    0 10px 35px rgba(59,130,246,.28),
+    inset 0 1px 0 rgba(255,255,255,.12) !important;
+}
+
+@media (max-width:768px){
+  #stageMap .stageMapInner{
+    transform:translateY(-136px) scale(1.02) !important;
+  }
+
+  #stageMap .stageInfoPanel{
+    bottom:74px !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 Stage Background Width Safe Patch
+   - Prevent stage 3 lava background from looking horizontally clipped.
+   - Use wider image safe area and reduce side vignette strength.
+   ========================================================= */
+#stageMap .stageBg {
+  inset: -8% -14% !important;
+  background-size: cover !important;
+  background-position: center center !important;
+}
+
+/* Lava has bright objects near the right side, so keep a little more right-side breathing room. */
+#stageMap .stageBg.lava {
+  background-position: center center !important;
+}
+
+#stageMap[data-selected="3"] .stageBg.lava {
+  opacity: .98 !important;
+  filter: brightness(.76) saturate(1.22) contrast(1.10) blur(.15px) !important;
+  transform: scale(1.01) !important;
+}
+
+/* Remove overly strong horizontal dark edge that made the background feel cropped. */
+#stageMap::after {
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.48), transparent 15%, transparent 76%, rgba(0,0,0,.78)),
+    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.06) 55%, rgba(0,0,0,.50) 100%) !important;
+}
+
+/* Info panel was clipping the second boss card in wide layout. Give it a little more height. */
+#stageMap .stageInfoPanel {
+  max-height: 210px !important;
+}
+
+@media (max-width: 768px) {
+  #stageMap .stageBg {
+    inset: -8% -18% !important;
+  }
+
+  #stageMap[data-selected="3"] .stageBg.lava {
+    opacity: .92 !important;
+    filter: brightness(.72) saturate(1.20) contrast(1.08) blur(.15px) !important;
+  }
+
+  #stageMap .stageInfoPanel {
+    max-height: 188px !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 Base Width-Safe Patch: Lava X Position + Stage UI Y Spacing
+   Base file: planet_rift_defense_v50_stage_background_width_safe.zip
+   - Fix only stage 3 Lava background horizontal position.
+   - Move stage map UI down slightly for better top margin.
+   ========================================================= */
+
+/* 3번 Lava 배경만 좌우 위치 보정 */
+#stageMap .stageBg.lava {
+  background-position: 64% center !important;
+}
+
+#stageMap[data-selected="3"] .stageBg.lava {
+  background-position: 64% center !important;
+  transform: scale(1.015) !important;
+}
+
+/* 스테이지 맵/노드/경로 전체가 위에 너무 붙어 보여서 아래로 이동 */
+#stageMap .stageMapInner {
+  transform: translateY(-54px) scale(.96) !important;
+  transform-origin: center 40% !important;
+}
+
+/* 노드 y축도 같이 아래로 보정 */
+#stageMap .stageNode[data-stage="1"] { top: 62% !important; }
+#stageMap .stageNode[data-stage="2"] { top: 29% !important; }
+#stageMap .stageNode[data-stage="3"] { top: 62% !important; }
+#stageMap .stageNode[data-stage="4"] { top: 29% !important; }
+
+/* 경로 SVG도 노드 위치에 맞춰 소폭 보정 */
+#stageMap .stagePathSvg {
+  transform: translateY(4px) !important;
+}
+
+/* 상단 UI도 아주 살짝 아래로 내려 여백 확보 */
+#stageMap .stageTopTitle {
+  top: 30px !important;
+}
+
+#stageMap .stageBackBtn {
+  top: 32px !important;
+}
+
+#stageMap .stageStatus {
+  top: 33px !important;
+}
+
+@media (max-width: 768px) {
+  #stageMap .stageBg.lava,
+  #stageMap[data-selected="3"] .stageBg.lava {
+    background-position: 62% center !important;
+  }
+
+  #stageMap .stageMapInner {
+    transform: translateY(-68px) scale(.95) !important;
+    transform-origin: center 37% !important;
+  }
+
+  #stageMap .stageNode[data-stage="1"] { top: 62% !important; }
+  #stageMap .stageNode[data-stage="2"] { top: 30% !important; }
+  #stageMap .stageNode[data-stage="3"] { top: 62% !important; }
+  #stageMap .stageNode[data-stage="4"] { top: 30% !important; }
+
+  #stageMap .stagePathSvg {
+    transform: translateY(5px) !important;
+  }
+
+  #stageMap .stageTopTitle {
+    top: 29px !important;
+  }
+
+  #stageMap .stageBackBtn {
+    top: 29px !important;
+  }
+
+  #stageMap .stageStatus {
+    top: 30px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #stageMap .stageMapInner {
+    transform: translateY(-60px) scale(.93) !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 Stage 3 Lava Canvas Balance Final
+   - 3번 Lava 배경은 이미지 자체에 왼쪽 safe canvas를 추가했다.
+   - CSS는 더 이상 과도한 right position을 쓰지 않고 center 기준으로 안정화.
+   ========================================================= */
+
+#stageMap .stageBg.cosmic { background-image: url("space_bg.png") !important; }
+#stageMap .stageBg.frost  { background-image: url("bg_ice.png") !important; }
+#stageMap .stageBg.lava   { background-image: url("bg_lava.png") !important; }
+#stageMap .stageBg.jungle { background-image: url("bg_jungle.png") !important; }
+
+#stageMap .stageBg.lava,
+#stageMap[data-selected="3"] .stageBg.lava {
+  background-position: center center !important;
+  background-size: cover !important;
+  transform: scale(1.0) !important;
+}
+
+/* 3번 선택 시 Lava 색감은 살리되, 우측 오브젝트가 잘리지 않도록 과확대 제거 */
+#stageMap[data-selected="3"] .stageBg.lava {
+  opacity: .96 !important;
+  filter: brightness(.76) saturate(1.22) contrast(1.10) blur(.10px) !important;
+}
+
+/* 기존 3번 전용 background-position override를 마지막에 무력화 */
+@media (max-width: 768px) {
+  #stageMap .stageBg.lava,
+  #stageMap[data-selected="3"] .stageBg.lava {
+    background-position: center center !important;
+    background-size: cover !important;
+    transform: scale(1.0) !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 Responsive Stage Map Fix
+   - Wide desktop layout stays almost unchanged.
+   - Narrow / mobile-like width gets a dedicated node layout.
+   - Fixes node/label/path overlap when viewport width is small.
+   ========================================================= */
+
+/* 중간 폭 이하: 브라우저/모바일 프리뷰에서 맵 노드가 위로 붙는 문제 해결 */
+@media (max-width: 980px) {
+  #stageMap .stageMapInner {
+    transform: translateY(-34px) scale(.88) !important;
+    transform-origin: center 42% !important;
+  }
+
+  /* 좁은 화면 전용 노드 재배치: 상단 노드를 내리고 좌우 간격 확보 */
+  #stageMap .stageNode[data-stage="1"] {
+    left: 27% !important;
+    top: 61% !important;
+  }
+
+  #stageMap .stageNode[data-stage="2"] {
+    left: 34% !important;
+    top: 31% !important;
+  }
+
+  #stageMap .stageNode[data-stage="3"] {
+    left: 72% !important;
+    top: 61% !important;
+  }
+
+  #stageMap .stageNode[data-stage="4"] {
+    left: 78% !important;
+    top: 31% !important;
+  }
+
+  #stageMap .stageNode {
+    width: 126px !important;
+    height: 126px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet {
+    width: 78px !important;
+    height: 78px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::before {
+    inset: -12px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::after {
+    inset: -23px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 24px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 91px !important;
+    font-size: 6.8px !important;
+    letter-spacing: .45px !important;
+    max-width: 110px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  #stageMap .stagePathSvg {
+    transform: translateY(10px) scale(.98) !important;
+    transform-origin: center center !important;
+  }
+
+  #stageMap .mapRouteBase {
+    stroke-width: 3.9 !important;
+  }
+
+  #stageMap .mapRouteLine {
+    stroke-width: 4.8 !important;
+  }
+
+  #stageMap .stageArrow {
+    font-size: 13px !important;
+  }
+
+  /* 패널/버튼은 맵과 겹치지 않게 조금 낮게 유지 */
+  #stageMap .stageInfoPanel {
+    bottom: 76px !important;
+    width: calc(100vw - 54px) !important;
+    max-height: 178px !important;
+    padding: 8px 9px !important;
+  }
+
+  #stageMap .stageEnter {
+    bottom: 18px !important;
+    width: calc(100vw - 92px) !important;
+    padding: 8px 14px !important;
+  }
+}
+
+/* 더 작은 모바일 폭 */
+@media (max-width: 768px) {
+  #stageMap .stageMapInner {
+    transform: translateY(-26px) scale(.82) !important;
+    transform-origin: center 43% !important;
+  }
+
+  #stageMap .stageNode[data-stage="1"] {
+    left: 29% !important;
+    top: 62% !important;
+  }
+
+  #stageMap .stageNode[data-stage="2"] {
+    left: 36% !important;
+    top: 33% !important;
+  }
+
+  #stageMap .stageNode[data-stage="3"] {
+    left: 71% !important;
+    top: 62% !important;
+  }
+
+  #stageMap .stageNode[data-stage="4"] {
+    left: 77% !important;
+    top: 33% !important;
+  }
+
+  #stageMap .stageNode {
+    width: 116px !important;
+    height: 116px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet {
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 22px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 84px !important;
+    font-size: 6.2px !important;
+    max-width: 96px !important;
+  }
+
+  #stageMap .stagePathSvg {
+    transform: translateY(13px) scale(.96) !important;
+  }
+
+  #stageMap .stageTopTitle {
+    top: 30px !important;
+    font-size: 12px !important;
+    letter-spacing: 4.5px !important;
+  }
+
+  #stageMap .stageBackBtn {
+    top: 30px !important;
+  }
+
+  #stageMap .stageStatus {
+    top: 31px !important;
+  }
+
+  #stageMap .stageInfoPanel {
+    bottom: 74px !important;
+    width: calc(100vw - 40px) !important;
+    max-height: 170px !important;
+  }
+
+  #stageMap .stageEnter {
+    bottom: 16px !important;
+    width: calc(100vw - 78px) !important;
+  }
+}
+
+/* 아주 좁은 화면 */
+@media (max-width: 430px) {
+  #stageMap .stageMapInner {
+    transform: translateY(-18px) scale(.76) !important;
+    transform-origin: center 44% !important;
+  }
+
+  #stageMap .stageNode[data-stage="1"] {
+    left: 30% !important;
+    top: 63% !important;
+  }
+
+  #stageMap .stageNode[data-stage="2"] {
+    left: 38% !important;
+    top: 34% !important;
+  }
+
+  #stageMap .stageNode[data-stage="3"] {
+    left: 70% !important;
+    top: 63% !important;
+  }
+
+  #stageMap .stageNode[data-stage="4"] {
+    left: 76% !important;
+    top: 34% !important;
+  }
+
+  #stageMap .stagePathSvg {
+    transform: translateY(16px) scale(.93) !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 HARD FIX: Stage 3 Lava Background Fill
+   - Based on responsive_stage_map_fixed.
+   - 3번 Lava가 왼쪽으로 쏠리고 오른쪽이 빈 것처럼 보이는 문제 최종 보정.
+   - artificial wide canvas 제거 후 원본 Lava 16:9 이미지를 cover로 사용.
+   ========================================================= */
+
+#stageMap .stageBg.cosmic { background-image: url("space_bg.png") !important; }
+#stageMap .stageBg.frost  { background-image: url("bg_ice.png") !important; }
+#stageMap .stageBg.lava   { background-image: url("bg_lava.png") !important; }
+#stageMap .stageBg.jungle { background-image: url("bg_jungle.png") !important; }
+
+#stageMap .stageBg {
+  position: absolute !important;
+  inset: -2% -2% !important;
+  width: auto !important;
+  height: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  opacity: 0 !important;
+  mix-blend-mode: normal !important;
+  transform: scale(1.015) !important;
+}
+
+/* 일반 배경 위치 */
+#stageMap .stageBg.cosmic { background-position: center center !important; }
+#stageMap .stageBg.frost  { background-position: center center !important; }
+#stageMap .stageBg.jungle { background-position: center center !important; }
+
+/* Lava는 우측 태양/운석이 중요해서 right center 기준 */
+#stageMap .stageBg.lava,
+#stageMap[data-selected="3"] .stageBg.lava {
+  background-position: right center !important;
+  background-size: cover !important;
+  inset: -3% -1% !important;
+  transform: scale(1.0) !important;
+}
+
+/* Stage active mapping */
+#stageMap[data-selected="1"] .stageBg.cosmic {
+  opacity: .92 !important;
+  filter: brightness(.72) saturate(1.14) contrast(1.06) blur(.12px) !important;
+}
+#stageMap[data-selected="2"] .stageBg.frost {
+  opacity: .92 !important;
+  filter: brightness(.70) saturate(1.16) contrast(1.07) blur(.12px) !important;
+}
+#stageMap[data-selected="3"] .stageBg.lava {
+  opacity: .98 !important;
+  filter: brightness(.80) saturate(1.24) contrast(1.10) blur(.05px) !important;
+}
+#stageMap[data-selected="4"] .stageBg.jungle {
+  opacity: .92 !important;
+  filter: brightness(.68) saturate(1.18) contrast(1.06) blur(.12px) !important;
+}
+
+/* Wrong/inactive layers must not leak */
+#stageMap[data-selected="1"] .stageBg:not(.cosmic),
+#stageMap[data-selected="2"] .stageBg:not(.frost),
+#stageMap[data-selected="3"] .stageBg:not(.lava),
+#stageMap[data-selected="4"] .stageBg:not(.jungle) {
+  opacity: 0 !important;
+}
+
+/* Reduce right-side black curtain feeling */
+#stageMap::after {
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.44), transparent 14%, transparent 78%, rgba(0,0,0,.76)),
+    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.04) 60%, rgba(0,0,0,.38) 100%) !important;
+}
+
+/* On smaller widths, still keep lava anchored right. */
+@media (max-width: 980px) {
+  #stageMap .stageBg.lava,
+  #stageMap[data-selected="3"] .stageBg.lava {
+    background-position: right center !important;
+    inset: -3% -1% !important;
+    transform: scale(1.0) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #stageMap .stageBg.lava,
+  #stageMap[data-selected="3"] .stageBg.lava {
+    background-position: right center !important;
+    inset: -3% -1% !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 HARD FIX: All Stage Backgrounds 16:9
+   - Apply the same successful Stage 3 method to Stage 1, 2, and 4.
+   - All backgrounds use direct 2560x1440 source images.
+   ========================================================= */
+
+#stageMap .stageBg.cosmic { background-image: url("space_bg.png") !important; }
+#stageMap .stageBg.frost  { background-image: url("bg_ice.png") !important; }
+#stageMap .stageBg.lava   { background-image: url("bg_lava.png") !important; }
+#stageMap .stageBg.jungle { background-image: url("bg_jungle.png") !important; }
+
+#stageMap .stageBg {
+  position: absolute !important;
+  inset: -2% -2% !important;
+  width: auto !important;
+  height: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  opacity: 0 !important;
+  mix-blend-mode: normal !important;
+  transform: scale(1.015) !important;
+}
+
+/* Stage-specific framing. 3번은 검증된 right center 유지. */
+#stageMap .stageBg.cosmic,
+#stageMap[data-selected="1"] .stageBg.cosmic {
+  background-position: center center !important;
+}
+
+#stageMap .stageBg.frost,
+#stageMap[data-selected="2"] .stageBg.frost {
+  background-position: center center !important;
+}
+
+#stageMap .stageBg.lava,
+#stageMap[data-selected="3"] .stageBg.lava {
+  background-position: right center !important;
+  transform: scale(1.0) !important;
+}
+
+#stageMap .stageBg.jungle,
+#stageMap[data-selected="4"] .stageBg.jungle {
+  background-position: center center !important;
+}
+
+/* Active stage visibility */
+#stageMap[data-selected="1"] .stageBg.cosmic {
+  opacity: .96 !important;
+  filter: brightness(.76) saturate(1.18) contrast(1.08) blur(.05px) !important;
+}
+
+#stageMap[data-selected="2"] .stageBg.frost {
+  opacity: .96 !important;
+  filter: brightness(.76) saturate(1.18) contrast(1.08) blur(.05px) !important;
+}
+
+#stageMap[data-selected="3"] .stageBg.lava {
+  opacity: .98 !important;
+  filter: brightness(.80) saturate(1.24) contrast(1.10) blur(.05px) !important;
+}
+
+#stageMap[data-selected="4"] .stageBg.jungle {
+  opacity: .96 !important;
+  filter: brightness(.72) saturate(1.20) contrast(1.08) blur(.05px) !important;
+}
+
+/* Inactive layers never leak. */
+#stageMap[data-selected="1"] .stageBg:not(.cosmic),
+#stageMap[data-selected="2"] .stageBg:not(.frost),
+#stageMap[data-selected="3"] .stageBg:not(.lava),
+#stageMap[data-selected="4"] .stageBg:not(.jungle) {
+  opacity: 0 !important;
+}
+
+/* Keep side darkness controlled. */
+#stageMap::after {
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.44), transparent 14%, transparent 78%, rgba(0,0,0,.76)),
+    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.04) 60%, rgba(0,0,0,.38) 100%) !important;
+}
+
+@media (max-width: 980px) {
+  #stageMap .stageBg {
+    inset: -2% -2% !important;
+  }
+
+  #stageMap .stageBg.lava,
+  #stageMap[data-selected="3"] .stageBg.lava {
+    background-position: right center !important;
+    transform: scale(1.0) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #stageMap .stageBg {
+    inset: -2% -2% !important;
+  }
+
+  #stageMap .stageBg.lava,
+  #stageMap[data-selected="3"] .stageBg.lava {
+    background-position: right center !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 SAFE ROLLBACK + ARROW ONLY POLISH
+   - Layout/coordinates are intentionally NOT modified.
+   - Only the old chunky text arrows are hidden and replaced with SVG HUD arrows.
+   ========================================================= */
+
+/* Keep the stable map layout from all_stage_backgrounds_hard_fix.
+   Do not override stageMapInner, stageNode, path d, node left/top, panel, or button. */
+
+/* Hide old text glyph arrows only */
+#stageMap .stageArrow {
+  opacity: 0 !important;
+}
+
+/* Premium SVG arrow visual only */
+#stageMap .premiumRouteArrow {
+  pointer-events: none !important;
+  opacity: .94 !important;
+  filter:
+    drop-shadow(0 0 6px currentColor)
+    drop-shadow(0 0 13px currentColor) !important;
+}
+
+#stageMap .premiumRouteArrowGlow {
+  fill: currentColor !important;
+  opacity: .18 !important;
+}
+
+#stageMap .premiumRouteArrowLine {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.55 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  opacity: .96 !important;
+}
+
+/* Route line polish without changing layout */
+#stageMap .mapRouteBase {
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+#stageMap .mapRouteLine {
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  filter:
+    drop-shadow(0 0 7px currentColor)
+    drop-shadow(0 0 12px currentColor) !important;
+}
+
+/* Very small screens: only shrink arrow visual slightly, never move layout */
+@media (max-width: 768px) {
+  #stageMap .premiumRouteArrow {
+    opacity: .88 !important;
+  }
+
+  #stageMap .premiumRouteArrowLine {
+    stroke-width: 1.35 !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 Synced Route Visual Safety
+   - Route path/arrow positions are synced by JS.
+   - Do not manually override path/arrow transforms in media queries.
+   ========================================================= */
+
+#stageMap .stagePathSvg {
+  transform: none !important;
+}
+
+#stageMap .premiumRouteArrow,
+#stageMap .premiumStageArrow {
+  pointer-events: none !important;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Old text arrows remain hidden after SVG arrow replacement */
+#stageMap .stageArrow {
+  opacity: 0 !important;
+}
+
+/* Keep line visual clean while JS controls d attributes */
+#stageMap .mapRouteBase,
+#stageMap .mapRouteLine {
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+
+
+/* =========================================================
+   v50 Stage Map Final Polish: No Arrows + Better Routes + Bigger Nodes
+   - Remove all route arrows.
+   - Make route dotted base cleaner.
+   - Increase stage node/button size for better premium visibility.
+   ========================================================= */
+
+/* 1) 화살표 완전 제거 */
+#stageMap .stageArrow,
+#stageMap .premiumRouteArrow,
+#stageMap .premiumStageArrow,
+#stageMap .premiumRouteArrowGlow,
+#stageMap .premiumRouteArrowLine {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* 2) 점선 경로를 더 정돈된 고급 HUD 라인으로 수정 */
+#stageMap .mapRouteBase {
+  stroke: rgba(160, 190, 215, .20) !important;
+  stroke-width: 3.2 !important;
+  stroke-dasharray: 1.4 7.5 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  opacity: .76 !important;
+  filter: drop-shadow(0 0 4px rgba(130, 190, 230, .08)) !important;
+}
+
+/* 활성 경로는 선명하지만 과하지 않게 */
+#stageMap .mapRouteLine {
+  stroke-width: 5.8 !important;
+  stroke-dasharray: 100 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  opacity: .96 !important;
+  filter:
+    drop-shadow(0 0 8px currentColor)
+    drop-shadow(0 0 18px color-mix(in srgb, currentColor 52%, transparent)) !important;
+}
+
+/* 3) 스테이지 버튼/노드 키우기 */
+#stageMap .stageNode {
+  width: 176px !important;
+  height: 176px !important;
+}
+
+#stageMap .stageNode .nodePlanet {
+  width: 116px !important;
+  height: 116px !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.13),
+    0 0 38px color-mix(in srgb, var(--nodeColor) 42%, transparent),
+    inset 0 0 26px rgba(255,255,255,.10) !important;
+}
+
+#stageMap .stageNode .nodePlanet::before {
+  inset: -16px !important;
+  border-width: 1px !important;
+  opacity: .88 !important;
+}
+
+#stageMap .stageNode .nodePlanet::after {
+  inset: -31px !important;
+  opacity: .32 !important;
+}
+
+#stageMap .stageNode .nodeNo {
+  font-size: 36px !important;
+  text-shadow:
+    0 0 12px rgba(255,255,255,.28),
+    0 0 22px currentColor !important;
+}
+
+#stageMap .stageNode .nodeLabel {
+  top: 132px !important;
+  font-size: 9.6px !important;
+  letter-spacing: .9px !important;
+  max-width: 156px !important;
+}
+
+/* hover/touch feedback */
+#stageMap .stageNode:hover,
+#stageMap .stageNode:active {
+  transform: translate(-50%, -50%) scale(1.035) !important;
+}
+
+#stageMap .stageNode.active .nodePlanet {
+  transform: scale(1.10) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.20),
+    0 0 58px color-mix(in srgb, var(--nodeColor) 60%, transparent),
+    inset 0 0 32px rgba(255,255,255,.14) !important;
+}
+
+/* 4) 작은 화면에서도 너무 작아지지 않게 별도 보정 */
+@media (max-width: 980px) {
+  #stageMap .stageNode {
+    width: 142px !important;
+    height: 142px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet {
+    width: 94px !important;
+    height: 94px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::before {
+    inset: -13px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::after {
+    inset: -25px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 29px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 108px !important;
+    font-size: 7.8px !important;
+    max-width: 128px !important;
+  }
+
+  #stageMap .mapRouteBase {
+    stroke-width: 2.9 !important;
+    stroke-dasharray: 1.3 7 !important;
+  }
+
+  #stageMap .mapRouteLine {
+    stroke-width: 5.0 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #stageMap .stageNode {
+    width: 128px !important;
+    height: 128px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet {
+    width: 84px !important;
+    height: 84px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 26px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 98px !important;
+    font-size: 7px !important;
+    max-width: 112px !important;
+  }
+
+  #stageMap .mapRouteLine {
+    stroke-width: 4.8 !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 MOBILE-ONLY Stage Map Dedicated Layout
+   - PC layout is intentionally untouched.
+   - Mobile/portrait viewport gets its own map area, node positions, panel, and CTA sizing.
+   - Routes remain synced by existing JS because the SVG and nodes share the same mobile map area.
+   ========================================================= */
+
+/* Portrait/tablet/mobile browser layout */
+@media (max-width: 900px), (max-aspect-ratio: 0.78) {
+  #stageMap {
+    --mobile-map-top: 96px;
+    --mobile-panel-h: 220px;
+    --mobile-cta-h: 52px;
+    --mobile-bottom-safe: 20px;
+  }
+
+  /* 상단 UI는 작고 단정하게 */
+  #stageMap .stageFrame {
+    inset: 8px 10px 10px !important;
+  }
+
+  #stageMap .stageTopTitle {
+    top: 30px !important;
+    font-size: 13px !important;
+    letter-spacing: 5px !important;
+    padding: 3px 30px 8px !important;
+  }
+
+  #stageMap .stageBackBtn {
+    top: 30px !important;
+    left: 22px !important;
+    padding: 5px 9px !important;
+    font-size: 7px !important;
+  }
+
+  #stageMap .stageStatus {
+    top: 31px !important;
+    right: 22px !important;
+    max-width: 190px !important;
+    font-size: 8px !important;
+  }
+
+  #stageMap .stageStatus small {
+    font-size: 7px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* 모바일에서는 맵 전용 영역을 별도 확보: 패널/버튼 영역과 분리 */
+  #stageMap .stageMapInner {
+    position: absolute !important;
+    left: 18px !important;
+    right: 18px !important;
+    top: var(--mobile-map-top) !important;
+    bottom: calc(var(--mobile-panel-h) + var(--mobile-cta-h) + var(--mobile-bottom-safe) + 22px) !important;
+    inset: auto 18px calc(var(--mobile-panel-h) + var(--mobile-cta-h) + var(--mobile-bottom-safe) + 22px) 18px !important;
+    width: auto !important;
+    height: auto !important;
+    transform: none !important;
+    transform-origin: center center !important;
+    z-index: 6 !important;
+  }
+
+  #stageMap .stagePathSvg {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    transform: none !important;
+    overflow: visible !important;
+  }
+
+  /* 모바일 전용 노드 좌표: PC 비율을 줄이지 않고 모바일 구도에 맞춤 */
+  #stageMap .stageNode[data-stage="1"] {
+    left: 30% !important;
+    top: 72% !important;
+  }
+
+  #stageMap .stageNode[data-stage="2"] {
+    left: 36% !important;
+    top: 28% !important;
+  }
+
+  #stageMap .stageNode[data-stage="3"] {
+    left: 70% !important;
+    top: 72% !important;
+  }
+
+  #stageMap .stageNode[data-stage="4"] {
+    left: 74% !important;
+    top: 28% !important;
+  }
+
+  /* 모바일에서도 조작하기 어렵지 않게, 하지만 너무 크지 않게 */
+  #stageMap .stageNode {
+    width: 132px !important;
+    height: 132px !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  #stageMap .stageNode:hover,
+  #stageMap .stageNode:active {
+    transform: translate(-50%, -50%) scale(1.025) !important;
+  }
+
+  #stageMap .stageNode .nodePlanet {
+    width: 88px !important;
+    height: 88px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::before {
+    inset: -12px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::after {
+    inset: -23px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 27px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 102px !important;
+    font-size: 6.8px !important;
+    letter-spacing: .45px !important;
+    max-width: 112px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* 선은 모바일에서 너무 강하게 보이지 않도록 정리 */
+  #stageMap .mapRouteBase {
+    stroke-width: 2.5 !important;
+    stroke-dasharray: 1.2 7.2 !important;
+    opacity: .48 !important;
+  }
+
+  #stageMap .mapRouteLine {
+    stroke-width: 4.4 !important;
+    opacity: .88 !important;
+    filter:
+      drop-shadow(0 0 6px currentColor)
+      drop-shadow(0 0 12px color-mix(in srgb, currentColor 45%, transparent)) !important;
+  }
+
+  /* 모바일 패널은 가로폭 꽉 차게, 높이는 제한 */
+  #stageMap .stageInfoPanel {
+    left: 50% !important;
+    right: auto !important;
+    bottom: calc(var(--mobile-cta-h) + var(--mobile-bottom-safe) + 16px) !important;
+    width: calc(100vw - 44px) !important;
+    max-width: 760px !important;
+    height: var(--mobile-panel-h) !important;
+    max-height: var(--mobile-panel-h) !important;
+    transform: translateX(-50%) !important;
+    padding: 10px 12px !important;
+    border-radius: 17px !important;
+    overflow: hidden !important;
+    background: rgba(3,10,24,.74) !important;
+    backdrop-filter: blur(14px) !important;
+  }
+
+  #stageMap .stageInfoHead {
+    gap: 10px !important;
+    align-items: flex-start !important;
+  }
+
+  #stageMap .stageInfoTitle {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+  }
+
+  #stageMap .stageInfoRisk {
+    font-size: 7px !important;
+    flex-shrink: 0 !important;
+  }
+
+  #stageMap .stageInfoRisk b {
+    padding: 4px 8px !important;
+    font-size: 7px !important;
+  }
+
+  #stageMap .stageInfoMood {
+    margin-top: 5px !important;
+    font-size: 8px !important;
+    line-height: 1.28 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  #stageMap .stageTagRow {
+    gap: 4px !important;
+    margin-top: 6px !important;
+    flex-wrap: nowrap !important;
+    overflow: hidden !important;
+  }
+
+  #stageMap .stageTag {
+    padding: 3px 6px !important;
+    font-size: 6px !important;
+  }
+
+  #stageMap .stageBossRow {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 7px !important;
+    margin-top: 7px !important;
+  }
+
+  #stageMap .stageBossCard {
+    padding: 7px 8px !important;
+    border-radius: 11px !important;
+    min-width: 0 !important;
+  }
+
+  #stageMap .stageBossCard small {
+    font-size: 6px !important;
+    margin-bottom: 2px !important;
+  }
+
+  #stageMap .stageBossCard b {
+    display: block !important;
+    font-size: 7.8px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  #stageMap .stageBossCard span,
+  #stageMap .stageBossCard em {
+    display: block !important;
+    font-size: 6.6px !important;
+    line-height: 1.18 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  #stageMap .stageEnter {
+    left: 50% !important;
+    bottom: var(--mobile-bottom-safe) !important;
+    width: calc(100vw - 76px) !important;
+    max-width: 660px !important;
+    min-width: 0 !important;
+    transform: translateX(-50%) !important;
+    padding: 10px 16px !important;
+    font-size: 9px !important;
+    border-radius: 14px !important;
+  }
+}
+
+/* Very narrow phones */
+@media (max-width: 430px) {
+  #stageMap {
+    --mobile-map-top: 92px;
+    --mobile-panel-h: 204px;
+    --mobile-cta-h: 48px;
+    --mobile-bottom-safe: 16px;
+  }
+
+  #stageMap .stageMapInner {
+    left: 12px !important;
+    right: 12px !important;
+  }
+
+  #stageMap .stageNode[data-stage="1"] {
+    left: 31% !important;
+    top: 73% !important;
+  }
+
+  #stageMap .stageNode[data-stage="2"] {
+    left: 37% !important;
+    top: 30% !important;
+  }
+
+  #stageMap .stageNode[data-stage="3"] {
+    left: 69% !important;
+    top: 73% !important;
+  }
+
+  #stageMap .stageNode[data-stage="4"] {
+    left: 73% !important;
+    top: 30% !important;
+  }
+
+  #stageMap .stageNode {
+    width: 116px !important;
+    height: 116px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet {
+    width: 76px !important;
+    height: 76px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 24px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 89px !important;
+    font-size: 6px !important;
+    max-width: 98px !important;
+  }
+
+  #stageMap .stageInfoPanel {
+    width: calc(100vw - 28px) !important;
+    padding: 8px 9px !important;
+  }
+
+  #stageMap .stageEnter {
+    width: calc(100vw - 56px) !important;
+    padding: 9px 12px !important;
+    font-size: 8px !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 MOBILE Stage Map Layout Refinement
+   - PC untouched.
+   - Move mobile nodes upward.
+   - Reduce panel dominance.
+   - Give the route map more breathing room.
+   ========================================================= */
+
+@media (max-width: 900px), (max-aspect-ratio: 0.78) {
+  #stageMap {
+    --mobile-map-top: 86px !important;
+    --mobile-panel-h: 188px !important;
+    --mobile-cta-h: 50px !important;
+    --mobile-bottom-safe: 18px !important;
+  }
+
+  /* 맵 영역을 더 크게 확보 */
+  #stageMap .stageMapInner {
+    left: 18px !important;
+    right: 18px !important;
+    top: var(--mobile-map-top) !important;
+    bottom: calc(var(--mobile-panel-h) + var(--mobile-cta-h) + var(--mobile-bottom-safe) + 10px) !important;
+  }
+
+  /* 노드가 패널 뒤로 내려가지 않도록 전체적으로 위로 배치 */
+  #stageMap .stageNode[data-stage="1"] {
+    left: 30% !important;
+    top: 58% !important;
+  }
+
+  #stageMap .stageNode[data-stage="2"] {
+    left: 38% !important;
+    top: 25% !important;
+  }
+
+  #stageMap .stageNode[data-stage="3"] {
+    left: 70% !important;
+    top: 58% !important;
+  }
+
+  #stageMap .stageNode[data-stage="4"] {
+    left: 74% !important;
+    top: 25% !important;
+  }
+
+  /* 모바일 노드는 너무 작지 않게 유지 */
+  #stageMap .stageNode {
+    width: 126px !important;
+    height: 126px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet {
+    width: 84px !important;
+    height: 84px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::before {
+    inset: -12px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::after {
+    inset: -23px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 26px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 98px !important;
+    font-size: 6.7px !important;
+    max-width: 110px !important;
+  }
+
+  /* 패널은 조금 낮고 작게: 맵을 덜 가리게 */
+  #stageMap .stageInfoPanel {
+    bottom: calc(var(--mobile-cta-h) + var(--mobile-bottom-safe) + 12px) !important;
+    height: var(--mobile-panel-h) !important;
+    max-height: var(--mobile-panel-h) !important;
+    width: calc(100vw - 46px) !important;
+    padding: 9px 11px !important;
+  }
+
+  #stageMap .stageInfoTitle {
+    font-size: 10.4px !important;
+  }
+
+  #stageMap .stageInfoMood {
+    font-size: 7.6px !important;
+  }
+
+  #stageMap .stageBossCard {
+    padding: 6px 8px !important;
+  }
+
+  #stageMap .stageEnter {
+    bottom: var(--mobile-bottom-safe) !important;
+    height: 44px !important;
+    padding: 0 14px !important;
+    width: calc(100vw - 78px) !important;
+    font-size: 8.6px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  #stageMap {
+    --mobile-map-top: 82px !important;
+    --mobile-panel-h: 176px !important;
+    --mobile-cta-h: 46px !important;
+    --mobile-bottom-safe: 14px !important;
+  }
+
+  #stageMap .stageMapInner {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: calc(var(--mobile-panel-h) + var(--mobile-cta-h) + var(--mobile-bottom-safe) + 8px) !important;
+  }
+
+  #stageMap .stageNode[data-stage="1"] {
+    left: 31% !important;
+    top: 59% !important;
+  }
+
+  #stageMap .stageNode[data-stage="2"] {
+    left: 39% !important;
+    top: 27% !important;
+  }
+
+  #stageMap .stageNode[data-stage="3"] {
+    left: 69% !important;
+    top: 59% !important;
+  }
+
+  #stageMap .stageNode[data-stage="4"] {
+    left: 73% !important;
+    top: 27% !important;
+  }
+
+  #stageMap .stageNode {
+    width: 112px !important;
+    height: 112px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet {
+    width: 74px !important;
+    height: 74px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 23px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 87px !important;
+    font-size: 5.8px !important;
+    max-width: 96px !important;
+  }
+
+  #stageMap .stageInfoPanel {
+    width: calc(100vw - 30px) !important;
+    padding: 8px 9px !important;
+  }
+
+  #stageMap .stageEnter {
+    width: calc(100vw - 56px) !important;
+    height: 42px !important;
+    font-size: 8px !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 MOBILE Button Size + Stage 3 Lava BG Position Patch
+   - PC untouched.
+   - Mobile stage nodes slightly smaller.
+   - Mobile stage 3 lava background pushed further right.
+   ========================================================= */
+
+@media (max-width: 900px), (max-aspect-ratio: 0.78) {
+  /* 모바일에서만 스테이지 버튼/노드 살짝 축소 */
+  #stageMap .stageNode {
+    width: 116px !important;
+    height: 116px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet {
+    width: 76px !important;
+    height: 76px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::before {
+    inset: -11px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::after {
+    inset: -21px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 23px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 89px !important;
+    font-size: 6.1px !important;
+    max-width: 98px !important;
+  }
+
+  /* 모바일에서 3번 Lava 배경만 오른쪽으로 더 이동 */
+  #stageMap[data-selected="3"] .stageBg.lava,
+  #stageMap .stageBg.lava {
+    background-position: 94% center !important;
+  }
+}
+
+@media (max-width: 430px) {
+  /* 아주 좁은 모바일에서는 한 번 더 살짝 축소 */
+  #stageMap .stageNode {
+    width: 104px !important;
+    height: 104px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet {
+    width: 68px !important;
+    height: 68px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 21px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 80px !important;
+    font-size: 5.4px !important;
+    max-width: 88px !important;
+  }
+
+  #stageMap[data-selected="3"] .stageBg.lava,
+  #stageMap .stageBg.lava {
+    background-position: 98% center !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -3624,15 +6236,34 @@ h1{
 
   <div class="stageMapInner">
     <svg class="stagePathSvg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <path class="mapRouteBase" d="M24 65 C21 53 22 37 30 24" pathLength="100"></path>
-      <path class="mapRouteBase" d="M30 24 C45 31 57 49 74 65" pathLength="100"></path>
-      <path class="mapRouteBase" d="M74 65 C81 53 83 37 76 24" pathLength="100"></path>
-      <path class="mapRouteLine segment-1" d="M24 65 C21 53 22 37 30 24" pathLength="100"></path>
-      <path class="mapRouteLine segment-2" d="M30 24 C45 31 57 49 74 65" pathLength="100"></path>
-      <path class="mapRouteLine segment-3" d="M74 65 C81 53 83 37 76 24" pathLength="100"></path>
-      <text class="stageArrow segment-1" x="24" y="46" style="color:#67e8f9">⌃</text>
-      <text class="stageArrow segment-2" x="52" y="45" style="color:#fb923c">›</text>
-      <text class="stageArrow segment-3" x="78" y="46" style="color:#22c55e">⌃</text>
+      <path class="mapRouteBase" d="M25 58 C19 46 22 34 34 25" pathLength="100"></path>
+      <path class="mapRouteBase" d="M34 25 C48 32 58 48 70 58" pathLength="100"></path>
+      <path class="mapRouteBase" d="M70 58 C80 48 82 35 78 25" pathLength="100"></path>
+      <path class="mapRouteLine segment-1" d="M25 58 C19 46 22 34 34 25" pathLength="100"></path>
+      <path class="mapRouteLine segment-2" d="M34 25 C48 32 58 48 70 58" pathLength="100"></path>
+      <path class="mapRouteLine segment-3" d="M70 58 C80 48 82 35 78 25" pathLength="100"></path>
+      <text class="stageArrow segment-1" x="24" y="42" style="color:#67e8f9">⌃</text>
+      <text class="stageArrow segment-2" x="54" y="43" style="color:#fb923c">›</text>
+      <text class="stageArrow segment-3" x="76" y="42" style="color:#22c55e">⌃</text>
+    
+      <g class="premiumRouteArrow segment-1" style="color:#67e8f9" transform="translate(24 42) rotate(-54)">
+        <path class="premiumRouteArrowGlow" d="M-5.5 4.5 L0 -5.5 L5.5 4.5 Z"></path>
+        <path class="premiumRouteArrowLine" d="M-5.5 4.5 L0 -5.5 L5.5 4.5"></path>
+        <path class="premiumRouteArrowLine" d="M0 -5.5 L0 9"></path>
+      </g>
+
+      <g class="premiumRouteArrow segment-2" style="color:#fb923c" transform="translate(54 43) rotate(24)">
+        <path class="premiumRouteArrowGlow" d="M-5.5 4.5 L0 -5.5 L5.5 4.5 Z"></path>
+        <path class="premiumRouteArrowLine" d="M-5.5 4.5 L0 -5.5 L5.5 4.5"></path>
+        <path class="premiumRouteArrowLine" d="M0 -5.5 L0 9"></path>
+      </g>
+
+      <g class="premiumRouteArrow segment-3" style="color:#22c55e" transform="translate(76 42) rotate(54)">
+        <path class="premiumRouteArrowGlow" d="M-5.5 4.5 L0 -5.5 L5.5 4.5 Z"></path>
+        <path class="premiumRouteArrowLine" d="M-5.5 4.5 L0 -5.5 L5.5 4.5"></path>
+        <path class="premiumRouteArrowLine" d="M0 -5.5 L0 9"></path>
+      </g>
+
     </svg>
 
     <button class="stageNode active unlocked" data-stage="1" style="left:24%;top:65%;--nodeColor:#38bdf8;--nodeA:#0284c7;--nodeB:#052238">
@@ -3924,6 +6555,8 @@ function renderStageMap(){
   StageMapState.selected = selectedStage;
   map.dataset.unlocked = String(unlocked);
   map.dataset.selected = String(selectedStage);
+  map.classList.remove('stage-selected-1','stage-selected-2','stage-selected-3','stage-selected-4');
+  map.classList.add(`stage-selected-${selectedStage}`);
 
   document.querySelectorAll('#stageMap .stageNode').forEach(node => {
     const stage = Number(node.dataset.stage);
@@ -3954,7 +6587,7 @@ function showStageMap(){
   const game = $('game');
   if(menu) menu.style.display = 'none';
   if(game) game.style.display = 'none';
-  if(map) map.style.display = 'block';
+  if(map){ map.style.display = 'block'; map.classList.add('premiumStage'); }
   stopStageBgm();
   renderStageMap();
 }
@@ -6806,6 +9439,178 @@ starField.raf = requestAnimationFrame(starLoop);
 reset();
 try { renderHangar(); } catch(err) { console.error('renderHangar failed during init', err); }
 })();
+
+
+/* =========================================================
+   v50 Synced Responsive Stage Route
+   - Nodes are responsive via CSS.
+   - SVG route/arrow positions are recalculated from actual node positions.
+   - This prevents line/arrow drift on narrow/mobile-like resolutions.
+   ========================================================= */
+(function(){
+  function pctPointFromNode(svg, node){
+    if(!svg || !node) return null;
+    const svgRect = svg.getBoundingClientRect();
+    const nodeRect = node.getBoundingClientRect();
+    if(!svgRect.width || !svgRect.height) return null;
+
+    const cx = nodeRect.left + nodeRect.width / 2 - svgRect.left;
+    const cy = nodeRect.top + nodeRect.height / 2 - svgRect.top;
+
+    return {
+      x: Math.max(0, Math.min(100, cx / svgRect.width * 100)),
+      y: Math.max(0, Math.min(100, cy / svgRect.height * 100))
+    };
+  }
+
+  function curvePath(a, b, bend){
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const mx = (a.x + b.x) / 2;
+    const my = (a.y + b.y) / 2;
+    const len = Math.max(1, Math.hypot(dx, dy));
+    const nx = -dy / len;
+    const ny = dx / len;
+
+    const strength = bend || 8;
+    const c1 = {
+      x: a.x + dx * 0.34 + nx * strength,
+      y: a.y + dy * 0.34 + ny * strength
+    };
+    const c2 = {
+      x: a.x + dx * 0.66 + nx * strength,
+      y: a.y + dy * 0.66 + ny * strength
+    };
+
+    return `M${a.x.toFixed(2)} ${a.y.toFixed(2)} C${c1.x.toFixed(2)} ${c1.y.toFixed(2)} ${c2.x.toFixed(2)} ${c2.y.toFixed(2)} ${b.x.toFixed(2)} ${b.y.toFixed(2)}`;
+  }
+
+  function cubicPoint(a, c1, c2, b, t){
+    const mt = 1 - t;
+    return {
+      x: mt*mt*mt*a.x + 3*mt*mt*t*c1.x + 3*mt*t*t*c2.x + t*t*t*b.x,
+      y: mt*mt*mt*a.y + 3*mt*mt*t*c1.y + 3*mt*t*t*c2.y + t*t*t*b.y
+    };
+  }
+
+  function cubicTangent(a, c1, c2, b, t){
+    const mt = 1 - t;
+    return {
+      x: 3*mt*mt*(c1.x-a.x) + 6*mt*t*(c2.x-c1.x) + 3*t*t*(b.x-c2.x),
+      y: 3*mt*mt*(c1.y-a.y) + 6*mt*t*(c2.y-c1.y) + 3*t*t*(b.y-c2.y)
+    };
+  }
+
+  function curveMeta(a, b, bend, t){
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const len = Math.max(1, Math.hypot(dx, dy));
+    const nx = -dy / len;
+    const ny = dx / len;
+    const strength = bend || 8;
+    const c1 = {
+      x: a.x + dx * 0.34 + nx * strength,
+      y: a.y + dy * 0.34 + ny * strength
+    };
+    const c2 = {
+      x: a.x + dx * 0.66 + nx * strength,
+      y: a.y + dy * 0.66 + ny * strength
+    };
+    const p = cubicPoint(a, c1, c2, b, t);
+    const tg = cubicTangent(a, c1, c2, b, t);
+    const angle = Math.atan2(tg.y, tg.x) * 180 / Math.PI + 90;
+    return {p, angle};
+  }
+
+  function updateStageRoutes(){
+    const map = document.getElementById('stageMap');
+    if(!map || map.style.display === 'none') return;
+
+    const svg = map.querySelector('.stagePathSvg');
+    if(!svg) return;
+
+    const n1 = map.querySelector('.stageNode[data-stage="1"]');
+    const n2 = map.querySelector('.stageNode[data-stage="2"]');
+    const n3 = map.querySelector('.stageNode[data-stage="3"]');
+    const n4 = map.querySelector('.stageNode[data-stage="4"]');
+    if(!n1 || !n2 || !n3 || !n4) return;
+
+    const p1 = pctPointFromNode(svg, n1);
+    const p2 = pctPointFromNode(svg, n2);
+    const p3 = pctPointFromNode(svg, n3);
+    const p4 = pctPointFromNode(svg, n4);
+    if(!p1 || !p2 || !p3 || !p4) return;
+
+    const segments = [
+      {from:p1, to:p2, cls:'segment-1', bend:-7, arrowT:.58},
+      {from:p2, to:p3, cls:'segment-2', bend:4, arrowT:.52},
+      {from:p3, to:p4, cls:'segment-3', bend:-7, arrowT:.58}
+    ];
+
+    segments.forEach(seg => {
+      const d = curvePath(seg.from, seg.to, seg.bend);
+      svg.querySelectorAll(`path.${seg.cls}`).forEach(path => {
+        path.setAttribute('d', d);
+      });
+
+      const meta = curveMeta(seg.from, seg.to, seg.bend, seg.arrowT);
+      svg.querySelectorAll(`g.premiumRouteArrow.${seg.cls}, g.premiumStageArrow.${seg.cls}`).forEach(g => {
+        g.setAttribute('transform', `translate(${meta.p.x.toFixed(2)} ${meta.p.y.toFixed(2)}) rotate(${meta.angle.toFixed(2)})`);
+      });
+
+      svg.querySelectorAll(`text.stageArrow.${seg.cls}`).forEach(t => {
+        t.setAttribute('x', meta.p.x.toFixed(2));
+        t.setAttribute('y', meta.p.y.toFixed(2));
+      });
+    });
+  }
+
+  let raf = 0;
+  function scheduleStageRouteSync(){
+    if(raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      updateStageRoutes();
+    });
+  }
+
+  window.updateStageRoutes = updateStageRoutes;
+  window.scheduleStageRouteSync = scheduleStageRouteSync;
+
+  window.addEventListener('resize', scheduleStageRouteSync);
+  window.addEventListener('orientationchange', () => setTimeout(scheduleStageRouteSync, 120));
+
+  const obs = new MutationObserver(scheduleStageRouteSync);
+  window.addEventListener('DOMContentLoaded', () => {
+    const map = document.getElementById('stageMap');
+    if(map){
+      obs.observe(map, {attributes:true, subtree:true, attributeFilter:['class','style','data-selected','data-unlocked']});
+    }
+    setTimeout(scheduleStageRouteSync, 60);
+    setTimeout(scheduleStageRouteSync, 250);
+  });
+
+  // Patch common entry points without depending on exact function bodies.
+  const originalRenderStageMap = window.renderStageMap;
+  if(typeof originalRenderStageMap === 'function'){
+    window.renderStageMap = function(){
+      const ret = originalRenderStageMap.apply(this, arguments);
+      scheduleStageRouteSync();
+      return ret;
+    };
+  }
+
+  const originalShowStageMap = window.showStageMap;
+  if(typeof originalShowStageMap === 'function'){
+    window.showStageMap = function(){
+      const ret = originalShowStageMap.apply(this, arguments);
+      scheduleStageRouteSync();
+      setTimeout(scheduleStageRouteSync, 80);
+      return ret;
+    };
+  }
+})();
+
 </script>
 </body>
 </html>
