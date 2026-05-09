@@ -2628,6 +2628,748 @@ h1{
   }
 }
 
+
+
+/* =========================================================
+   v50 Final Data-Type Sprite Bleed Fix
+   Actual markup uses data-type, not planet names.
+   Type mapping: 0 solar, 5 photon/laser, 6 hidden.
+   ========================================================= */
+@media (max-width: 768px) {
+  /* 기본은 왜곡 없이 중앙 */
+  #hangar .planetThumb.liveThumb {
+    background-size: 540% 108% !important;
+    background-position-y: center !important;
+  }
+
+  /* 솔라: 오른쪽에 보이는 옆 프레임을 더 확실히 잘라냄 */
+  #hangar .planetCard[data-type="0"] .planetThumb.liveThumb {
+    background-size: 620% 124% !important;
+    background-position-x: 52.6% !important;
+  }
+
+  /* 광자/레이저 계열 */
+  #hangar .planetCard[data-type="5"] .planetThumb.liveThumb {
+    background-size: 620% 124% !important;
+    background-position-x: 52.8% !important;
+  }
+
+  /* 히든 */
+  #hangar .planetCard[data-type="6"] .planetThumb.liveThumb {
+    background-size: 625% 125% !important;
+    background-position-x: 53.0% !important;
+  }
+
+  /* 오른쪽 1px 잔상 마스킹 */
+  #hangar .planetCard[data-type="0"] .planetThumb.liveThumb,
+  #hangar .planetCard[data-type="5"] .planetThumb.liveThumb,
+  #hangar .planetCard[data-type="6"] .planetThumb.liveThumb {
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.06),
+      inset -5px 0 6px rgba(10,16,33,.96) !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #hangar .planetCard[data-type="0"] .planetThumb.liveThumb,
+  #hangar .planetCard[data-type="5"] .planetThumb.liveThumb,
+  #hangar .planetCard[data-type="6"] .planetThumb.liveThumb {
+    background-size: 640% 128% !important;
+    background-position-x: 53.4% !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 Solar Thumbnail Centering Fix
+   - Previous bleed fix over-cropped solar icon.
+   - Give solar a wider square-safe thumbnail and center the sprite.
+   ========================================================= */
+@media (max-width: 768px) {
+  /* 솔라만 썸네일 영역을 조금 넓혀서 좌우 잘림 없이 중앙 배치 */
+  #hangar .planetCard[data-type="0"] .planetThumb.liveThumb {
+    width: 44px !important;
+    height: 40px !important;
+    flex: 0 0 44px !important;
+    border-radius: 10px !important;
+    background-size: 545% 109% !important;
+    background-position-x: 50.4% !important;
+    background-position-y: center !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.06),
+      inset -1px 0 2px rgba(10,16,33,.42) !important;
+  }
+
+  /* 솔라 카드 텍스트가 넓어진 아이콘 때문에 밀리지 않도록 카드 여백 소폭 조정 */
+  #hangar .planetCard[data-type="0"] {
+    gap: 9px !important;
+    padding-left: 8px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #hangar .planetCard[data-type="0"] .planetThumb.liveThumb {
+    width: 41px !important;
+    height: 38px !important;
+    flex-basis: 41px !important;
+    background-size: 550% 110% !important;
+    background-position-x: 50.5% !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 Mobile Skill Modal Typography Fix
+   - Reduce oversized random skill typography.
+   - Improve hierarchy and readability on mobile.
+   ========================================================= */
+@media (max-width: 768px) {
+  #modal .card,
+  #menu .card {
+    width: min(90vw, 660px) !important;
+    padding: 16px 16px 14px !important;
+    border-radius: 20px !important;
+  }
+
+  #modal .card h2.modalTitle,
+  #menu .card h2.modalTitle,
+  #modal h2,
+  #menu h2 {
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+    margin-bottom: 6px !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  #modal .modalLead,
+  #menu .modalLead,
+  #modal .card p.modalLead,
+  #menu .card p.modalLead {
+    font-size: 9px !important;
+    line-height: 1.35 !important;
+  }
+
+  #modal .choiceGrid,
+  #menu .choiceGrid {
+    gap: 12px !important;
+  }
+
+  #modal .choice,
+  #menu .choice {
+    min-height: 280px !important;
+    padding: 14px 12px 12px !important;
+    border-radius: 18px !important;
+  }
+
+  #modal .choiceTop,
+  #menu .choiceTop {
+    min-height: 28px !important;
+    margin-bottom: 8px !important;
+  }
+
+  #modal .choiceMode,
+  #menu .choiceMode {
+    font-size: 8.2px !important;
+    line-height: 1.08 !important;
+    letter-spacing: .04em !important;
+  }
+
+  #modal .choiceBadge,
+  #menu .choiceBadge {
+    height: 19px !important;
+    padding: 0 8px !important;
+    font-size: 7.2px !important;
+  }
+
+  #modal .choice h3,
+  #menu .choice h3,
+  #modal .choiceTitle,
+  #menu .choiceTitle,
+  #modal .choicePlanetName,
+  #menu .choicePlanetName {
+    font-size: 13.2px !important;
+    line-height: 1.12 !important;
+    min-height: 30px !important;
+    margin-bottom: 10px !important;
+    letter-spacing: -0.035em !important;
+    word-break: keep-all !important;
+  }
+
+  #modal .choiceCenter,
+  #menu .choiceCenter,
+  #modal .choiceSkillRow,
+  #menu .choiceSkillRow {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    min-height: 60px !important;
+    margin: 8px 0 10px !important;
+  }
+
+  #modal .choiceIcon,
+  #menu .choiceIcon,
+  #modal .choiceIconWrap,
+  #menu .choiceIconWrap,
+  #modal .choiceSkillIcon,
+  #menu .choiceSkillIcon {
+    width: 54px !important;
+    height: 54px !important;
+    min-width: 54px !important;
+    flex-basis: 54px !important;
+    border-radius: 15px !important;
+  }
+
+  #modal .choice img,
+  #menu .choice img,
+  #modal .choiceSkillIcon img,
+  #menu .choiceSkillIcon img {
+    width: 39px !important;
+    height: 39px !important;
+  }
+
+  #modal .choiceSkillMeta h3,
+  #menu .choiceSkillMeta h3,
+  #modal .choiceName,
+  #menu .choiceName {
+    font-size: 12.2px !important;
+    line-height: 1.16 !important;
+    letter-spacing: -0.04em !important;
+    word-break: keep-all !important;
+  }
+
+  #modal .choiceLevel,
+  #menu .choiceLevel,
+  #modal .choiceSkillMeta .choiceLevel,
+  #menu .choiceSkillMeta .choiceLevel {
+    font-size: 10px !important;
+    line-height: 1 !important;
+    margin-top: 4px !important;
+    letter-spacing: .03em !important;
+  }
+
+  #modal .choiceDesc,
+  #menu .choiceDesc,
+  #modal .choice p,
+  #menu .choice p {
+    font-size: 8.8px !important;
+    line-height: 1.35 !important;
+    letter-spacing: -0.02em !important;
+    word-break: keep-all !important;
+  }
+
+  #modal .choiceBoost,
+  #menu .choiceBoost {
+    min-height: 30px !important;
+    padding: 5px 8px !important;
+    font-size: 7.4px !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.02em !important;
+    margin-top: auto !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #modal .card,
+  #menu .card {
+    width: min(92vw, 620px) !important;
+    padding: 13px !important;
+  }
+
+  #modal .choiceGrid,
+  #menu .choiceGrid {
+    gap: 8px !important;
+  }
+
+  #modal .choice,
+  #menu .choice {
+    min-height: 250px !important;
+    padding: 12px 9px 10px !important;
+  }
+
+  #modal .choice h3,
+  #menu .choice h3,
+  #modal .choiceTitle,
+  #menu .choiceTitle,
+  #modal .choicePlanetName,
+  #menu .choicePlanetName {
+    font-size: 11.5px !important;
+    min-height: 26px !important;
+  }
+
+  #modal .choiceIcon,
+  #menu .choiceIcon,
+  #modal .choiceIconWrap,
+  #menu .choiceIconWrap,
+  #modal .choiceSkillIcon,
+  #menu .choiceSkillIcon {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    flex-basis: 46px !important;
+  }
+
+  #modal .choice img,
+  #menu .choice img,
+  #modal .choiceSkillIcon img,
+  #menu .choiceSkillIcon img {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  #modal .choiceSkillMeta h3,
+  #menu .choiceSkillMeta h3,
+  #modal .choiceName,
+  #menu .choiceName {
+    font-size: 10.5px !important;
+  }
+
+  #modal .choiceDesc,
+  #menu .choiceDesc,
+  #modal .choice p,
+  #menu .choice p {
+    font-size: 8px !important;
+  }
+
+  #modal .choiceBoost,
+  #menu .choiceBoost {
+    font-size: 6.8px !important;
+    min-height: 28px !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 Photon / Hidden Thumbnail Center Patch
+   - Move only Photon(type=5) and Hidden Star Engine(type=6) sprites to the right.
+   - Keep Solar and other planet thumbnails unchanged.
+   ========================================================= */
+@media (max-width: 768px) {
+  /* 광자 행성: 현재 왼쪽으로 치우쳐 보여서 오른쪽 이동 */
+  #hangar .planetCard[data-type="5"] .planetThumb.liveThumb {
+    width: 42px !important;
+    height: 38px !important;
+    flex: 0 0 42px !important;
+    background-size: 545% 109% !important;
+    background-position-x: 54.6% !important;
+    background-position-y: center !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.06),
+      inset -1px 0 2px rgba(10,16,33,.35) !important;
+  }
+
+  /* 히든 스타 엔진: 더 왼쪽으로 치우쳐 보여서 광자보다 조금 더 오른쪽 이동 */
+  #hangar .planetCard[data-type="6"] .planetThumb.liveThumb {
+    width: 42px !important;
+    height: 38px !important;
+    flex: 0 0 42px !important;
+    background-size: 548% 110% !important;
+    background-position-x: 56.2% !important;
+    background-position-y: center !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.06),
+      inset -1px 0 2px rgba(10,16,33,.35) !important;
+  }
+
+  /* 카드 내부 간격만 살짝 보정 */
+  #hangar .planetCard[data-type="5"],
+  #hangar .planetCard[data-type="6"] {
+    gap: 9px !important;
+    padding-left: 8px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #hangar .planetCard[data-type="5"] .planetThumb.liveThumb {
+    width: 39px !important;
+    height: 36px !important;
+    flex-basis: 39px !important;
+    background-size: 552% 111% !important;
+    background-position-x: 55.0% !important;
+  }
+
+  #hangar .planetCard[data-type="6"] .planetThumb.liveThumb {
+    width: 39px !important;
+    height: 36px !important;
+    flex-basis: 39px !important;
+    background-size: 555% 112% !important;
+    background-position-x: 56.8% !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 Photon / Hidden Hard Crop Final Patch
+   - JS now computes per-level sprite column, so remove fixed percent hacks.
+   - Thumbnail mask is narrower for photon/hidden only.
+   ========================================================= */
+@media (max-width: 768px) {
+  #hangar .planetCard[data-type="5"] .planetThumb.liveThumb,
+  #hangar .planetCard[data-type="6"] .planetThumb.liveThumb {
+    width: 34px !important;
+    height: 38px !important;
+    flex: 0 0 34px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    background-repeat: no-repeat !important;
+    background-position-y: center !important;
+  }
+
+  #hangar .planetCard[data-type="5"] .planetThumb.spriteHardCrop,
+  #hangar .planetCard[data-type="6"] .planetThumb.spriteHardCrop {
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.06),
+      inset 4px 0 4px rgba(10,16,33,.40),
+      inset -4px 0 4px rgba(10,16,33,.40) !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #hangar .planetCard[data-type="5"] .planetThumb.liveThumb,
+  #hangar .planetCard[data-type="6"] .planetThumb.liveThumb {
+    width: 32px !important;
+    height: 36px !important;
+    flex-basis: 32px !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 Hangar Thumbnail PNG Assets Patch
+   - Hangar uses pre-cut level thumbnails instead of CSS sprite positioning.
+   - Prevents sprite bleed and keeps each planet centered.
+   ========================================================= */
+@media (max-width: 768px) {
+  #hangar .planetThumb.thumbPng,
+  #hangar .planetThumb.liveThumb.thumbPng {
+    width: 38px !important;
+    height: 38px !important;
+    flex: 0 0 38px !important;
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+  }
+
+  #hangar .planetCard[data-type="0"] .planetThumb.thumbPng,
+  #hangar .planetCard[data-type="5"] .planetThumb.thumbPng,
+  #hangar .planetCard[data-type="6"] .planetThumb.thumbPng {
+    background-size: contain !important;
+    background-position: center !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06) !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #hangar .planetThumb.thumbPng,
+  #hangar .planetThumb.liveThumb.thumbPng {
+    width: 35px !important;
+    height: 35px !important;
+    flex-basis: 35px !important;
+  }
+}
+
+
+
+/* =========================================================
+   v50 Mobile Skill Card Vertical Layout Patch
+   - Redesign random skill cards for mobile.
+   - Layout: rarity -> planet -> icon -> skill title -> level -> effect -> growth condition.
+   ========================================================= */
+@media (max-width: 768px) {
+  #modal .card,
+  #menu .card {
+    width: min(92vw, 720px) !important;
+    padding: 18px 18px 16px !important;
+    border-radius: 22px !important;
+  }
+
+  #modal .choiceGrid,
+  #menu .choiceGrid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+    align-items: stretch !important;
+    margin-top: 14px !important;
+  }
+
+  #modal .choice,
+  #menu .choice {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    text-align: center !important;
+    min-height: 292px !important;
+    padding: 14px 12px 12px !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+  }
+
+  /* COMMON / EPIC 배지는 최상단 중앙 */
+  #modal .choiceTop,
+  #menu .choiceTop {
+    order: 1 !important;
+    width: 100% !important;
+    min-height: auto !important;
+    margin: 0 0 7px !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column-reverse !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 5px !important;
+  }
+
+  #modal .choiceBadge,
+  #menu .choiceBadge {
+    position: static !important;
+    height: 20px !important;
+    min-width: 86px !important;
+    padding: 0 10px !important;
+    border-radius: 999px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 7.8px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  /* RANDOM UNIT SKILL */
+  #modal .choiceMode,
+  #menu .choiceMode {
+    font-size: 8px !important;
+    line-height: 1.05 !important;
+    letter-spacing: .04em !important;
+    text-align: center !important;
+    margin: 0 !important;
+  }
+
+  /* 행성명은 작은 섹션 타이틀로 */
+  #modal .choicePlanetName,
+  #menu .choicePlanetName,
+  #modal .choice > h3:first-of-type,
+  #menu .choice > h3:first-of-type {
+    order: 2 !important;
+    width: 100% !important;
+    min-height: 22px !important;
+    margin: 0 0 9px !important;
+    font-size: 12px !important;
+    line-height: 1.12 !important;
+    letter-spacing: -0.03em !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* 아이콘을 중앙 상단 핵심 비주얼로 */
+  #modal .choiceSkillRow,
+  #menu .choiceSkillRow,
+  #modal .choiceCenter,
+  #menu .choiceCenter {
+    order: 3 !important;
+    width: 100% !important;
+    min-height: auto !important;
+    margin: 0 0 8px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 7px !important;
+    text-align: center !important;
+  }
+
+  #modal .choiceSkillIcon,
+  #menu .choiceSkillIcon,
+  #modal .choiceIcon,
+  #menu .choiceIcon,
+  #modal .choiceIconWrap,
+  #menu .choiceIconWrap {
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    flex: 0 0 56px !important;
+    border-radius: 16px !important;
+    margin: 0 auto !important;
+  }
+
+  #modal .choiceSkillIcon img,
+  #menu .choiceSkillIcon img,
+  #modal .choice img,
+  #menu .choice img {
+    width: 40px !important;
+    height: 40px !important;
+    object-fit: contain !important;
+  }
+
+  #modal .choiceSkillMeta,
+  #menu .choiceSkillMeta {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 3px !important;
+  }
+
+  /* 스킬명 */
+  #modal .choiceSkillMeta h3,
+  #menu .choiceSkillMeta h3,
+  #modal .choiceName,
+  #menu .choiceName {
+    width: 100% !important;
+    margin: 0 !important;
+    font-size: 12.5px !important;
+    line-height: 1.18 !important;
+    letter-spacing: -0.035em !important;
+    text-align: center !important;
+    word-break: keep-all !important;
+    white-space: normal !important;
+  }
+
+  /* LV */
+  #modal .choiceSkillMeta .choiceLevel,
+  #menu .choiceSkillMeta .choiceLevel,
+  #modal .choiceLevel,
+  #menu .choiceLevel {
+    margin: 2px 0 0 !important;
+    font-size: 10px !important;
+    line-height: 1 !important;
+    letter-spacing: .03em !important;
+    text-align: center !important;
+  }
+
+  /* 효과 설명 */
+  #modal .choiceDesc,
+  #menu .choiceDesc,
+  #modal .choice p,
+  #menu .choice p {
+    order: 4 !important;
+    width: 100% !important;
+    margin: 4px 0 10px !important;
+    font-size: 8.7px !important;
+    line-height: 1.35 !important;
+    letter-spacing: -0.02em !important;
+    text-align: center !important;
+    word-break: keep-all !important;
+  }
+
+  /* 성장 조건 태그는 하단 고정 */
+  #modal .choiceBoost,
+  #menu .choiceBoost {
+    order: 5 !important;
+    width: 100% !important;
+    min-height: 32px !important;
+    margin-top: auto !important;
+    padding: 5px 8px !important;
+    border-radius: 999px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-size: 7.1px !important;
+    line-height: 1.22 !important;
+    letter-spacing: -0.025em !important;
+    word-break: keep-all !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #modal .card,
+  #menu .card {
+    width: min(94vw, 640px) !important;
+    padding: 14px 13px 13px !important;
+  }
+
+  #modal .choiceGrid,
+  #menu .choiceGrid {
+    gap: 9px !important;
+  }
+
+  #modal .choice,
+  #menu .choice {
+    min-height: 260px !important;
+    padding: 12px 8px 10px !important;
+    border-radius: 17px !important;
+  }
+
+  #modal .choiceBadge,
+  #menu .choiceBadge {
+    min-width: 74px !important;
+    height: 18px !important;
+    font-size: 6.8px !important;
+  }
+
+  #modal .choiceMode,
+  #menu .choiceMode {
+    font-size: 7px !important;
+  }
+
+  #modal .choicePlanetName,
+  #menu .choicePlanetName,
+  #modal .choice > h3:first-of-type,
+  #menu .choice > h3:first-of-type {
+    font-size: 10.5px !important;
+    min-height: 19px !important;
+    margin-bottom: 7px !important;
+  }
+
+  #modal .choiceSkillIcon,
+  #menu .choiceSkillIcon,
+  #modal .choiceIcon,
+  #menu .choiceIcon,
+  #modal .choiceIconWrap,
+  #menu .choiceIconWrap {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    flex-basis: 48px !important;
+  }
+
+  #modal .choiceSkillIcon img,
+  #menu .choiceSkillIcon img,
+  #modal .choice img,
+  #menu .choice img {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  #modal .choiceSkillMeta h3,
+  #menu .choiceSkillMeta h3,
+  #modal .choiceName,
+  #menu .choiceName {
+    font-size: 10.5px !important;
+  }
+
+  #modal .choiceSkillMeta .choiceLevel,
+  #menu .choiceSkillMeta .choiceLevel,
+  #modal .choiceLevel,
+  #menu .choiceLevel {
+    font-size: 8.8px !important;
+  }
+
+  #modal .choiceDesc,
+  #menu .choiceDesc,
+  #modal .choice p,
+  #menu .choice p {
+    font-size: 7.8px !important;
+  }
+
+  #modal .choiceBoost,
+  #menu .choiceBoost {
+    min-height: 28px !important;
+    font-size: 6.4px !important;
+    padding: 4px 6px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -3502,12 +4244,31 @@ function applyLiveThumb(el, type, frameIndex){
   const forcedLevel = Number(el.dataset.level || 0);
   const level = forcedLevel > 0 ? forcedLevel : (livePlanetLevel(type) || 1);
   const col = (type === HIDDEN_PLANET_TYPE && isHiddenLocked()) ? 0 : planetThumbColumnForLevel(level);
+
+  // Hangar thumbnails use pre-cut per-level PNG files.
+  // This avoids CSS sprite bleeding and keeps icons visually centered on mobile.
+  const isHangarThumb = el.closest && el.closest('#hangar');
+  if(isHangarThumb && PLANETS[type]){
+    const thumbLevel = Math.max(1, Math.min(5, level || 1));
+    const thumbId = PLANETS[type].id;
+    el.style.backgroundImage = `url("thumbs/${thumbId}_lv${thumbLevel}.png")`;
+    el.style.backgroundSize = 'contain';
+    el.style.backgroundPosition = 'center';
+    el.style.backgroundRepeat = 'no-repeat';
+    el.style.animationDelay = `${(type % 4) * .28}s`;
+    el.dataset.renderedLevel = String(thumbLevel);
+    el.classList.add('thumbPng');
+    el.classList.remove('spriteHardCrop');
+    return;
+  }
+
   if(img){
     el.style.backgroundImage = `url("${img.src}")`;
     el.style.backgroundSize = `${PLANET_EVOLUTION_COLS * 100}% 100%`;
     el.style.backgroundPosition = `${col * 100 / Math.max(1, PLANET_EVOLUTION_COLS - 1)}% 50%`;
     el.style.animationDelay = `${(type % 4) * .28}s`;
     el.dataset.renderedLevel = String(level);
+    el.classList.remove('thumbPng');
     return;
   }
   const colIdx = type % PLANET_ICON_COLS;
