@@ -22,7 +22,7 @@ html,body{
 }
 #bg{
   position:fixed;inset:0;z-index:-4;
-  background:url("space_bg.png") center/cover no-repeat;
+  background:url("bg_cosmic.png") center/cover no-repeat;
   filter:brightness(.38) saturate(1.25);
 }
 #nebula{
@@ -110,8 +110,9 @@ canvas{
 .planetCardLevel{position:absolute;right:10px;bottom:10px;padding:3px 7px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:rgba(2,6,23,.72);font-family:'Orbitron';font-size:9px;font-weight:900;letter-spacing:.05em;color:#e2e8f0}
 .planetCard.hasUnit .planetCardLevel{color:#f8fafc;border-color:color-mix(in srgb, var(--planet-color) 48%, rgba(255,255,255,.16));box-shadow:0 0 14px color-mix(in srgb, var(--planet-color) 20%, transparent)}
 .planetCardRole{max-width:100%}
-.planetThumb{background-color:rgba(10,16,33,.92)}
-.planetThumb.liveThumb{background-size:500% 100%;background-position:0% 50%}
+.planetThumb{background-color:rgba(10,16,33,.92);display:flex;align-items:center;justify-content:center;background-position:center center;background-repeat:no-repeat}
+.planetThumb.liveThumb{background-size:contain;background-position:center center;background-repeat:no-repeat}
+.planetThumb.thumbPng{background-size:contain !important;background-position:center center !important;background-repeat:no-repeat !important}
 .choiceGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
 .choice{min-height:224px;padding:20px 20px 18px;border-radius:24px;cursor:pointer;position:relative;overflow:hidden;border:1px solid rgba(148,163,184,.18);background:linear-gradient(160deg,rgba(30,41,59,.94),rgba(2,6,23,.92));transition:.18s}
 .choiceTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px;padding-right:84px}
@@ -248,6 +249,105 @@ h1{
 }
 #modal{display:none;z-index:60}
 
+
+/* ===== Planet Detail Popup: bottom hangar cards ===== */
+.planetCard{cursor:pointer}
+.planetCard:focus-visible{outline:2px solid rgba(103,232,249,.86);outline-offset:3px}
+#planetDetailModal{
+  position:fixed;inset:0;z-index:75;
+  display:none;align-items:center;justify-content:center;
+  padding:22px;
+  background:radial-gradient(circle at 50% 35%,rgba(15,23,42,.80),rgba(0,0,0,.96));
+  backdrop-filter:blur(8px);
+}
+#planetDetailModal.open{display:flex}
+.planetDetailCard{
+  width:min(820px,94vw);max-height:min(720px,92vh);overflow:auto;
+  position:relative;text-align:left;color:#e5edf7;
+  padding:24px;border-radius:28px;
+  border:1px solid rgba(103,232,249,.24);
+  background:linear-gradient(145deg,rgba(15,23,42,.97),rgba(2,6,23,.98));
+  box-shadow:0 26px 90px rgba(0,0,0,.48),0 0 42px rgba(56,189,248,.13),inset 0 0 28px rgba(255,255,255,.035);
+}
+.planetDetailClose{
+  position:absolute;top:15px;right:15px;width:34px;height:34px;border-radius:999px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(15,23,42,.86);color:#e2e8f0;
+  font-family:'Orbitron';font-size:18px;font-weight:900;cursor:pointer;
+}
+.planetDetailClose:hover{border-color:rgba(103,232,249,.5);color:#fff;box-shadow:0 0 18px rgba(103,232,249,.16)}
+.planetDetailHero{display:grid;grid-template-columns:92px 1fr;gap:18px;align-items:center;padding-right:34px}
+.planetDetailThumb{
+  width:82px;height:82px;border-radius:22px;display:flex;align-items:center;justify-content:center;
+  background-color:rgba(10,16,33,.92);background-position:center center;background-repeat:no-repeat;background-size:contain;
+  border:1px solid rgba(255,255,255,.10);box-shadow:inset 0 0 22px rgba(255,255,255,.04),0 0 28px color-mix(in srgb,var(--planet-color,#38bdf8) 25%,transparent);
+}
+.planetDetailEyebrow{font-family:'Orbitron';font-size:10px;color:#67e8f9;letter-spacing:.16em;margin-bottom:6px}
+.planetDetailTitle{margin:0;font-size:25px;line-height:1.15;color:#f8fafc;font-weight:900}
+.planetDetailSubtitle{margin-top:7px;color:#cbd5e1;font-size:13px;line-height:1.5}
+.planetDetailTags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.planetDetailTags .tag{background:rgba(15,23,42,.78)}
+.planetDetailGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0 16px}
+.planetDetailStat{padding:12px;border-radius:16px;background:rgba(2,6,23,.44);border:1px solid rgba(148,163,184,.13)}
+.planetDetailStat small{display:block;font-family:'Orbitron';font-size:9px;color:#94a3b8;letter-spacing:.08em;margin-bottom:6px}
+.planetDetailStat b{display:block;font-family:'Orbitron';font-size:15px;color:#f8fafc;line-height:1.18}
+.planetDetailSection{margin-top:16px;padding:0;background:transparent;border:0;border-radius:0}
+.planetDetailSection h3{margin:0 0 8px;font-size:14px;color:#fff}
+.planetDetailSection p{margin:0;color:#cbd5e1;font-size:13px;line-height:1.62}
+.planetSkillList{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.planetSkillCard{min-height:116px;padding:12px;border-radius:16px;background:rgba(2,6,23,.52);border:1px solid rgba(148,163,184,.13);position:relative;overflow:hidden}
+.planetSkillCard::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--planet-color,#38bdf8);opacity:.72}
+.planetSkillCard strong{display:block;color:#f8fafc;font-size:13px;margin-bottom:6px;line-height:1.25}
+.planetSkillCard span{display:block;color:#cbd5e1;font-size:12px;line-height:1.48}
+.planetSkillLevel{display:inline-flex;margin-top:10px;padding:3px 7px;border-radius:999px;font-family:'Orbitron';font-size:9px;color:#fde68a;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.20)}
+.planetSkillPreview{margin-top:10px;display:grid;gap:6px}
+.planetSkillPreview div{display:grid;grid-template-columns:42px 1fr;gap:8px;align-items:start;padding:7px 8px;border-radius:10px;background:rgba(15,23,42,.58);border:1px solid rgba(148,163,184,.10)}
+.planetSkillPreview b{font-family:'Orbitron';font-size:9px;color:#93c5fd;line-height:1.4;white-space:nowrap}
+.planetSkillPreview span{font-size:11px;color:#cbd5e1;line-height:1.45}
+.planetLevelTableWrap{overflow:auto;border-radius:14px;border:1px solid rgba(148,163,184,.13);background:rgba(2,6,23,.34)}
+.planetLevelTable{width:100%;border-collapse:collapse;min-width:620px}
+.planetLevelTable th,.planetLevelTable td{padding:9px 10px;border-bottom:1px solid rgba(148,163,184,.10);font-size:12px;text-align:left;white-space:nowrap}
+.planetLevelTable th{position:sticky;top:0;background:rgba(15,23,42,.94);color:#94a3b8;font-family:'Orbitron';font-size:9px;letter-spacing:.08em;z-index:1}
+.planetLevelTable td{color:#dbeafe}
+.planetLevelTable tr:last-child td{border-bottom:0}
+.planetLevelTable tr.current td{background:color-mix(in srgb,var(--planet-color,#38bdf8) 14%,transparent);color:#fff;font-weight:800}
+.planetLevelTable .levelTier{font-family:'Orbitron';font-size:10px;color:#fde68a}
+.planetDetailNote{margin-top:9px;color:#94a3b8;font-size:12px;line-height:1.55}
+.planetDetailLocked{color:#fca5a5;font-weight:800}
+
+.globalEffectLine{
+  margin:-6px 0 10px;
+  color:#cbd5e1;
+  font-size:11px;
+  line-height:1.5;
+  letter-spacing:.01em;
+  opacity:.92;
+}
+.globalEffectLine b{color:#67e8f9;font-family:'Orbitron';font-size:9px;letter-spacing:.08em;margin-right:5px}
+.planetDetailDetails{margin-top:16px;color:#dbeafe}
+.planetDetailDetails summary{cursor:pointer;color:#93c5fd;font-weight:900;font-size:13px;list-style:none}
+.planetDetailDetails summary::-webkit-details-marker{display:none}
+.planetDetailDetails summary::before{content:'＋';margin-right:7px;color:#67e8f9;font-family:'Orbitron'}
+.planetDetailDetails[open] summary::before{content:'－'}
+.planetTowerSkillList{display:grid;gap:7px;margin-top:6px}
+.towerSkillLine{display:grid;grid-template-columns:54px 1fr;gap:10px;align-items:start;color:#cbd5e1;font-size:12px;line-height:1.48}
+.towerSkillLine b{font-family:'Orbitron';font-size:10px;color:#fde68a;white-space:nowrap;padding-top:1px}
+.towerSkillLine strong{color:#f8fafc;font-size:12.5px}
+.towerSkillLine span{display:block;color:#94a3b8;margin-top:1px}
+.towerSkillLine.locked{opacity:.48}
+.planetGlobalText{font-size:12.5px;color:#cbd5e1;line-height:1.55}
+.planetGlobalText b{color:#67e8f9}
+
+@media(max-width:720px){
+  .planetDetailCard{padding:20px;border-radius:22px}
+  .planetDetailHero{grid-template-columns:72px 1fr;gap:13px;padding-right:28px}
+  .planetDetailThumb{width:66px;height:66px;border-radius:18px}
+  .planetDetailTitle{font-size:20px}
+  .planetDetailGrid{grid-template-columns:repeat(2,1fr)}
+  .planetSkillList{grid-template-columns:1fr}
+}
+
 .choice::after{content:'';position:absolute;inset:-40% -10% auto auto;width:140px;height:140px;border-radius:50%;background:rgba(56,189,248,.08);filter:blur(28px);pointer-events:none}
 .choice:hover{transform:translateY(-4px);border-color:#38bdf8;box-shadow:0 18px 40px rgba(56,189,248,.16)}
 .choice.rare{border-color:rgba(56,189,248,.34);box-shadow:inset 0 0 22px rgba(56,189,248,.08)}
@@ -309,12 +409,12 @@ h1{
   transition:opacity .52s ease, filter .52s ease, transform .8s ease;
 }
 .stageBg.cosmic{
-  left:-20%;bottom:-20%;background-image:url("space_bg.png");
+  left:-20%;bottom:-20%;background-image:url("bg_cosmic.png");
   -webkit-mask-image:radial-gradient(circle at 74% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
   mask-image:radial-gradient(circle at 74% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
 }
 .stageBg.frost{
-  left:-20%;top:-20%;background-image:url("bg_ice.png");
+  left:-20%;top:-20%;background-image:url("bg_frost.png");
   -webkit-mask-image:radial-gradient(circle at 74% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
   mask-image:radial-gradient(circle at 74% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
 }
@@ -715,7 +815,7 @@ h1{
     box-shadow: none !important;
   }
 
-  /* 랜덤 스킬 선택 UI: 원본보다 확실히 작게, compact보다는 살짝 크게 */
+  /* 전투 보상 선택 UI: 원본보다 확실히 작게, compact보다는 살짝 크게 */
   #menu,
   #modal {
     padding: 10px !important;
@@ -4177,11 +4277,11 @@ h1{
 
 /* 원본 배경 이미지 기반으로 자연스럽게 복원 */
 #stageMap .stageBg.cosmic {
-  background-image: url("space_bg.png") !important;
+  background-image: url("bg_cosmic.png") !important;
 }
 
 #stageMap .stageBg.frost {
-  background-image: url("bg_ice.png") !important;
+  background-image: url("bg_frost.png") !important;
 }
 
 #stageMap .stageBg.lava {
@@ -4312,8 +4412,8 @@ h1{
   pointer-events: none !important;
 }
 
-#stageMap .stageBg.cosmic { background-image: url("space_bg.png") !important; }
-#stageMap .stageBg.frost { background-image: url("bg_ice.png") !important; }
+#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.png") !important; }
+#stageMap .stageBg.frost { background-image: url("bg_frost.png") !important; }
 #stageMap .stageBg.lava { background-image: url("bg_lava.png") !important; }
 #stageMap .stageBg.jungle { background-image: url("bg_jungle.png") !important; }
 
@@ -4856,8 +4956,8 @@ h1{
    - CSS는 더 이상 과도한 right position을 쓰지 않고 center 기준으로 안정화.
    ========================================================= */
 
-#stageMap .stageBg.cosmic { background-image: url("space_bg.png") !important; }
-#stageMap .stageBg.frost  { background-image: url("bg_ice.png") !important; }
+#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.png") !important; }
+#stageMap .stageBg.frost  { background-image: url("bg_frost.png") !important; }
 #stageMap .stageBg.lava   { background-image: url("bg_lava.png") !important; }
 #stageMap .stageBg.jungle { background-image: url("bg_jungle.png") !important; }
 
@@ -5103,8 +5203,8 @@ h1{
    - artificial wide canvas 제거 후 원본 Lava 16:9 이미지를 cover로 사용.
    ========================================================= */
 
-#stageMap .stageBg.cosmic { background-image: url("space_bg.png") !important; }
-#stageMap .stageBg.frost  { background-image: url("bg_ice.png") !important; }
+#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.png") !important; }
+#stageMap .stageBg.frost  { background-image: url("bg_frost.png") !important; }
 #stageMap .stageBg.lava   { background-image: url("bg_lava.png") !important; }
 #stageMap .stageBg.jungle { background-image: url("bg_jungle.png") !important; }
 
@@ -5197,8 +5297,8 @@ h1{
    - All backgrounds use direct 2560x1440 source images.
    ========================================================= */
 
-#stageMap .stageBg.cosmic { background-image: url("space_bg.png") !important; }
-#stageMap .stageBg.frost  { background-image: url("bg_ice.png") !important; }
+#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.png") !important; }
+#stageMap .stageBg.frost  { background-image: url("bg_frost.png") !important; }
 #stageMap .stageBg.lava   { background-image: url("bg_lava.png") !important; }
 #stageMap .stageBg.jungle { background-image: url("bg_jungle.png") !important; }
 
@@ -6243,6 +6343,189 @@ h1{
   .stageMasteryBox { padding: 8px; }
 }
 
+.gameOverOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 96;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: radial-gradient(circle at 50% 42%, rgba(248,113,113,.18), transparent 32%), rgba(2,6,23,.78);
+  backdrop-filter: blur(8px);
+}
+.gameOverCard {
+  width: min(680px, calc(100vw - 30px));
+  border: 1px solid rgba(248,113,113,.36);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(15,23,42,.96), rgba(2,6,23,.97));
+  box-shadow: 0 30px 90px rgba(0,0,0,.58), inset 0 1px 0 rgba(255,255,255,.08);
+  color: #e5e7eb;
+  padding: 24px;
+}
+.gameOverKicker {
+  font-family: Orbitron, Pretendard, sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .22em;
+  color: #fca5a5;
+}
+.gameOverCard h2 {
+  margin: 7px 0 8px;
+  font-family: Orbitron, Pretendard, sans-serif;
+  font-size: 31px;
+  letter-spacing: .08em;
+  color: #fff1f2;
+  text-shadow: 0 0 28px rgba(248,113,113,.34);
+}
+.gameOverCard p {
+  margin: 8px 0 0;
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.68;
+}
+.gameOverStats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 16px 0 13px;
+}
+.gameOverStat {
+  padding: 10px 11px;
+  border-radius: 14px;
+  background: rgba(15,23,42,.62);
+  border: 1px solid rgba(148,163,184,.16);
+}
+.gameOverStat span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: .14em;
+  color: #94a3b8;
+  font-weight: 900;
+}
+.gameOverStat b {
+  display: block;
+  margin-top: 4px;
+  color: #f8fafc;
+  font-family: Orbitron, Pretendard, sans-serif;
+  font-size: 16px;
+}
+.gameOverTip {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(148,163,184,.14);
+  color: #dbeafe;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.gameOverActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.gameOverActions button {
+  border-radius: 999px;
+  padding: 11px 18px;
+}
+@media (max-width: 720px) {
+  .gameOverCard { padding: 18px; }
+  .gameOverCard h2 { font-size: 24px; }
+  .gameOverStats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gameOverActions { justify-content: stretch; }
+  .gameOverActions button { flex: 1 1 160px; }
+}
+
+.stageClearOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 92;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: radial-gradient(circle at center, rgba(56,189,248,.18), rgba(2,6,23,.82) 55%, rgba(0,0,0,.92));
+  backdrop-filter: blur(8px);
+}
+.stageClearCard {
+  width: min(640px, calc(100vw - 32px));
+  padding: 24px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(15,23,42,.94), rgba(3,7,18,.96));
+  border: 1px solid rgba(125,211,252,.28);
+  box-shadow: 0 24px 80px rgba(0,0,0,.62), inset 0 0 42px rgba(56,189,248,.06);
+}
+.stageClearKicker {
+  font-family: Orbitron, Pretendard, sans-serif;
+  font-size: 11px;
+  letter-spacing: .24em;
+  color: #67e8f9;
+  font-weight: 900;
+}
+.stageClearCard h2 {
+  margin: 8px 0 6px;
+  font-family: Orbitron, Pretendard, sans-serif;
+  font-size: 30px;
+  letter-spacing: .05em;
+  color: #f8fafc;
+}
+.stageClearCard p {
+  margin: 0;
+  color: #cbd5e1;
+  line-height: 1.62;
+  font-size: 14px;
+}
+.stageClearStats {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.stageClearStat {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(15,23,42,.76);
+  border: 1px solid rgba(148,163,184,.14);
+}
+.stageClearStat span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: .14em;
+  color: #94a3b8;
+  font-weight: 900;
+}
+.stageClearStat b {
+  display: block;
+  margin-top: 4px;
+  color: #f8fafc;
+  font-family: Orbitron, Pretendard, sans-serif;
+  font-size: 15px;
+}
+.stageClearReward {
+  margin-top: 12px;
+  color: #dbeafe;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.stageClearActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.stageClearActions button {
+  border-radius: 999px;
+  padding: 11px 18px;
+}
+@media (max-width: 720px) {
+  .stageClearCard { padding: 18px; }
+  .stageClearCard h2 { font-size: 24px; }
+  .stageClearStats { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .stageClearActions { justify-content: stretch; }
+  .stageClearActions button { flex: 1 1 160px; }
+}
 
 /* Stage 5 Smog Wasteland patch */
 .stageBg.smog {
@@ -7430,6 +7713,190 @@ h1{
   }
 }
 
+
+
+/* =========================================================
+   Battle Minimal UI Patch
+   - 전투 중에는 즉시 판단/조작에 필요한 정보만 노출.
+   - 스킬/로그/오프라인 성장 패널은 전투 화면에서 제거.
+   - 둥근 정보 프레임을 줄이고 텍스트/배지 중심의 얇은 HUD로 정리.
+   ========================================================= */
+#side.battleMinimal{
+  width:300px;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+#side.battleMinimal .uiHidden{display:none!important}
+#side.battleMinimal .battleHud,
+#side.battleMinimal .battleActions,
+#side.battleMinimal .battleSelected{
+  background:rgba(2,6,23,.50);
+  border:1px solid rgba(148,163,184,.12);
+  border-radius:13px;
+  padding:9px 10px;
+  box-shadow:none;
+}
+#side.battleMinimal .battleStageLine{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:8px;
+}
+#side.battleMinimal .battleStageLine .title{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:10px;
+  color:#bae6fd;
+}
+#side.battleMinimal .battleStageLine .value{
+  font-size:18px;
+  margin:0;
+}
+#side.battleMinimal .battleStageLine .sub{
+  font-style:normal;
+  white-space:nowrap;
+  font-size:9px;
+}
+#side.battleMinimal .compactWave{
+  height:5px;
+  margin-top:7px;
+}
+#side.battleMinimal .battleStatLine{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:5px 8px;
+  margin-top:8px;
+}
+#side.battleMinimal .battleStatLine .stat{
+  min-width:0;
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:6px;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+}
+#side.battleMinimal .battleStatLine .label{
+  font-size:7.5px;
+  opacity:.78;
+}
+#side.battleMinimal .battleStatLine .value{
+  margin:0;
+  font-size:14px;
+  line-height:1;
+}
+#side.battleMinimal .battleStatLine .miniBar{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+#side.battleMinimal .globalEffectLine{
+  margin:7px 0 0;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#cbd5e1;
+  font-size:10px;
+  line-height:1.4;
+}
+#side.battleMinimal .globalEffectLine b{
+  font-size:8px;
+  color:#67e8f9;
+}
+#side.battleMinimal .battleActions button{
+  min-height:36px;
+  padding:8px 7px;
+  border-radius:10px;
+  font-size:10px;
+  box-shadow:none;
+}
+#side.battleMinimal .battleSelected{
+  min-height:0;
+}
+#side.battleMinimal .battleSelected .title{
+  font-size:9px;
+  color:#94a3b8;
+  margin-bottom:6px;
+}
+#side.battleMinimal #selectedText{
+  margin:0!important;
+  font-size:10px;
+  line-height:1.45;
+  color:#cbd5e1;
+}
+#side.battleMinimal .selectedCompactHead{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:6px;
+}
+#side.battleMinimal .selectedCompactHead .planetThumb{
+  width:32px;
+  height:32px;
+  flex:0 0 32px;
+  border-radius:50%;
+  background-size:cover;
+}
+#side.battleMinimal .towerName{
+  margin:0;
+  font-size:12px;
+  line-height:1.15;
+}
+#side.battleMinimal .compactHint{
+  color:#94a3b8;
+  font-size:9px;
+  line-height:1.45;
+}
+#side.battleMinimal .selectedCompactStats{
+  color:#e2e8f0;
+  font-size:10px;
+  line-height:1.55;
+}
+#side.battleMinimal .bossPreview,
+#side.battleMinimal .tags{
+  display:none!important;
+}
+@media(max-width:1180px){
+  #side.battleMinimal{
+    width:100%;
+    display:grid!important;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    overflow:hidden;
+  }
+  #side.battleMinimal .battleHud{grid-column:1 / 2}
+  #side.battleMinimal .battleActions{grid-column:2 / 3}
+  #side.battleMinimal .battleSelected{grid-column:1 / 3}
+}
+@media(max-width:768px){
+  #side.battleMinimal{
+    height:calc(132px + env(safe-area-inset-bottom))!important;
+    grid-template-columns:1.08fr .92fr!important;
+    gap:4px!important;
+  }
+  #side.battleMinimal .battleHud,
+  #side.battleMinimal .battleActions,
+  #side.battleMinimal .battleSelected{
+    padding:6px 7px!important;
+    border-radius:10px!important;
+  }
+  #side.battleMinimal .battleSelected{display:none!important}
+  #side.battleMinimal .battleActions button{
+    min-height:28px!important;
+    padding:5px 4px!important;
+    font-size:8.5px!important;
+  }
+  #side.battleMinimal .battleStageLine .title{font-size:8px!important}
+  #side.battleMinimal .battleStageLine .value{font-size:13px!important}
+  #side.battleMinimal .battleStatLine{gap:3px 6px!important;margin-top:5px!important}
+  #side.battleMinimal .battleStatLine .value{font-size:11px!important}
+  #side.battleMinimal .globalEffectLine{font-size:8.5px!important;margin-top:4px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+
 </style>
 </head>
 <body>
@@ -7447,58 +7914,53 @@ h1{
       <div id="hangar"></div>
     </div>
 
-    <aside id="side">
-      <section class="panel">
-        <div class="title" id="themeName">COSMIC VOID</div>
-        <div style="display:flex;align-items:end;justify-content:space-between;margin-top:4px">
-          <div class="value" id="stageLabel">1-1</div>
-          <div class="sub" id="stageType">장판 방어</div>
+    <aside id="side" class="battleMinimal">
+      <section class="battleHud" id="battleHud">
+        <div class="battleStageLine">
+          <span class="title" id="themeName">COSMIC VOID</span>
+          <strong class="value" id="stageLabel">1-1</strong>
+          <em class="sub" id="stageType">장판 방어</em>
         </div>
-        <div class="bar"><span id="waveBar"></span></div>
+        <div class="bar compactWave"><span id="waveBar"></span></div>
+        <div class="battleStatLine statGrid">
+          <div class="stat"><span class="label">CRYSTAL</span><b class="value" id="gold" style="color:var(--gold)">500</b></div>
+          <div class="stat"><span class="label">CORE</span><b class="value" id="hp" style="color:var(--red)">25</b></div>
+          <div class="stat"><span class="label">EXP</span><b class="value" id="exp" style="color:#a78bfa">0/50</b><div class="miniBar"><span id="expBar"></span></div></div>
+          <div class="stat"><span class="label">LV</span><b class="value" id="level" style="color:#67e8f9">1</b></div>
+        </div>
+        <div id="globalEffectLine" class="globalEffectLine"><b>GLOBAL</b>전역 효과 없음</div>
       </section>
 
-      <section class="panel statGrid">
-        <div class="stat"><div class="label">CRYSTAL</div><div class="value" id="gold" style="color:var(--gold)">500</div></div>
-        <div class="stat"><div class="label">CORE HP</div><div class="value" id="hp" style="color:var(--red)">25</div></div>
-        <div class="stat"><div class="label">EXP</div><div class="value" id="exp" style="color:#a78bfa">0/50</div><div class="miniBar"><span id="expBar"></span></div></div>
-        <div class="stat"><div class="label">LEVEL</div><div class="value" id="level" style="color:#67e8f9">1</div></div>
-      </section>
-
-      <section class="panel">
+      <section class="battleActions">
         <div class="row">
           <button id="summonBtn">랜덤 소환 100</button>
           <button id="mergeBtn" class="btnAlt">자동 병합</button>
         </div>
-        <div class="row3" style="margin-top:8px">
+        <div class="row3" style="margin-top:7px">
           <button id="speedBtn" class="btnAlt">1x</button>
           <button id="pauseBtn" class="btnAlt">일시정지</button>
           <button id="audioBtn" class="btnGreen">BGM ON</button>
         </div>
       </section>
 
-      <section class="panel skill">
-        <div class="title" style="margin-bottom:8px">TACTICAL PLATES</div>
-        <div class="row3">
-          <button id="blackholeBtn">Q<br>균열 포획 70</button>
-          <button id="novaBtn">W<br>궤도 포격 75</button>
-          <button id="repairBtn">E<br>코어 과충전 65</button>
+      <section class="battleSelected" id="selected">
+        <div class="title">SELECTED</div>
+        <div id="selectedText" class="sub">
+          장판을 선택하면 필요한 정보만 간단히 표시됩니다.
         </div>
       </section>
 
-      <section class="panel" id="selected">
-        <div class="title">COMMAND NODE</div>
-        <div id="selectedText" class="sub" style="margin-top:9px">
-          행성 장판을 터치하면 능력과 장판 보너스가 표시됩니다.
-        </div>
+      <section class="uiHidden skill" aria-hidden="true">
+        <button id="blackholeBtn" tabindex="-1">균열 포획</button>
+        <button id="novaBtn" tabindex="-1">궤도 포격</button>
+        <button id="repairBtn" tabindex="-1">코어 과충전</button>
       </section>
 
-      <section class="panel" id="logPanel">
-        <div class="title">BATTLE LOG</div>
+      <section class="uiHidden" id="logPanel" aria-hidden="true">
         <div id="log"></div>
       </section>
 
-      <section class="panel" id="offlinePanel">
-        <div class="title">OFFLINE PROGRESSION</div>
+      <section class="uiHidden" id="offlinePanel" aria-hidden="true">
         <div id="offlinePanelBody" class="offlineBox"></div>
       </section>
     </aside>
@@ -7510,18 +7972,18 @@ h1{
     <h1>PLANET RIFT DEFENSE</h1>
     <div class="menuSub">COSMIC PLATES</div>
     <p style="max-width:780px;margin:0 auto;color:#cbd5e1;line-height:1.68;font-size:15px">
-      행성 장판을 소환하고 병합해 균열 항로를 방어하세요.
-      적 처치 경험치로 랜덤 스킬을 얻고, 황금 보물성을 파괴하면 돈 또는 희귀 장판 스킬을 획득합니다.
-      블랙홀, 초신성, 빙결 성운, 독성 오로라가 서로 시너지를 만드는 미래형 우주 장판 디펜스입니다.
+      붕괴된 은하의 마지막 코어를 지키기 위해 잠든 행성 병기를 깨우고 오염된 성역을 하나씩 정화하세요.
+      일반 스킬은 성역 지도에서 스테이지 진행에 따라 하나씩 열리고, 전투 중에는 배치·병합·생존 판단에만 집중합니다.
+      행성별 고유 스킬은 타워 레벨에 따라 자동 해금됩니다.
     </p>
     <div class="menuGrid">
       <div class="info">
         <b>핵심 컨셉</b><br>
-        <span class="sub">뱀파이어 서바이벌식 레벨업 선택 + 랜덤 행성 장판 + 드래그 병합 + 보물성 이벤트.</span>
+        <span class="sub">성역별 시나리오 + 일반 스킬 단계 해금 + 랜덤 행성 장판 + 드래그 병합 + 행성별 고유 성장.</span>
       </div>
       <div class="info">
         <b>모바일 UX</b><br>
-        <span class="sub">터치 드래그로 이동/병합하고, 하단 버튼으로 소환·스킬·속도 조작을 빠르게 수행합니다.</span>
+        <span class="sub">전투 화면은 소환·병합·속도·일시정지만 남기고, 일반 스킬 관리는 성역 지도에서만 수행합니다.</span>
       </div>
 
     <div id="offlineMenuPanel" class="offlineMenuPanel">
@@ -7673,9 +8135,17 @@ h1{
 
 <div id="modal">
   <div class="card" style="text-align:left">
-    <div class="title" style="font-size:26px">랜덤 스킬 선택</div>
-    <div class="sub" style="margin-top:5px">경험치 에너지가 안정되었습니다. 이번 성장 방향을 하나 선택하세요.</div>
+    <div class="title" style="font-size:26px">전투 보상 선택</div>
+    <div class="sub" style="margin-top:5px">현재 버전에서는 일반 스킬은 성역 지도에서만 관리됩니다.</div>
     <div class="choiceGrid" id="choices"></div>
+  </div>
+</div>
+
+
+<div id="planetDetailModal" aria-hidden="true">
+  <div class="planetDetailCard" role="dialog" aria-modal="true" aria-labelledby="planetDetailTitle">
+    <button class="planetDetailClose" type="button" data-planet-detail-close aria-label="행성 상세 닫기">×</button>
+    <div id="planetDetailBody"></div>
   </div>
 </div>
 
@@ -7775,8 +8245,8 @@ function starLoop(now){
 const rand = (a,b)=>a+Math.random()*(b-a);
 
 const THEMES = [
-  {name:'COSMIC VOID', ko:'공허 성역', bg:'space_bg.png', color:'#38bdf8', starSpeed:1.0},
-  {name:'FROST EXPANSE', ko:'빙결 외곽', bg:'bg_ice.png', color:'#67e8f9', starSpeed:.82},
+  {name:'COSMIC VOID', ko:'공허 성역', bg:'bg_cosmic.png', color:'#38bdf8', starSpeed:1.0},
+  {name:'FROST EXPANSE', ko:'빙결 외곽', bg:'bg_frost.png', color:'#67e8f9', starSpeed:.82},
   {name:'LAVA NEBULA', ko:'용암 성운', bg:'bg_lava.png', color:'#fb923c', starSpeed:1.22},
   {name:'JUNGLE CORE', ko:'생체 정글', bg:'bg_jungle.png', color:'#22c55e', starSpeed:.95},
   {name:'SMOG WASTELAND', ko:'매연 폐역', bg:'bg_smog.png', color:'#9cab62', starSpeed:.72},
@@ -7786,23 +8256,49 @@ const THEMES = [
 
 
 const STAGE_MAP_DEFS = [
-  {stage:1, key:'cosmic', name:'COSMIC VOID', ko:'공허 성역', theme:0, color:'#38bdf8', mood:'기본 우주 균열 · 오로라 · 공허 에너지'},
-  {stage:2, key:'frost', name:'FROST EXPANSE', ko:'빙결 외곽', theme:1, color:'#67e8f9', mood:'냉기 · 눈보라 · 빙결'},
-  {stage:3, key:'lava', name:'LAVA NEBULA', ko:'용암 성운', theme:2, color:'#fb923c', mood:'태양 플레어 · 열기 · 적 방어 상승'},
-  {stage:4, key:'jungle', name:'JUNGLE CORE', ko:'생체 정글', theme:3, color:'#22c55e', mood:'생체 포자 · 독성 · 공격속도 저하'},
-  {stage:5, key:'smog', name:'SMOG WASTELAND', ko:'매연 폐역', theme:4, color:'#9cab62', mood:'매연 · 산업 폐허 · 시야 저하 · 방어 약화'},
-  {stage:6, key:'crystal', name:'CRYSTAL NEBULA', ko:'수정 성운', theme:5, color:'#c084fc', mood:'결정화된 균열 · 프리즘 장판 · 에너지 축전'},
-  {stage:7, key:'machine', name:'MACHINE CORE', ko:'기계 핵성', theme:6, color:'#60a5fa', mood:'폭주 방어망 · 실드 해체 · 임시 구조물'}
+  {stage:1, key:'cosmic', name:'COSMIC VOID', ko:'공허 성역', theme:0, color:'#38bdf8', mood:'오로라 균열 · 첫 방어선 · 기본 화력 학습'},
+  {stage:2, key:'frost', name:'FROST EXPANSE', ko:'빙결 외곽', theme:1, color:'#67e8f9', mood:'냉각 폭풍 · 감속/제어 학습 · 빠른 적 대응'},
+  {stage:3, key:'lava', name:'LAVA NEBULA', ko:'용암 성운', theme:2, color:'#fb923c', mood:'태양 플레어 · 장갑형 적 · 광역 화력 요구'},
+  {stage:4, key:'jungle', name:'JUNGLE CORE', ko:'생체 정글', theme:3, color:'#22c55e', mood:'포자 군체 · 재생형 적 · 장기전 운영'},
+  {stage:5, key:'smog', name:'SMOG WASTELAND', ko:'매연 폐역', theme:4, color:'#9cab62', mood:'산업 매연 · 은폐 장갑 · 방어 약화/감속 활용'},
+  {stage:6, key:'crystal', name:'CRYSTAL NEBULA', ko:'수정 성운', theme:5, color:'#c084fc', mood:'프리즘 공명 · 초과 피해 저장 · 장판 구조 변화'},
+  {stage:7, key:'machine', name:'MACHINE CORE', ko:'기계 핵성', theme:6, color:'#60a5fa', mood:'폭주 방어망 · 실드 해체 · 최종 코어 압박'}
 ];
 
 const STAGE_PRESENTATION = {
-  1:{risk:'LOW', tags:['AURORA','VOID MARK','ENTRY SANCTUARY'], note:'입문 구간이지만 공허 표식과 보스 재생 때문에 방심하면 밀립니다.'},
-  2:{risk:'MEDIUM', tags:['BLIZZARD','FREEZE','CONTROL'], note:'눈보라와 빙결로 템포를 끊는 스테이지입니다.'},
-  3:{risk:'HIGH', tags:['SOLAR FLARE','ARMOR','BURST'], note:'적 장갑과 화염 보스 폭딜이 동시에 압박하는 스테이지입니다.'},
-  4:{risk:'VERY HIGH', tags:['SPORE FIELD','HEAL','DECAY'], note:'회복 군체와 포자 디버프로 장기전 성향이 강합니다.'},
-  5:{risk:'EXTREME', tags:['SMOG','ARMOR DECAY','INDUSTRIAL HAZE'], note:'짙은 매연이 적을 숨기고 전선을 흐립니다. 감속·방어 약화 디버프를 역이용해야 합니다.'},
-  6:{risk:'EXTREME', tags:['PRISM','CHARGE','RESONANCE PLATE'], note:'수정 성운은 공격을 단순히 튕기지 않고, 초과 피해와 장판 구조를 저장·공명시킵니다.'},
-  7:{risk:'OMEGA', tags:['SHIELD DISMANTLE','SATELLITE','CORE BARRIER'], note:'기계 핵성은 방어막과 자동화 시스템을 해체하고 아군 방어망으로 재조립해야 합니다.'}
+  1:{risk:'LOW', tags:['AURORA','VOID MARK','ENTRY'], note:'첫 성역입니다. 공격력 연구가 열리고 기본 장판 배치를 학습합니다.'},
+  2:{risk:'MEDIUM', tags:['BLIZZARD','FREEZE','CONTROL'], note:'치명타 연구가 열립니다. 빠른 적과 빙결 패턴을 제어해야 합니다.'},
+  3:{risk:'HIGH', tags:['SOLAR FLARE','ARMOR','BURN'], note:'공격속도 연구가 열립니다. 장갑형 웨이브를 광역 화력으로 녹여야 합니다.'},
+  4:{risk:'VERY HIGH', tags:['SPORE FIELD','HEAL','DECAY'], note:'보스 대응 연구가 열립니다. 회복 군체와 장기전 압박이 시작됩니다.'},
+  5:{risk:'EXTREME', tags:['SMOG','ARMOR DECAY','HAZE'], note:'사거리 연구가 열립니다. 매연 은폐와 보스 압박이 동시에 강해집니다.'},
+  6:{risk:'EXTREME', tags:['PRISM','CHARGE','RESONANCE'], note:'장판 증폭 연구가 열립니다. 프리즘 장판의 공명 구조를 활용해야 합니다.'},
+  7:{risk:'OMEGA', tags:['SHIELD','SATELLITE','CORE'], note:'전장 회수 연구가 열립니다. 최종 방어망과 수리 드론을 해체해야 합니다.'}
+};
+
+const WORLD_SCENARIO = {
+  title:'PLANET RIFT DEFENSE',
+  premise:'붕괴된 은하의 마지막 코어를 지키기 위해 잠든 행성 병기를 깨우고, 오염된 성역을 하나씩 정화하는 우주 방어전.',
+  playerRole:'플레이어는 마지막 코어 방어망의 지휘관입니다. 성역 지도에서 일반 스킬을 연구하고, 전투에서는 행성 장판을 배치·병합해 균열 항로를 막습니다.',
+  loop:'성역 진입 → 10웨이브 방어 → 보스 정화 → 신규 행성/일반 스킬 해금 → 다음 성역 개방'
+};
+
+const STAGE_AUDIO_CUES = {
+  0:{file:'bgm_stage_01_cosmic_void.wav', mood:'낮은 신스와 별빛 패드, 입문 방어 긴장감'},
+  1:{file:'bgm_stage_02_frost_expanse.wav', mood:'차가운 패드와 얇은 리듬, 빙결 외곽의 정적'},
+  2:{file:'bgm_stage_03_lava_nebula.wav', mood:'빠른 드럼과 저역 펄스, 용암 성운의 공격성'},
+  3:{file:'bgm_stage_04_jungle_core.wav', mood:'불규칙한 퍼커션과 생체 드론, 살아있는 성역'},
+  4:{file:'bgm_stage_05_smog_wasteland.wav', mood:'탁한 노이즈와 무거운 베이스, 매연 폐역의 압박'},
+  5:{file:'bgm_stage_06_crystal_nebula.wav', mood:'반짝이는 아르페지오와 긴 잔향, 프리즘 공명'},
+  6:{file:'bgm_stage_07_machine_core.wav', mood:'기계적 펄스와 경고음, 최종 방어망'}
+};
+
+const STORY_EVENT_TEXT = {
+  map:'성역 지도에서 전역 연구를 정비하고 다음 균열 항로를 선택합니다.',
+  boss:'WARNING: 거대 침식체가 코어 방향으로 접근 중입니다.',
+  clearTitle:'SANCTUARY RESTORED',
+  clearBody:'성역의 궤도가 안정되었습니다. 잠든 행성 하나가 다시 빛을 되찾았습니다.',
+  gameOverTitle:'CORE COLLAPSE',
+  gameOverBody:'성역의 방어선이 붕괴되었습니다. 하지만 남은 성흔 조각이 다음 방어의 가능성을 남깁니다.'
 };
 
 const STAGE_BOSS_DEFS = {
@@ -7836,9 +8332,41 @@ const STAGE_BOSS_DEFS = {
   }
 };
 
+const LATE_STAGE_BOSS_BALANCE = {
+  5: {
+    mid:   { hp:.88, armor:-.03, speed:.98, interval:1.12, core:-1 },
+    final: { hp:.82, armor:-.05, speed:.97, interval:1.16, core:-1 }
+  },
+  6: {
+    mid:   { hp:.84, armor:-.04, speed:.98, interval:1.14, core:-1 },
+    final: { hp:.78, armor:-.06, speed:.96, interval:1.18, core:-1 }
+  },
+  7: {
+    mid:   { hp:.80, armor:-.06, speed:.97, interval:1.16, core:-1 },
+    final: { hp:.74, armor:-.08, speed:.95, interval:1.22, core:-2 }
+  }
+};
+
+function applyLateStageBossBalance(stageNo, tier, boss){
+  const stage = Number(stageNo) || 1;
+  const key = tier === 'final' ? 'final' : 'mid';
+  const tune = LATE_STAGE_BOSS_BALANCE[stage]?.[key];
+  if(!tune) return boss;
+  return {
+    ...boss,
+    hpMul: Math.max(1, Number((boss.hpMul * tune.hp).toFixed(3))),
+    speedMul: Number((boss.speedMul * tune.speed).toFixed(3)),
+    armor: Math.max(0, Number(((boss.armor || 0) + tune.armor).toFixed(3))),
+    interval: Math.round((boss.interval || 140) * tune.interval),
+    coreDamage: Math.max(1, Math.round((boss.coreDamage || 1) + tune.core))
+  };
+}
+
 function getStageBossDef(stageNo, tier='mid'){
-  const pack = STAGE_BOSS_DEFS[Number(stageNo)] || STAGE_BOSS_DEFS[1];
-  return tier === 'final' ? pack.final : pack.mid;
+  const stage = Number(stageNo) || 1;
+  const pack = STAGE_BOSS_DEFS[stage] || STAGE_BOSS_DEFS[1];
+  const key = tier === 'final' ? 'final' : 'mid';
+  return applyLateStageBossBalance(stage, key, {...(key === 'final' ? pack.final : pack.mid)});
 }
 
 const StageMapState = {
@@ -7877,11 +8405,13 @@ function enterTestMode(){
 
 const OFFLINE_META_KEY = 'planetRiftOfflineMetaV1';
 const OFFLINE_UPGRADE_CONFIG = {
-  core:{name:'코어 장갑', desc:'최대 HP +2, 클리어 안정성 증가', max:8, base:6, step:5},
-  supply:{name:'초기 보급', desc:'시작 수정 +60, 초반 소환 안정화', max:8, base:5, step:5},
-  command:{name:'소환 교리', desc:'랜덤 소환 비용 -5, 최소 70까지', max:6, base:8, step:6},
-  tactic:{name:'전술 냉각', desc:'전술판 쿨다운 -4%', max:6, base:9, step:7},
-  mining:{name:'채굴 효율', desc:'처치 수정 +4%, 장기전 보상 증가', max:6, base:7, step:6}
+  global_damage:{name:'공격력 연구', desc:'모든 행성 공격력 증가', max:12, base:5, step:5, unlockStage:1, catalog:'global_damage'},
+  global_crit:{name:'치명타 연구', desc:'치명 확률과 치명 피해 증가', max:10, base:7, step:6, unlockStage:2, catalog:'global_crit'},
+  global_speed:{name:'공격속도 연구', desc:'모든 행성 공격속도 증가', max:10, base:8, step:7, unlockStage:3, catalog:'global_speed'},
+  global_boss:{name:'보스 대응 연구', desc:'보스 피해와 방어 관통 증가', max:10, base:10, step:8, unlockStage:4, catalog:'global_boss'},
+  global_range:{name:'사거리 연구', desc:'모든 행성 사거리 증가', max:8, base:11, step:8, unlockStage:5, catalog:'global_range'},
+  global_plate:{name:'장판 증폭 연구', desc:'장판 위 행성 추가 강화', max:8, base:12, step:9, unlockStage:6, catalog:'global_plate'},
+  global_economy:{name:'전장 회수 연구', desc:'처치 보상 증가', max:8, base:12, step:9, unlockStage:7, catalog:'global_economy'}
 };
 
 const STARTER_PLANET_TYPES = [2, 5]; // 스톰 + 광자: 기본 전기/직선 화력, 솔라는 용암 성운 클리어 보상으로 지급
@@ -7906,7 +8436,7 @@ const OFFLINE_CHAPTERS = {
 let META = defaultOfflineMeta();
 
 function defaultOfflineMeta(){
-  return {shards:0,totalClears:0,totalDefeats:0,bestWave:{},clears:{},story:{},upgrades:{core:0,supply:0,command:0,tactic:0,mining:0},unlockedTowers:STARTER_PLANET_TYPES.slice()};
+  return {shards:0,totalClears:0,totalDefeats:0,bestWave:{},clears:{},story:{},upgrades:{},unlockedTowers:STARTER_PLANET_TYPES.slice()};
 }
 function normalizeOfflineMeta(raw){
   const base = defaultOfflineMeta();
@@ -7972,6 +8502,7 @@ function unlockStageTower(stageNo){
   saveOfflineMeta();
   const msg = `신규 타워 획득 — ${reward.name}`;
   toast(msg);
+  sound('unlock');
   log(`${msg}: ${reward.desc}`);
   return true;
 }
@@ -7996,6 +8527,49 @@ function saveOfflineMeta(){
   try{ localStorage.setItem(OFFLINE_META_KEY, JSON.stringify(META)); }
   catch(err){}
 }
+
+function isOfflineUpgradeUnlocked(key){
+  const cfg = OFFLINE_UPGRADE_CONFIG[key];
+  if(!cfg) return false;
+  if(TEST_MODE_CONFIG.enabled) return true;
+  return Number(StageMapState?.unlocked || 1) >= Number(cfg.unlockStage || 1);
+}
+function unlockedGeneralSkillCount(){
+  return Object.keys(OFFLINE_UPGRADE_CONFIG).filter(isOfflineUpgradeUnlocked).length;
+}
+function nextGeneralSkillUnlockText(){
+  const next = Object.entries(OFFLINE_UPGRADE_CONFIG)
+    .map(([key,cfg]) => ({key,cfg}))
+    .filter(x => !isOfflineUpgradeUnlocked(x.key))
+    .sort((a,b)=>Number(a.cfg.unlockStage||1)-Number(b.cfg.unlockStage||1))[0];
+  return next ? `${next.cfg.unlockStage}성역 도달 → ${next.cfg.name}` : '모든 일반 스킬 오픈 완료';
+}
+function syncGlobalUpgradesFromMeta(){
+  if(!S) return;
+  const out = {};
+  for(const u of GLOBAL_UPGRADE_CATALOG){
+    out[u.id] = Math.max(0, Number(META?.upgrades?.[u.id] || 0));
+  }
+  S.globalUpgrades = out;
+}
+function globalSkillSummaryText(){
+  const g = getGlobalUpgradeStats();
+  const parts = [
+    g.damage ? `공격 +${fmtPct2(g.damage)}` : '',
+    g.critChance ? `치명 +${fmtPct2(g.critChance)}` : '',
+    g.fireRate ? `공속 +${fmtPct2(g.fireRate)}` : '',
+    g.bossDamage ? `보스 +${fmtPct2(g.bossDamage)}` : '',
+    g.range ? `사거리 +${fmt2(g.range)}` : '',
+    g.plateDamage ? `장판 +${fmtPct2(g.plateDamage)}` : '',
+    g.reward ? `보상 +${fmtPct2(g.reward)}` : ''
+  ].filter(Boolean);
+  return parts.length ? parts.join(' · ') : '없음';
+}
+function globalSkillSummaryHtml(){
+  const txt = globalSkillSummaryText();
+  return `<span class="planetGlobalText"><b>전역 효과</b> ${escapeHtml(txt)}</span>`;
+}
+
 function offlineUpgradeCost(key){
   const cfg = OFFLINE_UPGRADE_CONFIG[key];
   const lv = Number(META.upgrades[key] || 0);
@@ -8004,32 +8578,30 @@ function offlineUpgradeCost(key){
 function buyOfflineUpgrade(key){
   const cfg = OFFLINE_UPGRADE_CONFIG[key];
   if(!cfg) return;
+  if(!isOfflineUpgradeUnlocked(key)){ toast(`${cfg.unlockStage}성역 도달 후 열립니다`); return; }
   const lv = Number(META.upgrades[key] || 0);
   if(lv >= cfg.max){ toast('이미 최대 강화입니다'); return; }
   const cost = offlineUpgradeCost(key);
-  if(META.shards < cost){ toast(`성흔 조각이 부족합니다: ${cost} 필요`); return; }
+  if(META.shards < cost){ toast(`성흔 조각이 부족합니다: ${fmt2(cost)} 필요`); return; }
   META.shards -= cost;
   META.upgrades[key] = lv + 1;
   saveOfflineMeta();
   renderOfflineMetaPanel();
-  toast(`${cfg.name} 강화 Lv.${lv+1}`);
-  if(S){ applyOfflineMetaToRun(false); updateUI(); }
+  toast(`${cfg.name} Lv.${fmt2(lv+1)}`);
+  if(S){ syncGlobalUpgradesFromMeta(); updateUI(); }
 }
 function currentSummonCost(){
-  const discount = Math.min(30, Number(META?.upgrades?.command || 0) * 5);
-  return Math.max(70, 100 - discount);
+  return 100;
 }
 function applyOfflineMetaToRun(resetHp=true){
   if(!S || !META) return;
-  const u = META.upgrades || {};
-  const core = Number(u.core || 0), supply = Number(u.supply || 0), mining = Number(u.mining || 0), tactic = Number(u.tactic || 0);
-  const baseMaxHp = 22 + core * 2;
-  S.maxHp = Math.max(S.maxHp || 22, baseMaxHp);
+  syncGlobalUpgradesFromMeta();
+  S.maxHp = Math.max(S.maxHp || 22, 22);
   if(resetHp) S.hp = S.maxHp;
-  S.gold = Math.max(S.gold || 0, 420 + supply * 60);
-  S.mods.reward = Math.max(S.mods.reward || 0, mining * .04);
-  S.mods.repair = Math.max(S.mods.repair || 0, Math.floor(core / 2));
-  S.offline = {summonCost:currentSummonCost(), cooldownScale:Math.max(.76, 1 - tactic * .04)};
+  S.gold = Math.max(S.gold || 0, 420);
+  S.mods.reward = Math.max(S.mods.reward || 0, 0);
+  S.mods.repair = Math.max(S.mods.repair || 0, 0);
+  S.offline = {summonCost:currentSummonCost(), cooldownScale:1};
 }
 function getOfflineStoryLog(stageNo, phase='intro'){
   const st = OFFLINE_CHAPTERS[Number(stageNo)] || OFFLINE_CHAPTERS[1];
@@ -8057,24 +8629,122 @@ function recordOfflineRunEnd(cleared=false, stageNoOverride=null){
     const reward = 8 + Number(stageNo) * 4 + Math.min(12, Number(S.level || 1));
     META.shards += reward;
     markOfflineStory(stageNo, 'clear');
-    toast(`성역 클리어 보상 — 성흔 조각 +${reward}`);
+    toast(`성역 클리어 보상 — 성흔 조각 +${fmt2(reward)}`);
     unlockStageTower(stageNo);
   }else{
     META.totalDefeats += 1;
     const consolation = Math.max(2, Math.floor((Number(S.wave || 1) + Number(S.level || 1)) / 2));
     META.shards += consolation;
-    toast(`전투 기록 회수 — 성흔 조각 +${consolation}`);
+    toast(`전투 기록 회수 — 성흔 조각 +${fmt2(consolation)}`);
   }
   saveOfflineMeta();
   renderOfflineMetaPanel();
 }
+
+function gameOverTipText(){
+  const g = getGlobalUpgradeStats();
+  if(S.wave >= 5 && !g.bossDamage) return '5웨이브 이후 보스가 부담스럽다면 성역 지도에서 보스 대응 연구를 먼저 올리는 편이 좋습니다.';
+  if((S.runKills || 0) < Math.max(8, S.wave * 8)) return '초반 처치 수가 낮습니다. 공격력 연구 또는 공격속도 연구를 올린 뒤 재도전해 보세요.';
+  if((S.leakedEnemies || 0) >= 4) return '적이 많이 새어 나갔습니다. 병목 구간에 행성을 모으고 자동 병합으로 핵심 타워 레벨을 먼저 올려보세요.';
+  if(S.gold < currentSummonCost()) return '수정이 부족했던 판입니다. 전장 회수 연구가 열려 있다면 보상 증가를 올리면 운영이 안정됩니다.';
+  return '실패 보상으로 얻은 성흔 조각을 성역 지도에서 일반 스킬에 투자한 뒤 같은 성역에 재도전하세요.';
+}
+
+function removeGameOverOverlay(){
+  const existing = $('gameOverOverlay');
+  if(existing) existing.remove();
+}
+
+function showGameOverOverlay(summary){
+  removeGameOverOverlay();
+  const stageNo = Number(summary.stageNo || S.stageNo || StageMapState.current || 1);
+  const def = getStageDef(stageNo);
+  const overlay = document.createElement('div');
+  overlay.id = 'gameOverOverlay';
+  overlay.className = 'gameOverOverlay';
+  overlay.innerHTML = `<div class="gameOverCard" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
+    <div class="gameOverKicker">MISSION FAILED</div>
+    <h2 id="gameOverTitle">${STORY_EVENT_TEXT.gameOverTitle}</h2>
+    <p>${escapeHtml(def.name)} ${fmt2(stageNo)}성역에서 코어가 파괴되었습니다. ${escapeHtml(STORY_EVENT_TEXT.gameOverBody)} 획득한 성흔 조각으로 일반 스킬을 강화할 수 있습니다.</p>
+    <div class="gameOverStats">
+      <div class="gameOverStat"><span>STAGE</span><b>${fmt2(stageNo)}-${fmt2(summary.wave)}</b></div>
+      <div class="gameOverStat"><span>KILLS</span><b>${fmt2(summary.kills)}</b></div>
+      <div class="gameOverStat"><span>BEST COMBO</span><b>x${fmt2(summary.bestCombo)}</b></div>
+      <div class="gameOverStat"><span>SHARDS</span><b>+${fmt2(summary.shardsGained)}</b></div>
+    </div>
+    <div class="gameOverTip">추천: ${escapeHtml(gameOverTipText())}</div>
+    <div class="gameOverActions">
+      <button id="gameOverMapBtn" class="btnAlt">성역 지도에서 강화</button>
+      <button id="gameOverRetryBtn" class="btnGreen">같은 성역 재도전</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  const retry = overlay.querySelector('#gameOverRetryBtn');
+  const mapBtn = overlay.querySelector('#gameOverMapBtn');
+  if(retry){
+    retry.onclick = () => {
+      removeGameOverOverlay();
+      StageMapState.selected = stageNo;
+      startSelectedStageFromMap();
+    };
+  }
+  if(mapBtn){
+    mapBtn.onclick = () => {
+      removeGameOverOverlay();
+      cancelAnimationFrame(raf);
+      $('game').style.display = 'none';
+      $('stageMap').style.display = 'block';
+      StageMapState.selected = stageNo;
+      StageMapState.current = stageNo;
+      stopStageBgm();
+      reset();
+      resetBattleUnitsForStageMap();
+      renderStageMap();
+      const hint = $('stageHint');
+      if(hint) hint.textContent = `전투 실패 기록 회수 완료 — 성흔 조각으로 일반 스킬을 강화한 뒤 ${fmt2(stageNo)}성역에 재도전하세요.`;
+    };
+  }
+}
+
+function triggerGameOver(reason='core'){
+  if(!S || S.gameOver) return;
+  S.gameOver = true;
+  S.active = false;
+  S.paused = true;
+  S.skillModalOpen = false;
+  S.queue = [];
+  S.hp = 0;
+  const beforeShards = Number(META?.shards || 0);
+  recordOfflineRunEnd(false);
+  const afterShards = Number(META?.shards || 0);
+  const summary = {
+    reason,
+    stageNo: Number(S.stageNo || StageMapState.current || 1),
+    wave: Number(S.wave || 1),
+    kills: Number(S.runKills || 0),
+    bestCombo: Number(S.combo?.best || 0),
+    shardsGained: Math.max(0, afterShards - beforeShards)
+  };
+  sound('gameover');
+  playResultBgm('gameover');
+  toast('코어 파괴 — 전투 기록 회수 완료');
+  log(`게임 오버: ${fmt2(summary.stageNo)}성역 ${fmt2(summary.wave)}웨이브 / 처치 ${fmt2(summary.kills)} / 조각 +${fmt2(summary.shardsGained)}`);
+  updateUI();
+  setTimeout(() => showGameOverOverlay(summary), 260);
+}
+
 function offlineUpgradeHtml(){
-  return `<div class="offlineUpgradeGrid">${Object.entries(OFFLINE_UPGRADE_CONFIG).map(([key,cfg])=>{
+  const nextStage = Math.min(STAGE_MAP_DEFS.length, Number(StageMapState?.unlocked || 1) + 1);
+  const entries = Object.entries(OFFLINE_UPGRADE_CONFIG).filter(([key,cfg]) => isOfflineUpgradeUnlocked(key) || Number(cfg.unlockStage || 1) <= nextStage);
+  return `<div class="offlineUpgradeGrid">${entries.map(([key,cfg])=>{
     const lv = Number(META.upgrades[key] || 0);
     const maxed = lv >= cfg.max;
+    const locked = !isOfflineUpgradeUnlocked(key);
     const cost = offlineUpgradeCost(key);
-    return `<button class="offlineUpgradeBtn" data-offline-upgrade="${key}" ${maxed?'disabled':''}>
-      <b>${cfg.name} Lv.${lv}/${cfg.max}</b><span>${cfg.desc}</span><em>${maxed?'MAX':`비용 ${cost}`}</em>
+    const catalog = getGlobalUpgrade(cfg.catalog || key);
+    const effect = catalog ? globalUpgradeText(catalog, Math.max(1, lv || 1)) : cfg.desc;
+    return `<button class="offlineUpgradeBtn ${locked?'locked':''}" data-offline-upgrade="${key}" ${locked || maxed?'disabled':''}>
+      <b>${cfg.name} Lv.${fmt2(lv)}/${fmt2(cfg.max)}</b><span>${locked ? `${fmt2(cfg.unlockStage)}성역 도달 시 오픈` : escapeHtml(effect)}</span><em>${locked?'LOCKED':(maxed?'MAX':`비용 ${fmt2(cost)}`)}</em>
     </button>`;
   }).join('')}</div>`;
 }
@@ -8085,10 +8755,13 @@ function renderOfflineMetaPanel(){
   const clears = Number(META.clears[String(selectedStage)] || 0);
   const best = Number(META.bestWave[String(selectedStage)] || 0);
   const rewardText = stageTowerRewardText(selectedStage);
-  const html = `<div class="offlineMetaTop"><div><div class="offlineMetaTitle">${story.title}</div><div class="offlineMetaStory">${story.intro}</div></div><div class="offlineMetaShard">성흔 조각 ${META.shards}</div></div>
-    <div class="offlineStatRow"><span class="offlinePill">선택 성역 클리어 ${clears}</span><span class="offlinePill">최고 웨이브 ${best}</span><span class="offlinePill">보유 타워 ${unlockedTowerCount()}/${BASE_PLANET_COUNT}</span><span class="offlinePill">${rewardText}</span><span class="offlinePill">소환 ${currentSummonCost()}</span></div>
+  const skillCount = unlockedGeneralSkillCount();
+  const totalSkill = Object.keys(OFFLINE_UPGRADE_CONFIG).length;
+  const globalLine = globalSkillSummaryText();
+  const html = `<div class="offlineMetaTop"><div><div class="offlineMetaTitle">${story.title}</div><div class="offlineMetaStory">일반 스킬은 성역 지도에서만 강화됩니다. 현재 전역 효과: ${escapeHtml(globalLine)}</div></div><div class="offlineMetaShard">성흔 조각 ${fmt2(META.shards)}</div></div>
+    <div class="offlineStatRow"><span class="offlinePill">선택 성역 클리어 ${fmt2(clears)}</span><span class="offlinePill">최고 웨이브 ${fmt2(best)}</span><span class="offlinePill">일반 스킬 ${fmt2(skillCount)}/${fmt2(totalSkill)}</span><span class="offlinePill">다음 오픈: ${escapeHtml(nextGeneralSkillUnlockText())}</span><span class="offlinePill">${rewardText}</span></div>
     ${offlineUpgradeHtml()}`;
-  const compact = `<div class="offlineMetaTop"><div><div class="offlineMetaTitle">${story.title}</div><div class="offlineMetaStory">${story.intro}</div></div><div class="offlineMetaShard">조각 ${META.shards}</div></div><div class="offlineStatRow"><span class="offlinePill">클리어 ${clears}</span><span class="offlinePill">최고 ${best}W</span><span class="offlinePill">타워 ${unlockedTowerCount()}/${BASE_PLANET_COUNT}</span><span class="offlinePill">${rewardText}</span></div>`;
+  const compact = `<div class="offlineMetaTop"><div><div class="offlineMetaTitle">${story.title}</div><div class="offlineMetaStory">전역 효과: ${escapeHtml(globalLine)}</div></div><div class="offlineMetaShard">조각 ${fmt2(META.shards)}</div></div><div class="offlineStatRow"><span class="offlinePill">클리어 ${fmt2(clears)}</span><span class="offlinePill">최고 ${fmt2(best)}W</span><span class="offlinePill">일반 ${fmt2(skillCount)}/${fmt2(totalSkill)}</span><span class="offlinePill">${rewardText}</span></div>`;
   const side = $('offlinePanelBody'); if(side) side.innerHTML = html;
   const menu = $('offlineMenuPanel'); if(menu) menu.innerHTML = html;
   const stage = $('offlineStagePanel'); if(stage) stage.innerHTML = compact;
@@ -8120,7 +8793,11 @@ function renderStageMapInfo(stageNo){
   const finalSkill = $('stageFinalBossSkill');
   if(title) title.textContent = `${def.stage}. ${def.name} / ${def.ko}`;
   if(risk) risk.textContent = presentation.risk;
-  if(mood) mood.textContent = `${def.mood} · ${presentation.note} · ${stageTowerRewardText(stageNo)}`;
+  if(mood){
+    const chapter = OFFLINE_CHAPTERS[Number(stageNo)] || OFFLINE_CHAPTERS[1];
+    const audioCue = STAGE_AUDIO_CUES[Number(def.theme)] || STAGE_AUDIO_CUES[0];
+    mood.textContent = `${def.mood} · ${presentation.note} · ${chapter.intro} · BGM: ${audioCue.mood} · ${stageTowerRewardText(stageNo)}`;
+  }
   if(tags){
     tags.innerHTML = presentation.tags.map(tag => `<span class="stageTag">${tag}</span>`).join('');
   }
@@ -8205,7 +8882,7 @@ function renderStageMap(){
   if(enter) enter.textContent = `ENTER ${def.stage}. ${def.name}`;
   if(hint) hint.textContent = TEST_MODE_CONFIG.enabled
     ? `TEST MODE — ${def.stage}. ${def.name} · ${def.ko} / 모든 성역과 타워가 일시적으로 활성화되었습니다.`
-    : `${def.stage}. ${def.name} · ${def.ko} — 10웨이브 클리어 시 다음 항로와 전용 타워가 개방됩니다. ${stageTowerRewardText(def.stage)}`;
+    : `${def.stage}. ${def.name} · ${def.ko} — ${WORLD_SCENARIO.loop}. ${stageTowerRewardText(def.stage)}`;
   renderStageMapInfo(selectedStage);
 }
 
@@ -8217,6 +8894,7 @@ function showStageMap(){
   if(game) game.style.display = 'none';
   if(map){ map.style.display = 'block'; map.classList.add('premiumStage'); }
   stopStageBgm();
+  if(audio && audio.on) playMapBgm();
   renderStageMap();
 }
 
@@ -8251,6 +8929,59 @@ function startSelectedStageFromMap(){
   raf=requestAnimationFrame(loop);
 }
 
+
+function removeStageClearOverlay(){
+  const existing = $('stageClearOverlay');
+  if(existing) existing.remove();
+}
+
+function showStageClearOverlay(summary){
+  removeStageClearOverlay();
+  const cleared = Number(summary.stageNo || StageMapState.current || 1);
+  const nextNo = Math.min(STAGE_MAP_DEFS.length, cleared + 1);
+  const def = getStageDef(cleared);
+  const nextDef = getStageDef(nextNo);
+  const reward = stageTowerReward(cleared);
+  const isFinal = cleared >= STAGE_MAP_DEFS.length;
+  const overlay = document.createElement('div');
+  overlay.id = 'stageClearOverlay';
+  overlay.className = 'stageClearOverlay';
+  overlay.innerHTML = `<div class="stageClearCard" role="dialog" aria-modal="true" aria-labelledby="stageClearTitle">
+    <div class="stageClearKicker">${escapeHtml(def.ko)} RESTORED</div>
+    <h2 id="stageClearTitle">${STORY_EVENT_TEXT.clearTitle}</h2>
+    <p>${escapeHtml(getOfflineStoryLog(cleared, 'clear'))}</p>
+    <div class="stageClearStats">
+      <div class="stageClearStat"><span>RESTORED</span><b>${fmt2(cleared)} / ${fmt2(STAGE_MAP_DEFS.length)}</b></div>
+      <div class="stageClearStat"><span>SHARDS</span><b>+${fmt2(summary.shardsGained)}</b></div>
+      <div class="stageClearStat"><span>REWARD</span><b>${reward ? escapeHtml(reward.name) : '완료'}</b></div>
+    </div>
+    <div class="stageClearReward">${escapeHtml(STORY_EVENT_TEXT.clearBody)} ${isFinal ? '모든 성역이 안정화되었습니다.' : `다음 항로: ${nextDef.name} / ${nextDef.ko}`}</div>
+    <div class="stageClearActions">
+      <button id="stageClearMapBtn" class="btnAlt">성역 지도에서 강화</button>
+      <button id="stageClearNextBtn" class="btnGreen">${isFinal ? '최종 성역 재도전' : '다음 성역 진입'}</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  const mapBtn = overlay.querySelector('#stageClearMapBtn');
+  const nextBtn = overlay.querySelector('#stageClearNextBtn');
+  if(mapBtn){
+    mapBtn.onclick = () => {
+      removeStageClearOverlay();
+      if(audio && audio.on) playMapBgm();
+      renderStageMap();
+    };
+  }
+  if(nextBtn){
+    nextBtn.onclick = () => {
+      removeStageClearOverlay();
+      StageMapState.selected = isFinal ? cleared : nextNo;
+      StageMapState.current = StageMapState.selected;
+      saveStageMapProgress();
+      startSelectedStageFromMap();
+    };
+  }
+}
+
 function completeStageFromBattle(){
   const cleared = clamp(Number(S.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
   const previousUnlocked = clamp(Number(StageMapState.unlocked || 1), 1, STAGE_MAP_DEFS.length);
@@ -8270,7 +9001,12 @@ function completeStageFromBattle(){
   renderStageMap();
   const firstHint = $('stageHint');
   if(firstHint) firstHint.textContent = `${clearedDef.stage}. ${clearedDef.name} 클리어! ${stageTowerRewardText(cleared)} · ${getOfflineStoryLog(cleared, 'clear')}`;
+  const beforeShards = Number(META?.shards || 0);
   recordOfflineRunEnd(true, cleared);
+  const afterShards = Number(META?.shards || 0);
+  const clearSummary = {stageNo:cleared, shardsGained:Math.max(0, afterShards - beforeShards)};
+  sound('clear');
+  playResultBgm('clear');
 
   reset();
   resetBattleUnitsForStageMap();
@@ -8288,6 +9024,7 @@ function completeStageFromBattle(){
         ? `모든 성역 클리어! 원하는 성역을 다시 선택해 재도전할 수 있습니다.`
         : `${nextDef.stage}. ${nextDef.name} / ${nextDef.ko} 해금 — ENTER로 진입하세요. 다음 보상: ${stageTowerRewardText(finalSelected)}`;
     }
+    showStageClearOverlay(clearSummary);
   }, 90);
 }
 
@@ -8319,7 +9056,7 @@ const PLANET_EVOLUTION_SHEETS = Object.fromEntries(Object.entries(PLANET_EVOLUTI
   return [key, img];
 }));
 
-const STAGE_FX_IMAGES = ['fx_cosmic.png?v=6','fx_ice.png?v=6','fx_lava.png?v=6','fx_jungle.png?v=6','bg_smog.png?v=1','bg_crystal.png?v=1','bg_machine.png?v=1'].map(src=>{
+const STAGE_FX_IMAGES = ['fx_cosmic.png?v=6','fx_frost.png?v=6','fx_lava.png?v=6','fx_jungle.png?v=6','fx_smog.png?v=1','fx_crystal.png?v=1','fx_machine.png?v=1'].map(src=>{
   const img = new Image();
   img.src = src;
   return img;
@@ -8333,12 +9070,71 @@ const BASE_PLANET_COUNT = 9;
 const HIDDEN_PLANET_TYPE = 9;
 const TECH_BONUS_PER_POINT = 0.08;
 
+function fmtInt(value){
+  const n = Number(value);
+  return Number.isFinite(n) ? String(Math.round(n)) : '0';
+}
+function fmt2(value){ return fmtInt(value); }
+function fmtPct2(value){ return `${fmtInt(Number(value || 0) * 100)}%`; }
+function fmtSigned2(value){
+  const n = Number(value);
+  if(!Number.isFinite(n)) return '0';
+  const v = Math.round(n);
+  return `${v >= 0 ? '+' : ''}${v}`;
+}
+function fmtWholeOr2(value){ return fmtInt(value); }
+
+const PLANET_THUMB_IMAGE_CACHE = {};
+function planetThumbLevel(level){
+  return Math.max(1, Math.min(6, Math.round(Number(level) || 1)));
+}
+function planetThumbSrc(type, level=1){
+  const p = PLANETS?.[Number(type)];
+  if(!p?.id) return '';
+  return `thumbs/${p.id}_lv${planetThumbLevel(level)}.png?v=align2`;
+}
+function planetThumbImage(type, level=1){
+  const src = planetThumbSrc(type, level);
+  if(!src) return null;
+  if(!PLANET_THUMB_IMAGE_CACHE[src]){
+    const img = new Image();
+    img.src = src;
+    PLANET_THUMB_IMAGE_CACHE[src] = img;
+  }
+  return PLANET_THUMB_IMAGE_CACHE[src];
+}
+function drawImageContainCentered(img, cx, cy, maxW, maxH){
+  if(!img || !img.complete || !img.naturalWidth || !img.naturalHeight) return false;
+  const ir = img.naturalWidth / img.naturalHeight;
+  const br = maxW / maxH;
+  let dw = maxW, dh = maxH;
+  if(ir > br){ dh = maxW / ir; }
+  else { dw = maxH * ir; }
+  ctx.drawImage(img, cx - dw / 2, cy - dh / 2, dw, dh);
+  return true;
+}
+
 const AUDIO_URLS = {
-  bgm: ['audio/bgm_cosmic.wav','audio/bgm_ice.wav','audio/bgm_lava.wav','audio/bgm_jungle.wav','audio/bgm_jungle.wav','audio/bgm_cosmic.wav','audio/bgm_cosmic.wav'],
+  bgm: {
+    map:'audio/bgm_map_starmap.wav',
+    boss:'audio/bgm_boss_incursion.wav',
+    clear:'audio/bgm_result_sanctuary_restored.wav',
+    gameover:'audio/bgm_result_core_collapse.wav',
+    stages:[
+      'audio/bgm_stage_01_cosmic_void.wav',
+      'audio/bgm_stage_02_frost_expanse.wav',
+      'audio/bgm_stage_03_lava_nebula.wav',
+      'audio/bgm_stage_04_jungle_core.wav',
+      'audio/bgm_stage_05_smog_wasteland.wav',
+      'audio/bgm_stage_06_crystal_nebula.wav',
+      'audio/bgm_stage_07_machine_core.wav'
+    ]
+  },
   sfx: {
     shot:'audio/sfx_shot.wav', beam:'audio/sfx_beam.wav', blackhole:'audio/sfx_blackhole.wav',
     nova:'audio/sfx_nova.wav', hit:'audio/sfx_hit.wav', kill:'audio/sfx_kill.wav',
-    treasure:'audio/sfx_treasure.wav', level:'audio/sfx_level.wav', summon:'audio/sfx_summon.wav', merge:'audio/sfx_merge.wav'
+    treasure:'audio/sfx_treasure.wav', level:'audio/sfx_level.wav', summon:'audio/sfx_summon.wav', merge:'audio/sfx_merge.wav',
+    boss:'audio/sfx_boss_warning.wav', clear:'audio/sfx_stage_clear.wav', gameover:'audio/sfx_core_collapse.wav', core:'audio/sfx_core_damage.wav', unlock:'audio/sfx_unlock.wav'
   }
 };
 
@@ -8559,56 +9355,188 @@ const TERRAIN = {
 
 const UNIT_SKILL_TREES = {
   solar: [
-    {id:'solar_core', name:'태양 핵융합로', text:l=>`해당 솔라 행성 공격력 +${18*l}%`, apply:(t)=>{ensureAug(t).damage+=.18}},
-    {id:'solar_flare', name:'플레어 장판', text:l=>`폭발 반경 +${22*l}%`, apply:(t)=>{ensureAug(t).area+=.22}},
-    {id:'solar_burn', name:'플레어 연소', text:l=>`연소 지속피해 +${35*l}%`, apply:(t)=>{ensureAug(t).dot+=.35}}
+    {id:'solar_core', name:'태양 핵융합로', text:l=>`해당 솔라 행성 공격력 +${fmt2(18*l)}%`, apply:(t)=>{ensureAug(t).damage+=.18}},
+    {id:'solar_flare', name:'플레어 장판', text:l=>`폭발 반경 +${fmt2(22*l)}%`, apply:(t)=>{ensureAug(t).area+=.22}},
+    {id:'solar_burn', name:'플레어 연소', text:l=>`연소 지속피해 +${fmt2(35*l)}%`, apply:(t)=>{ensureAug(t).dot+=.35}}
   ],
   frost: [
-    {id:'frost_core', name:'극저온 냉각핵', text:l=>`해당 프로스트 행성 공격력 +${16*l}%`, apply:(t)=>{ensureAug(t).damage+=.16}},
-    {id:'frost_lock', name:'절대영도 잠금', text:l=>`빙결 확률/지속 +${20*l}%`, apply:(t)=>{const a=ensureAug(t);a.freeze+=.20;a.freezeChance+=.05}},
-    {id:'frost_range', name:'냉기 렌즈', text:l=>`사거리 +${10*l}`, apply:(t)=>{ensureAug(t).range+=10}}
+    {id:'frost_core', name:'극저온 냉각핵', text:l=>`해당 프로스트 행성 공격력 +${fmt2(16*l)}%`, apply:(t)=>{ensureAug(t).damage+=.16}},
+    {id:'frost_lock', name:'절대영도 잠금', text:l=>`빙결 확률/지속 +${fmt2(20*l)}%`, apply:(t)=>{const a=ensureAug(t);a.freeze+=.20;a.freezeChance+=.05}},
+    {id:'frost_range', name:'냉기 렌즈', text:l=>`사거리 +${fmt2(10*l)}`, apply:(t)=>{ensureAug(t).range+=10}}
   ],
   storm: [
-    {id:'storm_coil', name:'플라즈마 유도 코일', text:l=>`해당 스톰 행성 공격력 +${15*l}%`, apply:(t)=>{ensureAug(t).damage+=.15}},
-    {id:'storm_chain', name:'연쇄 회로 증폭', text:l=>`연쇄 대상 +${l}`, apply:(t)=>{ensureAug(t).chain+=1}},
-    {id:'storm_break', name:'전하 표식', text:l=>`표식 피해 증폭 +${8*l}%`, apply:(t)=>{ensureAug(t).markAmp+=.08}}
+    {id:'storm_coil', name:'플라즈마 유도 코일', text:l=>`해당 스톰 행성 공격력 +${fmt2(15*l)}%`, apply:(t)=>{ensureAug(t).damage+=.15}},
+    {id:'storm_chain', name:'연쇄 회로 증폭', text:l=>`연쇄 대상 +${fmt2(l)}`, apply:(t)=>{ensureAug(t).chain+=1}},
+    {id:'storm_break', name:'전하 표식', text:l=>`표식 피해 증폭 +${fmt2(8*l)}%`, apply:(t)=>{ensureAug(t).markAmp+=.08}}
   ],
   toxic: [
-    {id:'toxic_reactor', name:'생체화학 반응로', text:l=>`독성 지속피해 +${40*l}%`, apply:(t)=>{ensureAug(t).dot+=.40}},
-    {id:'toxic_spore', name:'포자 확산막', text:l=>`독성 공격력 +${16*l}%`, apply:(t)=>{ensureAug(t).damage+=.16}},
-    {id:'toxic_slow', name:'마비 독성', text:l=>`중독 대상 둔화 +${l}`, apply:(t)=>{ensureAug(t).poisonSlow+=1}}
+    {id:'toxic_reactor', name:'생체화학 반응로', text:l=>`독성 지속피해 +${fmt2(40*l)}%`, apply:(t)=>{ensureAug(t).dot+=.40}},
+    {id:'toxic_spore', name:'포자 확산막', text:l=>`독성 공격력 +${fmt2(16*l)}%`, apply:(t)=>{ensureAug(t).damage+=.16}},
+    {id:'toxic_slow', name:'마비 독성', text:l=>`중독 대상 둔화 +${fmt2(l)}`, apply:(t)=>{ensureAug(t).poisonSlow+=1}}
   ],
   void: [
-    {id:'void_pull', name:'중력 우물 심화', text:l=>`블랙홀 흡입력 +${25*l}%`, apply:(t)=>{ensureAug(t).gravity+=.25}},
-    {id:'void_radius', name:'사건지평 확장', text:l=>`블랙홀 반경 +${18*l}%`, apply:(t)=>{ensureAug(t).area+=.18}},
-    {id:'void_decay', name:'공간 붕괴파', text:l=>`블랙홀 피해 +${17*l}%`, apply:(t)=>{ensureAug(t).damage+=.17}}
+    {id:'void_pull', name:'중력 우물 심화', text:l=>`블랙홀 흡입력 +${fmt2(25*l)}%`, apply:(t)=>{ensureAug(t).gravity+=.25}},
+    {id:'void_radius', name:'사건지평 확장', text:l=>`블랙홀 반경 +${fmt2(18*l)}%`, apply:(t)=>{ensureAug(t).area+=.18}},
+    {id:'void_decay', name:'공간 붕괴파', text:l=>`블랙홀 피해 +${fmt2(17*l)}%`, apply:(t)=>{ensureAug(t).damage+=.17}}
   ],
   laser: [
-    {id:'laser_lens', name:'광자 렌즈 정렬', text:l=>`광자 행성 공격력 +${17*l}%`, apply:(t)=>{ensureAug(t).damage+=.17}},
-    {id:'laser_width', name:'관통 빔 확장', text:l=>`빔 폭 +${5*l}`, apply:(t)=>{ensureAug(t).beamWidth+=5}},
-    {id:'laser_cooler', name:'광자 냉각 채널', text:l=>`공격속도 +${12*l}%`, apply:(t)=>{ensureAug(t).fireRate+=.12}}
+    {id:'laser_lens', name:'광자 렌즈 정렬', text:l=>`광자 행성 공격력 +${fmt2(17*l)}%`, apply:(t)=>{ensureAug(t).damage+=.17}},
+    {id:'laser_width', name:'관통 빔 확장', text:l=>`빔 폭 +${fmt2(5*l)}`, apply:(t)=>{ensureAug(t).beamWidth+=5}},
+    {id:'laser_cooler', name:'광자 냉각 채널', text:l=>`공격속도 +${fmt2(12*l)}%`, apply:(t)=>{ensureAug(t).fireRate+=.12}}
   ],
   smog: [
-    {id:'smog_choke', name:'정화 장막', text:l=>`정화 장막 반경 +${13*l}% · 장판 둔화 +${l}`, apply:(t)=>{const a=ensureAug(t);a.area+=.13;a.poisonSlow+=1}},
-    {id:'smog_catalyst', name:'스모그 응축', text:l=>`장판 체류 피해 +${30*l}% · 취약 표식 +${4*l}%`, apply:(t)=>{const a=ensureAug(t);a.dot+=.30;a.markAmp+=.04}},
-    {id:'smog_front', name:'역류 기류', text:l=>`적 역류 확률 +${Math.round(5.5*l)}% · 짧은 밀어내기`, apply:(t)=>{const a=ensureAug(t);a.burstChance+=.055;a.fireRate+=.03}}
+    {id:'smog_choke', name:'정화 장막', text:l=>`정화 장막 반경 +${fmt2(13*l)}% · 장판 둔화 +${fmt2(l)}`, apply:(t)=>{const a=ensureAug(t);a.area+=.13;a.poisonSlow+=1}},
+    {id:'smog_catalyst', name:'스모그 응축', text:l=>`장판 체류 피해 +${fmt2(30*l)}% · 취약 표식 +${fmt2(4*l)}%`, apply:(t)=>{const a=ensureAug(t);a.dot+=.30;a.markAmp+=.04}},
+    {id:'smog_front', name:'역류 기류', text:l=>`적 역류 확률 +${fmt2(5.5*l)}% · 짧은 밀어내기`, apply:(t)=>{const a=ensureAug(t);a.burstChance+=.055;a.fireRate+=.03}}
   ],
   crystal: [
-    {id:'crystal_charge', name:'수정 축전', text:l=>`초과 피해 저장률 +${18*l}% · 다음 공격 방출`, apply:(t)=>{ensureAug(t).crystalCharge+=.18}},
-    {id:'crystal_link', name:'프리즘 링크', text:l=>`장판 선로 지속 +${2*l}초 · 선로 피해 증가`, apply:(t)=>{ensureAug(t).prismLink+=1}},
-    {id:'crystal_resonance', name:'공명 장판', text:l=>`주변 장판 공명률 +${12*l}%`, apply:(t)=>{ensureAug(t).resonancePlate+=.12}}
+    {id:'crystal_charge', name:'수정 축전', text:l=>`초과 피해 저장률 +${fmt2(18*l)}% · 다음 공격 방출`, apply:(t)=>{ensureAug(t).crystalCharge+=.18}},
+    {id:'crystal_link', name:'프리즘 링크', text:l=>`장판 선로 지속 +${fmt2(2*l)}초 · 선로 피해 증가`, apply:(t)=>{ensureAug(t).prismLink+=1}},
+    {id:'crystal_resonance', name:'공명 장판', text:l=>`주변 장판 공명률 +${fmt2(12*l)}%`, apply:(t)=>{ensureAug(t).resonancePlate+=.12}}
   ],
   mecha: [
-    {id:'mecha_dismantle', name:'실드 해체', text:l=>`적 장갑 해체 +${Math.round(7*l)}% · 해체 시 수정 전환`, apply:(t)=>{ensureAug(t).shieldDismantle+=.07}},
-    {id:'mecha_satellite', name:'위성 조립', text:l=>`보조 위성포 발동률 +${Math.round(8*l)}%`, apply:(t)=>{ensureAug(t).satelliteForge+=.08}},
-    {id:'mecha_barrier', name:'비상 방벽', text:l=>`코어 근접 교전 시 보호막 +${l}`, apply:(t)=>{ensureAug(t).emergencyBarrier+=1}}
+    {id:'mecha_dismantle', name:'실드 해체', text:l=>`적 장갑 해체 +${fmt2(7*l)}% · 해체 시 수정 전환`, apply:(t)=>{ensureAug(t).shieldDismantle+=.07}},
+    {id:'mecha_satellite', name:'위성 조립', text:l=>`보조 위성포 발동률 +${fmt2(8*l)}%`, apply:(t)=>{ensureAug(t).satelliteForge+=.08}},
+    {id:'mecha_barrier', name:'비상 방벽', text:l=>`코어 근접 교전 시 보호막 +${fmt2(l)}`, apply:(t)=>{ensureAug(t).emergencyBarrier+=1}}
   ],
   starengine: [
-    {id:'star_crit', name:'쌍성 임계점', text:l=>`치명타 확률 +${9*l}%`, apply:(t)=>{ensureAug(t).critChance+=.09}},
-    {id:'star_burst', name:'STAR BURST 증폭', text:l=>`폭발 확률 +${7*l}%`, apply:(t)=>{ensureAug(t).burstChance+=.07}},
-    {id:'star_nova', name:'백색왜성 방출', text:l=>`치명타 배율 +${35*l}%`, apply:(t)=>{ensureAug(t).critMul+=.35}}
+    {id:'star_crit', name:'쌍성 임계점', text:l=>`치명타 확률 +${fmt2(9*l)}%`, apply:(t)=>{ensureAug(t).critChance+=.09}},
+    {id:'star_burst', name:'STAR BURST 증폭', text:l=>`폭발 확률 +${fmt2(7*l)}%`, apply:(t)=>{ensureAug(t).burstChance+=.07}},
+    {id:'star_nova', name:'백색왜성 방출', text:l=>`치명타 배율 +${fmt2(35*l)}%`, apply:(t)=>{ensureAug(t).critMul+=.35}}
   ]
 };
+
+
+
+
+const UNIT_SKILL_UNLOCK_LEVELS = [3, 6, 9];
+function towerSkillTree(type){
+  const id = PLANETS[type]?.id;
+  return UNIT_SKILL_TREES[id] || [];
+}
+function towerSkillUnlockLevel(index){
+  return UNIT_SKILL_UNLOCK_LEVELS[index] || (3 + index * 3);
+}
+function syncTowerSkillUnlocks(t){
+  if(!t) return [];
+  const skills = towerSkillTree(t.type);
+  if(!skills.length) return [];
+  ensureAug(t);
+  const newly = [];
+  for(let i=0;i<skills.length;i++){
+    const skill = skills[i];
+    const unlockLv = towerSkillUnlockLevel(i);
+    if(Number(t.level || 1) >= unlockLv && !t.skillLevels[skill.id]){
+      t.skillLevels[skill.id] = 1;
+      if(typeof skill.apply === 'function') skill.apply(t);
+      newly.push(skill);
+    }
+  }
+  return newly;
+}
+function towerSkillSummaryHtml(type, currentLevel=0){
+  const skills = towerSkillTree(type);
+  if(!skills.length) return '<p>고유 스킬 정보가 없습니다.</p>';
+  return `<div class="planetTowerSkillList">${skills.map((skill, idx)=>{
+    const lv = towerSkillUnlockLevel(idx);
+    const active = Number(currentLevel || 0) >= lv;
+    return `<div class="towerSkillLine ${active?'':'locked'}"><b>Lv.${fmt2(lv)}</b><div><strong>${escapeHtml(skill.name)}</strong><span>${escapeHtml(skill.text(1))}${active?' · 활성':' · 대기'}</span></div></div>`;
+  }).join('')}</div>`;
+}
+function towerSkillCompactText(t){
+  if(!t) return '없음';
+  const skills = towerSkillTree(t.type);
+  const unlocked = skills.filter((s, idx)=>Number(t.level || 1) >= towerSkillUnlockLevel(idx));
+  return unlocked.length ? unlocked.map(s=>s.name).join(' · ') : '아직 없음';
+}
+
+const GLOBAL_UPGRADE_MAX_LEVEL = 15;
+const GLOBAL_UPGRADE_CATALOG = [
+  {
+    id:'global_damage', name:'공통 화력 증폭', type:'화력', color:'#fb923c', icon:'global_damage',
+    desc:'배치된 모든 행성과 앞으로 소환될 행성의 기본 피해를 올립니다. 어느 조합에서도 가장 안정적인 선택입니다.',
+    text:l=>`모든 행성 공격력 +${fmtPct2(.10*l)}`
+  },
+  {
+    id:'global_speed', name:'공격속도 동기화', type:'속도', color:'#67e8f9', icon:'global_speed',
+    desc:'모든 행성의 공격 주기를 줄입니다. 감속/독/연쇄처럼 자주 때릴수록 강한 조합에서 효율이 큽니다.',
+    text:l=>`모든 행성 공격속도 +${fmtPct2(.08*l)}`
+  },
+  {
+    id:'global_crit', name:'치명타 매트릭스', type:'폭발력', color:'#fde68a', icon:'global_crit',
+    desc:'전체 화력에 치명타 기대값을 추가합니다. 보스 체력이 두꺼워지는 중후반에 가치가 커집니다.',
+    text:l=>`치명 확률 +${fmtPct2(.035*l)} · 치명 배율 +${fmtPct2(.08*l)}`
+  },
+  {
+    id:'global_range', name:'사거리 네트워크', type:'배치', color:'#a78bfa', icon:'global_range',
+    desc:'모든 행성의 사거리를 늘려 같은 타워가 더 오래 공격하게 만듭니다. 배치 실수 보정과 병목 커버에 좋습니다.',
+    text:l=>`모든 행성 사거리 +${fmt2(8*l)}`
+  },
+  {
+    id:'global_plate', name:'장판 증폭 회로', type:'장판', color:'#22c55e', icon:'global_plate',
+    desc:'증폭성운, 가속궤도, 중력렌즈, 수정광맥, 균열 장판 위 행성을 추가 강화합니다. 이 게임의 핵심 전략 업그레이드입니다.',
+    text:l=>`장판 위 피해 +${fmtPct2(.08*l)} · 장판 위 공격속도 +${fmtPct2(.05*l)}`
+  },
+  {
+    id:'global_boss', name:'보스 해체 프로토콜', type:'보스', color:'#f87171', icon:'global_boss',
+    desc:'보스와 장갑 적에게 들어가는 실제 피해를 올립니다. 5성역 이후 보스전이 막힐 때 우선순위가 높습니다.',
+    text:l=>`보스 피해 +${fmtPct2(.09*l)} · 방어 관통 +${fmtPct2(.02*l)}`
+  },
+  {
+    id:'global_economy', name:'전장 회수 시스템', type:'경제', color:'#facc15', icon:'global_economy',
+    desc:'처치 보상을 늘려 소환과 합성 속도를 빠르게 합니다. 초중반에 집으면 후반 성장 곡선이 좋아집니다.',
+    text:l=>`처치 보상 +${fmtPct2(.06*l)}`
+  }
+];
+
+function ensureGlobalUpgrades(){
+  if(!S) return {};
+  if(!S.globalUpgrades) S.globalUpgrades = {};
+  return S.globalUpgrades;
+}
+function globalUpgradeLevel(id){
+  const levels = S?.globalUpgrades || META?.upgrades || {};
+  return Math.max(0, Number(levels[id] || 0));
+}
+function getGlobalUpgrade(id){
+  return GLOBAL_UPGRADE_CATALOG.find(u => u.id === id) || null;
+}
+function getGlobalUpgradeStats(){
+  const levels = S?.globalUpgrades || META?.upgrades || {};
+  const lv = id => Math.max(0, Number(levels[id] || 0));
+  return {
+    damage: lv('global_damage') * .10,
+    fireRate: lv('global_speed') * .08,
+    critChance: lv('global_crit') * .035,
+    critMul: lv('global_crit') * .08,
+    range: lv('global_range') * 8,
+    plateDamage: lv('global_plate') * .08,
+    plateFireRate: lv('global_plate') * .05,
+    bossDamage: lv('global_boss') * .09,
+    armorBreak: lv('global_boss') * .02,
+    reward: lv('global_economy') * .06
+  };
+}
+function globalUpgradeText(upgrade, level){
+  if(!upgrade) return '';
+  return typeof upgrade.text === 'function' ? upgrade.text(level) : '';
+}
+function recommendedGlobalUpgradeIds(type){
+  const id = PLANETS[type]?.id;
+  const map = {
+    solar:['global_damage','global_plate','global_crit'],
+    frost:['global_speed','global_range','global_plate'],
+    storm:['global_speed','global_crit','global_damage'],
+    toxic:['global_speed','global_boss','global_plate'],
+    void:['global_range','global_plate','global_speed'],
+    laser:['global_damage','global_range','global_boss'],
+    smog:['global_plate','global_speed','global_boss'],
+    crystal:['global_plate','global_crit','global_damage'],
+    mecha:['global_boss','global_speed','global_economy'],
+    starengine:['global_crit','global_damage','global_boss']
+  };
+  return map[id] || ['global_damage','global_speed','global_plate'];
+}
 
 const TACTICAL_COOLDOWN_MAX = {blackhole:720, nova:820, repair:900};
 
@@ -8662,7 +9590,7 @@ function livePlanetLevel(type){
 }
 
 function planetThumbColumnForLevel(level){
-  const lv = Math.max(1, Math.min(5, Number(level) || 1));
+  const lv = Math.max(1, Math.min(6, Number(level) || 1));
   return lv - 1;
 }
 
@@ -8672,20 +9600,17 @@ function hangarVisualSignature(){
 }
 
 function applyLiveThumb(el, type, frameIndex){
-  const img = planetSheetImage(type);
   const forcedLevel = Number(el.dataset.level || 0);
   const level = forcedLevel > 0 ? forcedLevel : (livePlanetLevel(type) || 1);
-  const col = (type === HIDDEN_PLANET_TYPE && isHiddenLocked()) ? 0 : planetThumbColumnForLevel(level);
 
-  // Hangar thumbnails use pre-cut per-level PNG files.
-  // This avoids CSS sprite bleeding and keeps icons visually centered on mobile.
-  const isHangarThumb = el.closest && el.closest('#hangar');
-  if(isHangarThumb && PLANETS[type]){
-    const thumbLevel = Math.max(1, Math.min(6, level || 1));
-    const thumbId = PLANETS[type].id;
-    el.style.backgroundImage = `url("thumbs/${thumbId}_lv${thumbLevel}.png")`;
+  // 모든 유저 타워 썸네일은 동일한 중앙 정렬 PNG를 사용한다.
+  // 선택 패널/하단 카드/모바일 카드가 서로 다른 스프라이트 크롭 규칙을 타지 않게 고정한다.
+  const thumbSrc = planetThumbSrc(type, level);
+  if(thumbSrc){
+    const thumbLevel = planetThumbLevel(level);
+    el.style.backgroundImage = `url("${thumbSrc}")`;
     el.style.backgroundSize = 'contain';
-    el.style.backgroundPosition = 'center';
+    el.style.backgroundPosition = 'center center';
     el.style.backgroundRepeat = 'no-repeat';
     el.style.animationDelay = `${(type % 4) * .28}s`;
     el.dataset.renderedLevel = String(thumbLevel);
@@ -8694,6 +9619,8 @@ function applyLiveThumb(el, type, frameIndex){
     return;
   }
 
+  const img = planetSheetImage(type);
+  const col = (type === HIDDEN_PLANET_TYPE && isHiddenLocked()) ? 0 : planetThumbColumnForLevel(level);
   if(img){
     el.style.backgroundImage = `url("${img.src}")`;
     el.style.backgroundSize = `${PLANET_EVOLUTION_COLS * 100}% 100%`;
@@ -8723,7 +9650,7 @@ function hangarCostText(type){
   if(type === HIDDEN_PLANET_TYPE && isHiddenLocked()) return 'LOCK';
   if(type === HIDDEN_PLANET_TYPE) return 'UNLOCKED';
   if(!isTowerUnlocked(type)) return towerUnlockRequirementText(type);
-  return `COST ${p.cost || 100}`;
+  return `COST ${fmt2(p.cost || 100)}`;
 }
 
 function hangarRoleText(type){
@@ -8738,6 +9665,185 @@ function hangarRoleText(type){
   }
   const tags = Array.isArray(p.tags) && p.tags.length ? p.tags.slice(0,3).join(' · ') : '';
   return `${p.card || p.kind || '전투 행성'}${tags ? `<span class="techHint">${tags}</span>` : ''}`;
+}
+
+
+
+function escapeHtml(value){
+  return String(value ?? '').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+}
+
+function planetKindLabel(kind){
+  return ({
+    splash:'광역 폭발형', slow:'감속 제어형', chain:'연쇄 전격형', poison:'지속 피해형', gravity:'군중 제어형', beam:'관통 빔형', crystal:'축전 공명형', mecha:'방어 해체형', crit:'치명타 융합형'
+  })[kind] || '전투 행성';
+}
+
+function planetPlayGuide(type){
+  const p = PLANETS[type];
+  if(!p) return '';
+  const guides = {
+    solar:'적이 많이 겹치는 합류점에 배치하면 폭발 피해와 연소 효율이 가장 좋습니다.',
+    frost:'빠른 적과 보스의 진행 속도를 늦추는 제어 행성입니다. 코어 직전보다 중간 병목에 두는 편이 안정적입니다.',
+    storm:'여러 적에게 번개가 이어지는 다중 타깃 행성입니다. 적 라인이 길게 이어지는 구간에서 효율이 좋습니다.',
+    toxic:'보스와 고체력 적에게 누적 피해를 넣는 지속 피해 행성입니다. 오래 맞출 수 있는 경로 옆이 좋습니다.',
+    void:'적을 묶고 이동 흐름을 흔드는 제어 행성입니다. 다른 광역 행성 주변에 두면 시너지가 큽니다.',
+    laser:'직선 관통과 긴 사거리로 강한 단일 화력을 냅니다. 긴 직선 경로나 후방 저격 자리에 적합합니다.',
+    smog:'장판 제어와 둔화, 지속 피해를 함께 쓰는 행성입니다. 5성역 이후 혼잡한 경로에서 안정성이 좋습니다.',
+    crystal:'피해를 저장하고 공명시키는 설계형 행성입니다. 여러 장판 효과가 만나는 자리에 배치하면 성장 효율이 좋습니다.',
+    mecha:'실드 해체와 방어 보조에 강한 행성입니다. 장갑/실드 적이 늘어나는 후반 성역에서 가치가 큽니다.',
+    starengine:'기본 9종 Lv.5 달성 후 열리는 최종 병기입니다. 치명타와 폭발 피해로 후반 보스를 압박합니다.'
+  };
+  return guides[p.id] || `${p.card || p.kind || '전투 행성'} 역할을 담당합니다.`;
+}
+
+function planetDetailTowerSummary(type){
+  const placed = Array.isArray(grid) ? grid.filter(t => t && t.type === type) : [];
+  let highest = null;
+  for(const t of placed){
+    if(!highest || Number(t.level || 1) > Number(highest.level || 1)) highest = t;
+  }
+  return {placed, highest};
+}
+
+const PLANET_DETAIL_MAX_LEVEL = 12;
+const PLANET_SKILL_PREVIEW_MAX_LEVEL = 5;
+
+function planetBaseLevelStats(type, level){
+  const p = PLANETS[type];
+  const lv = Math.max(1, Math.min(PLANET_DETAIL_MAX_LEVEL, Number(level || 1)));
+  if(!p) return {dmg:0, range:0, cd:0};
+  return {
+    dmg: p.dmg + lv * 15,
+    range: Math.max(70, p.range + lv * 8),
+    cd: Math.max(8, p.cd - lv * 1.7)
+  };
+}
+
+function planetLevelNote(type, level){
+  const p = PLANETS[type];
+  if(!p) return '';
+  if(level === 1) return '소환 시작';
+  if(level === 3) return '1차 진화 외형';
+  if(level === 5) return type < BASE_PLANET_COUNT ? '2차 진화 · 히든 융합 재료 가능' : '2차 진화';
+  if(level === 7) return '3차 진화 외형';
+  if(level === 10) return '최종 진화 외형';
+  if(level === PLANET_DETAIL_MAX_LEVEL) return '최대 합성 레벨';
+  return '동일 행성 합성 성장';
+}
+
+function planetLevelProgressHtml(type, currentLevel=0){
+  const p = PLANETS[type];
+  if(!p) return '<p>레벨 성장 정보를 찾을 수 없습니다.</p>';
+  const rows = Array.from({length: PLANET_DETAIL_MAX_LEVEL}, (_, i) => i + 1).map(level => {
+    const st = planetBaseLevelStats(type, level);
+    const current = Number(currentLevel || 0) === level;
+    return `<tr class="${current ? 'current' : ''}">
+      <td>Lv.${fmt2(level)}</td>
+      <td>${fmt2(st.dmg)}</td>
+      <td>${fmt2(st.range)}</td>
+      <td>${fmt2(st.cd)}</td>
+      <td class="levelTier">${escapeHtml(planetEvolutionName(level))}</td>
+      <td>${escapeHtml(planetLevelNote(type, level))}</td>
+    </tr>`;
+  }).join('');
+  return `<div class="planetLevelTableWrap" style="--planet-color:${p.color}">
+    <table class="planetLevelTable">
+      <thead><tr><th>LEVEL</th><th>공격력</th><th>사거리</th><th>공격 주기</th><th>진화 단계</th><th>비고</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>
+  <div class="planetDetailNote">장판 보너스, 전술 업그레이드, 전술 버프, 스모그/먼지 페널티는 제외한 기본 성장 기준입니다. 공격 주기는 숫자가 낮을수록 빠릅니다.</div>`;
+}
+
+function planetSkillLevelPreviewHtml(skill){
+  if(!skill || typeof skill.text !== 'function') return '';
+  return `<div class="planetSkillPreview">
+    ${Array.from({length: PLANET_SKILL_PREVIEW_MAX_LEVEL}, (_, i) => i + 1).map(level => `<div><b>Lv.${fmt2(level)}</b><span>${escapeHtml(skill.text(level))}</span></div>`).join('')}
+  </div>`;
+}
+
+function planetGlobalSummaryHtml(){
+  return `<div class="planetGlobalText">${globalSkillSummaryHtml()}<br><span style="color:#94a3b8">일반 스킬은 성역 지도에서 강화되고, 전투 중에는 여기서 간략 표기만 됩니다.</span></div>`;
+}
+
+function showPlanetDetail(type){
+  const p = PLANETS[type];
+  const modal = $('planetDetailModal');
+  const body = $('planetDetailBody');
+  if(!p || !modal || !body) return;
+  const locked = isHangarPlanetLocked(type);
+  const unlocked = !locked && isTowerUnlocked(type);
+  const {placed, highest} = planetDetailTowerSummary(type);
+  const st = highest && typeof highest.stats === 'function' ? highest.stats() : null;
+  const levelText = highest ? `MAX Lv.${fmt2(highest.level || 1)}` : '보유 없음';
+  const statusText = locked ? `<span class="planetDetailLocked">${escapeHtml(hangarCostText(type))}</span>` : (unlocked ? escapeHtml(hangarCostText(type)) : escapeHtml(hangarCostText(type)));
+  const tags = Array.isArray(p.tags) ? p.tags : [];
+  body.innerHTML = `
+    <div class="planetDetailHero" style="--planet-color:${p.color}">
+      <div class="planetDetailThumb liveThumb" data-type="${type}" data-level="${highest ? fmt2(highest.level || 1) : 1}"></div>
+      <div>
+        <div class="planetDetailEyebrow">PLANET DETAIL</div>
+        <h2 class="planetDetailTitle" id="planetDetailTitle" style="color:${p.color}">${escapeHtml(p.name)}</h2>
+        <div class="planetDetailSubtitle">${escapeHtml(p.card || '')} · ${escapeHtml(planetKindLabel(p.kind))}</div>
+        <div class="planetDetailTags">${tags.map(x=>`<span class="tag">${escapeHtml(x)}</span>`).join('')}</div>
+      </div>
+    </div>
+    <div class="planetDetailGrid">
+      <div class="planetDetailStat"><small>상태</small><b>${statusText}</b></div>
+      <div class="planetDetailStat"><small>필드 보유</small><b>${fmt2(placed.length)}개</b></div>
+      <div class="planetDetailStat"><small>최고 레벨</small><b>${levelText}</b></div>
+      <div class="planetDetailStat"><small>타입</small><b>${escapeHtml(planetKindLabel(p.kind))}</b></div>
+      <div class="planetDetailStat"><small>기본 공격력</small><b>${fmt2(p.dmg)}</b></div>
+      <div class="planetDetailStat"><small>기본 사거리</small><b>${fmt2(p.range)}</b></div>
+      <div class="planetDetailStat"><small>공격 주기</small><b>${fmt2(p.cd)}</b></div>
+      <div class="planetDetailStat"><small>소환 비용</small><b>${type === HIDDEN_PLANET_TYPE ? '융합' : fmt2(p.cost || 0)}</b></div>
+      ${st ? `<div class="planetDetailStat"><small>현재 공격력</small><b>${fmt2(st.dmg)}</b></div>
+      <div class="planetDetailStat"><small>현재 사거리</small><b>${fmt2(st.range)}</b></div>` : ''}
+    </div>
+    <div class="planetDetailSection">
+      <h3>운용 설명</h3>
+      <p>${escapeHtml(planetPlayGuide(type))}</p>
+    </div>
+    <div class="planetDetailSection">
+      <h3>타워별 고유 스킬</h3>
+      ${towerSkillSummaryHtml(type, highest ? Number(highest.level || 1) : 0)}
+    </div>
+    <div class="planetDetailSection">
+      <h3>적용 중인 일반 스킬</h3>
+      ${planetGlobalSummaryHtml()}
+    </div>
+    <details class="planetDetailDetails">
+      <summary>레벨 성장표 보기</summary>
+      ${planetLevelProgressHtml(type, highest ? Number(highest.level || 1) : 0)}
+    </details>
+  `;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+  const thumb = body.querySelector('.liveThumb');
+  if(thumb) applyLiveThumb(thumb, type, highest ? Number(highest.level || 1) : 1);
+}
+
+function hidePlanetDetail(){
+  const modal = $('planetDetailModal');
+  if(!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden','true');
+}
+
+function bindHangarCardDetailEvents(){
+  document.querySelectorAll('#hangar .planetCard').forEach(card => {
+    card.setAttribute('tabindex','0');
+    card.setAttribute('role','button');
+    card.setAttribute('aria-label',`${card.querySelector('.planetCardName')?.textContent || '행성'} 상세 보기`);
+    card.addEventListener('click', () => showPlanetDetail(Number(card.dataset.type)));
+    card.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        showPlanetDetail(Number(card.dataset.type));
+      }
+    });
+  });
 }
 
 function renderHangar(){
@@ -8757,12 +9863,13 @@ function renderHangar(){
     </div>
   `;
   }).join('');
+  bindHangarCardDetailEvents();
   updateHangarVisuals(true);
   updateHangarState();
   const bh=$('blackholeBtn'), nv=$('novaBtn'), rp=$('repairBtn');
-  if(bh) bh.innerHTML = `Q<br>균열 포획 ${Math.ceil(S.tacticalCd.blackhole/60)||70}`;
-  if(nv) nv.innerHTML = `W<br>궤도 포격 ${Math.ceil(S.tacticalCd.nova/60)||75}`;
-  if(rp) rp.innerHTML = `E<br>코어 과충전 ${Math.ceil(S.tacticalCd.repair/60)||65}`;
+  if(bh) bh.innerHTML = `Q<br>균열 포획 ${fmt2(Math.ceil(S.tacticalCd.blackhole/60)||70)}`;
+  if(nv) nv.innerHTML = `W<br>궤도 포격 ${fmt2(Math.ceil(S.tacticalCd.nova/60)||75)}`;
+  if(rp) rp.innerHTML = `E<br>코어 과충전 ${fmt2(Math.ceil(S.tacticalCd.repair/60)||65)}`;
 }
 function updateHangarVisuals(force=false){
   const signature = hangarVisualSignature();
@@ -8784,7 +9891,7 @@ function updateHangarState(){
     const role = card.querySelector('.planetCardRole');
     if(role) role.innerHTML = `${hangarRoleText(type)}`;
     const badge = card.querySelector('.planetCardLevel');
-    if(badge) badge.textContent = highest > 0 ? `MAX Lv.${highest}` : 'LV.1';
+    if(badge) badge.textContent = highest > 0 ? `MAX Lv.${fmt2(highest)}` : 'LV.1';
   });
 }
 
@@ -8815,6 +9922,7 @@ function spawnImpactMist(x,y,color='rgba(74,222,128,.24)',count=5){
   for(let i=0;i<count;i++) particles.push({x:x+rand(-5,5),y:y+rand(-5,5),vx:rand(-.12,.12),vy:rand(-.22,.06),r:rand(7,11),life:20+Math.random()*10,maxLife:30,color,type:'smoke',core:'rgba(220,252,231,.20)',blur:6});
 }
 const SKILL_ICON_THEME = {
+  global_damage:['#fb923c','#fdba74','solarCore'], global_speed:['#67e8f9','#dbeafe','laserCooler'], global_crit:['#fde68a','#fff7cc','starCrit'], global_range:['#a78bfa','#ede9fe','frostRange'], global_plate:['#22c55e','#bbf7d0','stormBreak'], global_boss:['#f87171','#fecaca','starBurst'], global_economy:['#facc15','#fef3c7','toxicSpore'],
   solar_core:['#fb923c','#fdba74','solarCore'], solar_flare:['#f97316','#fbbf24','solarFlare'], solar_burn:['#ef4444','#fb923c','solarBurn'],
   frost_core:['#67e8f9','#dbeafe','frostCore'], frost_lock:['#93c5fd','#dbeafe','frostLock'], frost_range:['#38bdf8','#e0f2fe','frostRange'],
   storm_coil:['#facc15','#fde68a','stormCoil'], storm_chain:['#f59e0b','#fde047','stormChain'], storm_break:['#fcd34d','#fff7cc','stormBreak'],
@@ -8980,6 +10088,7 @@ function reset(){
   S = {
     theme:0,wave:1,gold:420,hp:22,maxHp:22,exp:0,level:1,nextExp:140,
     speed:1,paused:false,active:false,spawned:0,total:0,skillQueue:0,skillModalOpen:false,
+    globalUpgrades:{},
     hazardTimer:0,stageFx:null,stageArmorBonus:0,globalCooldownPenalty:0,
     hiddenUnlocked:false,
     tacticalCd:{blackhole:0,nova:0,repair:0},
@@ -8991,6 +10100,10 @@ function reset(){
     dustHintShown:false,
     combo:{kills:0,timer:0,best:0},
     mergeCombo:{count:0,timer:0},
+    runKills:0,
+    leakedEnemies:0,
+    coreDamageTaken:0,
+    gameOver:false,
     runEnded:false,
     offline:{summonCost:100,cooldownScale:1}
   };
@@ -9043,6 +10156,8 @@ function createMergedPlanet(a,b,idx){
   const p = new Planet(a.type, a.level+1, idx);
   p.aug = combineAugments(a,b);
   p.skillLevels = combineSkillLevels(a,b);
+  const unlocked = syncTowerSkillUnlocks(p);
+  if(unlocked.length && S){ log(`${p.def.name} Lv.${fmt2(p.level)} 고유 스킬 해금: ${unlocked.map(s=>s.name).join(' · ')}`); }
   return p;
 }
 function pointSeg(px,py,x1,y1,x2,y2){
@@ -9172,7 +10287,9 @@ function prepareWave(){
   if(S.currentBossInfo){
     const storyPhase = S.wave===10 ? 'final' : 'mid';
     markOfflineStory(S.stageNo || StageMapState.current || 1, storyPhase);
-    toast(`${S.currentBossInfo.tier} — ${S.currentBossInfo.name} / ${S.currentBossInfo.ko}`);
+    sound('boss', { intensity: storyPhase === 'final' ? 1.2 : 1 });
+    playStageBgm();
+    toast(`${STORY_EVENT_TEXT.boss} ${S.currentBossInfo.name} / ${S.currentBossInfo.ko}`);
     log(`보스 경보: ${S.currentBossInfo.name} / ${S.currentBossInfo.ability} — ${S.currentBossInfo.desc}`);
     log(`시나리오: ${getOfflineStoryLog(S.stageNo || StageMapState.current || 1, storyPhase)}`);
   }
@@ -9332,6 +10449,20 @@ function confineEnemyToRoute(enemy, maxOffset=12){
 }
 
 function drawPlanetSprite(type, x, y, size, frameIndex, level=1){
+  const thumbImg = planetThumbImage(type, level);
+  if(thumbImg && thumbImg.complete && thumbImg.naturalWidth){
+    const drawSize = size * (type === HIDDEN_PLANET_TYPE ? 1.20 : 1.14);
+    ctx.save();
+    ctx.imageSmoothingEnabled = true;
+    ctx.shadowColor = type === HIDDEN_PLANET_TYPE ? 'rgba(255,250,230,.48)' : 'rgba(255,255,255,.30)';
+    ctx.shadowBlur = type === HIDDEN_PLANET_TYPE ? 24 : 16;
+    ctx.filter = 'brightness(1.10) saturate(1.15)';
+    drawImageContainCentered(thumbImg, x, y, drawSize, drawSize);
+    ctx.filter = 'none';
+    ctx.restore();
+    return true;
+  }
+
   const evoImg = planetSheetImage(type);
   const evoCol = planetEvolutionColumn(level);
   if(evoImg && evoImg.complete && evoImg.naturalWidth){
@@ -9537,7 +10668,7 @@ function drawAnomalies(){
 
 class Planet{
   constructor(type,level,idx){
-    this.type=type;this.level=level;this.idx=idx;this.cool=rand(0,20);this.phase=Math.random()*TAU;this.frozen=0;this.uid=nextPlanetUid++;this.aug=defaultAug();this.skillLevels={};
+    this.type=type;this.level=level;this.idx=idx;this.cool=rand(0,20);this.phase=Math.random()*TAU;this.frozen=0;this.uid=nextPlanetUid++;this.aug=defaultAug();this.skillLevels={};syncTowerSkillUnlocks(this);
   }
   get def(){return PLANETS[this.type]}
   get pos(){return center(this.idx)}
@@ -9554,14 +10685,18 @@ class Planet{
   stats(){
     const b=this.terrainBonus();
     const a=ensureAug(this);
+    const g=getGlobalUpgradeStats();
     const ambient = getDustCloudPenalty(this.pos.x, this.pos.y);
+    const plateDamage = b.plate ? g.plateDamage : 0;
+    const plateFireRate = b.plate ? g.plateFireRate : 0;
+    const globalCritExpected = g.critChance * Math.max(0, (1.8 + g.critMul) - 1);
     return {
-      dmg:(this.def.dmg+this.level*15)*b.dmg*(1+a.damage) * ambient.damageMul,
-      range:Math.max(70,this.def.range+this.level*8+b.range+a.range),
-      cd:Math.max(8,(this.def.cd-this.level*1.7)*b.cd*(1+S.globalCooldownPenalty) * ambient.cooldownMul/(1+a.fireRate+S.tacticalBoost)),
+      dmg:(this.def.dmg+this.level*15)*b.dmg*(1+a.damage+g.damage+plateDamage+globalCritExpected) * ambient.damageMul,
+      range:Math.max(70,this.def.range+this.level*8+b.range+a.range+g.range),
+      cd:Math.max(8,(this.def.cd-this.level*1.7)*b.cd*(1+S.globalCooldownPenalty) * ambient.cooldownMul/(1+a.fireRate+g.fireRate+plateFireRate+S.tacticalBoost)),
       gold:b.gold, over:b.over,
-      critChance:(this.def.critChance||0)+a.critChance,
-      critMul:(this.def.critMul||1.8)+a.critMul,
+      critChance:(this.def.critChance||0)+a.critChance+g.critChance,
+      critMul:(this.def.critMul||1.8)+a.critMul+g.critMul,
       area:a.area, dot:a.dot, freeze:a.freeze, freezeChance:a.freezeChance,
       chain:a.chain, gravity:a.gravity, beamWidth:a.beamWidth, markAmp:a.markAmp,
       poisonSlow:a.poisonSlow, burstChance:a.burstChance,
@@ -9773,15 +10908,20 @@ class Enemy{
     confineEnemyToRoute(this, this.stageBoss ? 18 : 12);
   }
   damage(v,source,color){
-    let final=v*(1-clamp((this.armor||0)+S.stageArmorBonus,0,.72));
+    const g = getGlobalUpgradeStats();
+    const armorValue = Math.max(0, (this.armor||0) + S.stageArmorBonus - (g.armorBreak||0));
+    let final=v*(1-clamp(armorValue,0,.72));
+    if(this.boss || this.stageBoss) final*=1+(g.bossDamage||0);
     if(this.mark>0) final*=1.22;
     this.hp-=final;
-    if(final>18)floatText(this.x+rand(-5,5),this.y-this.size-rand(0,4),Math.round(final),color||'#fff', Math.min(15, 10 + final * .05), 50);
+    if(final>18)floatText(this.x+rand(-5,5),this.y-this.size-rand(0,4),final,color||'#fff', Math.min(15, 10 + final * .05), 50);
   }
   kill(){
     if(this.dead)return;
     this.dead=true;
-    const reward=Math.max(1,Math.floor((6+S.wave*.9)*this.reward*(1+S.mods.reward)));
+    S.runKills = (S.runKills || 0) + 1;
+    const g = getGlobalUpgradeStats();
+    const reward=Math.max(1,Math.floor((6+S.wave*.9)*this.reward*(1+S.mods.reward+(g.reward||0))));
     S.gold+=reward;
     gainExp(this.exp);
     burst(this.x,this.y,this.color,22,38);
@@ -9791,12 +10931,15 @@ class Enemy{
       if(Math.random()<.55){
         const bonus=45+S.wave*8;
         S.gold+=bonus;
-        toast(`황금 보물성 파괴! 수정 +${bonus}`);
-        impactLabel(this.x,this.y-this.size-34,`+${bonus} CRYSTAL`,'#fde68a',18,78);
+        toast(`황금 보물성 파괴! 수정 +${fmt2(bonus)}`);
+        impactLabel(this.x,this.y-this.size-34,`+${fmt2(bonus)} CRYSTAL`,'#fde68a',18,78);
         sound('treasure');
       }else{
-        toast('황금 보물성 파괴! 희귀 스킬 선택');
-        openSkillChoice(true);
+        const shardBonus = Math.max(2, Math.floor(2 + S.wave / 3));
+        if(META){ META.shards += shardBonus; saveOfflineMeta(); renderOfflineMetaPanel(); }
+        toast(`황금 보물성 파괴! 성흔 조각 +${fmt2(shardBonus)}`);
+        impactLabel(this.x,this.y-this.size-34,`+${fmt2(shardBonus)} SHARD`,'#fde68a',18,78);
+        sound('treasure');
       }
     }else{
       sound('kill');
@@ -9810,13 +10953,18 @@ class Enemy{
       const block = Math.min(S.coreShield, coreHit);
       S.coreShield -= block;
       coreHit -= block;
-      impactLabel(CORE.x, CORE.y - 54, `SHIELD -${block}`, '#bfdbfe', 15, 66);
+      impactLabel(CORE.x, CORE.y - 54, `SHIELD -${fmt2(block)}`, '#bfdbfe', 15, 66);
     }
     S.hp-=coreHit;
+    S.leakedEnemies = (S.leakedEnemies || 0) + 1;
+    S.coreDamageTaken = (S.coreDamageTaken || 0) + coreHit;
     shake=24;flash=.25;
     burst(CORE.x,CORE.y,'#fb7185',34,52);
     sound('hit');
-    if(S.hp<=0){S.hp=0;recordOfflineRunEnd(false);toast('코어 파괴 — 성흔 조각으로 영구 강화를 진행하세요');S.paused=true}
+    if(S.hp<=0){
+      triggerGameOver('core');
+      return;
+    }
     updateUI();
   }
   draw(){
@@ -9962,7 +11110,7 @@ function applyEmergencyBarrier(tower, target, st){
   const add = Math.max(1, Math.floor(st.emergencyBarrier));
   S.coreShield = Math.min(12, (S.coreShield || 0) + add);
   ring(CORE.x, CORE.y, 42 + S.coreShield * 2, '#93c5fd');
-  impactLabel(CORE.x, CORE.y - 42, `BARRIER +${add}`, '#bfdbfe', 13, 58);
+  impactLabel(CORE.x, CORE.y - 42, `BARRIER +${fmt2(add)}`, '#bfdbfe', 13, 58);
   updateUI();
 }
 
@@ -10024,7 +11172,7 @@ class Bullet{
         const gain = Math.max(1, Math.floor(dismantle * 36));
         S.gold += gain;
         finalDmg *= 1 + dismantle * 2.8;
-        impactLabel(this.target.x, this.target.y - this.target.size - 20, `실드 해체 +${gain}`, '#bfdbfe', 12, 58);
+        impactLabel(this.target.x, this.target.y - this.target.size - 20, `실드 해체 +${fmt2(gain)}`, '#bfdbfe', 12, 58);
       }
       this.target.damage(finalDmg, 'mecha', this.color);
       triggerMechaSatellite(this.tower, this.target, this.st, dmg);
@@ -10128,7 +11276,7 @@ function triggerBossSkill(enemy){
   const healPct = pct => {
     const gain = Math.floor(enemy.maxHp * pct);
     enemy.hp = Math.min(enemy.maxHp, enemy.hp + gain);
-    impactLabel(enemy.x, enemy.y - enemy.size - 40, `+${gain} HP`, '#bbf7d0', 14, 64);
+    impactLabel(enemy.x, enemy.y - enemy.size - 40, `+${fmt2(gain)} HP`, '#bbf7d0', 14, 64);
   };
   switch(enemy.bossEffect){
     case 'phaseRegen':
@@ -10332,13 +11480,12 @@ function gainExp(v){
     S.exp -= S.nextExp;
     S.level++;
     S.nextExp = Math.floor(S.nextExp * 1.24 + 24);
-    S.skillQueue++;
     leveled++;
   }
-  if(leveled>0) log(`레벨 ${S.level} 도달 — 랜덤 유닛 성장 ${S.skillQueue}개 대기`);
-  if(S.skillQueue>0 && !S.skillModalOpen) openSkillChoice(false);
+  if(leveled>0) log(`전투 레벨 ${fmt2(S.level)} 도달 — 전술 에너지 안정화`);
   updateUI();
 }
+
 
 function liveTowers(){
   return grid.map((t,idx)=>t?{t,idx}:null).filter(Boolean);
@@ -10358,37 +11505,44 @@ function rarityApplyCount(c){
   if(c.rarity === 'epic' || c.rarity === 'rare' || c.rare) return 2;
   return 1;
 }
-function makeUnitSkillCandidate(rare=false){
-  const list = liveTowers();
-  if(!list.length) return null;
-  const picked = list[Math.floor(Math.random()*list.length)];
-  const tree = UNIT_SKILL_TREES[picked.t.def.id] || UNIT_SKILL_TREES.solar;
-  const skill = tree[Math.floor(Math.random()*tree.length)];
-  const current = picked.t.skillLevels?.[skill.id] || 0;
+function makeGlobalUpgradeCandidate(rare=false, usedIds=new Set()){
+  const pool = GLOBAL_UPGRADE_CATALOG.filter(u => !usedIds.has(u.id) && globalUpgradeLevel(u.id) < GLOBAL_UPGRADE_MAX_LEVEL);
+  if(!pool.length) return null;
+  const upgrade = pool[Math.floor(Math.random()*pool.length)];
+  const current = globalUpgradeLevel(upgrade.id);
   const rarity = rollSkillRarity(rare);
-  const step = rarity === 'legendary' ? 3 : (rarity === 'epic' || rarity === 'rare' || rare ? 2 : 1);
-  return {uid:picked.t.uid, idx:picked.idx, type:picked.t.type, planetName:picked.t.def.name, color:picked.t.def.color, skill, nextLevel:current+step, rare, rarity};
+  const rawStep = rarity === 'legendary' ? 3 : (rarity === 'epic' || rarity === 'rare' || rare ? 2 : 1);
+  const step = Math.max(1, Math.min(rawStep, GLOBAL_UPGRADE_MAX_LEVEL - current));
+  return {
+    upgrade,
+    key:upgrade.id,
+    currentLevel:current,
+    nextLevel:current + step,
+    rare,
+    rarity,
+    color:upgrade.color || '#67e8f9'
+  };
 }
-function applyUnitSkillCandidate(c){
-  let idx = grid.findIndex(t => t && t.uid === c.uid);
-  if(idx < 0){
-    const list = liveTowers();
-    if(!list.length) return false;
-    idx = list[Math.floor(Math.random()*list.length)].idx;
+function applyGlobalUpgradeCandidate(c){
+  if(!c || !c.upgrade) return false;
+  const levels = ensureGlobalUpgrades();
+  const prev = Math.max(0, Number(levels[c.upgrade.id] || 0));
+  const count = Math.max(1, Math.min(GLOBAL_UPGRADE_MAX_LEVEL - prev, Number(c.nextLevel || prev + rarityApplyCount(c)) - prev));
+  if(count <= 0) return false;
+  levels[c.upgrade.id] = prev + count;
+  const color = c.upgrade.color || '#67e8f9';
+  for(const t of grid){
+    if(!t) continue;
+    const p = t.pos;
+    burst(p.x,p.y,color,12 + count*5,22 + count*5);
   }
-  const t = grid[idx];
-  ensureAug(t);
-  const prev = t.skillLevels[c.skill.id] || 0;
-  const count = rarityApplyCount(c);
-  t.skillLevels[c.skill.id] = prev + count;
-  for(let i=0;i<count;i++) c.skill.apply(t);
-  selected = idx;
-  const p = center(idx);
-  burst(p.x,p.y,t.def.color,24 + count*10,38 + count*8);
-  ring(p.x,p.y,54 + count*10,t.def.color);
-  impactLabel(p.x,p.y-42,`${rarityLabel(c.rarity)} UPGRADE`,t.def.color,16 + count*2,82);
+  ring(CORE.x, CORE.y, 72 + count*8, color);
+  impactLabel(CORE.x, CORE.y - 58, `${rarityLabel(c.rarity)} GLOBAL`, color, 16 + count, 82);
   shake = Math.max(shake, 4 + count*2);
   return true;
+}
+function applyUnitSkillCandidate(c){
+  return applyGlobalUpgradeCandidate(c);
 }
 function openSkillChoice(rare){
   S.paused=true;
@@ -10397,43 +11551,45 @@ function openSkillChoice(rare){
   const modal=$('modal'), box=$('choices');
   box.innerHTML='';
   const picks=[];
+  const used = new Set();
   let guard=0;
   while(picks.length<3 && guard++<30){
-    const c=makeUnitSkillCandidate(rare);
+    const c=makeGlobalUpgradeCandidate(rare, used);
     if(!c) break;
-    const key=c.uid+'_'+c.skill.id;
-    if(!picks.some(x=>x.key===key)) picks.push({...c,key});
+    used.add(c.upgrade.id);
+    picks.push(c);
   }
   if(!picks.length){
-    box.innerHTML='<div class="choice"><div class="choiceSkillRow"><div class="choiceSkillIcon"></div><div class="choiceSkillMeta"><h3>배치된 행성이 없습니다</h3></div></div><p class="choiceDesc">먼저 랜덤 소환으로 행성을 배치하세요.</p></div>';
+    box.innerHTML='<div class="choice"><div class="choiceSkillRow"><div class="choiceSkillIcon"></div><div class="choiceSkillMeta"><h3>전술 업그레이드 완료</h3></div></div><p class="choiceDesc">모든 기본 전술 업그레이드가 최대 레벨입니다.</p></div>';
   }
   picks.forEach(c=>{
     const div=document.createElement('div');
     div.className=`choice ${c.rarity || 'common'}`;
-    const icon = skillIconSvg(c.skill.id);
+    const icon = skillIconSvg(c.upgrade.icon || c.upgrade.id);
+    const currentText = c.currentLevel > 0 ? `현재 Lv.${fmt2(c.currentLevel)}` : '미습득';
     div.innerHTML=`<span class="choiceBadge">${rarityLabel(c.rarity)}</span>
       <div class="choiceTop">
         <div>
-          <span class="choiceMode">${rare?'TREASURE UNIT SKILL':'RANDOM UNIT SKILL'}</span>
-          <div class="choicePlanetName" style="color:${c.color}">${c.planetName}</div>
+          <span class="choiceMode">${rare?'TREASURE GLOBAL UPGRADE':'GLOBAL UPGRADE'}</span>
+          <div class="choicePlanetName" style="color:${c.color}">${c.upgrade.type}</div>
         </div>
       </div>
       <div class="choiceSkillRow">
-        <div class="choiceSkillIcon"><img alt="skill icon" src="${icon}"></div>
+        <div class="choiceSkillIcon"><img alt="upgrade icon" src="${icon}"></div>
         <div class="choiceSkillMeta">
-          <h3>${c.skill.name}</h3>
-          <div class="choiceLevel">Lv.${c.nextLevel}</div>
+          <h3>${c.upgrade.name}</h3>
+          <div class="choiceLevel">${currentText} → Lv.${fmt2(c.nextLevel)}</div>
         </div>
       </div>
-      <p class="choiceDesc">${c.skill.text(c.nextLevel)}</p>
-      <span class="choiceBoost">${rarityApplyCount(c)}단계 성장 · 맵 위 아군 행성 1개만 강화</span>`;
+      <p class="choiceDesc">${globalUpgradeText(c.upgrade, c.nextLevel)}</p>
+      <span class="choiceBoost">${fmt2(c.nextLevel-c.currentLevel)}단계 성장 · 모든 행성과 앞으로 소환될 행성에 적용</span>`;
     div.onclick=()=>{
-      const ok=applyUnitSkillCandidate(c);
+      const ok=applyGlobalUpgradeCandidate(c);
       modal.style.display='none';
       S.skillModalOpen=false;
       if(ok){
-        toast(`${rarityLabel(c.rarity)} 성장: ${c.planetName} / ${c.skill.name}`);
-        log(`랜덤 성장(${rarityLabel(c.rarity)}): ${c.planetName} / ${c.skill.name} Lv.${c.nextLevel}`);
+        toast(`${rarityLabel(c.rarity)} 전술 강화: ${c.upgrade.name}`);
+        log(`전술 업그레이드(${rarityLabel(c.rarity)}): ${c.upgrade.name} Lv.${fmt2(c.nextLevel)} — ${globalUpgradeText(c.upgrade, c.nextLevel)}`);
         sound('level');
       }
       updateSelected(); updateUI();
@@ -10444,7 +11600,6 @@ function openSkillChoice(rare){
   });
   modal.style.display='flex';
 }
-
 
 function updateTacticalCooldowns(dt){
   for(const k of Object.keys(S.tacticalCd||{})) S.tacticalCd[k]=Math.max(0,S.tacticalCd[k]-dt);
@@ -10498,6 +11653,7 @@ function useSkill(type){
 }
 
 function summon(typeOverride=null){
+  if(S.gameOver) return;
   const pool = availableSummonTypes();
   const preferred = Number(typeOverride);
   const type = pool.includes(preferred) ? preferred : pool[Math.floor(Math.random()*pool.length)];
@@ -10515,6 +11671,7 @@ function summon(typeOverride=null){
   updateSelected();updateUI();
 }
 function autoMerge(){
+  if(S.gameOver) return;
   for(let i=0;i<grid.length;i++){
     const a=grid[i];if(!a)continue;
     for(let j=i+1;j<grid.length;j++){
@@ -10644,8 +11801,8 @@ function waveDone(){
   const bonus=150+S.wave*24+S.theme*55;
   S.gold+=bonus;
   S.hp=Math.min(S.maxHp,S.hp+S.mods.repair);
-  toast(`웨이브 클리어! 수정 +${bonus}`);
-  log(`웨이브 클리어 보상: 수정 ${bonus}`);
+  toast(`웨이브 클리어! 수정 +${fmt2(bonus)}`);
+  log(`웨이브 클리어 보상: 수정 ${fmt2(bonus)}`);
   recordOfflineWaveProgress();
 
   if(S.wave >= 10){
@@ -10956,7 +12113,7 @@ function loop(now){
   drawBeams(raw);drawParticles(raw);drawFloats(raw);drawDragging();
 
   if(flash>0){ctx.globalAlpha=flash;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);flash=Math.max(0,flash-.035*raw);ctx.globalAlpha=1}
-  if(S.paused){
+  if(S.paused && !S.gameOver){
     ctx.globalAlpha=.16;ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
     ctx.globalAlpha=1;ctx.fillStyle='#fff';ctx.font='900 32px Orbitron';ctx.textAlign='center';
     ctx.fillText('PAUSED',W/2,90);
@@ -10969,56 +12126,45 @@ function updateUI(){
   $('stageLabel').textContent=`${S.theme+1}-${S.wave}`;
   const waveLabel = S.wave===5 ? '중간 보스 웨이브' : S.wave===10 ? '최종 보스 웨이브' : (S.wave%4===0 ? '압박 웨이브' : '장판 방어');
   $('stageType').textContent=waveLabel;
-  $('gold').textContent=S.gold;
-  $('hp').textContent=S.coreShield ? `${S.hp}+${S.coreShield}` : S.hp;
-  $('exp').textContent=`${S.exp}/${S.nextExp}`;
+  $('gold').textContent=fmt2(S.gold);
+  $('hp').textContent=S.coreShield ? `${fmt2(S.hp)}+${fmt2(S.coreShield)}` : fmt2(S.hp);
+  $('exp').textContent=`${fmt2(S.exp)}/${fmt2(S.nextExp)}`;
   const expBar=$('expBar'); if(expBar) expBar.style.width=clamp(S.exp/S.nextExp*100,0,100)+'%';
-  $('level').textContent=`${S.level}`;
+  $('level').textContent=fmt2(S.level);
   $('waveBar').style.width=S.total?Math.floor(S.spawned/S.total*100)+'%':'0%';
-  $('speedBtn').textContent=S.speed+'x';
+  $('speedBtn').textContent=`${fmt2(S.speed)}x`;
   $('pauseBtn').textContent=S.paused?'재개':'일시정지';
-  $('summonBtn').textContent=`랜덤 소환 ${currentSummonCost()}`;
+  $('summonBtn').textContent=`랜덤 소환 ${fmt2(currentSummonCost())}`;
+  const globalLine = $('globalEffectLine');
+  if(globalLine) globalLine.innerHTML = `<b>GLOBAL</b>${escapeHtml(globalSkillSummaryText())}`;
   renderOfflineMetaPanel();
   updateHangarState();
 }
 
 function updateSelected(){
   const box=$('selectedText');
+  if(!box) return;
   if(selected<0){
-    const bossTier = S.wave >= 10 ? 'final' : 'mid';
-    const boss = getStageBossDef(S.stageNo || StageMapState.current || 1, bossTier);
-    const bossOpen = S.wave >= (bossTier === 'final' ? 10 : 5);
-    box.innerHTML=`행성 장판을 터치하면 능력과 장판 보너스가 표시됩니다.<br><br><b>소환</b>은 랜덤만 가능하고, 레벨업 보상은 맵 위 <b>아군 행성 1개</b>에만 무작위로 붙습니다.<br><br><b>히든 행성</b>: 기본 행성 9종을 모두 Lv.5 이상으로 모으면 자동 융합됩니다.<br><br>하단 카드는 강화 버튼이 아니라 현재 행성 계열 목록입니다.
-      <div class="bossPreview">
-        <div class="bossTier">${boss.tier} PREVIEW</div>
-        <div class="bossName" style="color:${boss.color}">${boss.name} · ${boss.ko}</div>
-        <div class="bossDesc">${boss.title} · ${boss.ability}<br>${boss.desc}</div>
-        <div class="bossMeta">
-          <span class="tag">${bossOpen ? '현재 해금 구간' : (bossTier === 'final' ? '10 WAVE' : '5 WAVE')}</span>
-          <span class="tag">코어 피해 ${boss.coreDamage}</span>
-          <span class="tag">보상 배수 x${boss.rewardMul}</span>
-        </div>
-      </div>`;
+    box.innerHTML=`장판을 선택하면 배치 가능 여부와 행성 정보만 표시됩니다.<br><span class="compactHint">일반 스킬은 성역 지도에서 관리됩니다.</span>`;
     updateHangarState();
-    return
+    return;
   }
   const t=grid[selected], tr=TERRAIN[terrain[selected]];
   if(!t){
-    box.innerHTML=`<b>선택 장판</b><br>${tr.name} — ${tr.desc}<br><br>${canBuild(selected)?'이곳에는 행성을 배치할 수 있습니다.':'이곳에는 배치할 수 없습니다.'}`;
+    box.innerHTML=`<b>선택 장판</b> ${tr.name}<br><span class="compactHint">${canBuild(selected)?'배치 가능':'배치 불가'} · ${tr.desc}</span>`;
     updateHangarState();
     return;
   }
   const st=t.stats();
-  const critText = t.def.id==='starengine' ? ` · <b>치명타</b> ${Math.round((st.critChance + t.level*0.03)*100)}% · <b>폭발</b> ${Math.round((t.def.explodeChance||0)*100)}%` : '';
-  box.innerHTML=`<div class="selectedHead">
-      <div class="planetThumb big liveThumb" data-type="${t.type}" data-level="${t.level}"></div>
+  const critText = t.def.id==='starengine' ? ` · 치명 ${fmtPct2(st.critChance + t.level*0.03)}` : '';
+  box.innerHTML=`<div class="selectedCompactHead">
+      <div class="planetThumb liveThumb" data-type="${t.type}" data-level="${t.level}"></div>
       <div>
-        <div class="towerName" style="color:${t.def.color}">${t.def.name} Lv.${t.level}</div>
-        <div class="sub">${t.def.card} · ${t.def.kind} 타입 유닛 · 드래그 미리보기는 현재 선택한 행성의 실제 레벨 이미지로 표시됩니다</div>
+        <div class="towerName" style="color:${t.def.color}">${t.def.name} Lv.${fmt2(t.level)}</div>
+        <div class="compactHint">${t.def.card} · ${planetEvolutionName(t.level)}</div>
       </div>
     </div>
-    <div class="tags">${t.def.tags.map(x=>`<span class="tag">${x}</span>`).join('')}</div>
-    <br><b>공격력</b> ${Math.round(st.dmg)} · <b>사거리</b> ${Math.round(st.range)}${critText} · <b>장판</b> ${tr.name} / ${tr.desc}<br><b>진화 단계</b> ${planetEvolutionName(t.level)} · <b>개별 성장</b> ${Object.keys(t.skillLevels||{}).length}개 활성`;
+    <div class="selectedCompactStats">공격 ${fmt2(st.dmg)} · 사거리 ${fmt2(st.range)}${critText}<br>장판 ${tr.name} · ${escapeHtml(towerSkillCompactText(t))}</div>`;
   updateHangarVisuals(true);
   updateHangarState();
 }
@@ -11033,7 +12179,7 @@ function toast(t){
   $('toastLayer').appendChild(div);
   setTimeout(()=>div.remove(),3000);
 }
-function floatText(x,y,text,color,size=12,life=54){floats.push({x,y,text:String(text),color,life,maxLife:life,vy:-.52,size})}
+function floatText(x,y,text,color,size=12,life=54){floats.push({x,y,text:(typeof text === 'number' ? fmt2(text) : String(text)),color,life,maxLife:life,vy:-.52,size})}
 function burst(x,y,color,count,force){
   for(let i=0;i<count;i++){
     const a=Math.random()*TAU,s=rand(.5,force/22);
@@ -11043,7 +12189,7 @@ function burst(x,y,color,count,force){
 function ring(x,y,r,color){particles.push({x,y,r:2,max:r,color,life:26,maxLife:26,ring:true})}
 
 function impactLabel(x,y,text,color='#fff',size=18,life=76){
-  floats.push({x,y,text:String(text),color,life:Math.round(life*.86),maxLife:Math.round(life*.86),vy:-.48,size:Math.round(size*.92)});
+  floats.push({x,y,text:(typeof text === 'number' ? fmt2(text) : String(text)),color,life:Math.round(life*.86),maxLife:Math.round(life*.86),vy:-.48,size:Math.round(size*.92)});
 }
 function signatureChance(tower,base=.10,perLevel=.012){
   return Math.random() < Math.min(.38, base + tower.level * perLevel);
@@ -11067,12 +12213,12 @@ function registerKillCombo(enemy){
   S.combo.best = Math.max(S.combo.best||0, S.combo.kills);
   if(S.combo.kills >= 3){
     const color = S.combo.kills >= 12 ? '#fde68a' : S.combo.kills >= 7 ? '#d8b4fe' : '#7dd3fc';
-    impactLabel(enemy.x, enemy.y-enemy.size-18, `KILL x${S.combo.kills}`, color, Math.min(21, 13 + S.combo.kills*.55), 62);
+    impactLabel(enemy.x, enemy.y-enemy.size-18, `KILL x${fmt2(S.combo.kills)}`, color, Math.min(21, 13 + S.combo.kills*.55), 62);
     if(S.combo.kills % 5 === 0){
       const bonus = Math.min(38, 5 + Math.floor(S.combo.kills * 1.35));
       S.gold += bonus;
-      impactLabel(enemy.x, enemy.y-enemy.size-34, `COMBO +${bonus}`, '#facc15', 13, 62);
-      log(`킬 콤보 보너스: x${S.combo.kills} / 수정 +${bonus}`);
+      impactLabel(enemy.x, enemy.y-enemy.size-34, `COMBO +${fmt2(bonus)}`, '#facc15', 13, 62);
+      log(`킬 콤보 보너스: x${fmt2(S.combo.kills)} / 수정 +${fmt2(bonus)}`);
     }
   }
 }
@@ -11084,12 +12230,12 @@ function triggerMergeImpact(idx,color,level){
   burst(p.x,p.y,color,20 + S.mergeCombo.count*5,30 + S.mergeCombo.count*3);
   ring(p.x,p.y,42 + level*3 + S.mergeCombo.count*3,color);
   ring(p.x,p.y,20 + S.mergeCombo.count*3,'#ffffff');
-  impactLabel(p.x,p.y-38,S.mergeCombo.count>=2?`MERGE x${S.mergeCombo.count}`:'MERGE',color,16+Math.min(5,S.mergeCombo.count*1.4),66);
+  impactLabel(p.x,p.y-38,S.mergeCombo.count>=2?`MERGE x${fmt2(S.mergeCombo.count)}`:'MERGE',color,16+Math.min(5,S.mergeCombo.count*1.4),66);
   if(S.mergeCombo.count>=3){
     const bonus=Math.min(60,8*S.mergeCombo.count);
     S.gold+=bonus;
-    impactLabel(p.x,p.y-56,`+${bonus} CRYSTAL`,'#fde68a',13,62);
-    log(`병합 콤보: x${S.mergeCombo.count} / 수정 +${bonus}`);
+    impactLabel(p.x,p.y-56,`+${fmt2(bonus)} CRYSTAL`,'#fde68a',13,62);
+    log(`병합 콤보: x${fmt2(S.mergeCombo.count)} / 수정 +${fmt2(bonus)}`);
   }
   shake=Math.max(shake,6 + Math.min(10,S.mergeCombo.count*2));
   flash=Math.max(flash,.055);
@@ -11256,10 +12402,10 @@ function playTowerSfx(kind='solar', intensity=1){
   synthShot(kind, intensity);
 }
 
-function playStageBgm(){
-  if(!audio || !audio.on)return;
-  const src = AUDIO_URLS.bgm[S.theme % AUDIO_URLS.bgm.length];
+function playBgmSrc(src, volume=.34){
+  if(!audio || !audio.on || !src) return;
   if(audio.bgm && audio.bgmSrc === src){
+    audio.bgm.volume = volume;
     audio.bgm.play().catch(()=>{});
     return;
   }
@@ -11269,11 +12415,29 @@ function playStageBgm(){
   }
   const bgm = new Audio(src);
   bgm.loop = true;
-  bgm.volume = .34;
+  bgm.volume = volume;
   bgm.preload = 'auto';
   audio.bgm = bgm;
   audio.bgmSrc = src;
   bgm.play().catch(()=>{});
+}
+
+function playStageBgm(){
+  const stageList = AUDIO_URLS.bgm?.stages || [];
+  const fallbackList = Array.isArray(AUDIO_URLS.bgm) ? AUDIO_URLS.bgm : [];
+  const baseSrc = stageList[S.theme % stageList.length] || fallbackList[S.theme % fallbackList.length];
+  const bossWave = !!S.currentBossInfo && (S.wave === 5 || S.wave === 10);
+  const src = bossWave ? (AUDIO_URLS.bgm?.boss || baseSrc) : baseSrc;
+  playBgmSrc(src, bossWave ? .40 : .34);
+}
+
+function playMapBgm(){
+  playBgmSrc(AUDIO_URLS.bgm?.map, .30);
+}
+
+function playResultBgm(kind){
+  const src = kind === 'gameover' ? AUDIO_URLS.bgm?.gameover : AUDIO_URLS.bgm?.clear;
+  playBgmSrc(src, kind === 'gameover' ? .38 : .34);
 }
 
 function stopStageBgm(){
@@ -11283,13 +12447,19 @@ function stopStageBgm(){
 function sound(type, opts={}){
   if(!audio || !audio.on)return;
   if(type === 'boss'){
+    const srcBoss = AUDIO_URLS.sfx?.boss;
+    if(srcBoss){
+      const a = new Audio(srcBoss);
+      a.volume = .46 * (opts.intensity || 1);
+      a.play().catch(()=>{});
+    }
     playTowerSfx('boss', opts.intensity || 1);
     return;
   }
   const src = AUDIO_URLS.sfx[type];
   if(!src)return;
   const a = new Audio(src);
-  const volume = {shot:.24, beam:.26, blackhole:.40, nova:.46, treasure:.50, level:.40, hit:.32, kill:.28, summon:.26, merge:.32}[type] || .28;
+  const volume = {shot:.24, beam:.26, blackhole:.40, nova:.46, treasure:.50, level:.40, hit:.32, kill:.28, summon:.26, merge:.32, clear:.48, gameover:.48, core:.44, unlock:.42}[type] || .28;
   a.volume = volume * (opts.volumeMul || 1);
   a.play().catch(()=>{});
 }
@@ -11336,7 +12506,7 @@ document.querySelectorAll('#stageMap .stageNode').forEach(node => {
 $('summonBtn').onclick=summon;
 $('mergeBtn').onclick=autoMerge;
 $('speedBtn').onclick=()=>{S.speed=S.speed===1?2:S.speed===2?3:1;updateUI()};
-$('pauseBtn').onclick=()=>{S.paused=!S.paused;updateUI()};
+$('pauseBtn').onclick=()=>{if(S.gameOver)return;S.paused=!S.paused;updateUI()};
 $('audioBtn').onclick=()=>{
   if(!audio){
     initAudio();
@@ -11350,9 +12520,10 @@ $('audioBtn').onclick=()=>{
   $('audioBtn').textContent=audio.on?'BGM ON':'BGM OFF';
   toast(audio.on?'BGM 활성화':'BGM 비활성화');
 };
-$('blackholeBtn').onclick=()=>useSkill('blackhole');
-$('novaBtn').onclick=()=>useSkill('nova');
-$('repairBtn').onclick=()=>useSkill('repair');
+// 전투 화면 미니멀화: 액티브 스킬 버튼은 숨김 처리하고 직접 조작은 비활성화합니다.
+$('blackholeBtn').onclick=()=>toast('전투 중 액티브 스킬은 사용하지 않습니다.');
+$('novaBtn').onclick=()=>toast('전투 중 액티브 스킬은 사용하지 않습니다.');
+$('repairBtn').onclick=()=>toast('전투 중 액티브 스킬은 사용하지 않습니다.');
 
 document.addEventListener('click', e=>{
   const btn = e.target.closest('[data-offline-upgrade]');
@@ -11360,17 +12531,27 @@ document.addEventListener('click', e=>{
   buyOfflineUpgrade(btn.dataset.offlineUpgrade);
 });
 
+
+
+document.addEventListener('click', e=>{
+  if(e.target.closest('[data-planet-detail-close]')) hidePlanetDetail();
+  const modal = $('planetDetailModal');
+  if(modal && modal.classList.contains('open') && e.target === modal) hidePlanetDetail();
+});
+
+window.addEventListener('keydown', e=>{
+  if(e.key === 'Escape') hidePlanetDetail();
+});
+
 window.addEventListener('resize', resizeStarfield);
 
 window.addEventListener('keydown',e=>{
   if(e.repeat)return;
-  if(e.code==='Space'){e.preventDefault();S.paused=!S.paused;updateUI()}
+  if(e.code==='Space'){e.preventDefault();if(!S.gameOver){S.paused=!S.paused;updateUI()}}
   if(e.key==='1')summon();
   if(e.key==='2'){S.speed=S.speed===1?2:S.speed===2?3:1;updateUI()}
   if(e.key.toLowerCase()==='m')autoMerge();
-  if(e.key.toLowerCase()==='q')useSkill('blackhole');
-  if(e.key.toLowerCase()==='w')useSkill('nova');
-  if(e.key.toLowerCase()==='e')useSkill('repair');
+  // Q/W/E 액티브 스킬 단축키는 전투 UI 단순화를 위해 비활성화
 });
 
 
@@ -11441,7 +12622,7 @@ function computeStageMastery(stageNo){
 function stageMasteryHtml(stageNo){
   ensureOfflineMetaMastery();
   const stars = stageMasteryStars(stageNo);
-  const ratio = Math.round(stageMasteryHpRatio(stageNo) * 100);
+  const ratio = fmt2(stageMasteryHpRatio(stageNo) * 100);
   const goals = STAGE_MASTERY_GOALS[Number(stageNo)] || STAGE_MASTERY_GOALS[1];
   const starText = '★★★'.slice(0, stars) + '☆☆☆'.slice(0, 3 - stars);
   return `<div class="stageMasteryBox"><div class="stageMasteryTitle">STAGE MASTERY · 최고 코어 ${ratio}%</div><div class="stageMasteryStars">${starText}</div><div class="stageMasteryGoals">${goals.map((g,i)=>`<div class="stageMasteryGoal ${stars>i?'done':''}">${stars>i?'✓':'○'} ${g}</div>`).join('')}</div></div>`;
@@ -11501,10 +12682,10 @@ recordOfflineRunEnd = function(cleared=false, stageNoOverride=null){
     if(gainedStars > 0){
       const reward = OFFLINE_MASTER_REWARD[rec.stars] || 0;
       META.shards += reward;
-      toast(`성역 숙련도 ${rec.stars}성 달성 — 성흔 조각 +${reward}`);
-      log(`숙련도 갱신: ${stageNo}성역 ${rec.stars}성 / 최고 코어 ${Math.round(rec.bestHpRatio*100)}%`);
+      toast(`성역 숙련도 ${fmt2(rec.stars)}성 달성 — 성흔 조각 +${fmt2(reward)}`);
+      log(`숙련도 갱신: ${stageNo}성역 ${fmt2(rec.stars)}성 / 최고 코어 ${fmt2(rec.bestHpRatio*100)}%`);
     }else{
-      log(`숙련도 유지: ${stageNo}성역 최고 ${rec.stars}성 / 이번 코어 ${Math.round(result.hpRatio*100)}%`);
+      log(`숙련도 유지: ${stageNo}성역 최고 ${fmt2(rec.stars)}성 / 이번 코어 ${fmt2(result.hpRatio*100)}%`);
     }
     if(stageNo >= STAGE_MAP_DEFS.length){
       META.flags.seasonOneCleared = true;
@@ -11539,7 +12720,7 @@ function showOfflineEndingPanel(){
   const overlay = document.createElement('div');
   overlay.className = 'offlineGuideOverlay';
   overlay.style.display = 'flex';
-  overlay.innerHTML = `<div class="offlineGuideCard"><h2>SEASON 1 CLEAR</h2><p>매연 폐역의 굴뚝이 멈췄습니다. 균열은 완전히 닫히지 않았지만, 지휘관은 이제 스모그 병기를 포함한 반격 함대를 얻었습니다.</p><p><b>현재 성역 숙련도:</b> ${totalStars}/15성</p><div class="offlineGuideGrid"><div class="offlineGuideItem"><b>다음 목표</b><span>각 성역을 다시 클리어해 3성 숙련도를 완성하세요.</span></div><div class="offlineGuideItem"><b>남은 성장</b><span>성흔 조각으로 코어, 보급, 소환 교리를 강화하세요.</span></div></div><div class="offlineGuideActions"><button id="offlineEndingClose" class="btnGreen">계속하기</button></div></div>`;
+  overlay.innerHTML = `<div class="offlineGuideCard"><h2>SEASON 1 CLEAR</h2><p>매연 폐역의 굴뚝이 멈췄습니다. 균열은 완전히 닫히지 않았지만, 지휘관은 이제 스모그 병기를 포함한 반격 함대를 얻었습니다.</p><p><b>현재 성역 숙련도:</b> ${fmt2(totalStars)}/${fmt2(15)}성</p><div class="offlineGuideGrid"><div class="offlineGuideItem"><b>다음 목표</b><span>각 성역을 다시 클리어해 3성 숙련도를 완성하세요.</span></div><div class="offlineGuideItem"><b>남은 성장</b><span>성흔 조각으로 코어, 보급, 소환 교리를 강화하세요.</span></div></div><div class="offlineGuideActions"><button id="offlineEndingClose" class="btnGreen">계속하기</button></div></div>`;
   document.body.appendChild(overlay);
   const btn = overlay.querySelector('#offlineEndingClose');
   if(btn) btn.onclick = () => overlay.remove();
