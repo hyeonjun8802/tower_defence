@@ -8718,6 +8718,557 @@ h1{
   }
 }
 
+
+
+/* =========================================================
+   V19 MOBILE STAGE MAP OVERLAP FIX
+   - Reduce node crowding on portrait/mobile resolutions.
+   - Hide constellation overlay labels on mobile.
+   - Shrink map nodes and rebalance positions.
+   - Keep lower info card scrollable and CTA visible above browser chrome.
+   ========================================================= */
+@media (max-width: 900px), (max-aspect-ratio: 0.78) {
+  #stageMap{
+    --v19-mobile-panel-h: 296px;
+    --v19-mobile-cta-h: 46px;
+    --v19-mobile-gap: 12px;
+    overflow: hidden !important;
+  }
+
+  #stageMap .stageFrame{
+    inset: 10px !important;
+  }
+
+  #stageMap .constellationLabel,
+  #stageMap #constellationDeck,
+  #stageMap .stageNode .nodeKo{
+    display:none !important;
+  }
+
+  #stageMap .stageTopTitle{
+    top: 42px !important;
+    max-width: calc(100vw - 136px) !important;
+    font-size: 16px !important;
+    letter-spacing: 6.6px !important;
+  }
+
+  #stageMap .stageStatus{
+    top: 84px !important;
+    width: calc(100vw - 70px) !important;
+    font-size: 9px !important;
+    line-height: 1.26 !important;
+  }
+
+  #stageMap .stageStatus small{
+    margin-top: 3px !important;
+    font-size: 8px !important;
+  }
+
+  #stageMap .stageBackBtn{
+    top: 41px !important;
+    left: 18px !important;
+    padding: 7px 10px !important;
+    font-size: 8px !important;
+  }
+
+  #stageMap .stageMapInner{
+    left: 8px !important;
+    right: 8px !important;
+    top: 154px !important;
+    bottom: calc(var(--v19-mobile-panel-h) + var(--v19-mobile-cta-h) + 24px) !important;
+    transform: none !important;
+  }
+
+  #stageMap .stagePathSvg{
+    inset: 4% 2% 14% 2% !important;
+    width: 96% !important;
+    height: 82% !important;
+  }
+
+  #stageMap .stageNode{
+    width: 82px !important;
+    height: 82px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet,
+  #stageMap .stageNode[data-stage="5"] .nodePlanet,
+  #stageMap .stageNode[data-stage="6"] .nodePlanet,
+  #stageMap .stageNode[data-stage="7"] .nodePlanet{
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::before{ inset:-11px !important; }
+  #stageMap .stageNode .nodePlanet::after{ inset:-22px !important; }
+
+  #stageMap .stageNode .nodeNo{
+    font-size: 18px !important;
+  }
+
+  #stageMap .stageNode[data-stage="10"] .nodeNo,
+  #stageMap .stageNode[data-stage="11"] .nodeNo,
+  #stageMap .stageNode[data-stage="12"] .nodeNo{
+    font-size: 15px !important;
+  }
+
+  #stageMap .stageNode .nodeLock{
+    bottom: 21px !important;
+    font-size: 12px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel{
+    top: 65px !important;
+    max-width: 70px !important;
+    padding: 1px 4px !important;
+    font-size: 5.2px !important;
+    line-height: 1.05 !important;
+    letter-spacing: .28px !important;
+  }
+
+  #stageMap .nodeStarRow{
+    top: 77px !important;
+    max-width: 64px !important;
+    font-size: 5.6px !important;
+    letter-spacing: 0 !important;
+  }
+
+  /* Mobile-specific node spread */
+  #stageMap .stageNode[data-stage="1"]{ left:12% !important; top:62% !important; }
+  #stageMap .stageNode[data-stage="2"]{ left:28% !important; top:46% !important; }
+  #stageMap .stageNode[data-stage="3"]{ left:16% !important; top:29% !important; }
+  #stageMap .stageNode[data-stage="4"]{ left:36% !important; top:20% !important; }
+  #stageMap .stageNode[data-stage="5"]{ left:50% !important; top:35% !important; }
+  #stageMap .stageNode[data-stage="6"]{ left:42% !important; top:56% !important; }
+  #stageMap .stageNode[data-stage="7"]{ left:56% !important; top:74% !important; }
+  #stageMap .stageNode[data-stage="8"]{ left:69% !important; top:57% !important; }
+  #stageMap .stageNode[data-stage="9"]{ left:80% !important; top:43% !important; }
+  #stageMap .stageNode[data-stage="10"]{ left:73% !important; top:23% !important; }
+  #stageMap .stageNode[data-stage="11"]{ left:89% !important; top:20% !important; }
+  #stageMap .stageNode[data-stage="12"]{ left:89% !important; top:58% !important; }
+
+  #stageMap .stageInfoPanel{
+    left: 50% !important;
+    right: auto !important;
+    bottom: calc(var(--v19-mobile-cta-h) + 18px) !important;
+    width: calc(100vw - 20px) !important;
+    max-width: 780px !important;
+    height: var(--v19-mobile-panel-h) !important;
+    max-height: var(--v19-mobile-panel-h) !important;
+    transform: translateX(-50%) !important;
+    padding: 12px 12px 14px !important;
+    border-radius: 18px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  #stageMap .stageInfoHead{
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+  }
+
+  #stageMap .stageInfoTitle{
+    font-size: 11.8px !important;
+    line-height: 1.34 !important;
+  }
+
+  #stageMap .stageInfoRisk{
+    font-size: 8px !important;
+    gap: 6px !important;
+  }
+
+  #stageMap .stageInfoRisk b{
+    padding: 5px 9px !important;
+    font-size: 8px !important;
+  }
+
+  #stageMap .stageInfoMood,
+  #stageMap .offlineMetaStory,
+  #stageMap .stageFocusedStory{
+    font-size: 10px !important;
+    line-height: 1.52 !important;
+  }
+
+  #stageMap .stageTagRow,
+  #stageMap .stageFocusedMeta,
+  #stageMap .offlineStatRow{
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+
+  #stageMap .stageTag,
+  #stageMap .stageFocusedPill{
+    padding: 4px 8px !important;
+    font-size: 7.4px !important;
+  }
+
+  #stageMap .stageBossRow,
+  #stageMap .stageFocusedBoss,
+  #stageMap .stageSyncBossBrief{
+    grid-template-columns: 1fr !important;
+    gap: 7px !important;
+  }
+
+  #stageMap .stageBossCard,
+  #stageMap .stageFocusedBoss > div,
+  #stageMap .stageSyncBossBrief > div,
+  #stageMap .offlineStagePanel,
+  #stageMap .stageMasteryBox{
+    padding: 9px 10px !important;
+    border-radius: 12px !important;
+  }
+
+  #stageMap .stageBossCard small,
+  #stageMap .stageFocusedBoss small,
+  #stageMap .stageSyncBossBrief small,
+  #stageMap .offlineMetaTitle,
+  #stageMap .stageMasteryTitle{
+    font-size: 8px !important;
+  }
+
+  #stageMap .stageBossCard b,
+  #stageMap .stageFocusedBoss b,
+  #stageMap .stageSyncBossBrief b{
+    font-size: 10px !important;
+  }
+
+  #stageMap .stageBossCard span,
+  #stageMap .stageBossCard em,
+  #stageMap .stageFocusedBoss span,
+  #stageMap .stageSyncBossBrief span,
+  #stageMap .stageMasteryGoal{
+    font-size: 9px !important;
+    line-height: 1.38 !important;
+  }
+
+  #stageMap .stageHint{
+    bottom: calc(var(--v19-mobile-cta-h) + 28px) !important;
+    width: calc(100vw - 54px) !important;
+    max-width: 520px !important;
+    padding: 7px 12px !important;
+    font-size: 8px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  #stageMap .stageEnter{
+    left: 50% !important;
+    bottom: 10px !important;
+    width: calc(100vw - 32px) !important;
+    height: var(--v19-mobile-cta-h) !important;
+    transform: translateX(-50%) !important;
+    font-size: 8.8px !important;
+    letter-spacing: .11em !important;
+    border-radius: 16px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  #stageMap{
+    --v19-mobile-panel-h: 302px;
+    --v19-mobile-cta-h: 44px;
+  }
+
+  #stageMap .stageTopTitle{
+    top: 38px !important;
+    max-width: calc(100vw - 122px) !important;
+    font-size: 14px !important;
+    letter-spacing: 5px !important;
+  }
+
+  #stageMap .stageStatus{
+    top: 76px !important;
+    width: calc(100vw - 54px) !important;
+    font-size: 8px !important;
+  }
+
+  #stageMap .stageBackBtn{
+    top: 36px !important;
+    left: 14px !important;
+    padding: 5px 8px !important;
+    font-size: 7px !important;
+  }
+
+  #stageMap .stageMapInner{
+    top: 144px !important;
+    left: 6px !important;
+    right: 6px !important;
+    bottom: calc(var(--v19-mobile-panel-h) + var(--v19-mobile-cta-h) + 22px) !important;
+  }
+
+  #stageMap .stagePathSvg{
+    inset: 5% 1% 16% 1% !important;
+    width: 98% !important;
+    height: 80% !important;
+  }
+
+  #stageMap .stageNode{
+    width: 74px !important;
+    height: 74px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet,
+  #stageMap .stageNode[data-stage="5"] .nodePlanet,
+  #stageMap .stageNode[data-stage="6"] .nodePlanet,
+  #stageMap .stageNode[data-stage="7"] .nodePlanet{
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::before{ inset:-10px !important; }
+  #stageMap .stageNode .nodePlanet::after{ inset:-20px !important; }
+
+  #stageMap .stageNode .nodeNo{
+    font-size: 16px !important;
+  }
+
+  #stageMap .stageNode[data-stage="10"] .nodeNo,
+  #stageMap .stageNode[data-stage="11"] .nodeNo,
+  #stageMap .stageNode[data-stage="12"] .nodeNo{
+    font-size: 13px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel{
+    top: 58px !important;
+    max-width: 60px !important;
+    font-size: 4.8px !important;
+    letter-spacing: .18px !important;
+  }
+
+  #stageMap .nodeStarRow{
+    top: 69px !important;
+    max-width: 54px !important;
+    font-size: 5px !important;
+  }
+
+  #stageMap .stageNode[data-stage="1"]{ left:12% !important; top:63% !important; }
+  #stageMap .stageNode[data-stage="2"]{ left:29% !important; top:47% !important; }
+  #stageMap .stageNode[data-stage="3"]{ left:16% !important; top:31% !important; }
+  #stageMap .stageNode[data-stage="4"]{ left:37% !important; top:21% !important; }
+  #stageMap .stageNode[data-stage="5"]{ left:51% !important; top:36% !important; }
+  #stageMap .stageNode[data-stage="6"]{ left:42% !important; top:57% !important; }
+  #stageMap .stageNode[data-stage="7"]{ left:56% !important; top:74% !important; }
+  #stageMap .stageNode[data-stage="8"]{ left:69% !important; top:58% !important; }
+  #stageMap .stageNode[data-stage="9"]{ left:80% !important; top:44% !important; }
+  #stageMap .stageNode[data-stage="10"]{ left:73% !important; top:24% !important; }
+  #stageMap .stageNode[data-stage="11"]{ left:89% !important; top:21% !important; }
+  #stageMap .stageNode[data-stage="12"]{ left:89% !important; top:59% !important; }
+
+  #stageMap .stageInfoPanel{
+    width: calc(100vw - 16px) !important;
+    bottom: calc(var(--v19-mobile-cta-h) + 14px) !important;
+    padding: 11px 10px 13px !important;
+  }
+
+  #stageMap .stageInfoTitle{
+    font-size: 11px !important;
+  }
+
+  #stageMap .stageInfoMood,
+  #stageMap .offlineMetaStory,
+  #stageMap .stageFocusedStory{
+    font-size: 9.6px !important;
+  }
+
+  #stageMap .stageEnter{
+    width: calc(100vw - 20px) !important;
+    bottom: 8px !important;
+    font-size: 8.2px !important;
+  }
+}
+
+
+
+
+
+/* =========================================================
+   V21 HANGAR CARD SIZE REVERT + UNIFORM FIX
+   - Revert V20 oversized hangar cards.
+   - Keep the previous compact card size.
+   - Normalize Photon / Smog / Crystal thumbnail boxes to the same size.
+   ========================================================= */
+#hangar{
+  gap:7px !important;
+  padding-bottom:2px !important;
+}
+
+#hangar .planetCard{
+  flex:0 0 168px !important;
+  min-width:168px !important;
+  max-width:168px !important;
+  min-height:84px !important;
+  padding:9px 56px 9px 11px !important;
+  gap:10px !important;
+  border-radius:14px !important;
+  align-items:center !important;
+  overflow:hidden !important;
+}
+
+#hangar .planetThumb,
+#hangar .planetThumb.liveThumb,
+#hangar .planetThumb.thumbPng,
+#hangar .planetThumb.liveThumb.thumbPng,
+#hangar .planetCard[data-type="5"] .planetThumb,
+#hangar .planetCard[data-type="6"] .planetThumb,
+#hangar .planetCard[data-type="7"] .planetThumb,
+#hangar .planetCard[data-type="5"] .planetThumb.liveThumb,
+#hangar .planetCard[data-type="6"] .planetThumb.liveThumb,
+#hangar .planetCard[data-type="7"] .planetThumb.liveThumb,
+#hangar .planetCard[data-type="5"] .planetThumb.thumbPng,
+#hangar .planetCard[data-type="6"] .planetThumb.thumbPng,
+#hangar .planetCard[data-type="7"] .planetThumb.thumbPng{
+  width:44px !important;
+  height:44px !important;
+  flex:0 0 44px !important;
+  border-radius:12px !important;
+  background-size:contain !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
+  overflow:hidden !important;
+}
+
+#hangar .planetCardInfo{
+  min-width:0 !important;
+  flex:1 1 auto !important;
+  padding-right:0 !important;
+  overflow:hidden !important;
+}
+
+#hangar .planetCardName{
+  max-width:84px !important;
+  font-size:10px !important;
+  line-height:1.16 !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+
+#hangar .planetCardRole,
+#hangar .planetCardDesc,
+#hangar .planetCard small,
+#hangar .planetCard .sub,
+#hangar .planetCard .tags{
+  display:none !important;
+}
+
+#hangar .planetCardCost{
+  top:9px !important;
+  right:9px !important;
+  font-size:9px !important;
+  white-space:nowrap !important;
+}
+
+#hangar .planetCardLevel,
+#hangar .planetLevelBadge,
+#hangar .levelPill{
+  right:10px !important;
+  bottom:10px !important;
+  min-width:46px !important;
+  height:18px !important;
+  padding:3px 7px !important;
+  border-radius:999px !important;
+  font-size:9px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  white-space:nowrap !important;
+}
+
+@media (max-width:768px){
+  #hangar{
+    left:7px !important;
+    right:7px !important;
+    bottom:7px !important;
+    gap:8px !important;
+    padding:0 1px 2px !important;
+  }
+
+  #hangar .planetCard{
+    flex:0 0 184px !important;
+    min-width:184px !important;
+    max-width:184px !important;
+    min-height:76px !important;
+    padding:8px 58px 8px 10px !important;
+    gap:9px !important;
+    border-radius:13px !important;
+  }
+
+  #hangar .planetThumb,
+  #hangar .planetThumb.liveThumb,
+  #hangar .planetThumb.thumbPng,
+  #hangar .planetThumb.liveThumb.thumbPng,
+  #hangar .planetCard[data-type="5"] .planetThumb,
+  #hangar .planetCard[data-type="6"] .planetThumb,
+  #hangar .planetCard[data-type="7"] .planetThumb,
+  #hangar .planetCard[data-type="5"] .planetThumb.liveThumb,
+  #hangar .planetCard[data-type="6"] .planetThumb.liveThumb,
+  #hangar .planetCard[data-type="7"] .planetThumb.liveThumb,
+  #hangar .planetCard[data-type="5"] .planetThumb.thumbPng,
+  #hangar .planetCard[data-type="6"] .planetThumb.thumbPng,
+  #hangar .planetCard[data-type="7"] .planetThumb.thumbPng{
+    width:48px !important;
+    height:48px !important;
+    flex:0 0 48px !important;
+    border-radius:12px !important;
+    background-size:contain !important;
+    background-position:center center !important;
+    background-repeat:no-repeat !important;
+    overflow:hidden !important;
+  }
+
+  #hangar .planetCardName{
+    max-width:88px !important;
+    font-size:10px !important;
+    line-height:1.08 !important;
+    margin-bottom:0 !important;
+  }
+
+  #hangar .planetCardCost{
+    top:9px !important;
+    right:10px !important;
+    font-size:7.8px !important;
+  }
+
+  #hangar .planetCardLevel,
+  #hangar .planetLevelBadge,
+  #hangar .levelPill{
+    right:10px !important;
+    bottom:10px !important;
+    min-width:46px !important;
+    height:18px !important;
+    font-size:6.8px !important;
+    padding:2px 6px !important;
+  }
+}
+
+@media (max-width:390px){
+  #hangar .planetCard{
+    flex-basis:176px !important;
+    min-width:176px !important;
+    max-width:176px !important;
+    min-height:74px !important;
+  }
+
+  #hangar .planetThumb,
+  #hangar .planetThumb.liveThumb,
+  #hangar .planetThumb.thumbPng,
+  #hangar .planetThumb.liveThumb.thumbPng,
+  #hangar .planetCard[data-type="5"] .planetThumb,
+  #hangar .planetCard[data-type="6"] .planetThumb,
+  #hangar .planetCard[data-type="7"] .planetThumb,
+  #hangar .planetCard[data-type="5"] .planetThumb.liveThumb,
+  #hangar .planetCard[data-type="6"] .planetThumb.liveThumb,
+  #hangar .planetCard[data-type="7"] .planetThumb.liveThumb,
+  #hangar .planetCard[data-type="5"] .planetThumb.thumbPng,
+  #hangar .planetCard[data-type="6"] .planetThumb.thumbPng,
+  #hangar .planetCard[data-type="7"] .planetThumb.thumbPng{
+    width:46px !important;
+    height:46px !important;
+    flex-basis:46px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -9561,7 +10112,7 @@ function showGameOverOverlay(summary){
         $('stageMap').style.display = 'block';
         StageMapState.selected = stageNo;
         StageMapState.current = stageNo;
-        stopStageBgm();
+        stopAllGameAudio();
         reset();
         resetBattleUnitsForStageMap();
         renderStageMap();
@@ -9598,7 +10149,7 @@ function showEmergencyGameOverOverlay(summary={}, err=null){
   const retry = overlay.querySelector('#gameOverRetryBtn');
   const mapBtn = overlay.querySelector('#gameOverMapBtn');
   if(retry) retry.onclick = () => { removeGameOverOverlay(); StageMapState.selected = stageNo; startSelectedStageFromMap(); };
-  if(mapBtn) mapBtn.onclick = () => { removeGameOverOverlay(); $('game').style.display='none'; $('stageMap').style.display='block'; StageMapState.selected=stageNo; StageMapState.current=stageNo; reset(); resetBattleUnitsForStageMap(); renderStageMap(); };
+  if(mapBtn) mapBtn.onclick = () => { removeGameOverOverlay(); stopAllGameAudio(); $('game').style.display='none'; $('stageMap').style.display='block'; StageMapState.selected=stageNo; StageMapState.current=stageNo; reset(); resetBattleUnitsForStageMap(); renderStageMap(); };
   return overlay;
 }
 
@@ -9625,8 +10176,9 @@ function triggerGameOver(reason='core'){
     shardsGained: Math.max(0, afterShards - beforeShards)
   };
   S.lastGameOverSummary = summary;
-  try{ sound('gameover'); }catch(err){}
-  try{ playResultBgm('gameover'); }catch(err){}
+  // 게임오버 직후에는 현재 재생 중인 BGM/SFX/합성음을 모두 중지한다.
+  // 결과 BGM도 재생하지 않아 실패 화면이 정지 상태로 유지되게 한다.
+  try{ stopAllGameAudio(); }catch(err){ console.warn('game over audio stop failed', err); }
   try{ toast('코어 파괴 — 전투 기록 회수 완료'); }catch(err){}
   try{ log(`게임 오버: ${fmt2(summary.stageNo)}성역 ${fmt2(summary.wave)}웨이브 / 처치 ${fmt2(summary.kills)} / 조각 +${fmt2(summary.shardsGained)}`); }catch(err){}
   try{ updateUI(); }catch(err){ console.error('game over ui update failed', err); }
@@ -10538,6 +11090,7 @@ let audioCtx = null;
 const towerSfxLimiter = {};
 const audioBufferCache = {};
 const htmlAudioCache = {};
+const activeOneShotAudio = new Set();
 const soundLimiter = {};
 function isLowPowerAudioMode(){
   return window.matchMedia?.('(max-width: 768px)').matches || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
@@ -13571,6 +14124,43 @@ function stopStageBgm(){
   if(audio && audio.bgm) audio.bgm.pause();
 }
 
+function trackOneShotAudio(a){
+  if(!a) return a;
+  activeOneShotAudio.add(a);
+  const cleanup = () => activeOneShotAudio.delete(a);
+  a.addEventListener('ended', cleanup, {once:true});
+  a.addEventListener('pause', () => {
+    if(a.currentTime === 0 || a.ended) cleanup();
+  }, {once:true});
+  return a;
+}
+
+function stopAllGameAudio(){
+  try{
+    if(audio && audio.bgm){
+      audio.bgm.pause();
+      try{ audio.bgm.currentTime = 0; }catch(_){}
+      audio.bgm = null;
+      audio.bgmSrc = null;
+    }
+    Object.values(htmlAudioCache || {}).forEach(a => {
+      if(!a || typeof a.pause !== 'function') return;
+      try{ a.pause(); }catch(_){}
+      try{ a.currentTime = 0; }catch(_){}
+    });
+    activeOneShotAudio.forEach(a => {
+      try{ a.pause(); }catch(_){}
+      try{ a.currentTime = 0; }catch(_){}
+    });
+    activeOneShotAudio.clear();
+    if(audioCtx && audioCtx.state === 'running'){
+      audioCtx.suspend().catch(()=>{});
+    }
+  }catch(err){
+    console.warn('stopAllGameAudio failed', err);
+  }
+}
+
 function sound(type, opts={}){
   if(!audio || !audio.on)return;
   const now = performance.now();
@@ -13582,7 +14172,7 @@ function sound(type, opts={}){
   if(type === 'boss'){
     const srcBoss = AUDIO_URLS.sfx?.boss;
     if(srcBoss){
-      const a = (htmlAudioCache[srcBoss] || new Audio(srcBoss)).cloneNode(true);
+      const a = trackOneShotAudio((htmlAudioCache[srcBoss] || new Audio(srcBoss)).cloneNode(true));
       htmlAudioCache[srcBoss] = htmlAudioCache[srcBoss] || new Audio(srcBoss);
       a.volume = .34 * (opts.intensity || 1);
       a.play().catch(()=>{});
@@ -13595,7 +14185,7 @@ function sound(type, opts={}){
   const base = htmlAudioCache[src] || new Audio(src);
   htmlAudioCache[src] = base;
   base.preload = 'metadata';
-  const a = base.cloneNode(true);
+  const a = trackOneShotAudio(base.cloneNode(true));
   const volume = {shot:.16, beam:.16, blackhole:.34, nova:.38, treasure:.38, level:.34, hit:.18, kill:.16, summon:.22, merge:.26, clear:.42, gameover:.42, core:.38, unlock:.36}[type] || .22;
   a.volume = volume * (opts.volumeMul || 1);
   a.play().catch(()=>{});
@@ -14645,6 +15235,12 @@ window.addEventListener('DOMContentLoaded', () => {
   setTimeout(syncStageNodeCaptionsV18, 80);
   setTimeout(syncStageNodeCaptionsV18, 260);
 });
+
+
+/* V22 Game Over Audio Stop Patch
+   - Game over stops current BGM, result BGM, active one-shot SFX, cached HTMLAudio, and WebAudio synth output.
+   - Retry starts battle BGM again through the existing stage-entry path.
+*/
 
 </script>
 </body>
