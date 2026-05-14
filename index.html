@@ -9991,6 +9991,525 @@ h1{
   #stageMap .stageBg.rift{ right:-10% !important; bottom:-4% !important; }
 }
 
+
+
+/* =========================================================
+   V27 FUN EXPANSION PATCH UI
+   - Stage gimmick badge and roguelite event cards.
+   ========================================================= */
+#v27EventOverlay{
+  position:fixed;inset:0;z-index:92;display:flex;align-items:center;justify-content:center;
+  padding:22px;background:rgba(2,6,23,.74);backdrop-filter:blur(10px);
+  font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:#f8fafc;
+}
+.v27EventCard{width:min(920px,calc(100vw - 32px));border-radius:24px;border:1px solid rgba(125,211,252,.22);background:linear-gradient(180deg,rgba(15,23,42,.96),rgba(2,6,23,.96));box-shadow:0 30px 90px rgba(0,0,0,.58), inset 0 0 42px rgba(59,130,246,.08);padding:22px;}
+.v27EventKicker{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:.24em;color:#7dd3fc;margin-bottom:8px;}
+.v27EventCard h2{font-family:'Orbitron',sans-serif;margin:0;font-size:25px;letter-spacing:.08em;}
+.v27EventCard p{margin:8px 0 16px;color:#cbd5e1;line-height:1.55;font-size:14px;}
+.v27EventChoices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.v27EventChoice{appearance:none;text-align:left;border-radius:18px;border:1px solid rgba(148,163,184,.18);background:rgba(8,13,28,.78);padding:15px 15px 14px;color:#e5e7eb;min-height:150px;cursor:pointer;transition:transform .15s ease,border-color .15s ease,background .15s ease;}
+.v27EventChoice:hover{transform:translateY(-2px);border-color:rgba(125,211,252,.48);background:rgba(15,23,42,.92);}
+.v27EventChoice small{display:block;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:.18em;color:#93c5fd;margin-bottom:9px;}
+.v27EventChoice b{display:block;font-size:16px;color:#fff;margin-bottom:8px;line-height:1.25;}
+.v27EventChoice span{display:block;font-size:12px;color:#cbd5e1;line-height:1.48;}
+.v27EventChoice em{display:block;margin-top:10px;font-style:normal;font-size:11px;color:#fde68a;line-height:1.35;}
+.v27GimmickTag{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(125,211,252,.24);background:rgba(14,165,233,.08);border-radius:999px;padding:4px 9px;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:.1em;color:#bae6fd;margin-left:6px;}
+@media(max-width:760px){.v27EventCard{padding:17px;border-radius:20px}.v27EventCard h2{font-size:18px}.v27EventChoices{grid-template-columns:1fr}.v27EventChoice{min-height:112px}.v27EventCard p{font-size:12px}}
+
+
+
+/* =========================================================
+   V28 GALAXY LAYER MAP
+   - Galaxy is the parent layer above constellation/stage map.
+   - Current 12-stage route belongs to the first playable galaxy.
+   ========================================================= */
+#galaxyMap{
+  position:fixed;
+  inset:0;
+  z-index:44;
+  display:none;
+  overflow:hidden;
+  background:#01040b;
+  color:#f8fafc;
+  font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+#galaxyMap::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:0;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(56,189,248,.20), transparent 27%),
+    radial-gradient(circle at 78% 20%, rgba(168,85,247,.16), transparent 28%),
+    radial-gradient(circle at 50% 78%, rgba(239,68,68,.13), transparent 32%),
+    radial-gradient(circle at center, rgba(15,23,42,.30), rgba(1,4,11,.94) 66%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.10) 0 1px, transparent 1.35px) 0 0/82px 82px,
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.055) 0 1px, transparent 1.2px) 19px 31px/44px 44px;
+  pointer-events:none;
+}
+#galaxyMap::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  background:linear-gradient(180deg, rgba(0,0,0,.58), transparent 18%, transparent 74%, rgba(0,0,0,.72));
+}
+.galaxyFrame{
+  position:absolute;
+  inset:18px;
+  z-index:3;
+  border:1px solid rgba(148,163,184,.22);
+  border-radius:28px;
+  box-shadow:inset 0 0 44px rgba(56,189,248,.08),0 0 48px rgba(0,0,0,.54);
+  pointer-events:none;
+}
+.galaxyBackBtn{
+  position:absolute;
+  left:30px;
+  top:30px;
+  z-index:8;
+  padding:10px 16px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,.20);
+  background:rgba(2,6,23,.58);
+  color:#dbeafe;
+  font-family:'Orbitron',Pretendard,sans-serif;
+  font-size:11px;
+  letter-spacing:.08em;
+}
+.galaxyTopTitle{
+  position:absolute;
+  left:50%;
+  top:34px;
+  z-index:7;
+  transform:translateX(-50%);
+  font-family:'Orbitron',Pretendard,sans-serif;
+  font-size:24px;
+  letter-spacing:.28em;
+  font-weight:900;
+  color:#f8fafc;
+  text-shadow:0 0 24px rgba(125,211,252,.34);
+  white-space:nowrap;
+}
+.galaxyStatus{
+  position:absolute;
+  left:50%;
+  top:82px;
+  z-index:7;
+  transform:translateX(-50%);
+  width:min(880px, calc(100vw - 80px));
+  text-align:center;
+  color:#cbd5e1;
+  font-size:13px;
+  line-height:1.55;
+}
+.galaxyStatus b{color:#e0f2fe;font-family:'Orbitron',Pretendard,sans-serif;letter-spacing:.08em;}
+.galaxyGrid{
+  position:absolute;
+  left:50%;
+  top:146px;
+  bottom:124px;
+  z-index:6;
+  width:min(1120px, calc(100vw - 64px));
+  transform:translateX(-50%);
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+  align-content:center;
+}
+.galaxyCard{
+  position:relative;
+  min-height:210px;
+  overflow:hidden;
+  border-radius:26px;
+  padding:22px 24px;
+  text-align:left;
+  border:1px solid rgba(148,163,184,.22);
+  background:linear-gradient(180deg, rgba(15,23,42,.76), rgba(2,6,23,.70));
+  box-shadow:0 24px 52px rgba(0,0,0,.34), inset 0 0 40px rgba(255,255,255,.025);
+  color:#f8fafc;
+  cursor:pointer;
+}
+.galaxyCard::before{
+  content:'';
+  position:absolute;
+  right:-78px;
+  top:-94px;
+  width:230px;
+  height:230px;
+  border-radius:50%;
+  background:radial-gradient(circle at 34% 32%, rgba(255,255,255,.32), transparent 17%), radial-gradient(circle, var(--galaxyA), var(--galaxyB) 58%, transparent 72%);
+  filter:blur(.2px) saturate(1.1);
+  opacity:.84;
+}
+.galaxyCard::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 82% 14%, color-mix(in srgb, var(--galaxyA) 42%, transparent), transparent 34%), linear-gradient(135deg, transparent 0 54%, rgba(255,255,255,.035));
+  pointer-events:none;
+}
+.galaxyCard:hover,
+.galaxyCard.active{
+  border-color:color-mix(in srgb, var(--galaxyA) 52%, rgba(255,255,255,.22));
+  box-shadow:0 28px 64px rgba(0,0,0,.42), 0 0 0 1px color-mix(in srgb, var(--galaxyA) 22%, transparent), 0 0 42px color-mix(in srgb, var(--galaxyA) 20%, transparent);
+}
+.galaxyCard.locked{
+  cursor:not-allowed;
+  opacity:.58;
+  filter:saturate(.68) brightness(.78);
+}
+.galaxyCard.locked:hover{transform:none;}
+.galaxyCardContent{position:relative;z-index:2;display:flex;flex-direction:column;gap:10px;min-height:166px;}
+.galaxyKicker{font-family:'Orbitron',Pretendard,sans-serif;font-size:10px;letter-spacing:.18em;color:color-mix(in srgb,var(--galaxyA) 76%, white 24%);font-weight:900;}
+.galaxyCard h3{margin:0;font-family:'Orbitron',Pretendard,sans-serif;font-size:22px;letter-spacing:.08em;line-height:1.18;color:#fff;}
+.galaxyKo{font-size:14px;font-weight:900;color:#e0f2fe;}
+.galaxyDesc{max-width:68%;font-size:12px;line-height:1.55;color:#cbd5e1;}
+.galaxyMetaRow{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px;}
+.galaxyMetaPill{border:1px solid rgba(148,163,184,.18);background:rgba(2,6,23,.42);border-radius:999px;padding:6px 10px;font-size:10px;color:#dbeafe;}
+.galaxyEnterHint{
+  position:absolute;
+  left:50%;
+  bottom:48px;
+  transform:translateX(-50%);
+  z-index:7;
+  width:min(860px, calc(100vw - 64px));
+  color:#bae6fd;
+  text-align:center;
+  font-size:12px;
+  line-height:1.55;
+  background:rgba(2,6,23,.56);
+  border:1px solid rgba(148,163,184,.16);
+  border-radius:999px;
+  padding:11px 18px;
+  box-shadow:0 14px 30px rgba(0,0,0,.28);
+}
+#stageMap.fromGalaxy .stageTopTitle::after{
+  content:' · MILKY RIFT';
+  font-size:.62em;
+  letter-spacing:.12em;
+  color:#93c5fd;
+}
+@media (max-width: 900px), (max-aspect-ratio: 0.78){
+  .galaxyFrame{inset:10px;border-radius:22px;}
+  .galaxyBackBtn{left:18px;top:34px;padding:7px 10px;font-size:8px;}
+  .galaxyTopTitle{top:36px;font-size:16px;letter-spacing:.20em;}
+  .galaxyStatus{top:76px;width:calc(100vw - 48px);font-size:10px;}
+  .galaxyGrid{top:130px;bottom:86px;width:calc(100vw - 28px);grid-template-columns:1fr;gap:10px;align-content:start;overflow-y:auto;padding:2px 4px 10px;-webkit-overflow-scrolling:touch;}
+  .galaxyCard{min-height:146px;border-radius:20px;padding:16px 16px;}
+  .galaxyCard::before{width:158px;height:158px;right:-62px;top:-62px;}
+  .galaxyCardContent{min-height:112px;gap:7px;}
+  .galaxyKicker{font-size:8px;}
+  .galaxyCard h3{font-size:15px;}
+  .galaxyKo{font-size:12px;}
+  .galaxyDesc{max-width:78%;font-size:10px;line-height:1.42;}
+  .galaxyMetaPill{font-size:8px;padding:5px 8px;}
+  .galaxyEnterHint{bottom:22px;width:calc(100vw - 28px);font-size:9px;border-radius:16px;padding:9px 12px;}
+}
+@media (max-width: 430px){
+  .galaxyTopTitle{font-size:14px;letter-spacing:.16em;}
+  .galaxyStatus{top:72px;font-size:9px;}
+  .galaxyGrid{top:122px;bottom:82px;}
+  .galaxyCard{min-height:136px;padding:14px 14px;}
+  .galaxyDesc{max-width:76%;font-size:9.4px;}
+}
+
+
+
+/* =========================================================
+   V30 CINEMATIC GALAXY MAP + ZOOM TRANSITION
+   ========================================================= */
+#galaxyMap{
+  isolation:isolate;
+}
+#galaxyMap::before{
+  background:
+    radial-gradient(circle at 20% 18%, rgba(96,165,250,.18), transparent 24%),
+    radial-gradient(circle at 78% 14%, rgba(168,85,247,.14), transparent 24%),
+    radial-gradient(circle at 50% 84%, rgba(251,146,60,.13), transparent 28%),
+    radial-gradient(circle at center, rgba(15,23,42,.34), rgba(1,4,11,.92) 64%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.09) 0 1px, transparent 1.25px) 0 0/80px 80px,
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.05) 0 1px, transparent 1px) 21px 29px/42px 42px;
+}
+.galaxyBackdrop,
+.galaxyZoomLayer{
+  position:absolute;
+  inset:-5%;
+  z-index:1;
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  opacity:0;
+  transform:scale(1.03);
+  transition:opacity .56s ease, transform 1.1s cubic-bezier(.22,.9,.25,1), filter .9s ease;
+  filter:brightness(.54) saturate(1.05) blur(0px);
+  pointer-events:none;
+}
+.galaxyBackdrop::after,
+.galaxyZoomLayer::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at center, rgba(255,255,255,.10), transparent 38%), linear-gradient(180deg, rgba(1,4,11,.38), rgba(1,4,11,.12) 28%, rgba(1,4,11,.60));
+}
+.galaxyBackdrop.milky-rift{background-image:url('galaxy_milky_rift.png');}
+.galaxyBackdrop.andromeda-frost{background-image:url('galaxy_andromeda_frost.png');}
+.galaxyBackdrop.ember-spiral{background-image:url('galaxy_ember_spiral.png');}
+.galaxyBackdrop.void-crown{background-image:url('galaxy_void_crown.png');}
+#galaxyMap[data-selected-galaxy="milky-rift"] .galaxyBackdrop.milky-rift,
+#galaxyMap[data-selected-galaxy="andromeda-frost"] .galaxyBackdrop.andromeda-frost,
+#galaxyMap[data-selected-galaxy="ember-spiral"] .galaxyBackdrop.ember-spiral,
+#galaxyMap[data-selected-galaxy="void-crown"] .galaxyBackdrop.void-crown{
+  opacity:.72;
+  transform:scale(1);
+  filter:brightness(.68) saturate(1.08);
+}
+.galaxySceneWrap{
+  position:absolute;
+  left:50%;
+  top:132px;
+  bottom:306px;
+  width:min(1180px, calc(100vw - 64px));
+  transform:translateX(-50%);
+  z-index:6;
+  border-radius:28px;
+  overflow:hidden;
+}
+.galaxySceneGlow{
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at center, rgba(147,197,253,.09), transparent 42%), radial-gradient(circle at 22% 50%, rgba(96,165,250,.07), transparent 28%), radial-gradient(circle at 79% 32%, rgba(216,180,254,.06), transparent 22%);
+  filter:blur(2px);
+  pointer-events:none;
+}
+.galaxyRouteSvg{
+  position:absolute;
+  inset:5% 4% 7% 4%;
+  width:92%;
+  height:88%;
+  z-index:1;
+  overflow:visible;
+  pointer-events:none;
+}
+.galaxyRouteSvg path.routeBase{fill:none;stroke:rgba(148,163,184,.22);stroke-width:12;stroke-linecap:round;filter:drop-shadow(0 0 14px rgba(14,165,233,.08));}
+.galaxyRouteSvg path.routeGlow{fill:none;stroke:url(#galaxyRouteGradient);stroke-width:4.6;stroke-linecap:round;stroke-dasharray:18 18;opacity:.9;filter:drop-shadow(0 0 14px rgba(125,211,252,.34));}
+.galaxyNodeLayer{
+  position:absolute;
+  inset:0;
+  z-index:2;
+}
+.galaxyNode{
+  position:absolute;
+  width:156px;
+  height:156px;
+  margin-left:-78px;
+  margin-top:-78px;
+  background:none;
+  border:none;
+  padding:0;
+  color:#f8fafc;
+  cursor:pointer;
+}
+.galaxyNode.locked{cursor:not-allowed;}
+.galaxyNodeHalo,
+.galaxyNodeOrbit,
+.galaxyNodeCore{position:absolute;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);}
+.galaxyNodeHalo{width:146px;height:146px;background:radial-gradient(circle, color-mix(in srgb, var(--galaxyA) 28%, transparent), transparent 66%);filter:blur(10px);opacity:.78;}
+.galaxyNodeOrbit{width:118px;height:118px;border:1px solid color-mix(in srgb, var(--galaxyA) 34%, rgba(255,255,255,.18));box-shadow:0 0 0 1px rgba(148,163,184,.08), 0 0 34px color-mix(in srgb, var(--galaxyA) 22%, transparent), inset 0 0 22px rgba(255,255,255,.05);}
+.galaxyNodeOrbit::before,
+.galaxyNodeOrbit::after{content:'';position:absolute;inset:-14px;border-radius:50%;border:1px dashed rgba(148,163,184,.10);}
+.galaxyNodeOrbit::after{inset:14px;border-style:solid;border-color:transparent transparent rgba(255,255,255,.08) transparent;transform:rotate(16deg);}
+.galaxyNodeCore{width:82px;height:82px;background-color:#020617;background-size:cover;background-position:center;box-shadow:inset 0 0 0 2px rgba(255,255,255,.08), 0 0 24px rgba(2,6,23,.84);overflow:hidden;}
+.galaxyNodeCore::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 26%, rgba(255,255,255,.26), transparent 22%), linear-gradient(180deg, transparent 44%, rgba(2,6,23,.24));}
+.galaxyNode.active .galaxyNodeHalo{filter:blur(8px);opacity:.98;}
+.galaxyNode.active .galaxyNodeOrbit{transform:translate(-50%,-50%) scale(1.02);border-color:color-mix(in srgb, var(--galaxyA) 70%, rgba(255,255,255,.30));box-shadow:0 0 0 1px rgba(255,255,255,.12), 0 0 52px color-mix(in srgb, var(--galaxyA) 30%, transparent), inset 0 0 32px rgba(255,255,255,.08);}
+.galaxyNode.locked .galaxyNodeHalo,
+.galaxyNode.locked .galaxyNodeCore,
+.galaxyNode.locked .galaxyNodeOrbit{filter:saturate(.5) brightness(.74);opacity:.74;}
+.galaxyNodeBadge{
+  position:absolute;
+  left:50%;
+  top:17px;
+  transform:translateX(-50%);
+  min-width:68px;
+  padding:4px 10px;
+  border-radius:999px;
+  background:rgba(2,6,23,.66);
+  border:1px solid rgba(148,163,184,.18);
+  font-family:'Orbitron',Pretendard,sans-serif;
+  font-size:9px;
+  letter-spacing:.14em;
+  color:#dbeafe;
+  box-shadow:0 10px 20px rgba(0,0,0,.32);
+}
+.galaxyNodeLabel{
+  position:absolute;
+  left:50%;
+  top:118px;
+  width:178px;
+  transform:translateX(-50%);
+  text-align:center;
+}
+.galaxyNodeName{font-family:'Orbitron',Pretendard,sans-serif;font-size:14px;letter-spacing:.08em;font-weight:900;line-height:1.16;text-shadow:0 0 22px rgba(2,6,23,.72);}
+.galaxyNodeKo{margin-top:2px;font-size:12px;font-weight:700;color:#dbeafe;opacity:.96;text-shadow:0 0 18px rgba(2,6,23,.82);}
+.galaxyLockMark{
+  position:absolute;
+  left:50%;
+  top:49%;
+  transform:translate(-50%,-50%);
+  z-index:4;
+  font-size:22px;
+  filter:drop-shadow(0 0 12px rgba(2,6,23,.74));
+}
+.galaxyInfoPanel{
+  position:absolute;
+  left:50%;
+  right:auto;
+  bottom:102px;
+  width:min(1180px, calc(100vw - 64px));
+  transform:translateX(-50%);
+  z-index:7;
+  border-radius:26px;
+  border:1px solid rgba(148,163,184,.18);
+  background:linear-gradient(180deg, rgba(2,6,23,.84), rgba(2,6,23,.78));
+  box-shadow:0 24px 48px rgba(0,0,0,.34), inset 0 0 44px rgba(96,165,250,.06);
+  padding:18px 20px 16px;
+  overflow:hidden;
+}
+.galaxyInfoHead{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+.galaxyInfoTitle{font-family:'Orbitron',Pretendard,sans-serif;font-size:28px;letter-spacing:.05em;color:#fff;font-weight:900;line-height:1.12;}
+.galaxyInfoTitle small{display:block;margin-top:4px;font-family:'Noto Sans KR',sans-serif;font-size:16px;letter-spacing:0;color:#dbeafe;font-weight:800;}
+.galaxyInfoState{display:flex;align-items:center;gap:10px;font-family:'Orbitron',Pretendard,sans-serif;font-size:11px;color:#cbd5e1;white-space:nowrap;}
+.galaxyInfoState b{padding:8px 14px;border-radius:999px;border:1px solid rgba(148,163,184,.22);background:rgba(2,6,23,.58);font-size:12px;letter-spacing:.16em;color:#fff;}
+.galaxyInfoBody{margin-top:12px;color:#dbeafe;font-size:14px;line-height:1.7;max-width:94%;}
+.galaxyTagRow{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.galaxyTag{padding:7px 12px;border-radius:999px;border:1px solid rgba(148,163,184,.18);background:rgba(15,23,42,.55);font-family:'Orbitron',Pretendard,sans-serif;font-size:10px;letter-spacing:.1em;color:#dbeafe;}
+.galaxyInfoMeta{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.galaxyMetaCard{padding:12px 14px;border-radius:18px;border:1px solid rgba(148,163,184,.12);background:rgba(2,6,23,.46);}
+.galaxyMetaCard small{display:block;font-family:'Orbitron',Pretendard,sans-serif;font-size:10px;letter-spacing:.14em;color:#93c5fd;margin-bottom:6px;}
+.galaxyMetaCard b{display:block;font-family:'Orbitron',Pretendard,sans-serif;font-size:14px;line-height:1.3;color:#fff;}
+.galaxyMetaCard span{display:block;margin-top:3px;color:#cbd5e1;font-size:12px;line-height:1.45;}
+.galaxyEnterBtn{
+  position:absolute;
+  left:50%;
+  bottom:28px;
+  width:min(1180px, calc(100vw - 64px));
+  transform:translateX(-50%);
+  z-index:7;
+  height:58px;
+  border-radius:20px;
+  font-family:'Orbitron',Pretendard,sans-serif;
+  font-size:18px;
+  letter-spacing:.12em;
+  font-weight:900;
+  color:#f8fafc;
+  background:linear-gradient(90deg, rgba(59,130,246,.92), rgba(99,102,241,.92));
+  border:1px solid rgba(147,197,253,.38);
+  box-shadow:0 18px 36px rgba(59,130,246,.18), inset 0 0 20px rgba(255,255,255,.08);
+}
+.galaxyEnterBtn[disabled]{cursor:not-allowed;opacity:.62;filter:saturate(.72) grayscale(.18);}
+#galaxyMap.transitioning{pointer-events:none;}
+#galaxyMap.transitioning .galaxySceneWrap,
+#galaxyMap.transitioning .galaxyInfoPanel,
+#galaxyMap.transitioning .galaxyStatus,
+#galaxyMap.transitioning .galaxyTopTitle,
+#galaxyMap.transitioning .galaxyBackBtn,
+#galaxyMap.transitioning .galaxyEnterBtn{
+  opacity:0;
+  transform:translateY(-6px) scale(.985);
+  transition:opacity .56s ease, transform .95s cubic-bezier(.22,.9,.25,1);
+}
+#galaxyMap.transitioning .galaxyZoomLayer{
+  opacity:.94;
+  transform:scale(1.24);
+  filter:brightness(.86) saturate(1.16) blur(.6px);
+}
+#stageMap.fromGalaxy .stageTopTitle::after{
+  content:' · ' attr(data-galaxy-display);
+  font-size:.62em;
+  letter-spacing:.12em;
+  color:#93c5fd;
+}
+#stageMap.galaxyTransitionPrep{
+  display:block !important;
+  opacity:0;
+  transform:scale(1.06);
+  filter:blur(1.2px) saturate(1.08);
+  transition:opacity .96s cubic-bezier(.22,.9,.25,1), transform .96s cubic-bezier(.22,.9,.25,1), filter .96s cubic-bezier(.22,.9,.25,1);
+  pointer-events:none;
+}
+#stageMap.galaxyTransitionPrep.galaxyTransitionLive{
+  opacity:1;
+  transform:scale(1);
+  filter:none;
+}
+@media (max-width: 1100px){
+  .galaxySceneWrap{bottom:324px;}
+  .galaxyInfoMeta{grid-template-columns:1fr 1fr 1fr;}
+}
+@media (max-width: 900px), (max-aspect-ratio: 0.78){
+  .galaxyTopTitle{top:34px;font-size:16px;letter-spacing:.20em;}
+  .galaxyStatus{top:72px;width:calc(100vw - 44px);font-size:10px;line-height:1.45;}
+  .galaxyBackBtn{left:18px;top:32px;padding:7px 10px;font-size:8px;}
+  .galaxySceneWrap{top:118px;bottom:332px;width:calc(100vw - 18px);border-radius:22px;}
+  .galaxyRouteSvg{inset:8% 2% 12% 2%;width:96%;height:80%;}
+  .galaxyNode{width:122px;height:122px;margin-left:-61px;margin-top:-61px;}
+  .galaxyNodeHalo{width:116px;height:116px;}
+  .galaxyNodeOrbit{width:92px;height:92px;}
+  .galaxyNodeCore{width:64px;height:64px;}
+  .galaxyNodeBadge{top:12px;min-width:54px;padding:3px 8px;font-size:7px;}
+  .galaxyNodeLabel{top:92px;width:132px;}
+  .galaxyNodeName{font-size:10px;}
+  .galaxyNodeKo{font-size:9px;}
+  .galaxyInfoPanel{bottom:84px;width:calc(100vw - 18px);padding:13px 14px 12px;border-radius:20px;}
+  .galaxyInfoTitle{font-size:18px;}
+  .galaxyInfoTitle small{font-size:13px;}
+  .galaxyInfoState{font-size:8px;gap:6px;}
+  .galaxyInfoState b{padding:5px 9px;font-size:8px;}
+  .galaxyInfoBody{margin-top:9px;font-size:10px;line-height:1.58;max-width:100%;}
+  .galaxyTag{padding:5px 8px;font-size:7px;}
+  .galaxyInfoMeta{grid-template-columns:1fr;gap:7px;margin-top:10px;}
+  .galaxyMetaCard{padding:8px 10px;border-radius:14px;}
+  .galaxyMetaCard small{font-size:8px;margin-bottom:4px;}
+  .galaxyMetaCard b{font-size:10px;}
+  .galaxyMetaCard span{font-size:9px;}
+  .galaxyEnterBtn{bottom:18px;width:calc(100vw - 18px);height:48px;border-radius:16px;font-size:11px;}
+}
+@media (max-width: 430px){
+  .galaxySceneWrap{top:112px;bottom:350px;}
+  .galaxyNode{width:106px;height:106px;margin-left:-53px;margin-top:-53px;}
+  .galaxyNodeHalo{width:102px;height:102px;}
+  .galaxyNodeOrbit{width:80px;height:80px;}
+  .galaxyNodeCore{width:56px;height:56px;}
+  .galaxyNodeLabel{top:80px;width:118px;}
+  .galaxyNodeName{font-size:9px;}
+  .galaxyNodeKo{font-size:8px;}
+  .galaxyInfoPanel{bottom:76px;}
+  .galaxyEnterBtn{bottom:14px;height:46px;font-size:10px;}
+}
+
+
+
+/* =========================================================
+   V31 GALAXY MAP DISPLAY HARD FIX
+   - Force galaxy map above every other screen.
+   - Provide visible fallback nodes even before JS render runs.
+   ========================================================= */
+#galaxyMap{z-index:90 !important;display:none;}
+#galaxyMap.v31Visible{display:block !important;}
+#galaxyMap .galaxySceneWrap,
+#galaxyMap .galaxyInfoPanel,
+#galaxyMap .galaxyEnterBtn,
+#galaxyMap .galaxyTopTitle,
+#galaxyMap .galaxyStatus,
+#galaxyMap .galaxyBackBtn{visibility:visible !important;}
+#galaxyNodeLayer:empty::before{
+  content:'GALAXY MAP LOADING';
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  font-family:'Orbitron',Pretendard,sans-serif;font-size:18px;letter-spacing:.16em;color:#dbeafe;
+}
+
 </style>
 </head>
 <body>
@@ -10086,13 +10605,135 @@ h1{
     </div>
     </div>
     <div class="menuActionRow">
-      <button id="startBtn" style="font-size:18px;padding:15px 54px;border-radius:999px">START DEFENSE</button>
+      <button id="startBtn" onclick="return openGalaxyMapV31(event)" style="font-size:18px;padding:15px 54px;border-radius:999px">START DEFENSE</button>
       <button id="testModeBtn" class="secondaryAction" style="font-size:18px;padding:15px 40px;border-radius:999px">TEST MODE</button>
       <button id="runLogBtn" class="secondaryAction" style="font-size:15px;padding:15px 30px;border-radius:999px">RUN LOG CSV</button>
     </div>
   </div>
 </div>
 
+
+
+
+<div id="galaxyMap" data-selected-galaxy="milky-rift">
+  <div class="galaxyFrame"></div>
+  <div class="galaxyBackdrop milky-rift"></div>
+  <div class="galaxyBackdrop andromeda-frost"></div>
+  <div class="galaxyBackdrop ember-spiral"></div>
+  <div class="galaxyBackdrop void-crown"></div>
+  <div id="galaxyZoomLayer" class="galaxyZoomLayer" aria-hidden="true"></div>
+  <button id="galaxyMapBack" class="galaxyBackBtn">← MAIN</button>
+  <div class="galaxyTopTitle">GALAXY MAP</div>
+  <div class="galaxyStatus">
+    <b id="galaxyProgressLabel">MILKY RIFT · 1 / 4 GALAXIES</b><br>
+    <span id="galaxyProgressSub">은하 선택 후 성좌 지도로 확대 진입합니다.</span>
+  </div>
+  <div class="galaxySceneWrap">
+    <div class="galaxySceneGlow"></div>
+    <svg id="galaxyRouteSvg" class="galaxyRouteSvg" viewBox="0 0 1000 560" preserveAspectRatio="none"></svg>
+    <div id="galaxyNodeLayer" class="galaxyNodeLayer">
+      <button class="galaxyNode active open" type="button" data-galaxy-id="milky-rift" style="left:18%;top:69%;--galaxyA:#60a5fa;--galaxyB:#1d4ed8;">
+        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('galaxy_milky_rift.png')"></div>
+        <div class="galaxyNodeBadge">OPEN</div><div class="galaxyNodeLabel"><div class="galaxyNodeName">MILKY RIFT</div><div class="galaxyNodeKo">은하수 균열</div></div>
+      </button>
+      <button class="galaxyNode locked" type="button" data-galaxy-id="andromeda-frost" style="left:38%;top:29%;--galaxyA:#67e8f9;--galaxyB:#0f766e;">
+        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('galaxy_andromeda_frost.png')"></div>
+        <div class="galaxyNodeBadge">LOCKED</div><div class="galaxyLockMark">🔒</div><div class="galaxyNodeLabel"><div class="galaxyNodeName">ANDROMEDA FROST</div><div class="galaxyNodeKo">안드로메다 빙하</div></div>
+      </button>
+      <button class="galaxyNode locked" type="button" data-galaxy-id="ember-spiral" style="left:63%;top:63%;--galaxyA:#fb923c;--galaxyB:#991b1b;">
+        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('galaxy_ember_spiral.png')"></div>
+        <div class="galaxyNodeBadge">LOCKED</div><div class="galaxyLockMark">🔒</div><div class="galaxyNodeLabel"><div class="galaxyNodeName">EMBER SPIRAL</div><div class="galaxyNodeKo">잿불 나선은하</div></div>
+      </button>
+      <button class="galaxyNode locked" type="button" data-galaxy-id="void-crown" style="left:82%;top:30%;--galaxyA:#c084fc;--galaxyB:#5b21b6;">
+        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('galaxy_void_crown.png')"></div>
+        <div class="galaxyNodeBadge">LOCKED</div><div class="galaxyLockMark">🔒</div><div class="galaxyNodeLabel"><div class="galaxyNodeName">VOID CROWN</div><div class="galaxyNodeKo">공허 왕관</div></div>
+      </button>
+    </div>
+  </div>
+  <div id="galaxyInfoPanel" class="galaxyInfoPanel">
+    <div class="galaxyInfoHead">
+      <div class="galaxyInfoTitle">MILKY RIFT<small>은하수 균열</small></div>
+      <div class="galaxyInfoState">STATE <b>OPEN</b></div>
+    </div>
+    <div class="galaxyInfoBody">현재 플레이 가능한 본편 은하입니다. 성좌 내부로 진입해 12개 성역을 순차적으로 복원합니다.</div>
+    <div class="galaxyTagRow"><span class="galaxyTag">CORE ROUTE</span><span class="galaxyTag">12 STAGES</span><span class="galaxyTag">RESTORATION</span></div>
+    <div class="galaxyInfoMeta">
+      <div class="galaxyMetaCard"><small>ROUTE</small><b>SANCTUARY 1-12</b><span>현재 메인 캠페인</span></div>
+      <div class="galaxyMetaCard"><small>THREAT</small><b>공허 잔재 · 장판 오염</b><span>은하 단위 난이도 콘셉트입니다.</span></div>
+      <div class="galaxyMetaCard"><small>REWARD</small><b>일반 스킬 해금</b><span>12 SANCTUARIES</span></div>
+    </div>
+  </div>
+  <button id="galaxyEnterBtn" class="galaxyEnterBtn">ENTER MILKY RIFT</button>
+</div>
+
+
+<script>
+(function(){
+  function byId(id){ return document.getElementById(id); }
+  function hide(id){ var el=byId(id); if(el) el.style.display='none'; }
+  function show(id, display){ var el=byId(id); if(el) el.style.display=display||'block'; }
+  window.openGalaxyMapV31 = function(e){
+    if(e){ try{ e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); }catch(_){ } }
+    hide('menu'); hide('game'); hide('stageMap');
+    var g=byId('galaxyMap');
+    if(g){ g.style.display='block'; g.classList.add('v31Visible'); g.dataset.selectedGalaxy='milky-rift'; }
+    var z=byId('galaxyZoomLayer');
+    if(z){ z.style.opacity='0'; z.style.transform='scale(1.03)'; }
+    return false;
+  };
+  window.enterGalaxyMapV31 = function(e){
+    if(e){ try{ e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); }catch(_){ } }
+    var g=byId('galaxyMap');
+    var z=byId('galaxyZoomLayer');
+    var s=byId('stageMap');
+    if(z){ z.style.backgroundImage="url('galaxy_milky_rift.png')"; }
+    if(g){ g.classList.add('transitioning'); }
+    if(s){
+      s.dataset.galaxy='milky-rift';
+      s.dataset.galaxyDisplay='MILKY RIFT';
+      s.classList.add('fromGalaxy','galaxyTransitionPrep');
+      s.style.display='block';
+      setTimeout(function(){ s.classList.add('galaxyTransitionLive'); }, 40);
+    }
+    setTimeout(function(){
+      if(g){ g.style.display='none'; g.classList.remove('v31Visible','transitioning'); }
+      if(s){ s.classList.remove('galaxyTransitionPrep','galaxyTransitionLive'); s.style.display='block'; }
+      if(typeof window.showStageMap === 'function') { try{ window.showStageMap(); }catch(_){} }
+      var back=byId('stageMapBack'); if(back){ back.textContent='← GALAXY'; }
+    }, 980);
+    return false;
+  };
+  window.returnToMainFromGalaxyV31 = function(e){
+    if(e){ try{ e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); }catch(_){ } }
+    hide('galaxyMap'); hide('stageMap');
+    var menu=byId('menu'); if(menu) menu.style.display='flex';
+    return false;
+  };
+  function bind(){
+    var start=byId('startBtn'); if(start){ start.onclick=window.openGalaxyMapV31; start.setAttribute('onclick','return openGalaxyMapV31(event)'); }
+    var enter=byId('galaxyEnterBtn'); if(enter){ enter.onclick=window.enterGalaxyMapV31; enter.setAttribute('onclick','return enterGalaxyMapV31(event)'); }
+    var back=byId('galaxyMapBack'); if(back){ back.onclick=window.returnToMainFromGalaxyV31; back.setAttribute('onclick','return returnToMainFromGalaxyV31(event)'); }
+    var stageBack=byId('stageMapBack'); if(stageBack){ stageBack.textContent='← GALAXY'; stageBack.onclick=window.openGalaxyMapV31; stageBack.setAttribute('onclick','return openGalaxyMapV31(event)'); }
+  }
+  document.addEventListener('click', function(e){
+    var t=e.target;
+    if(t && t.closest){
+      if(t.closest('#startBtn')) return window.openGalaxyMapV31(e);
+      if(t.closest('#galaxyEnterBtn')) return window.enterGalaxyMapV31(e);
+      if(t.closest('#galaxyMapBack')) return window.returnToMainFromGalaxyV31(e);
+      var node=t.closest('#galaxyNodeLayer .galaxyNode[data-galaxy-id]');
+      if(node){
+        if(node.dataset.galaxyId==='milky-rift') return window.enterGalaxyMapV31(e);
+        if(typeof toast==='function') try{ toast('아직 미개방 은하입니다.'); }catch(_){}
+        return false;
+      }
+      if(t.closest('#stageMapBack')) return window.openGalaxyMapV31(e);
+    }
+  }, true);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind); else bind();
+  setTimeout(bind,100); setTimeout(bind,700);
+})();
+</script>
 
 <div id="stageMap" data-unlocked="1" data-selected="1">
   <div class="stageBg cosmic"></div>
@@ -10108,8 +10749,8 @@ h1{
   <div class="stageBg silent"></div>
   <div class="stageBg rift"></div>
   <div class="stageFrame"></div>
-  <button id="stageMapBack" class="stageBackBtn">← MAIN</button>
-  <div class="stageTopTitle">GALAXY MAP</div>
+  <button id="stageMapBack" class="stageBackBtn">← GALAXY</button>
+  <div class="stageTopTitle">CONSTELLATION MAP</div>
   <div class="stageStatus">
     <span id="stageProgressLabel">ORION CONSTELLATION · SANCTUARY 1 / 12</span>
     <small id="stageProgressSub">은하수 외곽 항로에서 첫 성역을 복원합니다</small>
@@ -15969,6 +16610,977 @@ window.addEventListener('DOMContentLoaded', () => {
    - Retry starts battle BGM again through the existing stage-entry path.
 */
 
+
+
+/* =========================================================
+   V27 FUN EXPANSION PATCH
+   1) Stage-specific battle gimmicks
+   2) New enemy archetypes
+   3) Roguelite mid-wave choice events
+   4) Extra boss patterns
+   5) Extra tower/skill growth hooks
+   ========================================================= */
+(function(){
+  const V27_STAGE_GIMMICKS = {
+    1:{name:'AURORA DRILL', ko:'기본 성역 훈련', tip:'기본 적과 장판 활용을 익힙니다.', color:'#38bdf8'},
+    2:{name:'FROST DRAG', ko:'빙결 항로', tip:'적이 느려지는 대신 체력이 높습니다.', color:'#67e8f9'},
+    3:{name:'LAVA ARMOR', ko:'용암 장갑', tip:'장갑 적과 불안정 장판이 늘어납니다.', color:'#fb923c'},
+    4:{name:'SPORE REGEN', ko:'포자 재생', tip:'회복형 적과 재생 파동이 전선을 압박합니다.', color:'#22c55e'},
+    5:{name:'SMOG HAZE', ko:'매연 은폐', tip:'은폐 적과 사거리 압박이 발생합니다.', color:'#9cab62'},
+    6:{name:'PRISM SHIELD', ko:'프리즘 실드', tip:'보호막 적과 공명 장판이 등장합니다.', color:'#c084fc'},
+    7:{name:'MACHINE REPAIR', ko:'기계 수리망', tip:'수리/실드 유닛이 방어선을 굳힙니다.', color:'#60a5fa'},
+    8:{name:'GRAVITY WELL', ko:'중력 우물', tip:'적이 밀집되고 중력 이상점이 생성됩니다.', color:'#8b5cf6'},
+    9:{name:'THUNDER RUSH', ko:'번개 질주', tip:'고속 돌진 적과 과전류 파동이 등장합니다.', color:'#22d3ee'},
+    10:{name:'TIME ECHO', ko:'시간 잔상', tip:'잔상 적이 반복 등장해 화력을 분산시킵니다.', color:'#a78bfa'},
+    11:{name:'SILENCE FIELD', ko:'침묵장', tip:'잠행 적과 일시 침묵이 타워 반응을 늦춥니다.', color:'#94a3b8'},
+    12:{name:'RIFT HYBRID', ko:'균열 복합전', tip:'이전 기믹이 섞여 나오는 최종 전장입니다.', color:'#ef4444'}
+  };
+  const V27_ENEMY_PROFILES = {
+    shielded:{base:'brute', label:'SHIELD', ko:'보호막형', color:'#c084fc', hp:1.18, spd:.96, size:1.02, reward:1.12, exp:1.08, armor:.08, shield:.38, hint:'보호막이 먼저 피해를 흡수합니다.'},
+    splitter:{base:'grunt', label:'SPLIT', ko:'분열형', color:'#fbbf24', hp:1.10, spd:1.04, size:.98, reward:1.08, exp:1.05, split:true, hint:'처치 시 작은 적 2체로 분열합니다.'},
+    healer:{base:'regen', label:'HEAL', ko:'회복형', color:'#4ade80', hp:1.16, spd:.93, size:1.04, reward:1.15, exp:1.15, healer:true, hint:'주변 적을 주기적으로 회복합니다.'},
+    stealth:{base:'runner', label:'STEALTH', ko:'은신형', color:'#94a3b8', hp:1.00, spd:1.18, size:.96, reward:1.20, exp:1.10, stealth:true, hint:'초반 구간에서 받는 피해가 감소합니다.'},
+    charger:{base:'runner', label:'RUSH', ko:'돌진형', color:'#22d3ee', hp:1.10, spd:1.34, size:.98, reward:1.15, exp:1.12, charger:true, hint:'일정 주기로 짧게 가속합니다.'},
+    phantom:{base:'grunt', label:'ECHO', ko:'잔상형', color:'#a78bfa', hp:.92, spd:1.16, size:.92, reward:1.05, exp:1.04, phantom:true, hint:'낮은 체력의 잔상 적입니다.'},
+    nullguard:{base:'brute', label:'NULL', ko:'침묵 장갑', color:'#cbd5e1', hp:1.22, spd:.91, size:1.02, reward:1.20, exp:1.18, armor:.16, stealth:true, hint:'암흑 장갑으로 초반 피해를 크게 줄입니다.'}
+  };
+
+  function v27Stage(){ return clamp(Number(S?.stageNo || StageMapState?.current || 1), 1, 12); }
+  function v27Wave(){ return Number(S?.ogge || 1); }
+  function v27Gimmick(stageNo=v27Stage()){ return V27_STAGE_GIMMICKS[stageNo] || V27_STAGE_GIMMICKS[1]; }
+  function v27Ensure(){
+    if(!S) return {};
+    if(!S.v27) S.v27 = {buffs:{damage:0,fireRate:0,range:0,reward:0,shield:0,enemyCountMul:1,enemyHpMul:1}, eventTaken:{}, pendingChoice:false, stage:0, wave:0};
+    if(!S.v27.buffs) S.v27.buffs = {damage:0,fireRate:0,range:0,reward:0,shield:0,enemyCountMul:1,enemyHpMul:1};
+    return S.v27;
+  }
+  function v27Log(msg){ try{ log(msg); }catch(_){ } }
+  function v27Toast(msg,type){ try{ toast(msg,type||'normal'); }catch(_){ } }
+  function v27Impact(x,y,text,color){ try{ impactLabel(x,y,text,color||'#fff',15,72); }catch(_){ } }
+  function v27MakeEntry(type, extra={}){ return {v27Type:type, ...extra}; }
+  function v27StageEnemyType(stage,wave,i){
+    if(stage === 2 && (i%7===2 || wave>=6 && i%6===1)) return v27MakeEntry('charger');
+    if(stage === 3 && (i%5===0 || wave>=5 && i%8===3)) return v27MakeEntry('shielded');
+    if(stage === 4 && (i%7===4 || wave>=5 && i%9===2)) return v27MakeEntry('healer');
+    if(stage === 5 && (i%6===1 || wave>=6 && i%8===5)) return v27MakeEntry('stealth');
+    if(stage === 6 && (i%5===2 || wave>=6 && i%7===3)) return v27MakeEntry('shielded');
+    if(stage === 7 && (i%6===3 || wave>=6 && i%8===4)) return v27MakeEntry(i%12===4 ? 'healer' : 'shielded');
+    if(stage === 8 && (i%5===1 || wave>=6 && i%7===5)) return v27MakeEntry('splitter');
+    if(stage === 9 && (i%4===1 || wave>=6 && i%6===2)) return v27MakeEntry('charger');
+    if(stage === 10 && (i%5===0 || wave>=5 && i%6===4)) return v27MakeEntry('phantom');
+    if(stage === 11 && (i%5===2 || wave>=6 && i%7===1)) return v27MakeEntry('nullguard');
+    if(stage === 12){
+      const mix = ['shielded','splitter','healer','stealth','charger','phantom','nullguard'];
+      if(i%3===0 || wave>=5 && i%4===1) return v27MakeEntry(mix[(i+wave)%mix.length]);
+    }
+    return null;
+  }
+  function v27ApplyTerrainGimmick(stage,wave){
+    if(!Array.isArray(terrain)) return;
+    const free = [];
+    for(let i=0;i<terrain.length;i++) if(terrain[i] === 'empty') free.push(i);
+    const pick = () => free.splice(Math.floor(Math.random()*free.length),1)[0];
+    if(stage === 3){
+      for(let n=0;n<Math.min(3,free.length);n++){ const idx=pick(); if(idx!=null) terrain[idx]='rift'; }
+    }else if(stage === 6){
+      for(let n=0;n<Math.min(3,free.length);n++){ const idx=pick(); if(idx!=null) terrain[idx]= n%2 ? 'lens' : 'amp'; }
+    }else if(stage === 8){
+      for(let n=0;n<Math.min(2,free.length);n++){ const idx=pick(); if(idx!=null) terrain[idx]='lens'; }
+    }else if(stage === 9){
+      for(let n=0;n<Math.min(3,free.length);n++){ const idx=pick(); if(idx!=null) terrain[idx]='coil'; }
+    }else if(stage === 11){
+      for(let n=0;n<Math.min(3,free.length);n++){ const idx=pick(); if(idx!=null) terrain[idx]='blocked'; }
+    }else if(stage === 12){
+      const types=['amp','coil','lens','rift','mine'];
+      for(let n=0;n<Math.min(5,free.length);n++){ const idx=pick(); if(idx!=null) terrain[idx]=types[(n+wave)%types.length]; }
+    }
+  }
+
+  const v27OldPlanetStats = Planet.prototype.stats;
+  Planet.prototype.stats = function(){
+    const st = v27OldPlanetStats.call(this);
+    const stage = v27Stage();
+    const v27 = v27Ensure();
+    const b = v27.buffs || {};
+    if(b.damage) st.dmg *= (1 + b.damage);
+    if(b.fireRate) st.cd /= (1 + b.fireRate);
+    if(b.range) st.range += b.range;
+    if(stage === 5){ st.range *= .94; st.cd *= 1.04; }
+    if(stage === 6 && this.terrainBonus?.().plate){ st.dmg *= 1.10; }
+    if(stage === 9){ st.cd *= .96; }
+    if(stage === 11 && S?.v27SilenceTimer > 0){ st.cd *= 1.14; }
+    if(stage === 12){ st.dmg *= 1.04; st.cd *= 1.03; }
+    return st;
+  };
+
+  const v27OldDamage = Enemy.prototype.damage;
+  Enemy.prototype.damage = function(v,source,color){
+    let value = Number(v || 0);
+    if(this.v27Stealth && !this.v27Revealed){
+      if(this.progress > 170 || this.mark > 0 || this.freeze > 0 || this.dotTime > 0){
+        this.v27Revealed = true;
+        v27Impact(this.x, this.y-this.size-16, 'REVEALED', '#cbd5e1');
+      }else value *= .48;
+    }
+    if(this.v27Shield && this.v27Shield > 0){
+      const absorbed = Math.min(this.v27Shield, value * .58);
+      this.v27Shield -= absorbed;
+      value -= absorbed;
+      if(absorbed > 8) v27Impact(this.x, this.y-this.size-20, 'SHIELD', '#c084fc');
+    }
+    return v27OldDamage.call(this, value, source, color);
+  };
+
+  const v27OldEnemyUpdate = Enemy.prototype.update;
+  Enemy.prototype.update = function(dt){
+    if(this.dead) return v27OldEnemyUpdate.call(this, dt);
+    if(this.v27Healer){
+      this.v27HealCd = (this.v27HealCd || 95) - dt;
+      if(this.v27HealCd <= 0){
+        this.v27HealCd = 118;
+        let healed = 0;
+        for(const e of enemies){
+          if(e.dead || e === this) continue;
+          if(dist(e.x,e.y,this.x,this.y) <= 128){
+            const g = Math.floor(e.maxHp * .08);
+            e.hp = Math.min(e.maxHp, e.hp + g);
+            healed++;
+          }
+        }
+        if(healed){ ring(this.x,this.y,76,'#4ade80'); v27Impact(this.x,this.y-this.size-18,'HEAL','#86efac'); }
+      }
+    }
+    if(this.v27Charger){
+      this.v27ChargeCd = (this.v27ChargeCd || 120) - dt;
+      if(this.v27ChargeCd <= 0){ this.v27ChargeCd = 180 + rand(0,60); this.v27ChargeTime = 34; v27Impact(this.x,this.y-this.size-20,'RUSH','#22d3ee'); }
+    }
+    const oldSpd = this.spd;
+    if(this.v27ChargeTime > 0){ this.v27ChargeTime -= dt; this.spd = oldSpd * 1.85; }
+    if(this.v27Phantom){ this.mark = Math.max(this.mark || 0, 30); }
+    const result = v27OldEnemyUpdate.call(this, dt);
+    this.spd = oldSpd;
+    return result;
+  };
+
+  const v27OldEnemyKill = Enemy.prototype.kill;
+  Enemy.prototype.kill = function(){
+    if(this.dead) return;
+    const shouldSplit = this.v27Split && !this.v27DidSplit;
+    const sx = this.x, sy = this.y, seg = this.seg, progress = this.progress;
+    v27OldEnemyKill.call(this);
+    const v27 = v27Ensure();
+    if(v27?.buffs?.reward){
+      const bonus = Math.max(1, Math.floor((6 + v27Wave()) * v27.buffs.reward));
+      S.gold += bonus;
+      if(Math.random() < .18) v27Impact(sx, sy - 28, `+${fmt2(bonus)}`, '#fde68a');
+    }
+    if(shouldSplit && Array.isArray(enemies)){
+      this.v27DidSplit = true;
+      for(let i=0;i<2;i++){
+        const child = new Enemy('runner');
+        child.x = sx + rand(-9,9); child.y = sy + rand(-9,9); child.seg = seg; child.progress = Math.max(0, progress - 4);
+        child.maxHp = Math.max(45, Math.floor(this.maxHp * .18)); child.hp = child.maxHp;
+        child.size = Math.max(8, this.size * .58); child.color = '#fde68a'; child.reward = .28; child.exp = 2;
+        child.v27Phantom = true; child.type = 'splitling';
+        enemies.push(child);
+      }
+      ring(sx,sy,54,'#facc15');
+      v27Impact(sx, sy-34, 'SPLIT', '#fde68a');
+    }
+  };
+
+  const v27OldSpawn = spawn;
+  spawn = function(entry){
+    if(entry && typeof entry === 'object' && entry.v27Type){
+      const profile = V27_ENEMY_PROFILES[entry.v27Type] || V27_ENEMY_PROFILES.shielded;
+      const enemy = new Enemy(profile.base || 'grunt');
+      enemy.type = entry.v27Type;
+      enemy.v27Type = entry.v27Type;
+      enemy.v27Label = profile.label;
+      enemy.v27Ko = profile.ko;
+      enemy.color = profile.color || enemy.color;
+      enemy.size *= profile.size || 1;
+      enemy.spd *= profile.spd || 1;
+      enemy.reward *= profile.reward || 1;
+      enemy.exp *= profile.exp || 1;
+      enemy.armor = Math.min(.82, (enemy.armor || 0) + (profile.armor || 0));
+      enemy.maxHp = Math.max(20, Math.floor(enemy.maxHp * (profile.hp || 1) * (S?.v27?.buffs?.enemyHpMul || 1)));
+      enemy.hp = enemy.maxHp;
+      if(profile.shield) enemy.v27Shield = Math.floor(enemy.maxHp * profile.shield);
+      if(profile.split) enemy.v27Split = true;
+      if(profile.healer) enemy.v27Healer = true;
+      if(profile.stealth) enemy.v27Stealth = true;
+      if(profile.charger) enemy.v27Charger = true;
+      if(profile.phantom) enemy.v27Phantom = true;
+      enemies.push(enemy);
+      if(Math.random() < .18) v27Impact(enemy.x + 38, enemy.y - 14, profile.label, profile.color);
+      S.spawned++;
+      return enemy;
+    }
+    return v27OldSpawn(entry);
+  };
+
+  prepareWave = function(){
+    makeRoute();
+    makeTerrain();
+    const stage = v27Stage();
+    const wave = v27Wave();
+    v27Ensure().stage = stage;
+    v27Ensure().wave = wave;
+    S.stageGimmick = v27Gimmick(stage);
+    v27ApplyTerrainGimmick(stage,wave);
+    relocateInvalidPlanets();
+    enemies.length=0;bullets.length=0;particles.length=0;beams.length=0;floats.length=0;anomalies.length=0;
+    S.stageArmorBonus=0;
+    S.globalCooldownPenalty=0;
+    S.hazardTimer=130;
+    S.v27SilenceTimer=0;
+    buildDustClouds();
+    S.queue.length=0;
+    const v27 = v27Ensure();
+    const baseCount = 27 + wave*6 + S.theme*5 + Math.floor(stage*1.8);
+    const count = Math.floor(baseCount * (v27.buffs?.enemyCountMul || 1));
+    for(let i=0;i<count;i++){
+      let entry = v27StageEnemyType(stage,wave,i);
+      if(!entry){
+        let type='grunt';
+        if(i%4===1) type='runner';
+        if(i%6===3) type='brute';
+        if(wave>=2 && i%8===5) type='regen';
+        if(wave>=3 && i%5===0) type='brute';
+        if(wave>=6 && i%7===2) type='regen';
+        if(stage >= 8 && i%9===4) entry = v27MakeEntry('splitter');
+        else type = type;
+        if(!entry) entry = type;
+      }
+      if(Math.random()<.02+S.mods.treasure) entry='treasure';
+      S.queue.push(entry);
+    }
+    S.currentBossInfo = null;
+    if(wave===5){
+      const bossData = getStageBossDef(stage, 'mid');
+      S.queue.push({type:'midboss', bossTier:'mid', bossData});
+      S.currentBossInfo = bossData;
+    }else if(wave===10){
+      const bossData = getStageBossDef(stage, 'final');
+      S.queue.push({type:'finalboss', bossTier:'final', bossData});
+      S.currentBossInfo = bossData;
+    }else if(wave%4===0){
+      S.queue.push('boss');
+    }
+    S.total=S.queue.length;
+    S.spawned=0;
+    S.active=true;
+    spawnTimer=13;
+    document.getElementById('bg').style.backgroundImage=`url("${theme().bg}")`;
+    triggerStageFx('enter');
+    if(audio && audio.on) playStageBgm();
+    const gimmick = v27Gimmick(stage);
+    toast(`${theme().ko} 진입 — ${gimmick.ko}: ${gimmick.tip}`);
+    if(S.currentBossInfo){
+      const storyPhase = wave===10 ? 'final' : 'mid';
+      markOfflineStory(stage, storyPhase);
+      sound('boss', { intensity: storyPhase === 'final' ? 1.2 : 1 });
+      playStageBgm();
+      toast(`${STORY_EVENT_TEXT.boss} ${S.currentBossInfo.name} / ${S.currentBossInfo.ko}`, 'important');
+      log(`보스 경보: ${S.currentBossInfo.name} / ${S.currentBossInfo.ability} — ${S.currentBossInfo.desc}`);
+      log(`시나리오: ${getOfflineStoryLog(stage, storyPhase)}`);
+    }
+    const preview = getWavePreviewInfo(wave, stage);
+    log(`웨이브 ${wave}: ${theme().ko} / ${gimmick.ko} / 적 ${S.total}체 접근`);
+    toast(`웨이브 ${wave} · ${preview.title} · ${gimmick.name}`, S.currentBossInfo ? 'important' : 'normal');
+    updateUI();
+  };
+
+  const v27OldTriggerStageFx = triggerStageFx;
+  triggerStageFx = function(reason){
+    const stage = v27Stage();
+    const wave = v27Wave();
+    const gimmick = v27Gimmick(stage);
+    try{ v27OldTriggerStageFx(reason); }catch(err){ console.warn('base stage fx failed',err); }
+    const label=$('stageFxLabel');
+    if(label){ label.textContent = gimmick.name; label.style.opacity=1; setTimeout(()=>{ if(label) label.style.opacity=0; }, 1450); }
+    if(stage === 2){
+      for(const e of enemies){ if(!e.dead) e.slow = Math.max(e.slow, 60); }
+    }else if(stage === 3){
+      S.stageArmorBonus = Math.max(S.stageArmorBonus || 0, .16); setTimeout(()=>{ if(S) S.stageArmorBonus=0; }, 4800);
+    }else if(stage === 4){
+      for(const e of enemies){ if(!e.dead) e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp*.10)); }
+      spawnImpactMist(CORE.x, CORE.y, 'rgba(34,197,94,.22)', 8);
+    }else if(stage === 5){
+      S.globalCooldownPenalty = Math.max(S.globalCooldownPenalty || 0, .18); setTimeout(()=>{ if(S) S.globalCooldownPenalty=0; }, 5000);
+    }else if(stage === 6){
+      const target = enemies.find(e=>!e.dead);
+      if(target) target.v27Shield = (target.v27Shield || 0) + Math.floor(target.maxHp*.14);
+    }else if(stage === 8){
+      const target=enemies.length?enemies.slice().sort((a,b)=>b.progress-a.progress)[0]:null;
+      const x=target?.x || W/2, y=target?.y || H/2;
+      anomalies.push({x,y,target:null,kind:'stageGravity',radius:150,visualRadius:24,damage:8+wave*2,pull:1.2,color:'#8b5cf6',life:70,maxLife:70,tick:0});
+    }else if(stage === 9){
+      for(const e of enemies){ if(!e.dead){ e.v27ChargeTime = Math.max(e.v27ChargeTime || 0, 30); e.mark=Math.max(e.mark,40); } }
+    }else if(stage === 10){
+      const lead=enemies.slice().sort((a,b)=>b.progress-a.progress)[0];
+      if(lead && enemies.length < 70){
+        const echo = new Enemy('runner');
+        echo.x=lead.x+rand(-12,12); echo.y=lead.y+rand(-12,12); echo.seg=lead.seg; echo.progress=Math.max(0,lead.progress-8);
+        echo.maxHp=Math.max(60,Math.floor(lead.maxHp*.26)); echo.hp=echo.maxHp; echo.color='#a78bfa'; echo.v27Phantom=true; echo.reward=.25; echo.exp=2;
+        enemies.push(echo); v27Impact(echo.x, echo.y-20, 'ECHO', '#a78bfa');
+      }
+    }else if(stage === 11){
+      S.v27SilenceTimer = 150;
+      choosePlacedPlanets(2).forEach(t=>{ t.frozen=Math.max(t.frozen||0,64); });
+    }else if(stage === 12){
+      const pool=[3,4,5,6,8,9,10,11];
+      const picked=pool[Math.floor(Math.random()*pool.length)];
+      const oldStage=S.stageNo; S.stageNo=picked;
+      try{ triggerStageFx('riftHybrid'); }catch(_){ }
+      S.stageNo=oldStage;
+    }
+    ring(CORE.x,CORE.y,54,gimmick.color);
+    v27Log(`스테이지 기믹: ${gimmick.ko} — ${gimmick.tip}`);
+  };
+
+  const v27OldUpdateHazards = updateStageHazards;
+  updateStageHazards = function(dt){
+    if(S?.v27SilenceTimer > 0) S.v27SilenceTimer = Math.max(0, S.v27SilenceTimer - dt);
+    return v27OldUpdateHazards(dt);
+  };
+
+  const v27OldBossSkill = triggerBossSkill;
+  triggerBossSkill = function(enemy){
+    v27OldBossSkill(enemy);
+    if(!enemy || enemy.dead) return;
+    const stage = v27Stage();
+    const color = enemy.auraColor || enemy.color || v27Gimmick(stage).color;
+    if(stage === 8){
+      anomalies.push({x:enemy.x,y:enemy.y,target:null,kind:'bossGravity',radius:180,visualRadius:34,damage:12,pull:1.45,color,life:76,maxLife:76,tick:0});
+      v27Impact(enemy.x, enemy.y-enemy.size-42, 'GRAVITY WELL', color);
+    }else if(stage === 9){
+      for(const e of enemies){ if(!e.dead && e!==enemy){ e.v27ChargeTime=Math.max(e.v27ChargeTime||0,42); e.mark=Math.max(e.mark,60); } }
+      v27Impact(enemy.x, enemy.y-enemy.size-42, 'OVERCHARGE', color);
+    }else if(stage === 10){
+      for(let i=0;i<2 && enemies.length<80;i++){
+        const ph = new Enemy('runner');
+        ph.x=enemy.x+rand(-18,18); ph.y=enemy.y+rand(-18,18); ph.seg=enemy.seg; ph.progress=Math.max(0,enemy.progress-12-i*6);
+        ph.maxHp=Math.max(90,Math.floor(enemy.maxHp*.06)); ph.hp=ph.maxHp; ph.color='#a78bfa'; ph.v27Phantom=true; ph.reward=.3; ph.exp=3;
+        enemies.push(ph);
+      }
+      v27Impact(enemy.x, enemy.y-enemy.size-42, 'TIME ECHO', color);
+    }else if(stage === 11){
+      S.v27SilenceTimer = Math.max(S.v27SilenceTimer||0, 180);
+      choosePlacedPlanets(enemy.bossTier === 'final' ? 3 : 2).forEach(t=>t.frozen=Math.max(t.frozen||0,86));
+      v27Impact(enemy.x, enemy.y-enemy.size-42, 'SILENCE', color);
+    }else if(stage === 12){
+      enemy.v27Shield = (enemy.v27Shield || 0) + Math.floor(enemy.maxHp*.08);
+      const pick = ['shielded','charger','phantom','healer'][Math.floor(Math.random()*4)];
+      if(enemies.length < 85){
+        const entry = v27MakeEntry(pick);
+        setTimeout(()=>{ if(S && !S.gameOver) spawn(entry); }, 120);
+      }
+      v27Impact(enemy.x, enemy.y-enemy.size-42, 'RIFT HYBRID', color);
+    }
+  };
+
+  function v27ChoicePool(){
+    const stage = v27Stage();
+    const wave = v27Wave();
+    const choices = [
+      {kind:'safe', title:'성역 에너지 흡수', body:'모든 행성 공격력 +8%, 이번 전투 동안 유지됩니다.', risk:'안정 선택', apply(){ v27Ensure().buffs.damage += .08; }},
+      {kind:'safe', title:'공격속도 동기화', body:'모든 행성 공격속도 +7%, 빠른 적 대응력이 좋아집니다.', risk:'안정 선택', apply(){ v27Ensure().buffs.fireRate += .07; }},
+      {kind:'safe', title:'랜덤 행성 성장', body:'배치된 행성 1개가 즉시 Lv.+1 성장합니다.', risk:'운영 선택', apply(){ const list=grid.filter(Boolean); if(list.length){ const t=list[Math.floor(Math.random()*list.length)]; t.level=Math.min(12,t.level+1); syncTowerSkillUnlocks(t); selected=t.idx; burst(t.pos.x,t.pos.y,t.def.color,28,44); } }},
+      {kind:'safe', title:'코어 방벽 전개', body:'코어 보호막 +3을 획득하고 다음 누수를 막습니다.', risk:'방어 선택', apply(){ S.coreShield=(S.coreShield||0)+3; }},
+      {kind:'risk', title:'균열 거래', body:'다음 웨이브 적 수 +16%, 대신 처치 보상 +35%.', risk:'위험 보상', apply(){ const b=v27Ensure().buffs; b.enemyCountMul *= 1.16; b.reward += .35; }},
+      {kind:'risk', title:'과충전 장판', body:'장판 위 화력 상승. 대신 다음 웨이브 적 체력 +10%.', risk:'고위험 성장', apply(){ const b=v27Ensure().buffs; b.damage += .12; b.enemyHpMul *= 1.10; }},
+      {kind:'rare', title:'프리즘 재배열', body:'비어있는 칸 일부가 증폭/가속 장판으로 바뀝니다.', risk:'희귀 선택', apply(){ v27ApplyTerrainGimmick(6,wave); relocateInvalidPlanets(); }},
+      {kind:'rare', title:'보스 해체 프로토콜', body:'이번 전투 동안 보스/장갑 대응력이 상승합니다.', risk:'보스 대비', apply(){ const c=makeGlobalUpgradeCandidate(true,new Set(['global_damage','global_speed','global_range'])); if(c) applyGlobalUpgradeCandidate(c); v27Ensure().buffs.damage += .05; }}
+    ];
+    if(stage >= 8) choices.push({kind:'rare', title:'심연 안정화', body:'후반 성역 전용 보정. 사거리 +12, 코어 보호막 +2.', risk:'후반 안정', apply(){ const b=v27Ensure().buffs; b.range += 12; S.coreShield=(S.coreShield||0)+2; }});
+    return choices;
+  }
+  function v27PickChoices(){
+    const pool = v27ChoicePool().slice();
+    const out=[];
+    while(pool.length && out.length<3){ out.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]); }
+    return out;
+  }
+  function openV27Event(next){
+    if(!S || S.gameOver){ next?.(); return; }
+    const v27=v27Ensure();
+    v27.pendingChoice = true;
+    S.paused = true;
+    const existing=$('v27EventOverlay'); if(existing) existing.remove();
+    const gimmick=v27Gimmick();
+    const choices=v27PickChoices();
+    const overlay=document.createElement('div');
+    overlay.id='v27EventOverlay';
+    overlay.innerHTML=`<div class="v27EventCard" role="dialog" aria-modal="true"><div class="v27EventKicker">SANCTUARY EVENT <span class="v27GimmickTag">${escapeHtml(gimmick.name)}</span></div><h2>성역 선택 이벤트</h2><p>${escapeHtml(gimmick.ko)}의 에너지가 흔들립니다. 한 가지 보정을 선택해 다음 웨이브 전략을 바꾸세요.</p><div class="v27EventChoices">${choices.map((c,i)=>`<button class="v27EventChoice" data-i="${i}"><small>${escapeHtml(c.kind.toUpperCase())}</small><b>${escapeHtml(c.title)}</b><span>${escapeHtml(c.body)}</span><em>${escapeHtml(c.risk)}</em></button>`).join('')}</div></div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelectorAll('.v27EventChoice').forEach(btn=>{
+      btn.onclick=()=>{
+        const c=choices[Number(btn.dataset.i)||0];
+        try{ c.apply(); }catch(err){ console.warn('v27 event apply failed', err); }
+        overlay.remove();
+        v27.pendingChoice=false;
+        S.paused=false;
+        sound('level');
+        toast(`이벤트 선택: ${c.title}`, 'important');
+        log(`성역 선택 이벤트: ${c.title} — ${c.body}`);
+        next?.();
+        updateUI();
+      };
+    });
+  }
+
+  waveDone = function(){
+    S.active=false;
+    const b=v27Ensure().buffs || {};
+    const bonus=Math.floor((150+S.ogge*24+S.theme*55) * (1 + (b.reward || 0)));
+    S.gold+=bonus;
+    S.hp=Math.min(S.maxHp,S.hp+S.mods.repair);
+    toast(`웨이브 클리어! 수정 +${fmt2(bonus)}`);
+    log(`웨이브 클리어 보상: 수정 ${fmt2(bonus)}`);
+    recordOfflineWaveProgress();
+    if(S.ogge >= 10){
+      log(`성역 ${S.stageNo || StageMapState.current || 1} 클리어 — 유닛 초기화 및 다음 항로 개방`);
+      completeStageFromBattle();
+      return;
+    }
+    const goNext = () => { S.ogge++; prepareWave(); };
+    if([2,4,6,8].includes(Number(S.ogge || 1))){
+      openV27Event(goNext);
+    }else goNext();
+  };
+
+  function v27AddSkillOnce(treeId, skill){
+    const tree = UNIT_SKILL_TREES[treeId];
+    if(Array.isArray(tree) && !tree.some(s=>s.id===skill.id)) tree.push(skill);
+  }
+  try{
+    v27AddSkillOnce('solar',{id:'v27_solar_supernova',name:'초신성 연쇄',text:l=>`Lv.12 해금: 폭발 피해 +${fmt2(18*l)}% · 분열 적 추가 피해`,apply:t=>{const a=ensureAug(t);a.area+=.18;a.damage+=.08;}});
+    v27AddSkillOnce('frost',{id:'v27_frost_permafrost',name:'영구동토권',text:l=>`Lv.12 해금: 감속/빙결 지속 +${fmt2(22*l)}%`,apply:t=>{const a=ensureAug(t);a.freeze+=.22;a.freezeChance+=.04;}});
+    v27AddSkillOnce('storm',{id:'v27_storm_overload',name:'과전류 추격',text:l=>`Lv.12 해금: 돌진형 적 추격 화력 +${fmt2(16*l)}%`,apply:t=>{const a=ensureAug(t);a.chain+=1;a.markAmp+=.08;}});
+    v27AddSkillOnce('toxic',{id:'v27_toxic_antiregen',name:'재생 억제 독소',text:l=>`Lv.12 해금: 회복형 적 지속 피해 +${fmt2(28*l)}%`,apply:t=>{const a=ensureAug(t);a.dot+=.28;a.poisonSlow+=1;}});
+    v27AddSkillOnce('void',{id:'v27_void_singularity',name:'소형 특이점',text:l=>`Lv.12 해금: 중력장 반경 +${fmt2(16*l)}%`,apply:t=>{const a=ensureAug(t);a.gravity+=.20;a.area+=.16;}});
+    v27AddSkillOnce('laser',{id:'v27_laser_reveal',name:'은폐 탐지 렌즈',text:l=>`Lv.12 해금: 은폐 적 탐지 · 광자 피해 +${fmt2(12*l)}%`,apply:t=>{const a=ensureAug(t);a.damage+=.12;a.beamWidth+=3;}});
+    v27AddSkillOnce('smog',{id:'v27_smog_purge',name:'매연 역정화',text:l=>`Lv.12 해금: 은폐/침묵 적 약화 +${fmt2(18*l)}%`,apply:t=>{const a=ensureAug(t);a.markAmp+=.10;a.dot+=.18;}});
+    v27AddSkillOnce('crystal',{id:'v27_crystal_barrier',name:'프리즘 보호막',text:l=>`Lv.12 해금: 보호막 적 추가 피해 +${fmt2(20*l)}%`,apply:t=>{const a=ensureAug(t);a.crystalCharge+=.18;a.resonancePlate+=.10;}});
+    v27AddSkillOnce('mecha',{id:'v27_mecha_hack',name:'기계 해킹 프로토콜',text:l=>`Lv.12 해금: 실드 해체 +${fmt2(10*l)}%`,apply:t=>{const a=ensureAug(t);a.shieldDismantle+=.10;a.satelliteForge+=.05;}});
+    v27AddSkillOnce('starengine',{id:'v27_star_endgame',name:'은하 종결 코어',text:l=>`Lv.12 해금: 최종 보스 피해 +${fmt2(20*l)}%`,apply:t=>{const a=ensureAug(t);a.critChance+=.05;a.critMul+=.20;}});
+  }catch(err){ console.warn('v27 skill patch failed', err); }
+
+  const v27OldRenderWavePreview = renderWavePreview;
+  renderWavePreview = function(){
+    v27OldRenderWavePreview();
+    const el=$('wavePreviewText');
+    if(el && S){ const g=v27Gimmick(); if(!el.textContent.includes(g.name)) el.textContent += ` · ${g.ko}`; }
+  };
+
+  const v27OldUpdateUI = updateUI;
+  updateUI = function(){
+    v27OldUpdateUI();
+    try{
+      const el=$('stageType');
+      if(el && S){
+        const g=v27Gimmick();
+        if(!el.innerHTML.includes('v27GimmickTag')) el.innerHTML = `${el.textContent} <span class="v27GimmickTag">${escapeHtml(g.ko)}</span>`;
+      }
+    }catch(_){ }
+  };
+
+  v27Log('V27 확장 패치 활성화: 스테이지 기믹 · 특수 적 · 선택 이벤트 · 보스 패턴 · Lv.12 고유 스킬');
+})();
+
+
+
+/* =========================================================
+   V28 Galaxy Layer Navigation
+   - Adds a parent Galaxy Cluster screen above the stage/constellation map.
+   - Stage map remains the actual playable sanctuary route for the selected galaxy.
+   ========================================================= */
+const GALAXY_MAP_DEFS_V28 = [
+  {
+    id:'milky-rift',
+    name:'MILKY RIFT',
+    ko:'은하수 균열',
+    kicker:'OPEN GALAXY',
+    range:'SANCTUARY 1-12',
+    progressLabel:'성역 12개',
+    desc:'현재 플레이 가능한 본편 은하입니다. 공허 성역에서 균열 왕좌까지 12개 성역을 복원합니다.',
+    unlocked:true,
+    colorA:'#38bdf8',
+    colorB:'#312e81',
+    startStage:1
+  },
+  {
+    id:'andromeda-frost',
+    name:'ANDROMEDA FROST',
+    ko:'안드로메다 빙하',
+    kicker:'LOCKED GALAXY',
+    range:'FUTURE STAGES 13-24',
+    progressLabel:'추가 예정',
+    desc:'빙결·수정 계열이 강화되는 두 번째 은하입니다. 신규 장판과 방어막 적을 확장할 수 있습니다.',
+    unlocked:false,
+    colorA:'#67e8f9',
+    colorB:'#164e63',
+    startStage:13
+  },
+  {
+    id:'ember-spiral',
+    name:'EMBER SPIRAL',
+    ko:'잿불 나선은하',
+    kicker:'LOCKED GALAXY',
+    range:'FUTURE STAGES 25-36',
+    progressLabel:'추가 예정',
+    desc:'용암·스모그·독성 장판이 중심이 되는 고난도 은하입니다. 지속 피해와 맵 오염 기믹에 적합합니다.',
+    unlocked:false,
+    colorA:'#fb923c',
+    colorB:'#7f1d1d',
+    startStage:25
+  },
+  {
+    id:'void-crown',
+    name:'VOID CROWN',
+    ko:'공허 왕관',
+    kicker:'LOCKED FINAL GALAXY',
+    range:'FUTURE STAGES 37-48',
+    progressLabel:'최종 확장',
+    desc:'중력·시간·침묵·균열 기믹이 복합 등장하는 최종 은하입니다. 엔드게임 루프용으로 확장하기 좋습니다.',
+    unlocked:false,
+    colorA:'#ef4444',
+    colorB:'#4c1d95',
+    startStage:37
+  }
+];
+let GalaxyMapStateV28 = { selected:'milky-rift' };
+function galaxyProgressTextV28(){
+  const total = GALAXY_MAP_DEFS_V28.length;
+  const open = GALAXY_MAP_DEFS_V28.filter(g => g.unlocked).length;
+  return `${open} / ${total} GALAXIES OPEN`;
+}
+function renderGalaxyMapV28(){
+  const grid = $('galaxyGrid');
+  if(!grid) return;
+  const unlockedStages = Number(StageMapState?.unlocked || 1);
+  grid.innerHTML = GALAXY_MAP_DEFS_V28.map(g => {
+    const selected = GalaxyMapStateV28.selected === g.id;
+    const state = `${g.unlocked ? 'unlocked' : 'locked'} ${selected ? 'active' : ''}`;
+    const progress = g.id === 'milky-rift' ? `복원 ${Math.min(12, unlockedStages)} / 12` : g.progressLabel;
+    return `<button class="galaxyCard ${state}" type="button" data-galaxy-id="${escapeHtml(g.id)}" style="--galaxyA:${g.colorA};--galaxyB:${g.colorB}">
+      <div class="galaxyCardContent">
+        <div class="galaxyKicker">${escapeHtml(g.unlocked ? g.kicker : 'LOCKED GALAXY')}</div>
+        <h3>${escapeHtml(g.name)}</h3>
+        <div class="galaxyKo">${escapeHtml(g.ko)}</div>
+        <div class="galaxyDesc">${escapeHtml(g.desc)}</div>
+        <div class="galaxyMetaRow">
+          <span class="galaxyMetaPill">${escapeHtml(g.range)}</span>
+          <span class="galaxyMetaPill">${escapeHtml(progress)}</span>
+        </div>
+      </div>
+    </button>`;
+  }).join('');
+  const label = $('galaxyProgressLabel');
+  const sub = $('galaxyProgressSub');
+  const hint = $('galaxyEnterHint');
+  if(label) label.textContent = `GALAXY CLUSTER · ${galaxyProgressTextV28()}`;
+  if(sub) sub.textContent = '은하를 선택하면 해당 은하의 성좌/성역 지도로 진입합니다.';
+  const selected = GALAXY_MAP_DEFS_V28.find(g => g.id === GalaxyMapStateV28.selected) || GALAXY_MAP_DEFS_V28[0];
+  if(hint) hint.textContent = selected.unlocked
+    ? `${selected.ko} 선택됨 — 클릭하면 성좌/성역 지도로 진입합니다.`
+    : `${selected.ko}는 아직 잠겨 있습니다. 현재 구조만 미리 배치해두었습니다.`;
+}
+function showGalaxyMapV28(){
+  loadOfflineMeta();
+  loadStageMapProgress();
+  const menu = $('menu');
+  const game = $('game');
+  const stageMap = $('stageMap');
+  const galaxyMap = $('galaxyMap');
+  if(menu) menu.style.display='none';
+  if(game) game.style.display='none';
+  if(stageMap) stageMap.style.display='none';
+  if(galaxyMap) galaxyMap.style.display='block';
+  stopStageBgm();
+  if(audio && audio.on) playMapBgm();
+  renderGalaxyMapV28();
+}
+function enterGalaxyV28(galaxyId){
+  const galaxy = GALAXY_MAP_DEFS_V28.find(g => g.id === galaxyId) || GALAXY_MAP_DEFS_V28[0];
+  GalaxyMapStateV28.selected = galaxy.id;
+  renderGalaxyMapV28();
+  if(!galaxy.unlocked){
+    toast(`${galaxy.ko}는 아직 미개방 은하입니다. 다음 확장 스테이지 묶음으로 열 수 있습니다.`);
+    return;
+  }
+  const galaxyMap = $('galaxyMap');
+  if(galaxyMap) galaxyMap.style.display='none';
+  const stageMap = $('stageMap');
+  if(stageMap){
+    stageMap.dataset.galaxy = galaxy.id;
+    stageMap.classList.add('fromGalaxy');
+  }
+  showStageMap();
+  const top = document.querySelector('#stageMap .stageTopTitle');
+  if(top) top.textContent = 'CONSTELLATION MAP';
+}
+
+(function bindGalaxyLayerV28(){
+  const start = $('startBtn');
+  if(start) start.onclick = () => {
+    setTestModeEnabled(false);
+    showGalaxyMapV28();
+  };
+  const back = $('galaxyMapBack');
+  if(back) back.onclick = () => {
+    const galaxyMap = $('galaxyMap');
+    if(galaxyMap) galaxyMap.style.display='none';
+    const menu = $('menu');
+    if(menu) menu.style.display='flex';
+    stopStageBgm();
+  };
+  const stageBack = $('stageMapBack');
+  if(stageBack){
+    stageBack.textContent = '← GALAXY';
+    stageBack.onclick = () => {
+      const stageMap = $('stageMap');
+      if(stageMap) stageMap.style.display='none';
+      showGalaxyMapV28();
+    };
+  }
+  document.addEventListener('click', e => {
+    const card = e.target.closest('#galaxyMap .galaxyCard[data-galaxy-id]');
+    if(!card) return;
+    enterGalaxyV28(card.dataset.galaxyId);
+  });
+  window.showGalaxyMapV28 = showGalaxyMapV28;
+  window.enterGalaxyV28 = enterGalaxyV28;
+  window.renderGalaxyMapV28 = renderGalaxyMapV28;
+})();
+
+
+
+/* =========================================================
+   V30 Cinematic Galaxy Map + Zoom To Stage Map
+   - Replaces the placeholder galaxy list with a real galaxy map.
+   - Applies 4 custom galaxy artworks.
+   - Enters the constellation map with a smooth zoom transition.
+   ========================================================= */
+(function(){
+  const $id = (id) => document.getElementById(id);
+  const esc = (v) => String(v ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+
+  const GALAXY_MAP_DEFS_V30 = [
+    {
+      id:'milky-rift', order:1, name:'MILKY RIFT', ko:'은하수 균열',
+      desc:'현재 플레이 가능한 본편 은하입니다. 성좌 내부로 진입해 12개 성역을 순차적으로 복원합니다.',
+      range:'SANCTUARY 1-12', state:'OPEN', unlocked:true,
+      note:'현재 메인 캠페인', progress:'12 SANCTUARIES',
+      colorA:'#60a5fa', colorB:'#1d4ed8', image:'galaxy_milky_rift.png',
+      x:18, y:69, tags:['CORE ROUTE','12 STAGES','RESTORATION'],
+      enemy:'공허 잔재 · 장판 오염 · 성역 보스 2종',
+      reward:'일반 스킬 해금 + 성역 복원 기록',
+      transitionLabel:'ORION CONSTELLATION'
+    },
+    {
+      id:'andromeda-frost', order:2, name:'ANDROMEDA FROST', ko:'안드로메다 빙하',
+      desc:'빙결과 수정 폭풍이 겹치는 차기 확장 은하입니다. 고밀도 둔화와 실드 적이 핵심입니다.',
+      range:'FUTURE 13-24', state:'LOCKED', unlocked:false,
+      note:'추후 확장 예정', progress:'0 / 12 OPEN',
+      colorA:'#67e8f9', colorB:'#0f766e', image:'galaxy_andromeda_frost.png',
+      x:38, y:29, tags:['FROST','CRYSTAL','CONTROL'],
+      enemy:'빙결 장갑 적 · 프리즘 실드 · 분열 파편',
+      reward:'빙결/수정 계열 유물',
+      transitionLabel:'GLACIAL CONSTELLATION'
+    },
+    {
+      id:'ember-spiral', order:3, name:'EMBER SPIRAL', ko:'잿불 나선은하',
+      desc:'용암·매연·독성 장판이 연속으로 이어지는 고난도 은하입니다. 화상과 오염 대응이 핵심입니다.',
+      range:'FUTURE 25-36', state:'LOCKED', unlocked:false,
+      note:'추후 확장 예정', progress:'0 / 12 OPEN',
+      colorA:'#fb923c', colorB:'#991b1b', image:'galaxy_ember_spiral.png',
+      x:63, y:63, tags:['LAVA','SMOG','BURN'],
+      enemy:'장갑 고속 적 · 독무 강화 · 화염 잔재',
+      reward:'화염/독성 계열 유물',
+      transitionLabel:'EMBER CONSTELLATION'
+    },
+    {
+      id:'void-crown', order:4, name:'VOID CROWN', ko:'공허 왕관',
+      desc:'가장 깊은 균열 은하. 시간 왜곡과 침묵장, 중력 균열이 동시에 등장하는 최종 확장 컨셉입니다.',
+      range:'FUTURE 37-48', state:'LOCKED', unlocked:false,
+      note:'최종 확장 예정', progress:'0 / 12 OPEN',
+      colorA:'#c084fc', colorB:'#5b21b6', image:'galaxy_void_crown.png',
+      x:82, y:30, tags:['VOID','TIME','RIFT'],
+      enemy:'시간 잔상 · 침묵장 · 균열 군주',
+      reward:'최종 계열 유물',
+      transitionLabel:'VOID CONSTELLATION'
+    }
+  ];
+
+  const galaxyState = { selected:'milky-rift', transitioning:false };
+
+  function galaxyDef(id){ return GALAXY_MAP_DEFS_V30.find(g => g.id === id) || GALAXY_MAP_DEFS_V30[0]; }
+  function setVisible(id, show, display='block'){ const el=$id(id); if(el) el.style.display = show ? display : 'none'; }
+  function progressText(){ return `${GALAXY_MAP_DEFS_V30.filter(g=>g.unlocked).length} / ${GALAXY_MAP_DEFS_V30.length} GALAXIES ONLINE`; }
+
+  function renderGalaxyRoutesV30(){
+    const svg = $id('galaxyRouteSvg');
+    if(!svg) return;
+    const path = 'M 180 390 C 230 320, 290 250, 385 170 S 570 220, 630 325 S 760 350, 820 180';
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="galaxyRouteGradient" x1="0%" y1="50%" x2="100%" y2="50%">
+          <stop offset="0%" stop-color="#60a5fa"/>
+          <stop offset="40%" stop-color="#67e8f9"/>
+          <stop offset="72%" stop-color="#fb923c"/>
+          <stop offset="100%" stop-color="#c084fc"/>
+        </linearGradient>
+      </defs>
+      <path class="routeBase" d="${path}" />
+      <path class="routeGlow" d="${path}" />
+    `;
+  }
+
+  function renderGalaxyNodesV30(){
+    const layer = $id('galaxyNodeLayer');
+    if(!layer) return;
+    layer.innerHTML = GALAXY_MAP_DEFS_V30.map(g => {
+      const selected = galaxyState.selected === g.id;
+      const lock = g.unlocked ? '' : '<div class="galaxyLockMark">🔒</div>';
+      const badge = g.unlocked ? 'OPEN' : 'LOCKED';
+      return `
+        <button class="galaxyNode ${selected ? 'active' : ''} ${g.unlocked ? 'open' : 'locked'}" type="button" data-galaxy-id="${esc(g.id)}" style="left:${g.x}%;top:${g.y}%;--galaxyA:${g.colorA};--galaxyB:${g.colorB};">
+          <div class="galaxyNodeHalo"></div>
+          <div class="galaxyNodeOrbit"></div>
+          <div class="galaxyNodeCore" style="background-image:url('${esc(g.image)}')"></div>
+          <div class="galaxyNodeBadge">${badge}</div>
+          ${lock}
+          <div class="galaxyNodeLabel">
+            <div class="galaxyNodeName">${esc(g.name)}</div>
+            <div class="galaxyNodeKo">${esc(g.ko)}</div>
+          </div>
+        </button>`;
+    }).join('');
+  }
+
+  function renderGalaxyInfoV30(){
+    const g = galaxyDef(galaxyState.selected);
+    const map = $id('galaxyMap');
+    if(map) map.dataset.selectedGalaxy = g.id;
+    const label = $id('galaxyProgressLabel');
+    const sub = $id('galaxyProgressSub');
+    if(label) label.textContent = `${g.name} · ${g.order} / ${GALAXY_MAP_DEFS_V30.length} GALAXIES`;
+    if(sub) sub.textContent = `${g.ko} 선택 상태 · ${progressText()}`;
+    const panel = $id('galaxyInfoPanel');
+    if(panel){
+      panel.innerHTML = `
+        <div class="galaxyInfoHead">
+          <div class="galaxyInfoTitle">${esc(g.name)}<small>${esc(g.ko)}</small></div>
+          <div class="galaxyInfoState">STATE <b>${esc(g.state)}</b></div>
+        </div>
+        <div class="galaxyInfoBody">${esc(g.desc)}</div>
+        <div class="galaxyTagRow">${g.tags.map(t => `<span class="galaxyTag">${esc(t)}</span>`).join('')}</div>
+        <div class="galaxyInfoMeta">
+          <div class="galaxyMetaCard"><small>ROUTE</small><b>${esc(g.range)}</b><span>${esc(g.note)}</span></div>
+          <div class="galaxyMetaCard"><small>THREAT</small><b>${esc(g.enemy)}</b><span>은하 단위 난이도 콘셉트입니다.</span></div>
+          <div class="galaxyMetaCard"><small>REWARD</small><b>${esc(g.reward)}</b><span>${esc(g.progress)}</span></div>
+        </div>`;
+    }
+    const enter = $id('galaxyEnterBtn');
+    if(enter){
+      enter.disabled = !g.unlocked || galaxyState.transitioning;
+      enter.textContent = g.unlocked ? `ENTER ${g.name}` : `${g.name} LOCKED`;
+    }
+  }
+
+  function renderGalaxyMapV30(){
+    renderGalaxyRoutesV30();
+    renderGalaxyNodesV30();
+    renderGalaxyInfoV30();
+  }
+
+  function showGalaxyMapV30(e){
+    if(e){ try{ e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); }catch(_){ } }
+    galaxyState.transitioning = false;
+    setVisible('menu', false);
+    setVisible('game', false);
+    const stageMap = $id('stageMap');
+    if(stageMap){
+      stageMap.style.display = 'none';
+      stageMap.classList.remove('galaxyTransitionPrep','galaxyTransitionLive');
+    }
+    const galaxyMap = $id('galaxyMap');
+    if(galaxyMap){
+      galaxyMap.style.display = 'block';
+      galaxyMap.classList.remove('transitioning');
+    }
+    const zoom = $id('galaxyZoomLayer');
+    if(zoom){
+      zoom.style.opacity = '0';
+      zoom.style.transform = 'scale(1.03)';
+      zoom.style.backgroundImage = '';
+    }
+    try{ if(typeof stopStageBgm === 'function') stopStageBgm(); }catch(_){ }
+    try{ if(window.audio && audio.on && typeof playMapBgm === 'function') playMapBgm(); }catch(_){ }
+    renderGalaxyMapV30();
+    return false;
+  }
+
+  function returnToMenuV30(e){
+    if(e){ try{ e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); }catch(_){ } }
+    setVisible('galaxyMap', false);
+    setVisible('stageMap', false);
+    const menu = $id('menu');
+    if(menu) menu.style.display = 'flex';
+    try{ if(typeof stopStageBgm === 'function') stopStageBgm(); }catch(_){ }
+    return false;
+  }
+
+  function selectGalaxyV30(galaxyId, e){
+    if(e){ try{ e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); }catch(_){ } }
+    galaxyState.selected = galaxyId;
+    const g = galaxyDef(galaxyId);
+    if(!g.unlocked){
+      try{ if(typeof toast === 'function') toast(`${g.ko}는 아직 미개방 은하입니다.`); }catch(_){ }
+    }
+    renderGalaxyMapV30();
+    return false;
+  }
+
+  function beginGalaxyTransitionV30(galaxy){
+    const galaxyMap = $id('galaxyMap');
+    const stageMap = $id('stageMap');
+    const zoom = $id('galaxyZoomLayer');
+    if(!galaxyMap || !stageMap || !zoom) return;
+
+    galaxyState.transitioning = true;
+    stageMap.dataset.galaxy = galaxy.id;
+    stageMap.dataset.galaxyDisplay = galaxy.name;
+    stageMap.classList.add('fromGalaxy','galaxyTransitionPrep');
+    stageMap.style.display = 'block';
+    try{
+      if(typeof showStageMap === 'function') showStageMap();
+    }catch(err){
+      console.warn('showStageMap fallback display used', err);
+      stageMap.style.display = 'block';
+    }
+    const top = document.querySelector('#stageMap .stageTopTitle');
+    if(top) top.textContent = galaxy.transitionLabel || 'CONSTELLATION MAP';
+    const back = $id('stageMapBack');
+    if(back) back.textContent = '← GALAXY';
+
+    zoom.style.backgroundImage = `url('${galaxy.image}')`;
+    zoom.style.opacity = '0';
+    zoom.style.transform = 'scale(1.02)';
+
+    requestAnimationFrame(() => {
+      galaxyMap.classList.add('transitioning');
+      requestAnimationFrame(() => {
+        zoom.style.opacity = '.94';
+        zoom.style.transform = 'scale(1.24)';
+        stageMap.classList.add('galaxyTransitionLive');
+      });
+    });
+
+    window.setTimeout(() => {
+      if(galaxyMap) galaxyMap.style.display = 'none';
+      galaxyMap && galaxyMap.classList.remove('transitioning');
+      if(stageMap){
+        stageMap.classList.remove('galaxyTransitionPrep','galaxyTransitionLive');
+        stageMap.style.pointerEvents = '';
+      }
+      zoom.style.opacity = '0';
+      zoom.style.transform = 'scale(1.02)';
+      galaxyState.transitioning = false;
+    }, 1080);
+  }
+
+  function enterGalaxyMapV30(galaxyId, e){
+    if(e){ try{ e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); }catch(_){ } }
+    const galaxy = galaxyDef(galaxyId || galaxyState.selected);
+    galaxyState.selected = galaxy.id;
+    renderGalaxyMapV30();
+    if(!galaxy.unlocked){
+      try{ if(typeof toast === 'function') toast(`${galaxy.ko}는 아직 미개방 은하입니다.`); }catch(_){ }
+      return false;
+    }
+    beginGalaxyTransitionV30(galaxy);
+    return false;
+  }
+
+  function bindGalaxyMapV30(){
+    const start = $id('startBtn');
+    if(start){
+      start.setAttribute('onclick','return showGalaxyMapV30(event)');
+      start.onclick = showGalaxyMapV30;
+    }
+    const stageBack = $id('stageMapBack');
+    if(stageBack){
+      stageBack.textContent = '← GALAXY';
+      stageBack.setAttribute('onclick','return showGalaxyMapV30(event)');
+      stageBack.onclick = showGalaxyMapV30;
+    }
+    const mapBack = $id('galaxyMapBack');
+    if(mapBack){
+      mapBack.setAttribute('onclick','return returnToMenuV30(event)');
+      mapBack.onclick = returnToMenuV30;
+    }
+    const enter = $id('galaxyEnterBtn');
+    if(enter){
+      enter.setAttribute('onclick','return enterGalaxyMapV30(undefined,event)');
+      enter.onclick = (e) => enterGalaxyMapV30(undefined, e);
+    }
+
+    document.addEventListener('click', function(e){
+      const startBtn = e.target.closest && e.target.closest('#startBtn');
+      if(startBtn) return showGalaxyMapV30(e);
+      const stageBackBtn = e.target.closest && e.target.closest('#stageMapBack');
+      if(stageBackBtn) return showGalaxyMapV30(e);
+      const mapBackBtn = e.target.closest && e.target.closest('#galaxyMapBack');
+      if(mapBackBtn) return returnToMenuV30(e);
+      const node = e.target.closest && e.target.closest('#galaxyNodeLayer .galaxyNode[data-galaxy-id]');
+      if(node){
+        const id = node.dataset.galaxyId;
+        if(galaxyState.selected === id && galaxyDef(id).unlocked) return enterGalaxyMapV30(id, e);
+        return selectGalaxyV30(id, e);
+      }
+      const enterBtn = e.target.closest && e.target.closest('#galaxyEnterBtn');
+      if(enterBtn) return enterGalaxyMapV30(undefined, e);
+    }, true);
+
+    renderGalaxyMapV30();
+  }
+
+  window.showGalaxyMapV30 = showGalaxyMapV30;
+  window.enterGalaxyMapV30 = enterGalaxyMapV30;
+  window.renderGalaxyMapV30 = renderGalaxyMapV30;
+  window.returnToMenuV30 = returnToMenuV30;
+  window.openGalaxyMapV29 = showGalaxyMapV30;
+  window.enterGalaxyMapV29 = enterGalaxyMapV30;
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', bindGalaxyMapV30);
+  }else{
+    bindGalaxyMapV30();
+  }
+  setTimeout(bindGalaxyMapV30, 120);
+  setTimeout(bindGalaxyMapV30, 680);
+})();;
+
 </script>
+
+<script>
+(function(){
+  function bindV31Final(){
+    var s=document.getElementById('startBtn');
+    if(s && window.openGalaxyMapV31){ s.onclick=window.openGalaxyMapV31; s.setAttribute('onclick','return openGalaxyMapV31(event)'); }
+    var e=document.getElementById('galaxyEnterBtn');
+    if(e && window.enterGalaxyMapV31){ e.onclick=window.enterGalaxyMapV31; e.setAttribute('onclick','return enterGalaxyMapV31(event)'); }
+    var b=document.getElementById('stageMapBack');
+    if(b && window.openGalaxyMapV31){ b.textContent='← GALAXY'; b.onclick=window.openGalaxyMapV31; b.setAttribute('onclick','return openGalaxyMapV31(event)'); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bindV31Final); else bindV31Final();
+  setTimeout(bindV31Final,200); setTimeout(bindV31Final,1000);
+})();
+</script>
+
 </body>
 </html>
