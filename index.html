@@ -69,6 +69,13 @@ canvas{
   cursor:crosshair;
 }
 #toastLayer{pointer-events:none;position:absolute;inset:0}
+#wavePreviewLine{margin-top:8px;padding:7px 10px;border-radius:12px;border:1px solid rgba(148,163,184,.14);background:rgba(15,23,42,.42);color:#dbeafe;font-size:12px;line-height:1.42;min-height:18px}
+#wavePreviewLine b{color:#93c5fd;margin-right:6px}
+.stageClearMastery{margin-top:14px;padding:12px 14px;border-radius:16px;border:1px solid rgba(125,211,252,.18);background:rgba(8,15,31,.58);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.stageClearMastery .stars{font-size:20px;letter-spacing:.14em;color:#fde68a;font-family:'Orbitron',sans-serif}
+.stageClearMastery .meta{display:flex;flex-direction:column;gap:4px;color:#cbd5e1;font-size:12px}
+.stageClearMastery .meta b{color:#fff;font-size:14px}
+
 
 .miniBar{height:5px;margin-top:6px;border-radius:999px;background:rgba(148,163,184,.18);overflow:hidden}
 .miniBar span{display:block;height:100%;width:0%;border-radius:inherit;background:linear-gradient(90deg,#a78bfa,#67e8f9)}
@@ -8160,6 +8167,7 @@ h1{
           <strong class="value" id="stageLabel">1-1</strong>
           <em class="sub" id="stageType">장판 방어</em>
         </div>
+        <div id="wavePreviewLine"><b>웨이브 예고</b><span id="wavePreviewText">기본 적 웨이브 · 추천: 균형 배치</span></div>
         <div class="bar compactWave"><span id="waveBar"></span></div>
         <div class="battleStatLine statGrid">
           <div class="stat"><span class="label">CRYSTAL</span><b class="value" id="gold" style="color:var(--gold)">500</b></div>
@@ -8187,12 +8195,6 @@ h1{
         <div id="selectedText" class="sub">
           장판을 선택하면 필요한 정보만 간단히 표시됩니다.
         </div>
-      </section>
-
-      <section class="uiHidden skill" aria-hidden="true">
-        <button id="blackholeBtn" tabindex="-1">균열 포획</button>
-        <button id="novaBtn" tabindex="-1">궤도 포격</button>
-        <button id="repairBtn" tabindex="-1">코어 과충전</button>
       </section>
 
       <section class="uiHidden" id="logPanel" aria-hidden="true">
@@ -8643,7 +8645,11 @@ function enterTestMode(){
   toast('TEST MODE 활성화 — 모든 성역과 기본 타워가 해금되었습니다');
 }
 
-const OFFLINE_META_KEY = 'planetRiftOfflineMetaV1';
+const SAVE_SCHEMA_VERSION = 2;
+const OFFLINE_META_KEY = 'planetRiftOfflineMetaV2';
+const LEGACY_OFFLINE_META_KEYS = ['planetRiftOfflineMetaV1'];
+const STAGE_MAP_PROGRESS_KEY = 'planetRiftStageProgressV3';
+const LEGACY_STAGE_MAP_KEYS = ['planetRiftStageProgressV2'];
 const OFFLINE_UPGRADE_CONFIG = {
   global_damage:{name:'공격력 연구', desc:'모든 행성 공격력 증가', max:12, base:5, step:5, unlockStage:1, catalog:'global_damage'},
   global_crit:{name:'치명타 연구', desc:'치명 확률과 치명 피해 증가', max:10, base:7, step:6, unlockStage:2, catalog:'global_crit'},
@@ -8676,19 +8682,24 @@ const OFFLINE_CHAPTERS = {
 let META = defaultOfflineMeta();
 
 function defaultOfflineMeta(){
-  return {shards:0,totalClears:0,totalDefeats:0,bestWave:{},clears:{},story:{},upgrades:{},unlockedTowers:STARTER_PLANET_TYPES.slice()};
+  return {saveVersion:SAVE_SCHEMA_VERSION,shards:0,totalClears:0,totalDefeats:0,bestWave:{},clears:{},story:{},upgrades:{},mastery:{},flags:{},settings:{bgm:true,sfx:true},unlockedTowers:STARTER_PLANET_TYPES.slice()};
 }
 function normalizeOfflineMeta(raw){
   const base = defaultOfflineMeta();
   const m = Object.assign(base, raw || {});
+  m.saveVersion = Math.max(1, Math.floor(Number(raw?.saveVersion || 1)));
   m.bestWave = Object.assign({}, base.bestWave, raw?.bestWave || {});
   m.clears = Object.assign({}, base.clears, raw?.clears || {});
   m.story = Object.assign({}, base.story, raw?.story || {});
   m.upgrades = Object.assign({}, base.upgrades, raw?.upgrades || {});
+  m.mastery = Object.assign({}, base.mastery, raw?.mastery || {});
+  m.flags = Object.assign({}, base.flags, raw?.flags || {});
+  m.settings = Object.assign({}, base.settings, raw?.settings || {});
   m.unlockedTowers = normalizeUnlockedTowers(raw?.unlockedTowers, m.clears);
   m.shards = Math.max(0, Math.floor(Number(m.shards) || 0));
   m.totalClears = Math.max(0, Math.floor(Number(m.totalClears) || 0));
   m.totalDefeats = Math.max(0, Math.floor(Number(m.totalDefeats) || 0));
+  m.saveVersion = SAVE_SCHEMA_VERSION;
   return m;
 }
 function normalizeUnlockedTowers(rawUnlocks=null, clears={}){
@@ -8758,13 +8769,26 @@ function nextTowerRewardText(){
 }
 
 function loadOfflineMeta(){
-  try{ META = normalizeOfflineMeta(JSON.parse(localStorage.getItem(OFFLINE_META_KEY) || 'null')); }
+  try{
+    let rawText = localStorage.getItem(OFFLINE_META_KEY);
+    if(!rawText){
+      for(const key of LEGACY_OFFLINE_META_KEYS){
+        rawText = localStorage.getItem(key);
+        if(rawText) break;
+      }
+    }
+    META = normalizeOfflineMeta(JSON.parse(rawText || 'null'));
+    if(!TEST_MODE_CONFIG.enabled) saveOfflineMeta();
+  }
   catch(err){ META = defaultOfflineMeta(); }
   renderOfflineMetaPanel();
 }
 function saveOfflineMeta(){
   if(TEST_MODE_CONFIG.enabled) return;
-  try{ localStorage.setItem(OFFLINE_META_KEY, JSON.stringify(META)); }
+  try{
+    META.saveVersion = SAVE_SCHEMA_VERSION;
+    localStorage.setItem(OFFLINE_META_KEY, JSON.stringify(META));
+  }
   catch(err){}
 }
 
@@ -9051,12 +9075,19 @@ function renderStageMapInfo(stageNo){
 
 function loadStageMapProgress(){
   try{
-    const raw = localStorage.getItem('planetRiftStageProgressV2');
+    let raw = localStorage.getItem(STAGE_MAP_PROGRESS_KEY);
+    if(!raw){
+      for(const key of LEGACY_STAGE_MAP_KEYS){
+        raw = localStorage.getItem(key);
+        if(raw) break;
+      }
+    }
     if(!raw) return;
     const saved = JSON.parse(raw);
     StageMapState.unlocked = clamp(Number(saved.unlocked || 1), 1, STAGE_MAP_DEFS.length);
     StageMapState.selected = clamp(Number(saved.selected || StageMapState.unlocked), 1, StageMapState.unlocked);
     StageMapState.current = clamp(Number(saved.current || StageMapState.selected), 1, STAGE_MAP_DEFS.length);
+    if(!TEST_MODE_CONFIG.enabled) saveStageMapProgress();
   }catch(err){
     StageMapState.unlocked = 1;
     StageMapState.selected = 1;
@@ -9067,7 +9098,8 @@ function loadStageMapProgress(){
 function saveStageMapProgress(){
   if(TEST_MODE_CONFIG.enabled) return;
   try{
-    localStorage.setItem('planetRiftStageProgressV2', JSON.stringify({
+    localStorage.setItem(STAGE_MAP_PROGRESS_KEY, JSON.stringify({
+      saveVersion: SAVE_SCHEMA_VERSION,
       unlocked: StageMapState.unlocked,
       selected: StageMapState.selected,
       current: StageMapState.current
@@ -9185,6 +9217,9 @@ function showStageClearOverlay(summary){
   const nextDef = getStageDef(nextNo);
   const reward = stageTowerReward(cleared);
   const isFinal = cleared >= STAGE_MAP_DEFS.length;
+  const mastery = computeStageMastery(cleared);
+  const masteryGoals = STAGE_MASTERY_GOALS[Number(cleared)] || STAGE_MASTERY_GOALS[1];
+  const starText = '★★★'.slice(0, mastery.stars) + '☆☆☆'.slice(0, 3 - mastery.stars);
   const overlay = document.createElement('div');
   overlay.id = 'stageClearOverlay';
   overlay.className = 'stageClearOverlay';
@@ -9197,6 +9232,7 @@ function showStageClearOverlay(summary){
       <div class="stageClearStat"><span>SHARDS</span><b>+${fmt2(summary.shardsGained)}</b></div>
       <div class="stageClearStat"><span>REWARD</span><b>${reward ? escapeHtml(reward.name) : '완료'}</b></div>
     </div>
+    <div class="stageClearMastery"><div class="meta"><span>성역 숙련도</span><b>${mastery.stars}성 달성 · 코어 보존 ${fmt2(mastery.hpRatio*100)}%</b><span>${escapeHtml(masteryGoals[Math.max(0, Math.min(masteryGoals.length-1, mastery.stars-1))] || masteryGoals[0])}</span></div><div class="stars">${starText}</div></div>
     <div class="stageClearReward">${escapeHtml(STORY_EVENT_TEXT.clearBody)} ${isFinal ? '모든 성역이 안정화되었습니다. 이제 각 성역의 3성 숙련도와 최고 웨이브 기록을 노려 재정화 루프를 이어갈 수 있습니다.' : `다음 항로: ${nextDef.name} / ${nextDef.ko}`}</div>
     <div class="stageClearActions">
       <button id="stageClearMapBtn" class="btnAlt">성역 지도에서 강화</button>
@@ -10526,6 +10562,42 @@ function makeTerrain(){
   }
 }
 
+
+function getWavePreviewInfo(waveNo, stageNo){
+  const stage = Number(stageNo || S?.stageNo || StageMapState.current || 1);
+  const parts = [];
+  const tips = [];
+  if(waveNo === 5){
+    parts.push('중간 보스 출현');
+    tips.push('보스 피해');
+    tips.push(stage <= 2 ? '감속' : '집중 화력');
+  }else if(waveNo === 10){
+    parts.push('최종 보스 출현');
+    tips.push('보스 피해');
+    tips.push('핵심 타워 병합');
+  }else if(waveNo % 4 === 0){
+    parts.push('압박 웨이브');
+    tips.push('범위 화력');
+    tips.push('코어 방어');
+  }else{
+    if(waveNo >= 6) parts.push('재생 적 증가');
+    else if(waveNo >= 3) parts.push('장갑 적 증가');
+    else parts.push('기본 적 웨이브');
+    tips.push(stage === 2 ? '감속' : stage === 5 ? '방어 약화' : '균형 배치');
+    if(waveNo >= 3) tips.push('병합 준비');
+  }
+  return {
+    title: parts.join(' · '),
+    detail: `추천: ${tips.filter(Boolean).join(' / ')}`
+  };
+}
+function renderWavePreview(){
+  const el = $('wavePreviewText');
+  if(!el || !S) return;
+  const info = getWavePreviewInfo(S.ogge || 1, S.stageNo || StageMapState.current || 1);
+  el.textContent = `${info.title} · ${info.detail}`;
+}
+
 function prepareWave(){
   makeRoute();
   makeTerrain();
@@ -10576,9 +10648,12 @@ function prepareWave(){
     log(`보스 경보: ${S.currentBossInfo.name} / ${S.currentBossInfo.ability} — ${S.currentBossInfo.desc}`);
     log(`시나리오: ${getOfflineStoryLog(S.stageNo || StageMapState.current || 1, storyPhase)}`);
   }
+  const preview = getWavePreviewInfo(S.ogge, S.stageNo || StageMapState.current || 1);
   log(`웨이브 ${S.ogge}: ${theme().ko} / 장판 없이 방어 어려움 / 적 ${S.total}체 접근`);
+  toast(`웨이브 ${S.ogge} · ${preview.title} · ${preview.detail}`, S.currentBossInfo ? 'important' : 'normal');
   updateUI();
 }
+
 
 
 function roundRect(x,y,w,h,r,fill,stroke){
@@ -12978,9 +13053,6 @@ $('audioBtn').onclick=()=>{
   toast(audio.on?'BGM 활성화':'BGM 비활성화');
 };
 // 전투 화면 미니멀화: 액티브 스킬 버튼은 숨김 처리하고 직접 조작은 비활성화합니다.
-$('blackholeBtn').onclick=()=>toast('전투 중 액티브 스킬은 사용하지 않습니다.');
-$('novaBtn').onclick=()=>toast('전투 중 액티브 스킬은 사용하지 않습니다.');
-$('repairBtn').onclick=()=>toast('전투 중 액티브 스킬은 사용하지 않습니다.');
 
 document.addEventListener('click', e=>{
   const btn = e.target.closest('[data-offline-upgrade]');
@@ -13161,7 +13233,7 @@ function showOfflineGuidePanel(){
   const overlay = document.createElement('div');
   overlay.className = 'offlineGuideOverlay';
   overlay.style.display = 'flex';
-  overlay.innerHTML = `<div class="offlineGuideCard"><h2>COMMAND BRIEFING</h2><p>이 게임은 온라인 과금형이 아니라, 성역을 깨며 타워와 영구 강화를 모으는 오프라인 로그라이트 디펜스입니다.</p><div class="offlineGuideGrid"><div class="offlineGuideItem"><b>1. 스테이지 보상</b><span>성역을 클리어하면 그 성역의 전용 타워가 해금됩니다.</span></div><div class="offlineGuideItem"><b>2. 실패 보상</b><span>실패해도 성흔 조각을 얻고, 조각으로 영구 강화를 올립니다.</span></div><div class="offlineGuideItem"><b>3. 3성 숙련도</b><span>코어 HP를 많이 남기고 클리어할수록 별이 올라갑니다.</span></div><div class="offlineGuideItem"><b>4. 최종 목표</b><span>5개 성역을 정화하고 모든 성역 3성을 노리는 것이 1차 목표입니다.</span></div></div><div class="offlineGuideActions"><button id="offlineGuideClose" class="btnGreen">시작하기</button></div></div>`;
+  overlay.innerHTML = `<div class="offlineGuideCard"><h2>COMMAND BRIEFING</h2><p>이 게임은 온라인 과금형이 아니라, 성역을 깨며 타워와 영구 강화를 모으는 오프라인 로그라이트 디펜스입니다.</p><div class="offlineGuideGrid"><div class="offlineGuideItem"><b>1. 스테이지 보상</b><span>성역을 클리어하면 그 성역의 전용 타워가 해금됩니다.</span></div><div class="offlineGuideItem"><b>2. 실패 보상</b><span>실패해도 성흔 조각을 얻고, 조각으로 영구 강화를 올립니다.</span></div><div class="offlineGuideItem"><b>3. 3성 숙련도</b><span>코어 HP를 많이 남기고 클리어할수록 별이 올라갑니다.</span></div><div class="offlineGuideItem"><b>4. 최종 목표</b><span>7개 성역을 정화하고 모든 성역 3성을 노리는 것이 1차 목표입니다.</span></div></div><div class="offlineGuideActions"><button id="offlineGuideClose" class="btnGreen">시작하기</button></div></div>`;
   document.body.appendChild(overlay);
   const close = () => overlay.remove();
   const btn = overlay.querySelector('#offlineGuideClose');
@@ -13177,7 +13249,7 @@ function showOfflineEndingPanel(){
   const overlay = document.createElement('div');
   overlay.className = 'offlineGuideOverlay';
   overlay.style.display = 'flex';
-  overlay.innerHTML = `<div class="offlineGuideCard"><h2>SEASON 1 CLEAR</h2><p>매연 폐역의 굴뚝이 멈췄습니다. 균열은 완전히 닫히지 않았지만, 지휘관은 이제 스모그 병기를 포함한 반격 함대를 얻었습니다.</p><p><b>현재 성역 숙련도:</b> ${fmt2(totalStars)}/${fmt2(15)}성</p><div class="offlineGuideGrid"><div class="offlineGuideItem"><b>다음 목표</b><span>각 성역을 다시 클리어해 3성 숙련도를 완성하세요.</span></div><div class="offlineGuideItem"><b>남은 성장</b><span>성흔 조각으로 코어, 보급, 소환 교리를 강화하세요.</span></div></div><div class="offlineGuideActions"><button id="offlineEndingClose" class="btnGreen">계속하기</button></div></div>`;
+  overlay.innerHTML = `<div class="offlineGuideCard"><h2>SEASON 1 CLEAR</h2><p>기계 핵성의 폭주가 멈췄습니다. 균열은 완전히 닫히지 않았지만, 지휘관은 이제 전 성역의 병기를 묶은 반격 함대를 완성했습니다.</p><p><b>현재 성역 숙련도:</b> ${fmt2(totalStars)}/${fmt2(STAGE_MAP_DEFS.length * 3)}성</p><div class="offlineGuideGrid"><div class="offlineGuideItem"><b>다음 목표</b><span>각 성역을 다시 클리어해 3성 숙련도를 완성하세요.</span></div><div class="offlineGuideItem"><b>남은 성장</b><span>성흔 조각으로 코어, 보급, 소환 교리를 강화하세요.</span></div></div><div class="offlineGuideActions"><button id="offlineEndingClose" class="btnGreen">계속하기</button></div></div>`;
   document.body.appendChild(overlay);
   const btn = overlay.querySelector('#offlineEndingClose');
   if(btn) btn.onclick = () => overlay.remove();
