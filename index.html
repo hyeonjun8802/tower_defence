@@ -6353,7 +6353,7 @@ h1{
 .gameOverOverlay {
   position: fixed;
   inset: 0;
-  z-index: 96;
+  z-index: 10020;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8143,6 +8143,581 @@ h1{
   }
 }
 
+
+
+/* =========================================================
+   v7 Mobile Stage Map Readability Patch
+   - Separate the top title/status so text no longer overlaps.
+   - Expand the lower stage information area on mobile.
+   - Allow descriptions/mastery/upgrades to be readable instead of clipped.
+   ========================================================= */
+@media (max-width: 900px), (max-aspect-ratio: 0.78) {
+  #stageMap {
+    --mobile-map-top: 128px !important;
+    --mobile-panel-h: 306px !important;
+    --mobile-cta-h: 50px !important;
+    --mobile-bottom-safe: 14px !important;
+    min-height: 100svh !important;
+    overflow: hidden !important;
+  }
+
+  #stageMap .stageFrame {
+    inset: 8px 10px 10px !important;
+  }
+
+  #stageMap .stageBackBtn {
+    top: 36px !important;
+    left: 22px !important;
+    z-index: 22 !important;
+  }
+
+  #stageMap .stageTopTitle {
+    top: 38px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: auto !important;
+    max-width: calc(100vw - 180px) !important;
+    padding: 3px 22px 7px !important;
+    font-size: 15px !important;
+    letter-spacing: 7px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+    z-index: 21 !important;
+  }
+
+  #stageMap .stageTopTitle::before,
+  #stageMap .stageTopTitle::after {
+    width: 42px !important;
+    opacity: .45 !important;
+  }
+
+  #stageMap .stageStatus {
+    top: 72px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: calc(100vw - 112px) !important;
+    max-width: 520px !important;
+    text-align: center !important;
+    font-size: 8.8px !important;
+    line-height: 1.25 !important;
+    letter-spacing: .12em !important;
+    color: #dbeafe !important;
+    z-index: 21 !important;
+  }
+
+  #stageMap .stageStatus small {
+    display: block !important;
+    margin-top: 4px !important;
+    max-width: 100% !important;
+    font-size: 8px !important;
+    line-height: 1.3 !important;
+    color: #bae6fd !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  #stageMap .stageMapInner {
+    top: var(--mobile-map-top) !important;
+    left: 14px !important;
+    right: 14px !important;
+    bottom: calc(var(--mobile-panel-h) + var(--mobile-cta-h) + var(--mobile-bottom-safe) + 12px) !important;
+    transform: none !important;
+    transform-origin: center center !important;
+  }
+
+  #stageMap .stageNode {
+    width: 108px !important;
+    height: 108px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet,
+  #stageMap .stageNode[data-stage="5"] .nodePlanet,
+  #stageMap .stageNode[data-stage="6"] .nodePlanet,
+  #stageMap .stageNode[data-stage="7"] .nodePlanet {
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 22px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 83px !important;
+    font-size: 5.8px !important;
+    max-width: 96px !important;
+  }
+
+  #stageMap .nodeStarRow {
+    top: 66px !important;
+    font-size: 8px !important;
+  }
+
+  #stageMap .stageInfoPanel {
+    left: 50% !important;
+    right: auto !important;
+    bottom: calc(var(--mobile-cta-h) + var(--mobile-bottom-safe) + 12px) !important;
+    width: calc(100vw - 30px) !important;
+    max-width: 760px !important;
+    height: var(--mobile-panel-h) !important;
+    max-height: var(--mobile-panel-h) !important;
+    transform: translateX(-50%) !important;
+    padding: 14px 14px 16px !important;
+    border-radius: 18px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+
+  #stageMap .stageInfoHead {
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  #stageMap .stageInfoTitle {
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+
+  #stageMap .stageInfoRisk {
+    flex: 0 0 auto !important;
+    font-size: 8px !important;
+  }
+
+  #stageMap .stageInfoMood {
+    margin-top: 10px !important;
+    font-size: 11px !important;
+    line-height: 1.55 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    color: #cbd5e1 !important;
+  }
+
+  #stageMap .stageTagRow {
+    margin-top: 10px !important;
+    gap: 7px !important;
+    flex-wrap: wrap !important;
+    overflow: visible !important;
+  }
+
+  #stageMap .stageTag {
+    padding: 5px 9px !important;
+    font-size: 7.4px !important;
+  }
+
+  #stageMap .stageBossRow {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 9px !important;
+    margin-top: 12px !important;
+  }
+
+  #stageMap .stageBossCard {
+    padding: 10px 10px !important;
+    border-radius: 13px !important;
+  }
+
+  #stageMap .stageBossCard small {
+    font-size: 7.2px !important;
+    margin-bottom: 4px !important;
+  }
+
+  #stageMap .stageBossCard b {
+    font-size: 9.8px !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+
+  #stageMap .stageBossCard span,
+  #stageMap .stageBossCard em {
+    font-size: 8.6px !important;
+    line-height: 1.35 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+
+  #stageMap .offlineStagePanel {
+    max-height: none !important;
+    overflow: visible !important;
+    margin-top: 12px !important;
+    padding: 11px !important;
+  }
+
+  #stageMap .offlineMetaTitle {
+    font-size: 10px !important;
+    line-height: 1.35 !important;
+  }
+
+  #stageMap .offlineMetaStory {
+    font-size: 10px !important;
+    line-height: 1.55 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+
+  #stageMap .offlineStatRow {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  #stageMap .stageMasteryBox {
+    margin-top: 12px !important;
+    padding: 12px !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  #stageMap .stageMasteryTitle {
+    font-size: 10px !important;
+    line-height: 1.35 !important;
+  }
+
+  #stageMap .stageMasteryStars {
+    font-size: 20px !important;
+    line-height: 1.1 !important;
+  }
+
+  #stageMap .stageMasteryGoals {
+    margin-top: 8px !important;
+    gap: 5px !important;
+  }
+
+  #stageMap .stageMasteryGoal {
+    font-size: 9.2px !important;
+    line-height: 1.35 !important;
+  }
+
+  #stageMap .stageEnter {
+    left: 50% !important;
+    bottom: var(--mobile-bottom-safe) !important;
+    width: calc(100vw - 58px) !important;
+    height: 48px !important;
+    max-width: 680px !important;
+    transform: translateX(-50%) !important;
+    font-size: 9.8px !important;
+    letter-spacing: .12em !important;
+    border-radius: 16px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  #stageMap {
+    --mobile-map-top: 124px !important;
+    --mobile-panel-h: 318px !important;
+    --mobile-cta-h: 50px !important;
+    --mobile-bottom-safe: 14px !important;
+  }
+
+  #stageMap .stageTopTitle {
+    top: 36px !important;
+    max-width: calc(100vw - 150px) !important;
+    font-size: 13px !important;
+    letter-spacing: 5.8px !important;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  #stageMap .stageStatus {
+    top: 68px !important;
+    width: calc(100vw - 86px) !important;
+    font-size: 8.2px !important;
+  }
+
+  #stageMap .stageStatus small {
+    font-size: 7.4px !important;
+  }
+
+  #stageMap .stageBackBtn {
+    top: 35px !important;
+    left: 18px !important;
+    font-size: 7px !important;
+    padding: 5px 8px !important;
+  }
+
+  #stageMap .stageNode {
+    width: 98px !important;
+    height: 98px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet,
+  #stageMap .stageNode[data-stage="5"] .nodePlanet,
+  #stageMap .stageNode[data-stage="6"] .nodePlanet,
+  #stageMap .stageNode[data-stage="7"] .nodePlanet {
+    width: 64px !important;
+    height: 64px !important;
+  }
+
+  #stageMap .stageNode .nodeNo {
+    font-size: 20px !important;
+  }
+
+  #stageMap .stageNode .nodeLabel {
+    top: 76px !important;
+    font-size: 5.2px !important;
+    max-width: 84px !important;
+  }
+
+  #stageMap .nodeStarRow {
+    top: 59px !important;
+    font-size: 7.6px !important;
+  }
+
+  #stageMap .stageInfoPanel {
+    width: calc(100vw - 24px) !important;
+    padding: 13px 12px 15px !important;
+  }
+
+  #stageMap .stageInfoTitle {
+    font-size: 12px !important;
+  }
+
+  #stageMap .stageInfoMood {
+    font-size: 10.2px !important;
+  }
+
+  #stageMap .stageBossRow {
+    grid-template-columns: 1fr !important;
+  }
+
+  #stageMap .stageEnter {
+    width: calc(100vw - 46px) !important;
+    height: 46px !important;
+    font-size: 9px !important;
+  }
+}
+
+
+/* V8 GALAXY CONSTELLATION EXPANSION */
+#constellationDeck{position:absolute;left:18px;right:18px;top:108px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;z-index:4}
+.constellationCard{appearance:none;border:none;text-align:left;padding:12px 14px;border-radius:16px;background:rgba(7,13,27,.72);border:1px solid rgba(148,163,184,.16);box-shadow:0 12px 24px rgba(2,6,23,.22);display:flex;flex-direction:column;gap:4px;color:#dbeafe;min-height:104px;cursor:pointer}
+.constellationCard b{font-size:13px;color:#fff}.constellationCard small{font-size:10px;letter-spacing:.12em;color:#93c5fd}.constellationCard em{font-style:normal;font-size:11px;line-height:1.35;color:#cbd5e1;opacity:.95}.constellationCard .constellationKicker{font-size:9px;letter-spacing:.18em;color:#67e8f9}.constellationCard .constellationMeta{margin-top:auto;font-size:11px;color:#fde68a}
+.constellationCard.locked{opacity:.56;filter:saturate(.7);cursor:not-allowed}.constellationCard.active{border-color:rgba(96,165,250,.52);box-shadow:0 0 0 1px rgba(96,165,250,.18),0 16px 30px rgba(37,99,235,.18);background:linear-gradient(180deg, rgba(15,23,42,.86), rgba(6,10,24,.82))}
+#stageMap .stageMapInner{top:206px !important;bottom:300px !important}
+#stageMap .stageInfoPanel{height:260px !important}
+#stageMap .stageNode[data-stage="8"]{--planetArt:url('stage_planet_cosmic.webp');}
+#stageMap .stageNode[data-stage="9"]{--planetArt:url('stage_planet_machine.webp');}
+#stageMap .stageNode[data-stage="10"]{--planetArt:url('stage_planet_crystal.webp');}
+#stageMap .stageNode[data-stage="11"]{--planetArt:url('stage_planet_smog.webp');}
+#stageMap .stageNode[data-stage="12"]{--planetArt:url('stage_planet_machine.webp');}
+#stageMap[data-selected="8"] .stageBg.cosmic,
+#stageMap[data-selected="9"] .stageBg.machine,
+#stageMap[data-selected="10"] .stageBg.crystal,
+#stageMap[data-selected="11"] .stageBg.smog,
+#stageMap[data-selected="12"] .stageBg.machine{opacity:.92 !important;filter:blur(.8px) brightness(.68) saturate(.92) contrast(1.06) !important;transform:scale(1.02)}
+.constellationLabel{position:absolute;font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:.18em;color:rgba(191,219,254,.72);text-shadow:0 0 12px rgba(30,64,175,.22);pointer-events:none;z-index:2}
+.constellation-orion{left:9%;top:8%}.constellation-cygnus{left:39%;top:76%}.constellation-draco{left:69%;top:7%}
+@media (max-width: 860px){
+  #constellationDeck{grid-template-columns:1fr;top:96px;gap:8px}
+  .constellationCard{min-height:auto;padding:10px 12px}
+  .constellationCard em{display:none}
+  #stageMap .stageMapInner{top:220px !important;bottom:316px !important}
+  .constellationLabel{font-size:9px;letter-spacing:.12em}
+  #stageMap .stageNode{width:96px !important;height:96px !important}
+  #stageMap .stageNode .nodePlanet{width:66px !important;height:66px !important}
+  #stageMap .stageNode .nodeLabel{top:75px !important;font-size:8px !important;letter-spacing:.45px !important}
+  #stageMap .stageNode .nodeKo{display:none !important}
+}
+@media (max-width: 560px){
+  #constellationDeck{left:12px;right:12px;top:90px}
+  .constellationCard{padding:9px 11px;border-radius:14px}
+  .constellationCard b{font-size:12px}.constellationCard small{font-size:9px}.constellationCard .constellationMeta{font-size:10px}
+  #stageMap .stageMapInner{top:210px !important;bottom:322px !important}
+  #stageMap .stageNode{width:82px !important;height:82px !important}
+  #stageMap .stageNode .nodePlanet{width:58px !important;height:58px !important}
+  #stageMap .stageNode .nodeNo{font-size:22px !important}
+  #stageMap .stageNode .nodeLabel{top:67px !important;font-size:7px !important;letter-spacing:.3px !important}
+  #stageMap .stageNode[data-stage="1"]{left:14% !important;top:61% !important}
+  #stageMap .stageNode[data-stage="2"]{left:26% !important;top:40% !important}
+  #stageMap .stageNode[data-stage="3"]{left:18% !important;top:22% !important}
+  #stageMap .stageNode[data-stage="4"]{left:37% !important;top:15% !important}
+  #stageMap .stageNode[data-stage="5"]{left:48% !important;top:32% !important}
+  #stageMap .stageNode[data-stage="6"]{left:41% !important;top:54% !important}
+  #stageMap .stageNode[data-stage="7"]{left:55% !important;top:73% !important}
+  #stageMap .stageNode[data-stage="8"]{left:67% !important;top:58% !important}
+  #stageMap .stageNode[data-stage="9"]{left:78% !important;top:40% !important}
+  #stageMap .stageNode[data-stage="10"]{left:72% !important;top:19% !important}
+  #stageMap .stageNode[data-stage="11"]{left:88% !important;top:17% !important}
+  #stageMap .stageNode[data-stage="12"]{left:88% !important;top:58% !important}
+}
+
+
+/* V10 Stage Map Preview Sync Fix */
+#stageEnterBtn.locked,
+#stageEnterBtn:disabled{
+  opacity:.62!important;
+  filter:saturate(.72) brightness(.82)!important;
+  cursor:not-allowed!important;
+  box-shadow:none!important;
+}
+#stageMap .stageNode.locked.active .nodePlanet{
+  box-shadow:0 0 0 1px rgba(248,113,113,.28),0 0 34px rgba(248,113,113,.18)!important;
+}
+#stageMap .stageNode.locked.active .nodeLabel{color:#fecaca!important;}
+
+
+/* V12 Stage Info Sync Visual Patch */
+/* V13: renderStageMapInfo now force-syncs the lower stage panel. */
+#stageMap .stageInfoMood{white-space:normal !important;overflow:visible !important;text-overflow:clip !important;display:block !important;max-height:none !important;}
+#stageMap .offlineStagePanel .offlineMetaStory{white-space:normal !important;overflow:visible !important;text-overflow:clip !important;line-height:1.45 !important;}
+.stageSyncBossBrief{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:8px 0 6px;}
+.stageSyncBossBrief>div{border:1px solid rgba(148,163,184,.18);background:rgba(15,23,42,.34);border-radius:13px;padding:9px 10px;display:flex;flex-direction:column;gap:3px;min-width:0;}
+.stageSyncBossBrief small{font-size:9px;letter-spacing:.16em;color:#7dd3fc;font-family:Orbitron,sans-serif;}
+.stageSyncBossBrief b{font-size:11px;color:#fff;font-family:Orbitron,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stageSyncBossBrief span{font-size:10px;color:#cbd5e1;line-height:1.35;}
+@media (max-width:560px){.stageSyncBossBrief{grid-template-columns:1fr;gap:7px}.stageSyncBossBrief>div{padding:8px}}
+
+
+/* V13 hard selected-stage lower info sync */
+#offlineStagePanel[data-stage]{transition:opacity .12s ease;}
+#stageMap .offlineMetaTitle{white-space:normal;}
+#stageMap .offlineMetaStory{white-space:normal;overflow:visible;text-overflow:clip;}
+
+
+
+/* V15 Focused Stage Text Sync Patch: lower info text must follow selected sanctuary */
+#stageMap .stagePathSvg,
+#stageMap .mapRouteBase,
+#stageMap .mapRouteLine,
+#stageMap .stageBg,
+#stageMap .stageFrame,
+#stageMap .constellationLabel{pointer-events:none !important;}
+#stageMap .stageNode,
+#stageMap .stageNode *{pointer-events:auto !important;}
+#stageMap .stageNode{z-index:30 !important;}
+#offlineStagePanel[data-stage]{min-height:176px;}
+.stageFocusedNarrative{display:flex;flex-direction:column;gap:10px;width:100%;}
+.stageFocusedTop{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+.stageFocusedTitle{font-family:'Orbitron',Pretendard,sans-serif;font-size:15px;font-weight:900;letter-spacing:.04em;color:#f8fafc;line-height:1.35;}
+.stageFocusedShard{font-family:'Orbitron',Pretendard,sans-serif;color:#fde68a;font-weight:900;white-space:nowrap;}
+.stageFocusedStory{font-size:12px;line-height:1.5;color:#dbeafe;white-space:normal;overflow:visible;text-overflow:clip;}
+.stageFocusedStory b{color:#fff;}
+.stageFocusedMeta{display:flex;flex-wrap:wrap;gap:7px;}
+.stageFocusedPill{border:1px solid rgba(148,163,184,.22);border-radius:999px;padding:5px 10px;background:rgba(15,23,42,.42);font-size:10px;color:#dbeafe;}
+.stageFocusedBoss{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.stageFocusedBoss>div{border:1px solid rgba(148,163,184,.16);border-radius:13px;background:rgba(8,13,28,.46);padding:9px 10px;min-width:0;}
+.stageFocusedBoss small{display:block;color:#93c5fd;font-family:'Orbitron';font-size:9px;letter-spacing:.14em;margin-bottom:4px;}
+.stageFocusedBoss b{display:block;color:#fff;font-family:'Orbitron';font-size:10.5px;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stageFocusedBoss span{display:block;color:#cbd5e1;font-size:10px;line-height:1.35;margin-top:3px;white-space:normal;}
+@media (max-width:768px){
+  .stageFocusedBoss{grid-template-columns:1fr;}
+  .stageFocusedTitle{font-size:13px;}
+  .stageFocusedStory{font-size:11px;}
+}
+
+
+/* =========================================================
+   V18 STAGE NODE CAPTION COLLISION FIX
+   - Node captions use short labels while the info panel keeps full names.
+   - Star mastery row is separated from the label to prevent text overlap.
+   ========================================================= */
+#stageMap .stageNode{
+  overflow:visible !important;
+}
+#stageMap .stageNode .nodeLabel{
+  position:absolute !important;
+  left:50% !important;
+  top:116px !important;
+  transform:translateX(-50%) !important;
+  display:block !important;
+  width:max-content !important;
+  max-width:112px !important;
+  padding:2px 6px 1px !important;
+  border-radius:999px !important;
+  background:rgba(2,6,23,.48) !important;
+  border:1px solid rgba(148,163,184,.10) !important;
+  color:color-mix(in srgb, var(--nodeColor) 84%, white 16%) !important;
+  font-size:7.8px !important;
+  line-height:1.05 !important;
+  letter-spacing:.72px !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  text-shadow:0 0 10px rgba(0,0,0,.86), 0 0 9px color-mix(in srgb, var(--nodeColor) 28%, transparent) !important;
+  z-index:5 !important;
+  pointer-events:none !important;
+}
+#stageMap .nodeStarRow{
+  position:absolute !important;
+  left:50% !important;
+  top:132px !important;
+  transform:translateX(-50%) !important;
+  display:block !important;
+  width:max-content !important;
+  max-width:94px !important;
+  font-size:7.6px !important;
+  line-height:1 !important;
+  letter-spacing:.02em !important;
+  color:#facc15 !important;
+  opacity:.86 !important;
+  text-align:center !important;
+  text-shadow:0 0 10px rgba(250,204,21,.48), 0 2px 7px rgba(0,0,0,.9) !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:clip !important;
+  z-index:4 !important;
+  pointer-events:none !important;
+}
+#stageMap .stageNode.locked .nodeStarRow{
+  opacity:.34 !important;
+  color:#fef3c7 !important;
+}
+#stageMap .stageNode[data-stage="10"] .nodeNo,
+#stageMap .stageNode[data-stage="11"] .nodeNo,
+#stageMap .stageNode[data-stage="12"] .nodeNo{
+  font-size:26px !important;
+}
+@media (max-width:860px){
+  #stageMap .stageNode .nodeLabel{
+    top:84px !important;
+    max-width:86px !important;
+    padding:2px 5px 1px !important;
+    font-size:6.6px !important;
+    letter-spacing:.45px !important;
+  }
+  #stageMap .nodeStarRow{
+    top:98px !important;
+    max-width:78px !important;
+    font-size:6.7px !important;
+  }
+  #stageMap .stageNode[data-stage="10"] .nodeNo,
+  #stageMap .stageNode[data-stage="11"] .nodeNo,
+  #stageMap .stageNode[data-stage="12"] .nodeNo{
+    font-size:20px !important;
+  }
+}
+@media (max-width:560px){
+  #stageMap .stageNode .nodeLabel{
+    top:73px !important;
+    max-width:76px !important;
+    font-size:5.8px !important;
+    letter-spacing:.32px !important;
+    padding:1px 4px !important;
+  }
+  #stageMap .nodeStarRow{
+    top:86px !important;
+    max-width:68px !important;
+    font-size:6.1px !important;
+  }
+  #stageMap .stageNode[data-stage="10"] .nodeNo,
+  #stageMap .stageNode[data-stage="11"] .nodeNo,
+  #stageMap .stageNode[data-stage="12"] .nodeNo{
+    font-size:18px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -8213,7 +8788,7 @@ h1{
     <h1>PLANET RIFT DEFENSE</h1>
     <div class="menuSub">COSMIC PLATES</div>
     <p style="max-width:780px;margin:0 auto;color:#cbd5e1;line-height:1.68;font-size:15px">
-      붕괴된 은하의 마지막 코어를 지키기 위해 잠든 행성 병기를 깨우고 오염된 성역을 하나씩 정화하세요.
+      붕괴된 은하수의 마지막 코어를 지키기 위해 잠든 행성 병기를 깨우고, 별자리마다 오염된 성역을 하나씩 복원하세요.
       일반 스킬은 성역 지도에서 스테이지 진행에 따라 하나씩 열리고, 전투 중에는 배치·병합·생존 판단에만 집중합니다.
       첫 판 튜토리얼, 로컬 전투 로그, 3성 숙련도 루프로 반복 플레이 흐름을 정리했습니다.
     </p>
@@ -8256,118 +8831,92 @@ h1{
   <div class="stageBg machine"></div>
   <div class="stageFrame"></div>
   <button id="stageMapBack" class="stageBackBtn">← MAIN</button>
-  <div class="stageTopTitle">STAGE MAP</div>
+  <div class="stageTopTitle">GALAXY MAP</div>
   <div class="stageStatus">
-    <span id="stageProgressLabel">SANCTUARY 1 / 7</span>
-    <small id="stageProgressSub">성역 클리어 시 다음 균열 항로가 열립니다</small>
+    <span id="stageProgressLabel">ORION CONSTELLATION · SANCTUARY 1 / 12</span>
+    <small id="stageProgressSub">은하수 외곽 항로에서 첫 성역을 복원합니다</small>
   </div>
+  <div id="constellationDeck" class="constellationDeck"></div>
 
   <div class="stageMapInner">
+    <div class="constellationLabel constellation-orion">ORION OUTER ARC</div>
+    <div class="constellationLabel constellation-cygnus">CYGNUS RIFT ARC</div>
+    <div class="constellationLabel constellation-draco">DRACO ABYSS ARC</div>
     <svg class="stagePathSvg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <path class="mapRouteBase" d="M18 58 C18 49 21 43 27 38" pathLength="100"></path>
-      <path class="mapRouteBase" d="M29 37 C35 33 41 29 46 28" pathLength="100"></path>
-      <path class="mapRouteBase" d="M48 28 C55 27 61 29 66 33" pathLength="100"></path>
-      <path class="mapRouteBase" d="M68 35 C74 39 78 45 79 50" pathLength="100"></path>
-      <path class="mapRouteBase" d="M78 52 C75 58 69 64 62 68" pathLength="100"></path>
-      <path class="mapRouteBase" d="M64 69 C70 71 76 71 82 70" pathLength="100"></path>
+      <path class="mapRouteBase" d="M16 60 C18 52 22 44 27 38" pathLength="100"></path>
+      <path class="mapRouteBase" d="M27 38 C26 32 23 25 20 20" pathLength="100"></path>
+      <path class="mapRouteBase" d="M20 20 C26 16 31 14 37 13" pathLength="100"></path>
+      <path class="mapRouteBase" d="M37 13 C44 16 47 24 48 32" pathLength="100"></path>
+      <path class="mapRouteBase" d="M48 32 C46 41 43 49 42 55" pathLength="100"></path>
+      <path class="mapRouteBase" d="M42 55 C46 64 50 70 55 74" pathLength="100"></path>
+      <path class="mapRouteBase" d="M55 74 C60 69 64 63 67 58" pathLength="100"></path>
+      <path class="mapRouteBase" d="M67 58 C72 51 75 45 78 38" pathLength="100"></path>
+      <path class="mapRouteBase" d="M78 38 C76 31 74 24 72 18" pathLength="100"></path>
+      <path class="mapRouteBase" d="M72 18 C78 16 83 15 88 16" pathLength="100"></path>
+      <path class="mapRouteBase" d="M88 16 C91 24 92 36 90 58" pathLength="100"></path>
 
-      <path class="mapRouteLine segment-1" d="M18 58 C18 49 21 43 27 38" pathLength="100"></path>
-      <path class="mapRouteLine segment-2" d="M29 37 C35 33 41 29 46 28" pathLength="100"></path>
-      <path class="mapRouteLine segment-3" d="M48 28 C55 27 61 29 66 33" pathLength="100"></path>
-      <path class="mapRouteLine segment-4" d="M68 35 C74 39 78 45 79 50" pathLength="100"></path>
-      <path class="mapRouteLine segment-5" d="M78 52 C75 58 69 64 62 68" pathLength="100"></path>
-      <path class="mapRouteLine segment-6" d="M64 69 C70 71 76 71 82 70" pathLength="100"></path>
-
-      <g class="premiumRouteArrow segment-1" style="color:#67e8f9" transform="translate(22 47) rotate(-18)">
-        <path class="premiumRouteArrowGlow" d="M-5.5 4.5 L0 -5.5 L5.5 4.5 Z"></path>
-        <path class="premiumRouteArrowLine" d="M-5.5 4.5 L0 -5.5 L5.5 4.5"></path>
-        <path class="premiumRouteArrowLine" d="M0 -5.5 L0 9"></path>
-      </g>
-      <g class="premiumRouteArrow segment-2" style="color:#fb923c" transform="translate(38 30) rotate(62)">
-        <path class="premiumRouteArrowGlow" d="M-5.5 4.5 L0 -5.5 L5.5 4.5 Z"></path>
-        <path class="premiumRouteArrowLine" d="M-5.5 4.5 L0 -5.5 L5.5 4.5"></path>
-        <path class="premiumRouteArrowLine" d="M0 -5.5 L0 9"></path>
-      </g>
-      <g class="premiumRouteArrow segment-3" style="color:#22c55e" transform="translate(57 29) rotate(74)">
-        <path class="premiumRouteArrowGlow" d="M-5.5 4.5 L0 -5.5 L5.5 4.5 Z"></path>
-        <path class="premiumRouteArrowLine" d="M-5.5 4.5 L0 -5.5 L5.5 4.5"></path>
-        <path class="premiumRouteArrowLine" d="M0 -5.5 L0 9"></path>
-      </g>
-      <g class="premiumRouteArrow segment-4" style="color:#9cab62" transform="translate(77 44) rotate(148)">
-        <path class="premiumRouteArrowGlow" d="M-5.5 4.5 L0 -5.5 L5.5 4.5 Z"></path>
-        <path class="premiumRouteArrowLine" d="M-5.5 4.5 L0 -5.5 L5.5 4.5"></path>
-        <path class="premiumRouteArrowLine" d="M0 -5.5 L0 9"></path>
-      </g>
-      <g class="premiumRouteArrow segment-5" style="color:#c084fc" transform="translate(71 61) rotate(-130)">
-        <path class="premiumRouteArrowGlow" d="M-5.5 4.5 L0 -5.5 L5.5 4.5 Z"></path>
-        <path class="premiumRouteArrowLine" d="M-5.5 4.5 L0 -5.5 L5.5 4.5"></path>
-        <path class="premiumRouteArrowLine" d="M0 -5.5 L0 9"></path>
-      </g>
-      <g class="premiumRouteArrow segment-6" style="color:#60a5fa" transform="translate(74 70) rotate(100)">
-        <path class="premiumRouteArrowGlow" d="M-5.5 4.5 L0 -5.5 L5.5 4.5 Z"></path>
-        <path class="premiumRouteArrowLine" d="M-5.5 4.5 L0 -5.5 L5.5 4.5"></path>
-        <path class="premiumRouteArrowLine" d="M0 -5.5 L0 9"></path>
-      </g>
+      <path class="mapRouteLine segment-1" d="M16 60 C18 52 22 44 27 38" pathLength="100"></path>
+      <path class="mapRouteLine segment-2" d="M27 38 C26 32 23 25 20 20" pathLength="100"></path>
+      <path class="mapRouteLine segment-3" d="M20 20 C26 16 31 14 37 13" pathLength="100"></path>
+      <path class="mapRouteLine segment-4" d="M37 13 C44 16 47 24 48 32" pathLength="100"></path>
+      <path class="mapRouteLine segment-5" d="M48 32 C46 41 43 49 42 55" pathLength="100"></path>
+      <path class="mapRouteLine segment-6" d="M42 55 C46 64 50 70 55 74" pathLength="100"></path>
+      <path class="mapRouteLine segment-7" d="M55 74 C60 69 64 63 67 58" pathLength="100"></path>
+      <path class="mapRouteLine segment-8" d="M67 58 C72 51 75 45 78 38" pathLength="100"></path>
+      <path class="mapRouteLine segment-9" d="M78 38 C76 31 74 24 72 18" pathLength="100"></path>
+      <path class="mapRouteLine segment-10" d="M72 18 C78 16 83 15 88 16" pathLength="100"></path>
+      <path class="mapRouteLine segment-11" d="M88 16 C91 24 92 36 90 58" pathLength="100"></path>
     </svg>
 
-    <button class="stageNode active unlocked" data-stage="1" style="left:18%;top:58%;--nodeColor:#38bdf8;--nodeA:#0284c7;--nodeB:#052238">
-      <span class="nodePlanet"><span class="nodeNo">1</span></span>
-      <span class="nodeLabel">COSMIC VOID</span>
-      <span class="nodeKo">공허 성역</span>
+    <button class="stageNode active unlocked" data-stage="1" style="left:16%;top:60%;--nodeColor:#38bdf8;--nodeA:#0284c7;--nodeB:#052238">
+      <span class="nodePlanet"><span class="nodeNo">1</span></span><span class="nodeLabel" title="COSMIC VOID">COSMIC</span><span class="nodeKo">공허 성역</span>
     </button>
-    <button class="stageNode locked" data-stage="2" style="left:28%;top:36%;--nodeColor:#67e8f9;--nodeA:#0891b2;--nodeB:#06283a">
-      <span class="nodePlanet"><span class="nodeNo">2</span><span class="nodeLock">🔒</span></span>
-      <span class="nodeLabel">FROST EXPANSE</span>
-      <span class="nodeKo">빙결 외곽</span>
+    <button class="stageNode locked" data-stage="2" style="left:27%;top:38%;--nodeColor:#67e8f9;--nodeA:#0891b2;--nodeB:#06283a">
+      <span class="nodePlanet"><span class="nodeNo">2</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="FROST EXPANSE">FROST</span><span class="nodeKo">빙결 외곽</span>
     </button>
-    <button class="stageNode locked" data-stage="3" style="left:46%;top:28%;--nodeColor:#fb923c;--nodeA:#ea580c;--nodeB:#351006">
-      <span class="nodePlanet"><span class="nodeNo">3</span><span class="nodeLock">🔒</span></span>
-      <span class="nodeLabel">LAVA NEBULA</span>
-      <span class="nodeKo">용암 성운</span>
+    <button class="stageNode locked" data-stage="3" style="left:20%;top:20%;--nodeColor:#fb923c;--nodeA:#ea580c;--nodeB:#351006">
+      <span class="nodePlanet"><span class="nodeNo">3</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="LAVA NEBULA">LAVA</span><span class="nodeKo">용암 성운</span>
     </button>
-    <button class="stageNode locked" data-stage="4" style="left:66%;top:33%;--nodeColor:#22c55e;--nodeA:#16a34a;--nodeB:#082b16">
-      <span class="nodePlanet"><span class="nodeNo">4</span><span class="nodeLock">🔒</span></span>
-      <span class="nodeLabel">JUNGLE CORE</span>
-      <span class="nodeKo">생체 정글</span>
+    <button class="stageNode locked" data-stage="4" style="left:37%;top:13%;--nodeColor:#22c55e;--nodeA:#16a34a;--nodeB:#082b16">
+      <span class="nodePlanet"><span class="nodeNo">4</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="JUNGLE CORE">JUNGLE</span><span class="nodeKo">생체 정글</span>
     </button>
-    <button class="stageNode locked" data-stage="5" style="left:80%;top:52%;--nodeColor:#9cab62;--nodeA:#64702f;--nodeB:#1f2412">
-      <span class="nodePlanet"><span class="nodeNo">5</span><span class="nodeLock">🔒</span></span>
-      <span class="nodeLabel">SMOG WASTELAND</span>
-      <span class="nodeKo">매연 폐역</span>
+    <button class="stageNode locked" data-stage="5" style="left:48%;top:32%;--nodeColor:#9cab62;--nodeA:#64702f;--nodeB:#1f2412">
+      <span class="nodePlanet"><span class="nodeNo">5</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="SMOG WASTELAND">SMOG</span><span class="nodeKo">매연 폐역</span>
     </button>
-    <button class="stageNode locked" data-stage="6" style="left:63%;top:69%;--nodeColor:#c084fc;--nodeA:#7e22ce;--nodeB:#1e1238">
-      <span class="nodePlanet"><span class="nodeNo">6</span><span class="nodeLock">🔒</span></span>
-      <span class="nodeLabel">CRYSTAL NEBULA</span>
-      <span class="nodeKo">수정 성운</span>
+    <button class="stageNode locked" data-stage="6" style="left:42%;top:55%;--nodeColor:#c084fc;--nodeA:#7e22ce;--nodeB:#1e1238">
+      <span class="nodePlanet"><span class="nodeNo">6</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="CRYSTAL NEBULA">CRYSTAL</span><span class="nodeKo">수정 성운</span>
     </button>
-    <button class="stageNode locked" data-stage="7" style="left:81%;top:68%;--nodeColor:#60a5fa;--nodeA:#1d4ed8;--nodeB:#0f172a">
-      <span class="nodePlanet"><span class="nodeNo">7</span><span class="nodeLock">🔒</span></span>
-      <span class="nodeLabel">MACHINE CORE</span>
-      <span class="nodeKo">기계 핵성</span>
+    <button class="stageNode locked" data-stage="7" style="left:55%;top:74%;--nodeColor:#60a5fa;--nodeA:#1d4ed8;--nodeB:#0f172a">
+      <span class="nodePlanet"><span class="nodeNo">7</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="MACHINE CORE">MACHINE</span><span class="nodeKo">기계 핵성</span>
+    </button>
+    <button class="stageNode locked" data-stage="8" style="left:67%;top:58%;--nodeColor:#8b5cf6;--nodeA:#5b21b6;--nodeB:#0f1127">
+      <span class="nodePlanet"><span class="nodeNo">8</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="GRAVITY MAUSOLEUM">GRAVITY</span><span class="nodeKo">중력 무덤</span>
+    </button>
+    <button class="stageNode locked" data-stage="9" style="left:78%;top:38%;--nodeColor:#22d3ee;--nodeA:#0e7490;--nodeB:#082032">
+      <span class="nodePlanet"><span class="nodeNo">9</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="THUNDER CORRIDOR">THUNDER</span><span class="nodeKo">번개 회랑</span>
+    </button>
+    <button class="stageNode locked" data-stage="10" style="left:72%;top:18%;--nodeColor:#a78bfa;--nodeA:#6d28d9;--nodeB:#1a1431">
+      <span class="nodePlanet"><span class="nodeNo">10</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="TIME SHARDS">TIME</span><span class="nodeKo">시간 잔해</span>
+    </button>
+    <button class="stageNode locked" data-stage="11" style="left:88%;top:16%;--nodeColor:#64748b;--nodeA:#334155;--nodeB:#0f172a">
+      <span class="nodePlanet"><span class="nodeNo">11</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="SILENT CONSTELLATION">SILENT</span><span class="nodeKo">침묵 성단</span>
+    </button>
+    <button class="stageNode locked" data-stage="12" style="left:90%;top:58%;--nodeColor:#ef4444;--nodeA:#991b1b;--nodeB:#24090a">
+      <span class="nodePlanet"><span class="nodeNo">12</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="RIFT THRONE">RIFT</span><span class="nodeKo">균열 왕좌</span>
     </button>
   </div>
 
-  <div id="stageHint" class="stageHint">1 COSMIC VOID부터 시작합니다. 10웨이브를 클리어하면 다음 성역 선이 그려집니다.</div>
+  <div id="stageHint" class="stageHint">오리온 외곽 성좌 · 1. COSMIC VOID / 공허 성역 — 진입 가능. 첫 번째 공허 성역입니다. 기본 행성 배치, 장판 활용, 병합 타이밍을 익히는 입문 전장입니다.</div>
   <div id="stageInfoPanel" class="stageInfoPanel">
     <div class="stageInfoHead">
       <div id="stageInfoTitle" class="stageInfoTitle">1. COSMIC VOID</div>
       <div class="stageInfoRisk"><span>RISK</span><b id="stageInfoRisk">LOW</b></div>
     </div>
-    <div id="stageInfoMood" class="stageInfoMood">기본 우주 균열 · 오로라 · 공허 에너지</div>
+    <div id="stageInfoMood" class="stageInfoMood">공허 성역 설명 · 첫 번째 공허 성역입니다. 기본 행성 배치, 장판 활용, 병합 타이밍을 익히는 입문 전장입니다.</div>
     <div id="stageInfoTags" class="stageTagRow"></div>
     <div class="stageBossRow">
-      <div class="stageBossCard">
-        <small>MID BOSS</small>
-        <b id="stageMidBossName">ASTRAL WARDEN</b>
-        <span id="stageMidBossKo">성운 감시자 · 위상 수호체</span>
-        <em id="stageMidBossSkill">PHASE REGEN</em>
-      </div>
-      <div class="stageBossCard">
-        <small>FINAL BOSS</small>
-        <b id="stageFinalBossName">OBLIVION HEART</b>
-        <span id="stageFinalBossKo">공허 심핵 · 최종 균열 군주</span>
-        <em id="stageFinalBossSkill">SINGULARITY SURGE</em>
-      </div>
+      <div class="stageBossCard"><small>MID BOSS</small><b id="stageMidBossName">ASTRAL WARDEN</b><span id="stageMidBossKo">성운 감시자 · 위상 수호체</span><em id="stageMidBossSkill">PHASE REGEN</em></div>
+      <div class="stageBossCard"><small>FINAL BOSS</small><b id="stageFinalBossName">OBLIVION HEART</b><span id="stageFinalBossKo">공허 심핵 · 최종 균열 군주</span><em id="stageFinalBossSkill">SINGULARITY SURGE</em></div>
     </div>
     <div id="offlineStagePanel" class="offlineStagePanel"></div>
   </div>
@@ -8498,79 +9047,122 @@ const THEMES = [
 
 
 const STAGE_MAP_DEFS = [
-  {stage:1, key:'cosmic', name:'COSMIC VOID', ko:'공허 성역', theme:0, color:'#38bdf8', mood:'오로라 균열 · 첫 방어선 · 기본 화력 학습'},
-  {stage:2, key:'frost', name:'FROST EXPANSE', ko:'빙결 외곽', theme:1, color:'#67e8f9', mood:'냉각 폭풍 · 감속/제어 학습 · 빠른 적 대응'},
-  {stage:3, key:'lava', name:'LAVA NEBULA', ko:'용암 성운', theme:2, color:'#fb923c', mood:'태양 플레어 · 장갑형 적 · 광역 화력 요구'},
-  {stage:4, key:'jungle', name:'JUNGLE CORE', ko:'생체 정글', theme:3, color:'#22c55e', mood:'포자 군체 · 재생형 적 · 장기전 운영'},
-  {stage:5, key:'smog', name:'SMOG WASTELAND', ko:'매연 폐역', theme:4, color:'#9cab62', mood:'산업 매연 · 은폐 장갑 · 방어 약화/감속 활용'},
-  {stage:6, key:'crystal', name:'CRYSTAL NEBULA', ko:'수정 성운', theme:5, color:'#c084fc', mood:'프리즘 공명 · 초과 피해 저장 · 장판 구조 변화'},
-  {stage:7, key:'machine', name:'MACHINE CORE', ko:'기계 핵성', theme:6, color:'#60a5fa', mood:'폭주 방어망 · 실드 해체 · 최종 코어 압박'}
+  {stage:1, key:'cosmic', name:'COSMIC VOID', ko:'공허 성역', theme:0, color:'#38bdf8', constellation:'orion', mood:'오로라 균열 · 첫 방어선 · 기본 화력 학습'},
+  {stage:2, key:'frost', name:'FROST EXPANSE', ko:'빙결 외곽', theme:1, color:'#67e8f9', constellation:'orion', mood:'냉각 폭풍 · 감속/제어 학습 · 빠른 적 대응'},
+  {stage:3, key:'lava', name:'LAVA NEBULA', ko:'용암 성운', theme:2, color:'#fb923c', constellation:'orion', mood:'태양 플레어 · 장갑형 적 · 광역 화력 요구'},
+  {stage:4, key:'jungle', name:'JUNGLE CORE', ko:'생체 정글', theme:3, color:'#22c55e', constellation:'orion', mood:'포자 군체 · 재생형 적 · 장기전 운영'},
+  {stage:5, key:'smog', name:'SMOG WASTELAND', ko:'매연 폐역', theme:4, color:'#9cab62', constellation:'orion', mood:'산업 매연 · 은폐 장갑 · 방어 약화/감속 활용'},
+  {stage:6, key:'crystal', name:'CRYSTAL NEBULA', ko:'수정 성운', theme:5, color:'#c084fc', constellation:'orion', mood:'프리즘 공명 · 초과 피해 저장 · 장판 구조 변화'},
+  {stage:7, key:'machine', name:'MACHINE CORE', ko:'기계 핵성', theme:6, color:'#60a5fa', constellation:'orion', mood:'폭주 방어망 · 실드 해체 · 코어 압박'},
+  {stage:8, key:'gravity', name:'GRAVITY MAUSOLEUM', ko:'중력 무덤', theme:0, color:'#8b5cf6', constellation:'cygnus', mood:'붕괴 궤도 · 군중 제어 · 중력 왜곡'},
+  {stage:9, key:'thunder', name:'THUNDER CORRIDOR', ko:'번개 회랑', theme:6, color:'#22d3ee', constellation:'cygnus', mood:'과전류 항로 · 고속 압박 · 연쇄 충격'},
+  {stage:10, key:'time', name:'TIME SHARDS', ko:'시간 잔해', theme:5, color:'#a78bfa', constellation:'cygnus', mood:'반복 잔상 · 압박 웨이브 · 시간 역류'},
+  {stage:11, key:'silent', name:'SILENT CONSTELLATION', ko:'침묵 성단', theme:4, color:'#64748b', constellation:'draco', mood:'감응 차단 · 정보 제한 · 암흑 추적전'},
+  {stage:12, key:'throne', name:'RIFT THRONE', ko:'균열 왕좌', theme:6, color:'#ef4444', constellation:'draco', mood:'은하 중심핵 전초전 · 최종 패턴 복합전'}
 ];
 
 const STAGE_PRESENTATION = {
-  1:{risk:'LOW', tags:['AURORA','VOID MARK','ENTRY'], note:'첫 성역입니다. 공격력 연구가 열리고 기본 장판 배치를 학습합니다.'},
-  2:{risk:'MEDIUM', tags:['BLIZZARD','FREEZE','CONTROL'], note:'치명타 연구가 열립니다. 빠른 적과 빙결 패턴을 제어해야 합니다.'},
-  3:{risk:'HIGH', tags:['SOLAR FLARE','ARMOR','BURN'], note:'공격속도 연구가 열립니다. 장갑형 웨이브를 광역 화력으로 녹여야 합니다.'},
-  4:{risk:'VERY HIGH', tags:['SPORE FIELD','HEAL','DECAY'], note:'보스 대응 연구가 열립니다. 회복 군체와 장기전 압박이 시작됩니다.'},
-  5:{risk:'EXTREME', tags:['SMOG','ARMOR DECAY','HAZE'], note:'사거리 연구가 열립니다. 매연 은폐와 보스 압박이 동시에 강해집니다.'},
-  6:{risk:'EXTREME', tags:['PRISM','CHARGE','RESONANCE'], note:'장판 증폭 연구가 열립니다. 프리즘 장판의 공명 구조를 활용해야 합니다.'},
-  7:{risk:'OMEGA', tags:['SHIELD','SATELLITE','CORE'], note:'전장 회수 연구가 열립니다. 최종 방어망과 수리 드론을 해체해야 합니다.'}
+  1:{risk:'LOW', tags:['AURORA','VOID MARK','ENTRY'], note:'기본 화력을 익히며 첫 균열을 정화합니다.'},
+  2:{risk:'MEDIUM', tags:['BLIZZARD','FREEZE','CONTROL'], note:'감속과 제어를 익히며 빠른 적에 대응합니다.'},
+  3:{risk:'HIGH', tags:['SOLAR FLARE','ARMOR','BURN'], note:'장갑형 적에게 광역 화력을 투입해야 합니다.'},
+  4:{risk:'VERY HIGH', tags:['SPORE FIELD','HEAL','DECAY'], note:'재생 군체를 끊고 장기전 운영을 학습합니다.'},
+  5:{risk:'EXTREME', tags:['SMOG','ARMOR DECAY','HAZE'], note:'시야 압박과 방어 약화를 동시에 버텨야 합니다.'},
+  6:{risk:'EXTREME', tags:['PRISM','CHARGE','RESONANCE'], note:'초과 피해와 장판 공명을 활용하는 성역입니다.'},
+  7:{risk:'EXTREME+', tags:['MACHINE','SHIELD','REPAIR'], note:'수리 드론과 실드 재가동을 끊어야 하는 기계 핵성입니다.'},
+  8:{risk:'NIGHTMARE', tags:['GRAVITY','PULL','CONTROL'], note:'중력 왜곡으로 적의 밀집과 가속이 반복되는 제어전입니다.'},
+  9:{risk:'NIGHTMARE', tags:['THUNDER','CHAIN','SPEED'], note:'과전류 항로에서 고속 적과 연쇄 충격을 버텨야 합니다.'},
+  10:{risk:'NIGHTMARE+', tags:['TIME','ECHO','REWIND'], note:'시간 잔상이 화력을 분산시키는 압박 성역입니다.'},
+  11:{risk:'ABYSS', tags:['SILENCE','NULL','STEALTH'], note:'감응 차단과 암흑 장갑으로 정보가 제한되는 성단입니다.'},
+  12:{risk:'FINAL', tags:['RIFT KING','HYBRID','ENDGAME'], note:'이전 성역의 패턴이 합쳐지는 최종 복합전입니다.'}
 };
 
-const WORLD_SCENARIO = {
-  title:'PLANET RIFT DEFENSE',
-  premise:'붕괴된 은하의 마지막 코어를 지키기 위해 잠든 행성 병기를 깨우고, 오염된 성역을 하나씩 정화하는 우주 방어전.',
-  playerRole:'플레이어는 마지막 코어 방어망의 지휘관입니다. 성역 지도에서 일반 스킬을 연구하고, 전투에서는 행성 장판을 배치·병합해 균열 항로를 막습니다.',
-  loop:'성역 진입 → 10웨이브 방어 → 보스 정화 → 신규 행성/일반 스킬 해금 → 다음 성역 개방'
-};
 
-const STAGE_AUDIO_CUES = {
-  0:{file:'bgm_stage_01_cosmic_void.ogg', mood:'낮은 신스와 별빛 패드, 입문 방어 긴장감'},
-  1:{file:'bgm_stage_02_frost_expanse.ogg', mood:'차가운 패드와 얇은 리듬, 빙결 외곽의 정적'},
-  2:{file:'bgm_stage_03_lava_nebula.ogg', mood:'빠른 드럼과 저역 펄스, 용암 성운의 공격성'},
-  3:{file:'bgm_stage_04_jungle_core.ogg', mood:'불규칙한 퍼커션과 생체 드론, 살아있는 성역'},
-  4:{file:'bgm_stage_05_smog_wasteland.ogg', mood:'탁한 노이즈와 무거운 베이스, 매연 폐역의 압박'},
-  5:{file:'bgm_stage_06_crystal_nebula.ogg', mood:'반짝이는 아르페지오와 긴 잔향, 프리즘 공명'},
-  6:{file:'bgm_stage_07_machine_core.ogg', mood:'기계적 펄스와 경고음, 최종 방어망'}
-};
 
-const STORY_EVENT_TEXT = {
-  map:'성역 지도에서 전역 연구를 정비하고 다음 균열 항로를 선택합니다.',
-  boss:'WARNING: 거대 침식체가 코어 방향으로 접근 중입니다.',
-  clearTitle:'SANCTUARY RESTORED',
-  clearBody:'성역의 궤도가 안정되었습니다. 잠든 행성 하나가 다시 빛을 되찾았습니다.',
-  gameOverTitle:'CORE COLLAPSE',
-  gameOverBody:'성역의 방어선이 붕괴되었습니다. 하지만 남은 성흔 조각이 다음 방어의 가능성을 남깁니다.'
+const STAGE_DESCRIPTION_COPY = {
+  1:{summary:'첫 번째 공허 성역입니다. 기본 행성 배치, 장판 활용, 병합 타이밍을 익히는 입문 전장입니다.', enemy:'공허 균열 적은 능력치가 균형형이라 초반 화력 곡선을 확인하기 좋습니다.', strategy:'레이저·블랙홀 계열로 길목을 안정화하고, 3웨이브부터 병합 준비를 시작하세요.', battle:'공허 성역 방어 · 기본 화력 학습'},
+  2:{summary:'빙결 외곽은 빠른 적이 섞여 들어오는 제어형 전장입니다. 적을 늦추는 배치가 핵심입니다.', enemy:'빙결 선봉대는 속도 변화가 크고, 후반에는 감속 저항 적이 섞입니다.', strategy:'냉각·감속 장판 근처에 타워를 모아 빠른 적의 돌파를 막으세요.', battle:'빙결 외곽 방어 · 감속 제어전'},
+  3:{summary:'용암 성운은 장갑형 적이 본격적으로 등장하는 화력 검증 스테이지입니다.', enemy:'용암 장갑 적은 단일 저레벨 화력을 오래 버티며 코어로 밀고 들어옵니다.', strategy:'광역 피해와 장갑 돌파 타워를 우선 병합하고, 화력 부족 구간을 장판으로 보완하세요.', battle:'용암 성운 방어 · 장갑 돌파전'},
+  4:{summary:'생체 정글은 적이 회복과 증식을 반복하는 장기전 스테이지입니다.', enemy:'포자 군체는 주변 적을 회복시키기 때문에 처치 순서가 중요합니다.', strategy:'재생을 끊는 집중 화력과 지속 피해를 확보해 전선이 밀리지 않게 운영하세요.', battle:'생체 정글 방어 · 재생 차단전'},
+  5:{summary:'매연 폐역은 시야와 방어 효율을 동시에 흔드는 디버프형 전장입니다.', enemy:'매연 은폐 적은 방어선을 흐트러뜨리고 장갑으로 피해를 흡수합니다.', strategy:'감속, 방어 약화, 지속 피해를 겹쳐 은폐 장갑 적을 빠르게 노출시키세요.', battle:'매연 폐역 방어 · 은폐 약화전'},
+  6:{summary:'수정 성운은 피해가 저장되고 굴절되는 공명형 스테이지입니다.', enemy:'수정 공명체는 초과 피해와 장판 효과를 흔들어 배치 판단을 어렵게 만듭니다.', strategy:'공명 장판과 고레벨 타워를 연결해 한 번에 큰 피해를 넣는 구간을 만드세요.', battle:'수정 성운 방어 · 프리즘 공명전'},
+  7:{summary:'기계 핵성은 실드와 수리 드론이 전선을 굳히는 방어망 스테이지입니다.', enemy:'기계 실드 유닛은 수리 드론과 함께 등장해 처치 시간을 크게 늘립니다.', strategy:'실드 해체 타워와 집중 화력을 먼저 확보하고, 보스 전에는 병합 레벨을 끌어올리세요.', battle:'기계 핵성 방어 · 실드 해체전'},
+  8:{summary:'중력 무덤은 죽은 행성의 궤도가 적을 밀집시키고 전장을 왜곡하는 제어 스테이지입니다.', enemy:'중력 왜곡 적은 몰려오거나 갑자기 가속해 방어선의 빈틈을 찌릅니다.', strategy:'군중 제어와 범위 화력을 겹쳐 몰려오는 적을 한 번에 정리하세요.', battle:'중력 무덤 방어 · 군중 제어전'},
+  9:{summary:'번개 회랑은 고속 적과 연쇄 충격이 이어지는 속도 압박 스테이지입니다.', enemy:'과전류 고속 적은 짧은 시간에 코어 근처까지 도달할 수 있습니다.', strategy:'초반부터 공격 속도와 연쇄 화력을 확보하고, 길목 앞쪽에 화력을 집중하세요.', battle:'번개 회랑 방어 · 고속 대응전'},
+  10:{summary:'시간 잔해는 과거 웨이브의 잔상이 겹쳐 화력이 분산되는 반복 전장입니다.', enemy:'시간 잔상 적은 같은 구간에 반복 등장해 타워 타겟팅을 흔듭니다.', strategy:'잔상 처리용 범위 화력과 보스 집중 화력을 분리해서 배치하세요.', battle:'시간 잔해 방어 · 잔상 처리전'},
+  11:{summary:'침묵 성단은 감응 신호가 끊겨 적 특성 파악이 늦어지는 암흑 스테이지입니다.', enemy:'침묵 잠행 적은 반응을 늦추고 암흑 장갑으로 초반 피해를 줄입니다.', strategy:'안정적인 중앙 배치와 범용 화력을 먼저 완성해 정보 제한 구간을 버티세요.', battle:'침묵 성단 방어 · 신호 차단전'},
+  12:{summary:'균열 왕좌는 이전 성역의 패턴이 모두 합쳐지는 시즌 1 최종 복합전입니다.', enemy:'균열 왕좌 혼합군은 장갑, 재생, 실드, 고속, 잔상 패턴을 순차적으로 압박합니다.', strategy:'핵심 타워를 빠르게 고레벨로 병합하고, 장판·전역 스킬을 모두 활용해야 합니다.', battle:'균열 왕좌 방어 · 최종 복합전'}
 };
+function getStageDescriptionCopy(stageNo){
+  const n = clamp(Number(stageNo || 1), 1, STAGE_MAP_DEFS.length);
+  return STAGE_DESCRIPTION_COPY[n] || STAGE_DESCRIPTION_COPY[1];
+}
+function stageDescriptionLine(stageNo){
+  const n = clamp(Number(stageNo || 1), 1, STAGE_MAP_DEFS.length);
+  const def = getStageDef(n);
+  const copy = getStageDescriptionCopy(n);
+  return `${def.ko} 설명 · ${copy.summary} 추천 전략: ${copy.strategy}`;
+}
+function stageHintLine(stageNo, canEnter=true){
+  const n = clamp(Number(stageNo || 1), 1, STAGE_MAP_DEFS.length);
+  const def = getStageDef(n);
+  const arc = getConstellationArcByStage(n);
+  const copy = getStageDescriptionCopy(n);
+  const state = canEnter ? '진입 가능' : '미개방 미리보기';
+  return `${arc.ko} · ${def.stage}. ${def.name} / ${def.ko} — ${state}. ${copy.summary} 보상: ${stageTowerRewardText(def.stage)}`;
+}
+function stageTagHtml(stageNo){
+  const presentation = getStagePresentation(stageNo);
+  return presentation.tags.map(tag => `<span class="stageTag">${escapeHtml(tag)}</span>`).join('');
+}
 
 const STAGE_BOSS_DEFS = {
   1: {
-    mid: {tier:'MID BOSS', name:'ASTRAL WARDEN', ko:'성운 감시자', title:'위상 수호체', color:'#7dd3fc', aura:'#38bdf8', hpMul:1.55, speedMul:.98, size:34, rewardMul:2.2, expMul:2.0, armor:.05, coreDamage:1, ability:'위상 재생', desc:'짧은 주기로 위상 재생을 사용해 체력을 회복하고 순간 가속합니다.', effect:'phaseRegen', interval:165},
-    final: {tier:'FINAL BOSS', name:'OBLIVION HEART', ko:'공허 심핵', title:'최종 균열 군주', color:'#a78bfa', aura:'#c084fc', hpMul:2.45, speedMul:.93, size:42, rewardMul:3.8, expMul:3.0, armor:.10, coreDamage:3, ability:'특이점 폭주', desc:'공허 파동으로 자신을 강화하며 주기적으로 체력을 대량 회복합니다.', effect:'voidSurge', interval:145}
+    mid: {tier:'MID BOSS', name:'ASTRAL WARDEN', ko:'성운 감시자', title:'위상 수호체', color:'#bae6fd', aura:'#38bdf8', hpMul:1.58, speedMul:.96, size:34, rewardMul:2.05, expMul:1.95, armor:.06, coreDamage:1, ability:'위상 재생', desc:'짧은 주기로 잔여 위상 에너지를 회복합니다.', effect:'phaseRegen', interval:168},
+    final: {tier:'FINAL BOSS', name:'OBLIVION HEART', ko:'공허 심핵', title:'최초 균열 군주', color:'#e0f2fe', aura:'#0ea5e9', hpMul:2.42, speedMul:.90, size:44, rewardMul:3.55, expMul:2.9, armor:.12, coreDamage:3, ability:'특이점 파동', desc:'전장 중앙에 공허 파동을 일으켜 방어선을 압박합니다.', effect:'voidSurge', interval:150}
   },
   2: {
-    mid: {tier:'MID BOSS', name:'GLACIER HOWLER', ko:'빙하 포효체', title:'극저온 추적자', color:'#bae6fd', aura:'#67e8f9', hpMul:1.65, speedMul:.94, size:35, rewardMul:2.3, expMul:2.0, armor:.06, coreDamage:1, ability:'빙결 구속', desc:'가장 강한 아군 행성 하나를 잠시 얼려 공격을 멈추게 합니다.', effect:'frostLock', interval:160},
-    final: {tier:'FINAL BOSS', name:'ABSOLUTE ZERO', ko:'절대영도 핵', title:'빙결 군주', color:'#e0f2fe', aura:'#93c5fd', hpMul:2.5, speedMul:.90, size:42, rewardMul:4.0, expMul:3.0, armor:.12, coreDamage:3, ability:'눈보라 감옥', desc:'복수의 행성을 동시에 얼리고 냉기 재생으로 피해를 줄입니다.', effect:'blizzardPrison', interval:148}
+    mid: {tier:'MID BOSS', name:'CRYO SENTINEL', ko:'빙결 파수병', title:'냉각 폭풍 감시자', color:'#cffafe', aura:'#67e8f9', hpMul:1.68, speedMul:.94, size:35, rewardMul:2.18, expMul:2.05, armor:.08, coreDamage:1, ability:'냉각 장막', desc:'차가운 장막으로 주변 적의 생존 시간을 늘립니다.', effect:'frostVeil', interval:162},
+    final: {tier:'FINAL BOSS', name:'GLACIER MONARCH', ko:'빙하 군주', title:'결빙 외곽의 지배자', color:'#ecfeff', aura:'#06b6d4', hpMul:2.58, speedMul:.88, size:45, rewardMul:3.75, expMul:3.05, armor:.14, coreDamage:3, ability:'빙하 행진', desc:'방어선을 늦추는 한파를 전개하고 빠른 적을 뒤섞습니다.', effect:'frostVeil', interval:146}
   },
   3: {
-    mid: {tier:'MID BOSS', name:'EMBER TITAN', ko:'화염 거신', title:'융해 선봉장', color:'#fdba74', aura:'#fb923c', hpMul:1.70, speedMul:.96, size:36, rewardMul:2.35, expMul:2.1, armor:.08, coreDamage:1, ability:'용암 장갑', desc:'용암 갑각을 덧입어 방어력을 끌어올리고 짧게 돌진합니다.', effect:'magmaShell', interval:160},
-    final: {tier:'FINAL BOSS', name:'SOL INFERNO', ko:'태양 화옥', title:'초열 군주', color:'#fb923c', aura:'#f97316', hpMul:2.60, speedMul:.94, size:44, rewardMul:4.1, expMul:3.15, armor:.14, coreDamage:4, ability:'대폭발', desc:'과열 상태에서 폭발적으로 가속하며 높은 장갑을 유지합니다.', effect:'cataclysmBurst', interval:144}
+    mid: {tier:'MID BOSS', name:'MAGMA COLOSSUS', ko:'마그마 거상', title:'장갑 파쇄 시험체', color:'#fed7aa', aura:'#fb923c', hpMul:1.82, speedMul:.93, size:37, rewardMul:2.32, expMul:2.18, armor:.13, coreDamage:2, ability:'용암 장갑', desc:'두꺼운 장갑으로 단일 화력을 버티며 전진합니다.', effect:'solarFlare', interval:156},
+    final: {tier:'FINAL BOSS', name:'SOLAR RIFT TITAN', ko:'태양 균열 거인', title:'불타는 성운 군주', color:'#ffedd5', aura:'#f97316', hpMul:2.78, speedMul:.86, size:47, rewardMul:4.0, expMul:3.22, armor:.20, coreDamage:4, ability:'태양 플레어', desc:'플레어 폭주로 광역 피해와 장갑 돌파를 요구합니다.', effect:'solarFlare', interval:140}
   },
   4: {
-    mid: {tier:'MID BOSS', name:'SPORE TYRANT', ko:'포자 군체', title:'생체 포식자', color:'#86efac', aura:'#4ade80', hpMul:1.68, speedMul:.95, size:36, rewardMul:2.4, expMul:2.1, armor:.08, coreDamage:1, ability:'포자 증식', desc:'주변 적을 치유하고 스스로 회복하는 생체 포자 구름을 분출합니다.', effect:'sporeBloom', interval:162},
-    final: {tier:'FINAL BOSS', name:'WORLDROOT PRIME', ko:'월드루트 프라임', title:'생태 핵군주', color:'#4ade80', aura:'#22c55e', hpMul:2.65, speedMul:.92, size:44, rewardMul:4.2, expMul:3.2, armor:.14, coreDamage:4, ability:'과성장', desc:'주변 군체를 급속 성장시키며 자신의 체력도 지속적으로 끌어올립니다.', effect:'overgrowth', interval:142}
+    mid: {tier:'MID BOSS', name:'SPORE MATRIARCH', ko:'포자 모체', title:'생체 재생핵', color:'#bbf7d0', aura:'#22c55e', hpMul:1.92, speedMul:.94, size:37, rewardMul:2.45, expMul:2.28, armor:.11, coreDamage:2, ability:'포자 회복', desc:'재생 포자를 퍼뜨려 주변 군체를 회복시킵니다.', effect:'sporeHeal', interval:154},
+    final: {tier:'FINAL BOSS', name:'VERDANT DEVOURER', ko:'녹빛 포식자', title:'생체 정글 군주', color:'#dcfce7', aura:'#16a34a', hpMul:2.92, speedMul:.88, size:48, rewardMul:4.25, expMul:3.38, armor:.19, coreDamage:4, ability:'군체 증식', desc:'장기전으로 갈수록 재생 군체를 증식시킵니다.', effect:'sporeHeal', interval:138}
   },
   5: {
-    mid: {tier:'MID BOSS', name:'CHIMNEY MAW', ko:'굴뚝 포식체', title:'매연 선봉장', color:'#a3a86a', aura:'#9cab62', hpMul:1.82, speedMul:.97, size:37, rewardMul:2.55, expMul:2.2, armor:.10, coreDamage:2, ability:'매연 차폐', desc:'검은 매연 장막을 펼쳐 자신을 보호하고 주변 적의 이동을 돕습니다.', effect:'sootScreen', interval:156},
-    final: {tier:'FINAL BOSS', name:'SMOG OMEGA', ko:'스모그 오메가', title:'산업 폐역 군주', color:'#c9d16a', aura:'#b6c45f', hpMul:2.86, speedMul:.93, size:45, rewardMul:4.45, expMul:3.35, armor:.18, coreDamage:4, ability:'산업 장막', desc:'전장 전체에 매연을 확산시켜 방어력을 끌어올리고 지속 회복합니다.', effect:'industrialVeil', interval:138}
+    mid: {tier:'MID BOSS', name:'SMOG REAVER', ko:'매연 약탈자', title:'폐역 잠행체', color:'#d9f99d', aura:'#9cab62', hpMul:2.06, speedMul:.95, size:38, rewardMul:2.62, expMul:2.38, armor:.18, coreDamage:2, ability:'매연 은폐', desc:'짙은 매연으로 방어 효율을 낮추며 접근합니다.', effect:'sootScreen', interval:150},
+    final: {tier:'FINAL BOSS', name:'INDUSTRIAL LEVIATHAN', ko:'산업 폐역의 거수', title:'중독 장갑 군주', color:'#ecfccb', aura:'#84cc16', hpMul:3.06, speedMul:.88, size:49, rewardMul:4.55, expMul:3.55, armor:.25, coreDamage:5, ability:'부식성 장갑', desc:'부식 안개와 장갑을 동시에 전개해 방어선을 갉아먹습니다.', effect:'industrialVeil', interval:134}
   },
   6: {
-    mid: {tier:'MID BOSS', name:'PRISM GUARDIAN', ko:'프리즘 가디언', title:'결정화된 균열 수호자', color:'#d8b4fe', aura:'#c084fc', hpMul:1.94, speedMul:.94, size:38, rewardMul:2.65, expMul:2.35, armor:.12, coreDamage:2, ability:'굴절 장막', desc:'프리즘 장막으로 약한 공격을 흡수하고 자신의 장갑을 일시 강화합니다.', effect:'refractionVeil', interval:150},
-    final: {tier:'FINAL BOSS', name:'CRYSTAL SOVEREIGN', ko:'수정 군주', title:'굴절된 균열의 심장', color:'#c4b5fd', aura:'#a78bfa', hpMul:3.00, speedMul:.91, size:46, rewardMul:4.6, expMul:3.5, armor:.20, coreDamage:4, ability:'수정 과부하', desc:'결정 과부하로 주변 적에게 보호막성 장갑을 부여하고 자신을 재결정화합니다.', effect:'crystalOverload', interval:136}
+    mid: {tier:'MID BOSS', name:'PRISM GUARDIAN', ko:'프리즘 수호자', title:'수정 공명체', color:'#e9d5ff', aura:'#c084fc', hpMul:2.12, speedMul:.95, size:38, rewardMul:2.7, expMul:2.44, armor:.17, coreDamage:2, ability:'공명 저장', desc:'받은 충격 일부를 저장해 공명 파동으로 되돌립니다.', effect:'crystalOverload', interval:148},
+    final: {tier:'FINAL BOSS', name:'CRYSTAL OVERMIND', ko:'수정 과부하 핵', title:'프리즘 성운 군주', color:'#f3e8ff', aura:'#a855f7', hpMul:3.16, speedMul:.89, size:49, rewardMul:4.75, expMul:3.68, armor:.24, coreDamage:5, ability:'프리즘 과부하', desc:'초과 피해와 장판 공명을 흔들어 배치 판단을 요구합니다.', effect:'crystalOverload', interval:132}
   },
   7: {
     mid: {tier:'MID BOSS', name:'REPAIR DRONE HIVE', ko:'수리 드론 군집', title:'폭주 보조 시스템', color:'#93c5fd', aura:'#60a5fa', hpMul:2.02, speedMul:.95, size:38, rewardMul:2.75, expMul:2.45, armor:.16, coreDamage:2, ability:'전장 수리', desc:'주변 기계 유닛을 수리하고 자신의 장갑을 재가동합니다.', effect:'fieldRepair', interval:148},
     final: {tier:'FINAL BOSS', name:'AUTOMATON CORE', ko:'오토마톤 코어', title:'폭주한 고대 방어망', color:'#bfdbfe', aura:'#ef4444', hpMul:3.16, speedMul:.90, size:48, rewardMul:4.8, expMul:3.7, armor:.24, coreDamage:5, ability:'코어 재부팅', desc:'코어 실드를 재부팅하고 수리 드론을 호출하며 마지막 구간에서 장갑을 전개합니다.', effect:'coreReboot', interval:132}
+  },
+  8: {
+    mid: {tier:'MID BOSS', name:'ORBIT DEVOURER', ko:'궤도 포식자', title:'중력 선봉장', color:'#c4b5fd', aura:'#8b5cf6', hpMul:2.14, speedMul:.96, size:39, rewardMul:2.85, expMul:2.55, armor:.16, coreDamage:2, ability:'중력 붕괴', desc:'가장 앞선 행성 주위에 중력 파문을 일으켜 적을 끌어모읍니다.', effect:'voidSurge', interval:146},
+    final: {tier:'FINAL BOSS', name:'DEAD STAR HEART', ko:'죽은 별의 심장', title:'붕괴 궤도 군주', color:'#ddd6fe', aura:'#8b5cf6', hpMul:3.28, speedMul:.89, size:49, rewardMul:5.0, expMul:3.8, armor:.25, coreDamage:5, ability:'특이점 함몰', desc:'중력장을 뒤틀어 자신을 재생시키고 주변 적을 가속합니다.', effect:'voidSurge', interval:128}
+  },
+  9: {
+    mid: {tier:'MID BOSS', name:'ARC CHASER', ko:'뇌광 추적자', title:'과전류 사냥꾼', color:'#a5f3fc', aura:'#22d3ee', hpMul:2.22, speedMul:1.02, size:39, rewardMul:2.95, expMul:2.6, armor:.17, coreDamage:2, ability:'연쇄 과전류', desc:'연쇄 번개를 남기며 질주해 방어선을 흔듭니다.', effect:'cataclysmBurst', interval:142},
+    final: {tier:'FINAL BOSS', name:'ZERO SPARK CORE', ko:'제로 스파크 코어', title:'초전도 군주', color:'#cffafe', aura:'#06b6d4', hpMul:3.36, speedMul:.94, size:50, rewardMul:5.2, expMul:3.95, armor:.26, coreDamage:5, ability:'초전도 폭주', desc:'에너지 선로를 과부하시켜 모든 하수인의 이동을 가속합니다.', effect:'cataclysmBurst', interval:126}
+  },
+  10: {
+    mid: {tier:'MID BOSS', name:'ECHO WRAITH', ko:'시간 잔영체', title:'반복된 망령', color:'#ddd6fe', aura:'#a78bfa', hpMul:2.28, speedMul:.95, size:40, rewardMul:3.0, expMul:2.7, armor:.18, coreDamage:2, ability:'과거 잔상', desc:'자신의 분신 잔상을 남겨 화력을 분산시킵니다.', effect:'phaseRegen', interval:138},
+    final: {tier:'FINAL BOSS', name:'CHRONO RIFT', ko:'크로노 리프트', title:'시간 역류 군주', color:'#ede9fe', aura:'#8b5cf6', hpMul:3.44, speedMul:.92, size:50, rewardMul:5.35, expMul:4.05, armor:.28, coreDamage:5, ability:'시간 역류', desc:'웨이브 압박을 되감아 순간적으로 적군을 증식시킵니다.', effect:'coreReboot', interval:124}
+  },
+  11: {
+    mid: {tier:'MID BOSS', name:'MUTE HUNTER', ko:'무음 사냥꾼', title:'암흑 잠행체', color:'#cbd5e1', aura:'#64748b', hpMul:2.36, speedMul:.97, size:40, rewardMul:3.1, expMul:2.8, armor:.20, coreDamage:3, ability:'감응 차단', desc:'잠시 동안 행성 반응을 흐리게 만들어 화력을 떨어뜨립니다.', effect:'sootScreen', interval:136},
+    final: {tier:'FINAL BOSS', name:'OBSERVER NULL', ko:'침묵의 관측자', title:'성단 심연 군주', color:'#e2e8f0', aura:'#94a3b8', hpMul:3.54, speedMul:.91, size:51, rewardMul:5.5, expMul:4.15, armor:.30, coreDamage:6, ability:'신호 소거', desc:'전장의 알림과 감응을 차단하며 자신에게 강한 장갑을 부여합니다.', effect:'industrialVeil', interval:122}
+  },
+  12: {
+    mid: {tier:'MID BOSS', name:'SANCTUARY MIRROR', ko:'성역 복제체', title:'왕좌의 전령', color:'#fca5a5', aura:'#ef4444', hpMul:2.45, speedMul:.98, size:42, rewardMul:3.2, expMul:2.9, armor:.22, coreDamage:3, ability:'패턴 복제', desc:'이전 보스들의 패턴 일부를 혼합해 사용합니다.', effect:'coreReboot', interval:132},
+    final: {tier:'FINAL BOSS', name:'RIFT KING', ko:'균열의 왕', title:'은하 중심핵 군주', color:'#fecaca', aura:'#dc2626', hpMul:3.70, speedMul:.93, size:54, rewardMul:6.0, expMul:4.5, armor:.34, coreDamage:6, ability:'왕좌 개문', desc:'균열 왕좌를 개문해 전장을 왜곡하고, 마지막 구간에서 모든 하수인을 강화합니다.', effect:'crystalOverload', interval:118}
   }
 };
 
@@ -8671,13 +9263,18 @@ const STAGE_TOWER_REWARDS = {
   7:{type:8, name:'메카 행성', theme:'기계 핵성 기술', desc:'실드와 장갑을 해체하고 임시 위성포와 코어 방벽을 재가동합니다.'}
 };
 const OFFLINE_CHAPTERS = {
-  1:{title:'1장. 공허 성역 — 첫 균열', intro:'인류의 외곽 방어선에 첫 균열이 열린다. 지휘관은 불안정한 장판 위에 행성 병기를 배치해 코어를 지켜야 한다.', mid:'성운 감시자가 방어선을 시험한다. 재생을 끊지 못하면 전선이 계속 밀린다.', final:'공허 심핵이 모습을 드러낸다. 이 존재는 단순한 괴수가 아니라 균열 너머 지휘체다.', clear:'공허 성역의 항로가 안정화됐다. 하지만 균열 신호는 얼어붙은 외곽으로 이어진다.'},
-  2:{title:'2장. 빙결 외곽 — 멈춘 궤도', intro:'냉각 폭풍이 행성 병기의 궤도를 늦춘다. 배치와 병합 타이밍이 전투의 핵심이 된다.', mid:'빙하 포효체가 가장 강한 행성을 얼린다. 단일 화력만 믿으면 방어선이 붕괴된다.', final:'절대영도 핵은 복수의 행성을 봉쇄한다. 균형 잡힌 장판 운용이 필요하다.', clear:'빙결 외곽이 해방됐다. 남은 기록에는 태양 코어가 폭주했다는 경고가 남아 있다.'},
-  3:{title:'3장. 용암 성운 — 폭주하는 태양핵', intro:'용암 성운의 적들은 장갑을 두르고 진입한다. 태양핵을 이용한 광역 연소 화력이 전투의 핵심이 된다.', mid:'화염 거신이 갑각을 덧입고 돌진한다. 전술판을 아끼면 코어가 먼저 무너진다.', final:'태양 화옥은 과열된 균열의 심장이다. 고레벨 병합과 장판 선택이 승부를 가른다.', clear:'태양핵의 폭주가 멈췄다. 하지만 생체 신호가 성역 전체를 감염시키고 있다.'},
-  4:{title:'4장. 생체 정글 — 살아있는 성역', intro:'성역이 하나의 생명체처럼 반응한다. 포자와 재생 군체가 장기전을 강요한다.', mid:'포자 군체가 주변 적을 치유한다. 회복보다 빠른 화력 성장이 필요하다.', final:'월드루트 프라임은 행성 병기와 균열 생태계를 동시에 침식한다. 다음 균열은 오래된 산업 궤도에서 열리고 있다.', clear:'생체 정글의 코어가 정화됐다. 균열은 닫히지 않았고, 오염된 매연 폐역의 좌표가 드러났다.'},
-  5:{title:'5장. 매연 폐역 — 숨 막힌 궤도', intro:'정화된 생체 정글 뒤편에서 오래된 산업 궤도가 되살아난다. 짙은 매연이 시야와 센서를 막고 적의 장갑을 은폐한다.', mid:'굴뚝 포식체가 폐역의 굴뚝을 열어 검은 장막을 뿜는다. 감속과 방어 약화를 겹쳐 전선을 붙잡아야 한다.', final:'스모그 오메가는 폐기된 공장 행성 전체를 병기화한 존재다. 매연 장막을 뚫고 최종 코어를 정화해야 한다.', clear:'매연 폐역의 굴뚝이 멈추고 산업 궤도가 회수됐다. 지휘관은 적의 장갑을 부식시키는 스모그 병기를 확보했다.'},
-  6:{title:'6장. 수정 성운 — 굳어버린 균열', intro:'매연 폐역의 오염을 걷어내자 남은 균열 에너지가 차갑게 굳어 수정 성운을 형성했다. 이곳의 장판은 빛과 에너지를 저장하고 굴절시킨다.', mid:'프리즘 가디언이 결정 장막을 펼친다. 단순 화력보다 초과 피해와 장판 공명을 관리해야 한다.', final:'수정 군주는 균열 에너지를 재결정화해 전장을 뒤틀고 있다. 프리즘 선로를 역이용해 중심핵을 깨뜨려야 한다.', clear:'수정 성운의 결정핵이 안정화됐다. 아군은 에너지를 저장하고 장판 구조를 바꾸는 크리스탈 행성을 획득했다.'},
-  7:{title:'7장. 기계 핵성 — 폭주한 방어망', intro:'수정 성운 깊은 곳에서 고대 행성 방어망의 중심부가 깨어났다. 균열 오염으로 폭주한 기계 핵성은 모든 생명 신호를 침입자로 판단한다.', mid:'수리 드론 군집이 기계 유닛을 재가동한다. 적의 방어 구조를 해체하지 못하면 전선이 굳어진다.', final:'오토마톤 코어가 방어망 전체를 재부팅한다. 실드와 장갑을 해체하고 코어 방벽으로 마지막 압박을 버텨야 한다.', clear:'오토마톤 코어의 폭주가 멈추고 고대 방어망 일부가 아군 지휘 체계에 연결됐다. 메카 행성이 전장에 합류한다.'}
+  1:{title:'1장. 공허 성역 — 첫 균열', intro:'오리온 외곽 성좌의 입구에서 첫 균열이 열린다. 지휘관은 불안정한 장판 위에 행성 병기를 배치해 코어를 지켜야 한다.', mid:'성운 감시자가 방어선을 시험한다. 재생을 끊지 못하면 전선이 계속 밀린다.', final:'공허 심핵이 모습을 드러낸다. 이는 균열 너머 지휘체의 전조에 불과하다.', clear:'첫 성역이 안정화되며 오리온 성좌의 항로가 이어진다.'},
+  2:{title:'2장. 빙결 외곽 — 멈춘 궤도', intro:'냉각 폭풍이 항로를 봉쇄한다. 배치와 병합 타이밍이 전투의 핵심이 된다.', mid:'빙하 포효체가 가장 강한 행성을 얼린다. 단일 화력만 믿으면 방어선이 무너진다.', final:'절대영도 핵은 복수의 행성을 봉쇄한다. 균형 잡힌 장판 운용이 필요하다.', clear:'얼어붙은 항로가 풀리며 다음 태양 플레어 구역 좌표가 열린다.'},
+  3:{title:'3장. 용암 성운 — 폭주하는 태양핵', intro:'용암 성운의 적들은 장갑을 두르고 진입한다. 광역 연소 화력이 전투의 핵심이 된다.', mid:'화염 거신이 갑각을 덧입고 돌진한다. 화력이 모자라면 코어가 먼저 무너진다.', final:'태양 화옥은 과열된 균열의 심장이다. 고레벨 병합이 승부를 가른다.', clear:'태양핵의 폭주가 멈췄고, 오리온 성좌 깊은 곳의 생체 신호가 포착된다.'},
+  4:{title:'4장. 생체 정글 — 살아있는 성역', intro:'성역 자체가 하나의 생명체처럼 반응한다. 포자와 재생 군체가 장기전을 강요한다.', mid:'포자 군체가 주변 적을 치유한다. 회복보다 빠른 화력 성장이 필요하다.', final:'월드루트 프라임은 행성 병기와 균열 생태계를 동시에 침식한다.', clear:'생체 정글의 코어가 정화되며 오염된 산업 궤도 좌표가 드러난다.'},
+  5:{title:'5장. 매연 폐역 — 숨 막힌 궤도', intro:'정화된 생체 정글 뒤편에서 오래된 산업 궤도가 되살아난다. 짙은 매연이 시야와 센서를 막는다.', mid:'굴뚝 포식체가 검은 장막을 뿜어 방어선을 흐린다. 감속과 약화를 겹쳐 붙잡아야 한다.', final:'스모그 오메가는 폐기된 공장 행성 전체를 병기화한 존재다.', clear:'매연 폐역의 굴뚝이 멈추고 프리즘 파열 좌표가 열린다.'},
+  6:{title:'6장. 수정 성운 — 굳어버린 균열', intro:'남은 균열 에너지가 차갑게 굳어 수정 성운을 형성했다. 장판은 빛과 에너지를 저장하고 굴절시킨다.', mid:'프리즘 가디언이 결정 장막을 펼친다. 초과 피해와 장판 공명을 관리해야 한다.', final:'수정 군주는 균열 에너지를 재결정화해 전장을 뒤틀고 있다.', clear:'수정 성운의 결정핵이 안정화되며 오리온 성좌의 마지막 핵성 좌표가 활성화된다.'},
+  7:{title:'7장. 기계 핵성 — 폭주한 방어망', intro:'고대 행성 방어망의 중심부가 깨어났다. 균열 오염으로 폭주한 핵성은 모든 생명 신호를 침입자로 판단한다.', mid:'수리 드론 군집이 기계 유닛을 재가동한다. 적의 방어 구조를 해체하지 못하면 전선이 굳어진다.', final:'오토마톤 코어가 방어망 전체를 재부팅한다. 실드와 장갑을 해체하고 마지막 압박을 버텨야 한다.', clear:'오리온 외곽 성좌가 복원되었다. 멀리서 백조 균열 성좌가 붉게 흔들리기 시작한다.'},
+  8:{title:'8장. 중력 무덤 — 죽은 행성의 궤도', intro:'백조 균열 성좌 초입. 죽은 행성들의 무덤이 중력의 울림으로 항로를 뒤틀고 있다.', mid:'궤도 포식자가 중력 고리를 넓혀 적을 끌어모은다. 군중 제어와 보스 지연이 중요하다.', final:'죽은 별의 심장은 주변 궤도를 붕괴시켜 전장의 위치 감각을 무너뜨린다.', clear:'중력 무덤이 진정되었지만, 과전류가 성좌 전체를 파고든다.'},
+  9:{title:'9장. 번개 회랑 — 과전류 항로', intro:'붕괴된 에너지 선로가 전장을 가로지르며 적들을 가속시킨다. 빠른 대응과 연쇄 화력이 필요하다.', mid:'뇌광 추적자가 번개 꼬리를 남기며 질주한다. 한순간의 누수가 코어 붕괴로 이어진다.', final:'제로 스파크 코어는 회랑 전체를 과부하 상태로 전환한다.', clear:'전류의 회랑이 정리되자 시간 잔해가 드러난다.'},
+  10:{title:'10장. 시간 잔해 — 반복되는 전장', intro:'과거 전투의 파편이 되감기며 같은 웨이브가 서로 겹친다. 템포를 놓치면 압박이 누적된다.', mid:'시간 잔영체가 과거의 적군 잔상을 다시 호출한다.', final:'크로노 리프트는 웨이브 순서를 교란하고 지연을 증폭시킨다.', clear:'백조 균열 성좌가 복원되며 용자리 심연 성좌로 향하는 암흑 항로가 열린다.'},
+  11:{title:'11장. 침묵 성단 — 끊어진 신호', intro:'용자리 심연 성좌에서는 모든 신호가 약화된다. 적 특성을 완전히 파악하기 전까지 침묵이 지속된다.', mid:'무음 사냥꾼은 감응 차단막을 펼치며 타워들의 반응을 늦춘다.', final:'침묵의 관측자는 보이지 않는 신호 위에서 전장을 해체한다.', clear:'침묵 성단을 통과하자 균열 왕좌로 향하는 마지막 길이 보인다.'},
+  12:{title:'12장. 균열 왕좌 — 은하수의 심장', intro:'모든 별자리의 항로가 하나로 겹치며 균열의 왕이 모습을 드러낸다. 지금까지의 모든 전술을 총동원해야 한다.', mid:'성역 복제체가 이전 보스들의 패턴을 조합해 압박한다.', final:'균열의 왕이 왕좌를 개문하며 은하 중심핵을 집어삼키려 한다. 이 전투가 은하수 방어전의 분기점이다.', clear:'균열 왕좌가 붕괴하고 은하 항로가 안정화된다. 이제 별자리 전체의 3성 숙련도와 재정화 루프가 시작된다.'}
 };
 let META = defaultOfflineMeta();
 
@@ -8920,55 +9517,91 @@ function removeGameOverOverlay(){
 }
 
 function showGameOverOverlay(summary){
+  try{
+    removeGameOverOverlay();
+    const safeSummary = summary || {};
+    const stageNo = Number(safeSummary.stageNo || S?.stageNo || StageMapState.current || 1);
+    const waveNo = Number(safeSummary.wave || safeSummary.ogge || S?.ogge || 1);
+    const def = getStageDef(stageNo);
+    const overlay = document.createElement('div');
+    overlay.id = 'gameOverOverlay';
+    overlay.className = 'gameOverOverlay';
+    overlay.innerHTML = `<div class="gameOverCard" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
+      <div class="gameOverKicker">MISSION FAILED</div>
+      <h2 id="gameOverTitle">${STORY_EVENT_TEXT.gameOverTitle}</h2>
+      <p>${escapeHtml(def.name)} ${fmt2(stageNo)}성역에서 코어가 파괴되었습니다. ${escapeHtml(STORY_EVENT_TEXT.gameOverBody)} 획득한 성흔 조각으로 일반 스킬을 강화할 수 있습니다.</p>
+      <div class="gameOverStats">
+        <div class="gameOverStat"><span>STAGE</span><b>${fmt2(stageNo)}-${fmt2(waveNo)}</b></div>
+        <div class="gameOverStat"><span>KILLS</span><b>${fmt2(safeSummary.kills || 0)}</b></div>
+        <div class="gameOverStat"><span>BEST COMBO</span><b>x${fmt2(safeSummary.bestCombo || 0)}</b></div>
+        <div class="gameOverStat"><span>SHARDS</span><b>+${fmt2(safeSummary.shardsGained || 0)}</b></div>
+      </div>
+      <div class="gameOverTip">추천: ${escapeHtml(gameOverTipText())}</div>
+      <div class="gameOverActions">
+        <button id="gameOverMapBtn" class="btnAlt">은하 지도에서 강화</button>
+        <button id="gameOverRetryBtn" class="btnGreen">같은 성역 재도전</button>
+      </div>
+    </div>`;
+    document.body.appendChild(overlay);
+    if(S) S.gameOverOverlayShown = true;
+    const retry = overlay.querySelector('#gameOverRetryBtn');
+    const mapBtn = overlay.querySelector('#gameOverMapBtn');
+    if(retry){
+      retry.onclick = () => {
+        removeGameOverOverlay();
+        StageMapState.selected = stageNo;
+        startSelectedStageFromMap();
+      };
+    }
+    if(mapBtn){
+      mapBtn.onclick = () => {
+        removeGameOverOverlay();
+        cancelAnimationFrame(raf);
+        $('game').style.display = 'none';
+        $('stageMap').style.display = 'block';
+        StageMapState.selected = stageNo;
+        StageMapState.current = stageNo;
+        stopStageBgm();
+        reset();
+        resetBattleUnitsForStageMap();
+        renderStageMap();
+        const hint = $('stageHint');
+        if(hint) hint.textContent = `전투 실패 기록 회수 완료 — 성흔 조각으로 일반 스킬을 강화한 뒤 ${fmt2(stageNo)}성역에 재도전하세요.`;
+      };
+    }
+    return overlay;
+  }catch(err){
+    console.error('game over overlay failed', err);
+    showEmergencyGameOverOverlay(summary, err);
+    return null;
+  }
+}
+
+function showEmergencyGameOverOverlay(summary={}, err=null){
   removeGameOverOverlay();
-  const stageNo = Number(summary.stageNo || S.stageNo || StageMapState.current || 1);
-  const def = getStageDef(stageNo);
+  const stageNo = Number(summary.stageNo || S?.stageNo || StageMapState.current || 1);
   const overlay = document.createElement('div');
   overlay.id = 'gameOverOverlay';
   overlay.className = 'gameOverOverlay';
-  overlay.innerHTML = `<div class="gameOverCard" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
+  overlay.innerHTML = `<div class="gameOverCard" role="dialog" aria-modal="true">
     <div class="gameOverKicker">MISSION FAILED</div>
-    <h2 id="gameOverTitle">${STORY_EVENT_TEXT.gameOverTitle}</h2>
-    <p>${escapeHtml(def.name)} ${fmt2(stageNo)}성역에서 코어가 파괴되었습니다. ${escapeHtml(STORY_EVENT_TEXT.gameOverBody)} 획득한 성흔 조각으로 일반 스킬을 강화할 수 있습니다.</p>
-    <div class="gameOverStats">
-      <div class="gameOverStat"><span>STAGE</span><b>${fmt2(stageNo)}-${fmt2(summary.ogge)}</b></div>
-      <div class="gameOverStat"><span>KILLS</span><b>${fmt2(summary.kills)}</b></div>
-      <div class="gameOverStat"><span>BEST COMBO</span><b>x${fmt2(summary.bestCombo)}</b></div>
-      <div class="gameOverStat"><span>SHARDS</span><b>+${fmt2(summary.shardsGained)}</b></div>
-    </div>
-    <div class="gameOverTip">추천: ${escapeHtml(gameOverTipText())}</div>
+    <h2>CORE COLLAPSE</h2>
+    <p>코어가 파괴되어 전투가 종료되었습니다. 은하 지도에서 강화하거나 같은 성역에 재도전할 수 있습니다.</p>
+    <div class="gameOverTip">${err ? '표시 오류를 복구했습니다. ' : ''}추천: 성흔 조각으로 전역 연구를 강화한 뒤 재도전하세요.</div>
     <div class="gameOverActions">
-      <button id="gameOverMapBtn" class="btnAlt">성역 지도에서 강화</button>
-      <button id="gameOverRetryBtn" class="btnGreen">같은 성역 재도전</button>
+      <button id="gameOverMapBtn" class="btnAlt">은하 지도</button>
+      <button id="gameOverRetryBtn" class="btnGreen">재도전</button>
     </div>
   </div>`;
   document.body.appendChild(overlay);
+  if(S) S.gameOverOverlayShown = true;
   const retry = overlay.querySelector('#gameOverRetryBtn');
   const mapBtn = overlay.querySelector('#gameOverMapBtn');
-  if(retry){
-    retry.onclick = () => {
-      removeGameOverOverlay();
-      StageMapState.selected = stageNo;
-      startSelectedStageFromMap();
-    };
-  }
-  if(mapBtn){
-    mapBtn.onclick = () => {
-      removeGameOverOverlay();
-      cancelAnimationFrame(raf);
-      $('game').style.display = 'none';
-      $('stageMap').style.display = 'block';
-      StageMapState.selected = stageNo;
-      StageMapState.current = stageNo;
-      stopStageBgm();
-      reset();
-      resetBattleUnitsForStageMap();
-      renderStageMap();
-      const hint = $('stageHint');
-      if(hint) hint.textContent = `전투 실패 기록 회수 완료 — 성흔 조각으로 일반 스킬을 강화한 뒤 ${fmt2(stageNo)}성역에 재도전하세요.`;
-    };
-  }
+  if(retry) retry.onclick = () => { removeGameOverOverlay(); StageMapState.selected = stageNo; startSelectedStageFromMap(); };
+  if(mapBtn) mapBtn.onclick = () => { removeGameOverOverlay(); $('game').style.display='none'; $('stageMap').style.display='block'; StageMapState.selected=stageNo; StageMapState.current=stageNo; reset(); resetBattleUnitsForStageMap(); renderStageMap(); };
+  return overlay;
 }
+
 
 function triggerGameOver(reason='core'){
   if(!S || S.gameOver) return;
@@ -8978,8 +9611,10 @@ function triggerGameOver(reason='core'){
   S.skillModalOpen = false;
   S.queue = [];
   S.hp = 0;
+  S.gameOverOverlayShown = false;
   const beforeShards = Number(META?.shards || 0);
-  recordOfflineRunEnd(false);
+  try{ recordOfflineRunEnd(false); }
+  catch(err){ console.error('game over record failed', err); }
   const afterShards = Number(META?.shards || 0);
   const summary = {
     reason,
@@ -8989,13 +9624,21 @@ function triggerGameOver(reason='core'){
     bestCombo: Number(S.combo?.best || 0),
     shardsGained: Math.max(0, afterShards - beforeShards)
   };
-  sound('gameover');
-  playResultBgm('gameover');
-  toast('코어 파괴 — 전투 기록 회수 완료');
-  log(`게임 오버: ${fmt2(summary.stageNo)}성역 ${fmt2(summary.ogge)}웨이브 / 처치 ${fmt2(summary.kills)} / 조각 +${fmt2(summary.shardsGained)}`);
-  updateUI();
-  setTimeout(() => showGameOverOverlay(summary), 260);
+  S.lastGameOverSummary = summary;
+  try{ sound('gameover'); }catch(err){}
+  try{ playResultBgm('gameover'); }catch(err){}
+  try{ toast('코어 파괴 — 전투 기록 회수 완료'); }catch(err){}
+  try{ log(`게임 오버: ${fmt2(summary.stageNo)}성역 ${fmt2(summary.wave)}웨이브 / 처치 ${fmt2(summary.kills)} / 조각 +${fmt2(summary.shardsGained)}`); }catch(err){}
+  try{ updateUI(); }catch(err){ console.error('game over ui update failed', err); }
+  showGameOverOverlay(summary);
+  setTimeout(() => {
+    if(S?.gameOver && !$('gameOverOverlay')) showGameOverOverlay(S.lastGameOverSummary || summary);
+  }, 300);
+  setTimeout(() => {
+    if(S?.gameOver && !$('gameOverOverlay')) showEmergencyGameOverOverlay(S.lastGameOverSummary || summary);
+  }, 900);
 }
+
 
 function offlineUpgradeHtml(){
   const nextStage = Math.min(STAGE_MAP_DEFS.length, Number(StageMapState?.unlocked || 1) + 1);
@@ -9012,20 +9655,27 @@ function offlineUpgradeHtml(){
     </button>`;
   }).join('')}</div>`;
 }
+function resolveStageInfoSelection(){
+  const panelStage = Number($('stageInfoPanel')?.dataset?.stage || 0);
+  const mapStage = Number($('stageMap')?.dataset?.selected || 0);
+  const stateStage = Number(StageMapState?.selected || StageMapState?.current || 1);
+  return clamp(panelStage || mapStage || stateStage || 1, 1, STAGE_MAP_DEFS.length);
+}
 function renderOfflineMetaPanel(){
   if(!META) return;
-  const selectedStage = Number(StageMapState?.selected || StageMapState?.current || 1);
+  const selectedStage = resolveStageInfoSelection();
   const story = OFFLINE_CHAPTERS[selectedStage] || OFFLINE_CHAPTERS[1];
+  const copy = getStageDescriptionCopy(selectedStage);
   const clears = Number(META.clears[String(selectedStage)] || 0);
   const best = Number(META.bestWave[String(selectedStage)] || 0);
   const rewardText = stageTowerRewardText(selectedStage);
   const skillCount = unlockedGeneralSkillCount();
   const totalSkill = Object.keys(OFFLINE_UPGRADE_CONFIG).length;
   const globalLine = globalSkillSummaryText();
-  const html = `<div class="offlineMetaTop"><div><div class="offlineMetaTitle">${story.title}</div><div class="offlineMetaStory">일반 스킬은 성역 지도에서만 강화됩니다. 현재 전역 효과: ${escapeHtml(globalLine)}</div></div><div class="offlineMetaShard">성흔 조각 ${fmt2(META.shards)}</div></div>
+  const html = `<div class="offlineMetaTop"><div><div class="offlineMetaTitle">${story.title}</div><div class="offlineMetaStory">${escapeHtml(copy.summary)} 추천 전략: ${escapeHtml(copy.strategy)} 현재 전역 효과: ${escapeHtml(globalLine)}</div></div><div class="offlineMetaShard">성흔 조각 ${fmt2(META.shards)}</div></div>
     <div class="offlineStatRow"><span class="offlinePill">선택 성역 클리어 ${fmt2(clears)}</span><span class="offlinePill">최고 웨이브 ${fmt2(best)}</span><span class="offlinePill">일반 스킬 ${fmt2(skillCount)}/${fmt2(totalSkill)}</span><span class="offlinePill">다음 오픈: ${escapeHtml(nextGeneralSkillUnlockText())}</span><span class="offlinePill">${rewardText}</span></div>
     ${offlineUpgradeHtml()}`;
-  const compact = `<div class="offlineMetaTop"><div><div class="offlineMetaTitle">${story.title}</div><div class="offlineMetaStory">전역 효과: ${escapeHtml(globalLine)}</div></div><div class="offlineMetaShard">조각 ${fmt2(META.shards)}</div></div><div class="offlineStatRow"><span class="offlinePill">클리어 ${fmt2(clears)}</span><span class="offlinePill">최고 ${fmt2(best)}W</span><span class="offlinePill">일반 ${fmt2(skillCount)}/${fmt2(totalSkill)}</span><span class="offlinePill">${rewardText}</span></div>`;
+  const compact = `<div class="offlineMetaTop"><div><div class="offlineMetaTitle">${story.title}</div><div class="offlineMetaStory">${escapeHtml(copy.summary)} 추천: ${escapeHtml(copy.strategy)}</div></div><div class="offlineMetaShard">조각 ${fmt2(META.shards)}</div></div><div class="offlineStatRow"><span class="offlinePill">클리어 ${fmt2(clears)}</span><span class="offlinePill">최고 ${fmt2(best)}W</span><span class="offlinePill">일반 ${fmt2(skillCount)}/${fmt2(totalSkill)}</span><span class="offlinePill">${rewardText}</span></div>`;
   const side = $('offlinePanelBody'); if(side) side.innerHTML = html;
   const menu = $('offlineMenuPanel'); if(menu) menu.innerHTML = html;
   const stage = $('offlineStagePanel'); if(stage) stage.innerHTML = compact;
@@ -9038,6 +9688,32 @@ function getStageDef(stageNo){
 
 function getStagePresentation(stageNo){
   return STAGE_PRESENTATION[Number(stageNo)] || STAGE_PRESENTATION[1];
+}
+
+function getConstellationArcByStage(stageNo){
+  const n = Number(stageNo);
+  return CONSTELLATION_ARCS.find(arc => n >= arc.start && n <= arc.end) || CONSTELLATION_ARCS[0];
+}
+function stageCountInArc(arc){
+  return Math.max(0, arc.end - arc.start + 1);
+}
+function unlockedCountInArc(arc){
+  const unlocked = Math.max(1, Math.floor(Number(StageMapState?.unlocked || 1)));
+  return Math.max(0, Math.min(arc.end, unlocked) - arc.start + 1);
+}
+function isArcUnlocked(arc){
+  return Number(StageMapState?.unlocked || 1) >= arc.start;
+}
+function renderConstellationDeck(){
+  const host = $('constellationDeck');
+  if(!host) return;
+  const selectedArc = getConstellationArcByStage(StageMapState?.selected || 1);
+  host.innerHTML = CONSTELLATION_ARCS.map(arc => {
+    const unlocked = unlockedCountInArc(arc);
+    const total = stageCountInArc(arc);
+    const state = isArcUnlocked(arc) ? (selectedArc.id === arc.id ? 'active' : 'unlocked') : 'locked';
+    return `<button class="constellationCard ${state}" data-constellation-jump="${arc.start}" type="button"><span class="constellationKicker">${isArcUnlocked(arc)?'CONSTELLATION OPEN':'LOCKED CONSTELLATION'}</span><b>${arc.ko}</b><small>${arc.name}</small><em>${arc.desc}</em><span class="constellationMeta">복원 ${unlocked} / ${total} 성역</span></button>`;
+  }).join('');
 }
 
 function renderStageMapInfo(stageNo){
@@ -9055,15 +9731,18 @@ function renderStageMapInfo(stageNo){
   const finalName = $('stageFinalBossName');
   const finalKo = $('stageFinalBossKo');
   const finalSkill = $('stageFinalBossSkill');
-  if(title) title.textContent = `${def.stage}. ${def.name} / ${def.ko}`;
+  const arc = getConstellationArcByStage(stageNo);
+  if(title) title.textContent = `${arc.ko} · ${def.stage}. ${def.name} / ${def.ko}`;
   if(risk) risk.textContent = presentation.risk;
   if(mood){
     const chapter = OFFLINE_CHAPTERS[Number(stageNo)] || OFFLINE_CHAPTERS[1];
     const audioCue = STAGE_AUDIO_CUES[Number(def.theme)] || STAGE_AUDIO_CUES[0];
-    mood.textContent = `${def.mood} · ${presentation.note} · ${chapter.intro} · BGM: ${audioCue.mood} · ${stageTowerRewardText(stageNo)}`;
+    const copy = getStageDescriptionCopy(stageNo);
+    mood.textContent = `${def.ko} 설명 · ${copy.summary} 적 특성: ${copy.enemy} 추천 전략: ${copy.strategy} · BGM: ${audioCue.mood} · ${stageTowerRewardText(stageNo)}`;
+    mood.title = `${chapter.title} · ${chapter.intro}`;
   }
   if(tags){
-    tags.innerHTML = presentation.tags.map(tag => `<span class="stageTag">${tag}</span>`).join('');
+    tags.innerHTML = stageTagHtml(stageNo);
   }
   if(midName) midName.textContent = mid.name;
   if(midKo) midKo.textContent = `${mid.ko} · ${mid.title}`;
@@ -9071,6 +9750,18 @@ function renderStageMapInfo(stageNo){
   if(finalName) finalName.textContent = finalBoss.name;
   if(finalKo) finalKo.textContent = `${finalBoss.ko} · ${finalBoss.title}`;
   if(finalSkill) finalSkill.textContent = finalBoss.ability;
+  const panel = $('stageInfoPanel');
+  if(panel) panel.dataset.stage = String(stageNo);
+  // V13 hard sync: whenever the visible stage information changes,
+  // the lower offline/stage detail block must change with it.
+  try{
+    StageMapState.selected = clamp(Number(stageNo || 1), 1, STAGE_MAP_DEFS.length);
+    const map = $('stageMap');
+    if(map) map.dataset.selected = String(StageMapState.selected);
+    renderOfflineMetaPanel();
+  }catch(err){
+    console.warn('stage lower info hard sync failed', err);
+  }
 }
 
 function loadStageMapProgress(){
@@ -9085,8 +9776,8 @@ function loadStageMapProgress(){
     if(!raw) return;
     const saved = JSON.parse(raw);
     StageMapState.unlocked = clamp(Number(saved.unlocked || 1), 1, STAGE_MAP_DEFS.length);
-    StageMapState.selected = clamp(Number(saved.selected || StageMapState.unlocked), 1, StageMapState.unlocked);
-    StageMapState.current = clamp(Number(saved.current || StageMapState.selected), 1, STAGE_MAP_DEFS.length);
+    StageMapState.selected = clamp(Number(saved.selected || StageMapState.unlocked), 1, STAGE_MAP_DEFS.length);
+    StageMapState.current = clamp(Number(saved.current || Math.min(StageMapState.selected, StageMapState.unlocked)), 1, STAGE_MAP_DEFS.length);
     if(!TEST_MODE_CONFIG.enabled) saveStageMapProgress();
   }catch(err){
     StageMapState.unlocked = 1;
@@ -9125,12 +9816,13 @@ function renderStageMap(){
   const map = $('stageMap');
   if(!map) return;
   const unlocked = clamp(StageMapState.unlocked, 1, STAGE_MAP_DEFS.length);
-  const selectedStage = clamp(StageMapState.selected, 1, unlocked);
+  const selectedStage = clamp(StageMapState.selected, 1, STAGE_MAP_DEFS.length);
+  const canEnterSelectedStage = selectedStage <= unlocked;
   StageMapState.unlocked = unlocked;
   StageMapState.selected = selectedStage;
   map.dataset.unlocked = String(unlocked);
   map.dataset.selected = String(selectedStage);
-  map.classList.remove('stage-selected-1','stage-selected-2','stage-selected-3','stage-selected-4','stage-selected-5','stage-selected-6','stage-selected-7');
+  map.classList.remove(...Array.from({length:12},(_,i)=>`stage-selected-${i+1}`));
   map.classList.add(`stage-selected-${selectedStage}`);
 
   document.querySelectorAll('#stageMap .stageNode').forEach(node => {
@@ -9145,17 +9837,26 @@ function renderStageMap(){
   });
 
   const def = getStageDef(selectedStage);
+  const arc = getConstellationArcByStage(selectedStage);
   const label = $('stageProgressLabel');
   const sub = $('stageProgressSub');
   const enter = $('stageEnterBtn');
   const hint = $('stageHint');
-  if(label) label.textContent = `${TEST_MODE_CONFIG.enabled ? 'TEST MODE · ' : ''}SANCTUARY ${unlocked} / ${STAGE_MAP_DEFS.length}`;
-  if(sub) sub.textContent = `${def.stage}. ${def.name} / ${def.ko} ${TEST_MODE_CONFIG.enabled ? '· 전체 해금 검증 모드' : '선택됨'}`;
-  if(enter) enter.textContent = `ENTER ${def.stage}. ${def.name}`;
+  if(label) label.textContent = `${TEST_MODE_CONFIG.enabled ? 'TEST MODE · ' : ''}${arc.name} · OPEN ${unlocked} / ${STAGE_MAP_DEFS.length}`;
+  if(sub) sub.textContent = `${arc.ko} · ${def.stage}. ${def.name} / ${def.ko} ${canEnterSelectedStage ? '선택됨' : '미개방 미리보기'}`;
+  if(enter){
+    enter.textContent = canEnterSelectedStage ? `ENTER ${def.stage}. ${def.name}` : `LOCKED · ${def.stage}. ${def.name}`;
+    enter.disabled = !canEnterSelectedStage;
+    enter.classList.toggle('locked', !canEnterSelectedStage);
+  }
   if(hint) hint.textContent = TEST_MODE_CONFIG.enabled
-    ? `TEST MODE — ${def.stage}. ${def.name} · ${def.ko} / 모든 성역과 타워가 일시적으로 활성화되었습니다.`
-    : `${def.stage}. ${def.name} · ${def.ko} — ${WORLD_SCENARIO.loop}. ${stageTowerRewardText(def.stage)}`;
+    ? `TEST MODE — ${def.stage}. ${def.name} · ${def.ko} / ${getStageDescriptionCopy(def.stage).summary}`
+    : stageHintLine(def.stage, canEnterSelectedStage);
+  renderConstellationDeck();
   renderStageMapInfo(selectedStage);
+  try { renderOfflineMetaPanel(); } catch(err) { console.warn('stage bottom panel sync failed', err); }
+  const infoPanel = $('stageInfoPanel');
+  if(infoPanel) infoPanel.scrollTop = 0;
 }
 
 function showStageMap(){
@@ -9171,7 +9872,15 @@ function showStageMap(){
 }
 
 function startSelectedStageFromMap(){
-  const stageNo = clamp(StageMapState.selected, 1, StageMapState.unlocked);
+  const selectedStageNo = clamp(StageMapState.selected, 1, STAGE_MAP_DEFS.length);
+  if(selectedStageNo > StageMapState.unlocked){
+    const defLocked = getStageDef(selectedStageNo);
+    const arcLocked = getConstellationArcByStage(selectedStageNo);
+    toast(`${arcLocked.ko} · ${defLocked.ko}는 아직 미개방입니다.`);
+    renderStageMap();
+    return;
+  }
+  const stageNo = selectedStageNo;
   const def = getStageDef(stageNo);
   StageMapState.current = stageNo;
   StageMapState.selected = stageNo;
@@ -9236,7 +9945,7 @@ function showStageClearOverlay(summary){
     <div class="stageClearReward">${escapeHtml(STORY_EVENT_TEXT.clearBody)} ${isFinal ? '모든 성역이 안정화되었습니다. 이제 각 성역의 3성 숙련도와 최고 웨이브 기록을 노려 재정화 루프를 이어갈 수 있습니다.' : `다음 항로: ${nextDef.name} / ${nextDef.ko}`}</div>
     <div class="stageClearActions">
       <button id="stageClearMapBtn" class="btnAlt">성역 지도에서 강화</button>
-      <button id="stageClearNextBtn" class="btnGreen">${isFinal ? '기계 핵성 재정화' : '다음 성역 진입'}</button>
+      <button id="stageClearNextBtn" class="btnGreen">${isFinal ? '은하 항로 재정화' : '다음 성역 진입'}</button>
     </div>
   </div>`;
   document.body.appendChild(overlay);
@@ -10420,6 +11129,9 @@ function reset(){
     leakedEnemies:0,
     coreDamageTaken:0,
     gameOver:false,
+    gameOverOverlayShown:false,
+    gameOverOverlayRequested:false,
+    lastGameOverSummary:null,
     runEnded:false,
     offline:{summonCost:100,cooldownScale:1}
   };
@@ -10563,28 +11275,81 @@ function makeTerrain(){
 }
 
 
+const STAGE_BATTLE_DESCRIPTIONS = Object.fromEntries(
+  Object.entries(STAGE_DESCRIPTION_COPY).map(([stage, copy]) => [Number(stage), copy.battle])
+);
+const STAGE_WAVE_LINES = {
+  1:'공허 균열 적',
+  2:'빙결 선봉대',
+  3:'용암 장갑 적',
+  4:'재생 포자 군체',
+  5:'매연 은폐 적',
+  6:'수정 공명체',
+  7:'기계 실드 유닛',
+  8:'중력 왜곡 적',
+  9:'과전류 고속 적',
+  10:'시간 잔상 적',
+  11:'침묵 잠행 적',
+  12:'균열 왕좌 혼합군'
+};
+const STAGE_WAVE_TIPS = {
+  1:'균형 배치',
+  2:'감속 / 제어',
+  3:'장갑 돌파 / 광역',
+  4:'재생 차단 / 집중 화력',
+  5:'방어 약화 / 감속',
+  6:'공명 장판 / 초과 피해',
+  7:'실드 해체 / 수리 차단',
+  8:'군중 제어 / 밀집 처리',
+  9:'고속 대응 / 연쇄 화력',
+  10:'잔상 처리 / 화력 분산 방지',
+  11:'암흑 장갑 / 안정 배치',
+  12:'복합 패턴 / 핵심 타워 병합'
+};
+function getStageBattleDescription(stageNo, waveNo){
+  const n = clamp(Number(stageNo || S?.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
+  const wave = Number(waveNo || S?.ogge || 1);
+  const base = STAGE_BATTLE_DESCRIPTIONS[n] || getStageDef(n).ko || '성역 방어';
+  if(wave === 5) return `${base} · 중간 보스`;
+  if(wave === 10) return `${base} · 최종 보스`;
+  if(wave % 4 === 0) return `${base} · 압박 웨이브`;
+  return base;
+}
+function getStageBattleFullDescription(stageNo, waveNo){
+  const n = clamp(Number(stageNo || S?.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
+  const def = getStageDef(n);
+  const presentation = getStagePresentation(n);
+  const preview = getWavePreviewInfo(waveNo || S?.ogge || 1, n);
+  const copy = getStageDescriptionCopy(n);
+  return `${def.stage}. ${def.name} / ${def.ko} · ${copy.summary} · ${copy.enemy} · ${preview.title} · ${preview.detail}`;
+}
+
+
 function getWavePreviewInfo(waveNo, stageNo){
-  const stage = Number(stageNo || S?.stageNo || StageMapState.current || 1);
+  const stage = clamp(Number(stageNo || S?.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
+  const wave = Number(waveNo || 1);
+  const enemyLine = STAGE_WAVE_LINES[stage] || '기본 적 웨이브';
+  const stageTip = STAGE_WAVE_TIPS[stage] || '균형 배치';
   const parts = [];
   const tips = [];
-  if(waveNo === 5){
-    parts.push('중간 보스 출현');
+  if(wave === 5){
+    parts.push(`${enemyLine} · 중간 보스 출현`);
     tips.push('보스 피해');
-    tips.push(stage <= 2 ? '감속' : '집중 화력');
-  }else if(waveNo === 10){
-    parts.push('최종 보스 출현');
-    tips.push('보스 피해');
+    tips.push(stageTip);
+  }else if(wave === 10){
+    parts.push(`${enemyLine} · 최종 보스 출현`);
     tips.push('핵심 타워 병합');
-  }else if(waveNo % 4 === 0){
-    parts.push('압박 웨이브');
+    tips.push(stageTip);
+  }else if(wave % 4 === 0){
+    parts.push(`${enemyLine} · 압박 웨이브`);
     tips.push('범위 화력');
-    tips.push('코어 방어');
+    tips.push(stageTip);
   }else{
-    if(waveNo >= 6) parts.push('재생 적 증가');
-    else if(waveNo >= 3) parts.push('장갑 적 증가');
-    else parts.push('기본 적 웨이브');
-    tips.push(stage === 2 ? '감속' : stage === 5 ? '방어 약화' : '균형 배치');
-    if(waveNo >= 3) tips.push('병합 준비');
+    if(wave >= 6) parts.push(`${enemyLine} · 강화 적 증가`);
+    else if(wave >= 3) parts.push(`${enemyLine} · 특수 적 증가`);
+    else parts.push(`${enemyLine} · 기본 웨이브`);
+    tips.push(stageTip);
+    if(wave >= 3) tips.push('병합 준비');
   }
   return {
     title: parts.join(' · '),
@@ -12389,6 +13154,11 @@ function loop(now){
   raf=requestAnimationFrame(loop);
   const raw=clamp((now-last)/16.666,0,3);last=now;
   const dt=S.paused?0:raw*S.speed;
+  if(S && S.hp <= 0 && !S.gameOver) triggerGameOver('core');
+  if(S && S.gameOver && !$('gameOverOverlay') && !S.gameOverOverlayRequested){
+    S.gameOverOverlayRequested = true;
+    setTimeout(() => showGameOverOverlay(S.lastGameOverSummary || {stageNo:S.stageNo,wave:S.ogge,kills:S.runKills||0,bestCombo:S.combo?.best||0,shardsGained:0}), 0);
+  }
 
   if(!Array.isArray(route) || route.length < 2){
     try { makeRoute(); makeTerrain(); }
@@ -12432,14 +13202,31 @@ function loop(now){
     ctx.globalAlpha=1;ctx.fillStyle='#fff';ctx.font='900 32px Orbitron';ctx.textAlign='center';
     ctx.fillText('PAUSED',W/2,90);
   }
+  if(S.gameOver){
+    ctx.globalAlpha=.28;ctx.fillStyle='#020617';ctx.fillRect(0,0,W,H);
+    ctx.globalAlpha=1;ctx.textAlign='center';
+    ctx.fillStyle='#fecaca';ctx.font='900 30px Orbitron';ctx.fillText('CORE COLLAPSE',W/2,82);
+    ctx.fillStyle='#e5e7eb';ctx.font='800 14px Pretendard';ctx.fillText('전투 종료 — 결과 창을 확인하세요',W/2,112);
+    if(!$('gameOverOverlay') && !S.gameOverOverlayRequested){
+      S.gameOverOverlayRequested = true;
+      setTimeout(() => showGameOverOverlay(S.lastGameOverSummary || {stageNo:S.stageNo,wave:S.ogge,kills:S.runKills||0,bestCombo:S.combo?.best||0,shardsGained:0}), 0);
+    }
+  }
   ctx.restore();
 }
 
 function updateUI(){
-  $('themeName').textContent=theme().ko || theme().name;
-  $('stageLabel').textContent=`${S.theme+1}‑${S.ogge}`;
-  const waveLabel = S.ogge===5 ? '중간 보스 웨이브' : S.ogge===10 ? '최종 보스 웨이브' : (S.ogge%4===0 ? '압박 웨이브' : '장판 방어');
-  $('stageType').textContent=waveLabel;
+  const currentStageDef = getStageDef(S.stageNo || StageMapState.current || (S.theme + 1));
+  $('themeName').textContent=currentStageDef.ko || currentStageDef.name || theme().ko || theme().name;
+  $('themeName').title=`${currentStageDef.stage}. ${currentStageDef.name} / ${currentStageDef.ko}`;
+  $('stageLabel').textContent=`${currentStageDef.stage}‑${S.ogge}`;
+  const stageType = $('stageType');
+  const waveLabel = getStageBattleDescription(S.stageNo || StageMapState.current || 1, S.ogge);
+  if(stageType){
+    stageType.textContent = waveLabel;
+    stageType.title = getStageBattleFullDescription(currentStageDef.stage, S.ogge);
+  }
+  renderWavePreview();
   $('gold').textContent=fmt2(S.gold);
   $('hp').textContent=S.coreShield ? `${fmt2(S.hp)}+${fmt2(S.coreShield)}` : fmt2(S.hp);
   $('exp').textContent=`${fmt2(S.exp)}/${fmt2(S.nextExp)}`;
@@ -13024,17 +13811,32 @@ if($('runLogBtn')) $('runLogBtn').onclick = showBattleLogSummary;
 
 document.querySelectorAll('#stageMap .stageNode').forEach(node => {
   node.addEventListener('click', () => {
-    const stageNo = Number(node.dataset.stage);
-    if(stageNo > StageMapState.unlocked){
-      const hint = $('stageHint');
-      if(hint) hint.textContent = `${stageNo}번 성역은 이전 성역 10웨이브 클리어 후 열립니다.`;
-      return;
-    }
+    const stageNo = clamp(Number(node.dataset.stage || 1), 1, STAGE_MAP_DEFS.length);
     StageMapState.selected = stageNo;
     saveStageMapProgress();
     renderStageMap();
+    if(stageNo > StageMapState.unlocked){
+      const def = getStageDef(stageNo);
+      const arc = getConstellationArcByStage(stageNo);
+      const hint = $('stageHint');
+      if(hint) hint.textContent = `${arc.ko} · ${def.ko} 미리보기 — 이전 성역을 클리어하면 진입할 수 있습니다.`;
+    }
   });
 });
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-constellation-jump]');
+  if(!btn) return;
+  const stageNo = clamp(Number(btn.dataset.constellationJump || 1), 1, STAGE_MAP_DEFS.length);
+  StageMapState.selected = stageNo;
+  saveStageMapProgress();
+  renderStageMap();
+  if(stageNo > StageMapState.unlocked){
+    const arc = getConstellationArcByStage(stageNo);
+    toast(`${arc.ko}는 이전 별자리 복원 후 열립니다. 하단 정보는 미리보기로 표시됩니다.`);
+  }
+});
+
 $('summonBtn').onclick=summon;
 $('mergeBtn').onclick=autoMerge;
 $('speedBtn').onclick=()=>{S.speed=S.speed===1?2:S.speed===2?3:1;updateUI()};
@@ -13096,7 +13898,12 @@ const STAGE_MASTERY_GOALS = {
   4:['성역 10웨이브 클리어','코어 HP 40% 이상으로 클리어','코어 HP 70% 이상으로 클리어'],
   5:['성역 10웨이브 클리어','코어 HP 40% 이상으로 클리어','코어 HP 68% 이상으로 클리어'],
   6:['성역 10웨이브 클리어','코어 HP 38% 이상으로 클리어','코어 HP 66% 이상으로 클리어'],
-  7:['성역 10웨이브 클리어','코어 HP 35% 이상으로 클리어','코어 HP 62% 이상으로 클리어']
+  7:['성역 10웨이브 클리어','코어 HP 35% 이상으로 클리어','코어 HP 62% 이상으로 클리어'],
+  8:['성역 10웨이브 클리어','코어 HP 34% 이상으로 클리어','코어 HP 60% 이상으로 클리어'],
+  9:['성역 10웨이브 클리어','코어 HP 33% 이상으로 클리어','코어 HP 58% 이상으로 클리어'],
+  10:['성역 10웨이브 클리어','코어 HP 32% 이상으로 클리어','코어 HP 56% 이상으로 클리어'],
+  11:['성역 10웨이브 클리어','코어 HP 30% 이상으로 클리어','코어 HP 54% 이상으로 클리어'],
+  12:['성역 10웨이브 클리어','코어 HP 28% 이상으로 클리어','코어 HP 52% 이상으로 클리어']
 };
 const OFFLINE_MASTER_REWARD = [0, 3, 7, 12];
 
@@ -13140,7 +13947,18 @@ function stageMasteryHpRatio(stageNo){
 
 function computeStageMastery(stageNo){
   const hpRatio = S && S.maxHp ? Math.max(0, Math.min(1, S.hp / S.maxHp)) : 0;
-  const thresholds = Number(stageNo) >= 7 ? [.01, .35, .62] : Number(stageNo) === 6 ? [.01, .38, .66] : Number(stageNo) === 5 ? [.01, .40, .68] : Number(stageNo) === 4 ? [.01, .40, .70] : Number(stageNo) === 3 ? [.01, .45, .75] : [.01, .50, .80];
+  const n = Number(stageNo);
+  const thresholds = n >= 12 ? [.01, .28, .52]
+    : n >= 11 ? [.01, .30, .54]
+    : n >= 10 ? [.01, .32, .56]
+    : n >= 9 ? [.01, .33, .58]
+    : n >= 8 ? [.01, .34, .60]
+    : n >= 7 ? [.01, .35, .62]
+    : n === 6 ? [.01, .38, .66]
+    : n === 5 ? [.01, .40, .68]
+    : n === 4 ? [.01, .40, .70]
+    : n === 3 ? [.01, .45, .75]
+    : [.01, .50, .80];
   let stars = 0;
   if(hpRatio >= thresholds[0]) stars = 1;
   if(hpRatio >= thresholds[1]) stars = 2;
@@ -13161,7 +13979,7 @@ const _renderOfflineMetaPanelMastery = renderOfflineMetaPanel;
 renderOfflineMetaPanel = function(){
   ensureOfflineMetaMastery();
   _renderOfflineMetaPanelMastery();
-  const selectedStage = Number(StageMapState?.selected || StageMapState?.current || 1);
+  const selectedStage = resolveStageInfoSelection();
   const html = stageMasteryHtml(selectedStage);
   const side = $('offlinePanelBody'); if(side) side.insertAdjacentHTML('beforeend', html);
   const menu = $('offlineMenuPanel'); if(menu) menu.insertAdjacentHTML('beforeend', `<div class="offlineStatRow"><span class="offlinePill">다음 목표: ${nextMasteryTargetText()}</span></div>`);
@@ -13233,7 +14051,7 @@ function showOfflineGuidePanel(){
   const overlay = document.createElement('div');
   overlay.className = 'offlineGuideOverlay';
   overlay.style.display = 'flex';
-  overlay.innerHTML = `<div class="offlineGuideCard"><h2>COMMAND BRIEFING</h2><p>이 게임은 온라인 과금형이 아니라, 성역을 깨며 타워와 영구 강화를 모으는 오프라인 로그라이트 디펜스입니다.</p><div class="offlineGuideGrid"><div class="offlineGuideItem"><b>1. 스테이지 보상</b><span>성역을 클리어하면 그 성역의 전용 타워가 해금됩니다.</span></div><div class="offlineGuideItem"><b>2. 실패 보상</b><span>실패해도 성흔 조각을 얻고, 조각으로 영구 강화를 올립니다.</span></div><div class="offlineGuideItem"><b>3. 3성 숙련도</b><span>코어 HP를 많이 남기고 클리어할수록 별이 올라갑니다.</span></div><div class="offlineGuideItem"><b>4. 최종 목표</b><span>7개 성역을 정화하고 모든 성역 3성을 노리는 것이 1차 목표입니다.</span></div></div><div class="offlineGuideActions"><button id="offlineGuideClose" class="btnGreen">시작하기</button></div></div>`;
+  overlay.innerHTML = `<div class="offlineGuideCard"><h2>COMMAND BRIEFING</h2><p>이 게임은 온라인 과금형이 아니라, 성역을 깨며 타워와 영구 강화를 모으는 오프라인 로그라이트 디펜스입니다.</p><div class="offlineGuideGrid"><div class="offlineGuideItem"><b>1. 스테이지 보상</b><span>성역을 클리어하면 그 성역의 전용 타워가 해금됩니다.</span></div><div class="offlineGuideItem"><b>2. 실패 보상</b><span>실패해도 성흔 조각을 얻고, 조각으로 영구 강화를 올립니다.</span></div><div class="offlineGuideItem"><b>3. 3성 숙련도</b><span>코어 HP를 많이 남기고 클리어할수록 별이 올라갑니다.</span></div><div class="offlineGuideItem"><b>4. 최종 목표</b><span>12개 성역을 정화하고 모든 별자리 성역 3성을 노리는 것이 1차 목표입니다.</span></div></div><div class="offlineGuideActions"><button id="offlineGuideClose" class="btnGreen">시작하기</button></div></div>`;
   document.body.appendChild(overlay);
   const close = () => overlay.remove();
   const btn = overlay.querySelector('#offlineGuideClose');
@@ -13249,7 +14067,7 @@ function showOfflineEndingPanel(){
   const overlay = document.createElement('div');
   overlay.className = 'offlineGuideOverlay';
   overlay.style.display = 'flex';
-  overlay.innerHTML = `<div class="offlineGuideCard"><h2>SEASON 1 CLEAR</h2><p>기계 핵성의 폭주가 멈췄습니다. 균열은 완전히 닫히지 않았지만, 지휘관은 이제 전 성역의 병기를 묶은 반격 함대를 완성했습니다.</p><p><b>현재 성역 숙련도:</b> ${fmt2(totalStars)}/${fmt2(STAGE_MAP_DEFS.length * 3)}성</p><div class="offlineGuideGrid"><div class="offlineGuideItem"><b>다음 목표</b><span>각 성역을 다시 클리어해 3성 숙련도를 완성하세요.</span></div><div class="offlineGuideItem"><b>남은 성장</b><span>성흔 조각으로 코어, 보급, 소환 교리를 강화하세요.</span></div></div><div class="offlineGuideActions"><button id="offlineEndingClose" class="btnGreen">계속하기</button></div></div>`;
+  overlay.innerHTML = `<div class="offlineGuideCard"><h2>SEASON 1 CLEAR</h2><p>균열 왕좌가 붕괴했습니다. 균열은 완전히 사라지지 않았지만, 지휘관은 이제 은하수 전역의 병기를 묶은 별자리 연합 함대를 완성했습니다.</p><p><b>현재 성역 숙련도:</b> ${fmt2(totalStars)}/${fmt2(STAGE_MAP_DEFS.length * 3)}성</p><div class="offlineGuideGrid"><div class="offlineGuideItem"><b>다음 목표</b><span>각 별자리 성역을 다시 클리어해 3성 숙련도를 완성하세요.</span></div><div class="offlineGuideItem"><b>남은 성장</b><span>성흔 조각으로 코어, 보급, 소환 교리를 강화하세요.</span></div></div><div class="offlineGuideActions"><button id="offlineEndingClose" class="btnGreen">계속하기</button></div></div>`;
   document.body.appendChild(overlay);
   const btn = overlay.querySelector('#offlineEndingClose');
   if(btn) btn.onclick = () => overlay.remove();
@@ -13261,12 +14079,358 @@ startSelectedStageFromMap = function(){
   setTimeout(showOfflineGuidePanel, 180);
 };
 
+
+
+/* =========================================================
+   V12 STAGE CLICK FULL INFO SYNC PATCH
+   - Integrated inside main game scope so stage data functions are accessible.
+   - Any stage node click updates the full lower information panel.
+   ========================================================= */
+function stageSyncSafeNum(v, fallback=1){
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+function stageSyncClampStage(stageNo){
+  return clamp(stageSyncSafeNum(stageNo, 1), 1, STAGE_MAP_DEFS.length);
+}
+function buildStageBottomInfoHtml(stageNo){
+  const n = stageSyncClampStage(stageNo);
+  const def = getStageDef(n);
+  const arc = getConstellationArcByStage(n);
+  const story = OFFLINE_CHAPTERS[n] || OFFLINE_CHAPTERS[1];
+  const presentation = getStagePresentation(n);
+  const mid = getStageBossDef(n, 'mid');
+  const finalBoss = getStageBossDef(n, 'final');
+  const clears = Number(META?.clears?.[String(n)] || 0);
+  const best = Number(META?.bestWave?.[String(n)] || 0);
+  const rewardText = stageTowerRewardText(n);
+  const globalLine = globalSkillSummaryText();
+  const mastery = typeof stageMasteryHtml === 'function' ? stageMasteryHtml(n) : '';
+  const copy = getStageDescriptionCopy(n);
+  const storyLine = `${copy.summary} 적 특성: ${copy.enemy} 추천 전략: ${copy.strategy}`;
+  return `<div class="stageFocusedNarrative" data-focused-stage="${n}">
+    <div class="stageFocusedTop">
+      <div>
+        <div class="stageFocusedTitle">${escapeHtml(story.title || `${n}장. ${def.ko}`)}</div>
+        <div class="stageFocusedStory"><b>${escapeHtml(def.name)} / ${escapeHtml(def.ko)}</b> · ${escapeHtml(arc.ko)} · ${escapeHtml(storyLine)}</div>
+      </div>
+      <div class="stageFocusedShard">조각 ${fmt2(META?.shards || 0)}</div>
+    </div>
+    <div class="stageFocusedMeta">
+      <span class="stageFocusedPill">위험도 ${escapeHtml(presentation.risk)}</span>
+      <span class="stageFocusedPill">클리어 ${fmt2(clears)}</span>
+      <span class="stageFocusedPill">최고 ${fmt2(best)}W</span>
+      <span class="stageFocusedPill">${escapeHtml(rewardText)}</span>
+      <span class="stageFocusedPill">전역 효과: ${escapeHtml(globalLine)}</span>
+    </div>
+    <div class="stageFocusedBoss">
+      <div><small>MID BOSS</small><b>${escapeHtml(mid.name)}</b><span>${escapeHtml(mid.ko)} · ${escapeHtml(mid.ability)} · ${escapeHtml(mid.desc || mid.title || '')}</span></div>
+      <div><small>FINAL BOSS</small><b>${escapeHtml(finalBoss.name)}</b><span>${escapeHtml(finalBoss.ko)} · ${escapeHtml(finalBoss.ability)} · ${escapeHtml(finalBoss.desc || finalBoss.title || '')}</span></div>
+    </div>
+    ${mastery}
+  </div>`;
+}
+function syncStageBottomInfo(stageNo){
+  const n = stageSyncClampStage(stageNo);
+  const stage = $('offlineStagePanel');
+  if(stage){
+    stage.dataset.stage = String(n);
+    stage.innerHTML = buildStageBottomInfoHtml(n);
+  }
+  const info = $('stageInfoPanel');
+  if(info){
+    info.dataset.stage = String(n);
+    info.scrollTop = 0;
+  }
+  const map = $('stageMap');
+  if(map) map.dataset.selected = String(n);
+}
+function syncStageMapNodeStates(stageNo){
+  const n = stageSyncClampStage(stageNo);
+  const unlocked = clamp(stageSyncSafeNum(StageMapState?.unlocked, 1), 1, STAGE_MAP_DEFS.length);
+  const map = $('stageMap');
+  if(map){
+    map.dataset.unlocked = String(unlocked);
+    map.dataset.selected = String(n);
+    map.classList.remove(...Array.from({length:STAGE_MAP_DEFS.length},(_,i)=>`stage-selected-${i+1}`));
+    map.classList.add(`stage-selected-${n}`);
+  }
+  document.querySelectorAll('#stageMap .stageNode').forEach(node => {
+    const stage = stageSyncClampStage(node.dataset.stage || 1);
+    const isUnlocked = stage <= unlocked;
+    const isSelected = stage === n;
+    node.classList.toggle('locked', !isUnlocked);
+    node.classList.toggle('unlocked', isUnlocked);
+    node.classList.toggle('active', isSelected);
+    const lock = node.querySelector('.nodeLock');
+    if(lock) lock.style.display = isUnlocked ? 'none' : 'block';
+    let badge = node.querySelector('.nodeStarRow');
+    if(!badge){
+      badge = document.createElement('span');
+      badge.className = 'nodeStarRow';
+      node.appendChild(badge);
+    }
+    const stars = typeof stageMasteryStars === 'function' ? stageMasteryStars(stage) : 0;
+    badge.textContent = stars ? '★'.repeat(stars) + '☆'.repeat(3-stars) : '☆☆☆';
+  });
+}
+function syncStageMapSelectionAndInfo(stageNo, opts={}){
+  const n = stageSyncClampStage(stageNo);
+  const unlocked = clamp(stageSyncSafeNum(StageMapState?.unlocked, 1), 1, STAGE_MAP_DEFS.length);
+  const canEnter = n <= unlocked;
+  StageMapState.selected = n;
+  if(opts.save !== false) saveStageMapProgress();
+  syncStageMapNodeStates(n);
+  const def = getStageDef(n);
+  const arc = getConstellationArcByStage(n);
+  const label = $('stageProgressLabel');
+  const sub = $('stageProgressSub');
+  const enter = $('stageEnterBtn');
+  const hint = $('stageHint');
+  if(label) label.textContent = `${TEST_MODE_CONFIG.enabled ? 'TEST MODE · ' : ''}${arc.name} · OPEN ${unlocked} / ${STAGE_MAP_DEFS.length}`;
+  if(sub) sub.textContent = `${arc.ko} · ${def.stage}. ${def.name} / ${def.ko} ${canEnter ? '선택됨' : '미개방 미리보기'}`;
+  if(enter){
+    enter.textContent = canEnter ? `ENTER ${def.stage}. ${def.name}` : `LOCKED · ${def.stage}. ${def.name}`;
+    enter.disabled = !canEnter;
+    enter.classList.toggle('locked', !canEnter);
+  }
+  if(hint){
+    hint.textContent = stageHintLine(def.stage, canEnter);
+  }
+  renderStageMapInfo(n);
+  syncStageBottomInfo(n);
+  if(opts.deck !== false && typeof renderConstellationDeck === 'function') renderConstellationDeck();
+  if(typeof window.scheduleStageRouteSync === 'function') window.scheduleStageRouteSync();
+}
+
+const _renderStageMapV12FullSync = renderStageMap;
+renderStageMap = function(){
+  const ret = _renderStageMapV12FullSync.apply(this, arguments);
+  syncStageMapSelectionAndInfo(StageMapState.selected, {save:false, deck:false});
+  return ret;
+};
+
+document.addEventListener('click', function(e){
+  const node = e.target.closest && e.target.closest('#stageMap .stageNode');
+  if(!node) return;
+  e.preventDefault();
+  e.stopPropagation();
+  if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+  const stageNo = stageSyncClampStage(node.dataset.stage || 1);
+  syncStageMapSelectionAndInfo(stageNo, {save:true});
+}, true);
+
+document.addEventListener('click', function(e){
+  const card = e.target.closest && e.target.closest('#stageMap [data-constellation-jump]');
+  if(!card) return;
+  e.preventDefault();
+  e.stopPropagation();
+  if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+  const stageNo = stageSyncClampStage(card.dataset.constellationJump || 1);
+  syncStageMapSelectionAndInfo(stageNo, {save:true});
+  if(stageNo > StageMapState.unlocked){
+    const arc = getConstellationArcByStage(stageNo);
+    toast(`${arc.ko}는 이전 별자리 복원 후 열립니다. 하단 정보는 미리보기로 표시됩니다.`);
+  }
+}, true);
+
+
+/* =========================================================
+   V14 STAGE MAP POINTER FALLBACK
+   - Some route/svg/fog layers can sit above the buttons visually.
+   - Any pointer/click inside the map now resolves the nearest stage node.
+   - This guarantees the lower panel changes even when the direct button
+     event is intercepted by an overlay layer.
+   ========================================================= */
+function nearestStageNodeFromPoint(clientX, clientY){
+  const nodes = Array.from(document.querySelectorAll('#stageMap .stageNode'));
+  let best = null;
+  let bestDist = Infinity;
+  nodes.forEach(node => {
+    const rect = node.getBoundingClientRect();
+    if(!rect.width || !rect.height) return;
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = clientX - cx;
+    const dy = clientY - cy;
+    const d = Math.hypot(dx, dy);
+    const radius = Math.max(rect.width, rect.height) * 0.74;
+    if(d <= radius && d < bestDist){
+      best = node;
+      bestDist = d;
+    }
+  });
+  return best;
+}
+function shouldIgnoreStageMapPointer(e){
+  const target = e.target;
+  if(!target || !target.closest) return false;
+  return !!target.closest('#stageInfoPanel, #stageEnterBtn, #stageMapBack, #constellationDeck, [data-constellation-jump], #stageHint');
+}
+function handleStageMapPointerSelection(e){
+  const map = $('stageMap');
+  if(!map || map.style.display === 'none') return;
+  if(!e || typeof e.clientX !== 'number' || typeof e.clientY !== 'number') return;
+  if(shouldIgnoreStageMapPointer(e)) return;
+  if(!e.target.closest || !e.target.closest('#stageMap')) return;
+  const direct = e.target.closest('#stageMap .stageNode');
+  const node = direct || nearestStageNodeFromPoint(e.clientX, e.clientY);
+  if(!node) return;
+  e.preventDefault();
+  e.stopPropagation();
+  if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+  const stageNo = stageSyncClampStage(node.dataset.stage || 1);
+  syncStageMapSelectionAndInfo(stageNo, {save:true});
+}
+document.addEventListener('pointerdown', handleStageMapPointerSelection, true);
+document.addEventListener('click', handleStageMapPointerSelection, true);
+
+const _showStageMapV12FullSync = showStageMap;
+showStageMap = function(){
+  const ret = _showStageMapV12FullSync.apply(this, arguments);
+  setTimeout(() => syncStageMapSelectionAndInfo(StageMapState.selected, {save:false}), 0);
+  return ret;
+};
+
+/* V15: keep the lower text block synchronized with the selected stage only. */
+function forceLowerTextToSelectedStage(stageNo){
+  const n = stageSyncClampStage(stageNo || $('stageMap')?.dataset?.selected || StageMapState?.selected || 1);
+  const stage = $('offlineStagePanel');
+  if(stage && stage.dataset.stage !== String(n)){
+    syncStageBottomInfo(n);
+  }else if(stage && !stage.querySelector(`[data-focused-stage="${n}"]`)){
+    syncStageBottomInfo(n);
+  }
+}
+function forceSelectStageFromEvent(e){
+  const node = e?.target?.closest && e.target.closest('#stageMap .stageNode');
+  if(!node) return;
+  const n = stageSyncClampStage(node.dataset.stage || 1);
+  syncStageMapSelectionAndInfo(n, {save:true});
+  forceLowerTextToSelectedStage(n);
+}
+document.addEventListener('pointerup', forceSelectStageFromEvent, true);
+document.addEventListener('touchend', forceSelectStageFromEvent, true);
+try{
+  const mapForLowerText = $('stageMap');
+  if(mapForLowerText){
+    new MutationObserver(() => forceLowerTextToSelectedStage()).observe(mapForLowerText, {attributes:true, attributeFilter:['data-selected','class']});
+  }
+}catch(err){}
+
+
 resizeStarfield();
 starField.last = performance.now();
 starField.raf = requestAnimationFrame(starLoop);
 loadOfflineMeta();
 reset();
 try { renderHangar(); } catch(err) { console.error('renderHangar failed during init', err); }
+})();
+
+
+/* =========================================================
+   V17 HARD STAGE DESCRIPTION SYNC
+   - This DOM-level guard updates the actually visible stage description area.
+   - It runs after the legacy stage-map patches, so older render functions cannot
+     leave the description text looking identical between stages.
+   ========================================================= */
+(function(){
+  const STAGE_UI_COPY = {
+    1:{name:'COSMIC VOID',ko:'공허 성역',arc:'오리온 외곽 성좌',risk:'LOW',tags:['AURORA','VOID','ENTRY'],summary:'첫 번째 공허 성역입니다. 기본 행성 배치, 장판 활용, 병합 타이밍을 익히는 입문 전장입니다.',enemy:'공허 균열 적은 능력치가 균형형이라 초반 화력 곡선을 확인하기 좋습니다.',strategy:'레이저·블랙홀 계열로 길목을 안정화하고, 3웨이브부터 병합 준비를 시작하세요.',battle:'공허 성역 방어 · 기본 화력 학습',reward:'블랙홀 행성 해금'},
+    2:{name:'FROST EXPANSE',ko:'빙결 외곽',arc:'오리온 외곽 성좌',risk:'MEDIUM',tags:['BLIZZARD','FREEZE','CONTROL'],summary:'빙결 외곽은 빠른 적이 섞여 들어오는 제어형 전장입니다. 적을 늦추는 배치가 핵심입니다.',enemy:'빙결 선봉대는 속도 변화가 크고, 후반에는 감속 저항 적이 섞입니다.',strategy:'냉각·감속 장판 근처에 타워를 모아 빠른 적의 돌파를 막으세요.',battle:'빙결 외곽 방어 · 감속 제어전',reward:'서리 행성 해금'},
+    3:{name:'LAVA NEBULA',ko:'용암 성운',arc:'오리온 외곽 성좌',risk:'HIGH',tags:['SOLAR','ARMOR','BURN'],summary:'용암 성운은 장갑형 적이 본격적으로 등장하는 화력 검증 스테이지입니다.',enemy:'용암 장갑 적은 단일 저레벨 화력을 오래 버티며 코어로 밀고 들어옵니다.',strategy:'광역 피해와 장갑 돌파 타워를 우선 병합하고, 화력 부족 구간을 장판으로 보완하세요.',battle:'용암 성운 방어 · 장갑 돌파전',reward:'태양 행성 해금'},
+    4:{name:'JUNGLE CORE',ko:'생체 정글',arc:'오리온 외곽 성좌',risk:'VERY HIGH',tags:['SPORE','HEAL','DECAY'],summary:'생체 정글은 적이 회복과 증식을 반복하는 장기전 스테이지입니다.',enemy:'포자 군체는 주변 적을 회복시키기 때문에 처치 순서가 중요합니다.',strategy:'재생을 끊는 집중 화력과 지속 피해를 확보해 전선이 밀리지 않게 운영하세요.',battle:'생체 정글 방어 · 재생 차단전',reward:'독성 행성 해금'},
+    5:{name:'SMOG WASTELAND',ko:'매연 폐역',arc:'오리온 외곽 성좌',risk:'EXTREME',tags:['SMOG','ARMOR','HAZE'],summary:'매연 폐역은 시야와 방어 효율을 동시에 흔드는 디버프형 전장입니다.',enemy:'매연 은폐 적은 방어선을 흐트러뜨리고 장갑으로 피해를 흡수합니다.',strategy:'감속, 방어 약화, 지속 피해를 겹쳐 은폐 장갑 적을 빠르게 노출시키세요.',battle:'매연 폐역 방어 · 은폐 약화전',reward:'스모그 행성 해금'},
+    6:{name:'CRYSTAL NEBULA',ko:'수정 성운',arc:'오리온 외곽 성좌',risk:'EXTREME',tags:['PRISM','CHARGE','RESONANCE'],summary:'수정 성운은 피해가 저장되고 굴절되는 공명형 스테이지입니다.',enemy:'수정 공명체는 초과 피해와 장판 효과를 흔들어 배치 판단을 어렵게 만듭니다.',strategy:'공명 장판과 고레벨 타워를 연결해 한 번에 큰 피해를 넣는 구간을 만드세요.',battle:'수정 성운 방어 · 프리즘 공명전',reward:'수정 행성 해금'},
+    7:{name:'MACHINE CORE',ko:'기계 핵성',arc:'오리온 외곽 성좌',risk:'EXTREME+',tags:['MACHINE','SHIELD','REPAIR'],summary:'기계 핵성은 실드와 수리 드론이 전선을 굳히는 방어망 스테이지입니다.',enemy:'기계 실드 유닛은 수리 드론과 함께 등장해 처치 시간을 크게 늘립니다.',strategy:'실드 해체 타워와 집중 화력을 먼저 확보하고, 보스 전에는 병합 레벨을 끌어올리세요.',battle:'기계 핵성 방어 · 실드 해체전',reward:'기계 행성 해금'},
+    8:{name:'GRAVITY MAUSOLEUM',ko:'중력 무덤',arc:'백조 균열 성좌',risk:'NIGHTMARE',tags:['GRAVITY','PULL','CONTROL'],summary:'중력 무덤은 죽은 행성의 궤도가 적을 밀집시키고 전장을 왜곡하는 제어 스테이지입니다.',enemy:'중력 왜곡 적은 몰려오거나 갑자기 가속해 방어선의 빈틈을 찌릅니다.',strategy:'군중 제어와 범위 화력을 겹쳐 몰려오는 적을 한 번에 정리하세요.',battle:'중력 무덤 방어 · 군중 제어전',reward:'중력 제어 숙련'},
+    9:{name:'THUNDER CORRIDOR',ko:'번개 회랑',arc:'백조 균열 성좌',risk:'NIGHTMARE',tags:['THUNDER','CHAIN','SPEED'],summary:'번개 회랑은 고속 적과 연쇄 충격이 이어지는 속도 압박 스테이지입니다.',enemy:'과전류 고속 적은 짧은 시간에 코어 근처까지 도달할 수 있습니다.',strategy:'초반부터 공격 속도와 연쇄 화력을 확보하고, 길목 앞쪽에 화력을 집중하세요.',battle:'번개 회랑 방어 · 고속 대응전',reward:'과전류 대응 숙련'},
+    10:{name:'TIME SHARDS',ko:'시간 잔해',arc:'백조 균열 성좌',risk:'NIGHTMARE+',tags:['TIME','ECHO','REWIND'],summary:'시간 잔해는 과거 웨이브의 잔상이 겹쳐 화력이 분산되는 반복 전장입니다.',enemy:'시간 잔상 적은 같은 구간에 반복 등장해 타워 타겟팅을 흔듭니다.',strategy:'잔상 처리용 범위 화력과 보스 집중 화력을 분리해서 배치하세요.',battle:'시간 잔해 방어 · 잔상 처리전',reward:'시간 역류 대응'},
+    11:{name:'SILENT CONSTELLATION',ko:'침묵 성단',arc:'용자리 심연 성좌',risk:'ABYSS',tags:['SILENCE','NULL','STEALTH'],summary:'침묵 성단은 감응 신호가 끊겨 적 특성 파악이 늦어지는 암흑 스테이지입니다.',enemy:'침묵 잠행 적은 반응을 늦추고 암흑 장갑으로 초반 피해를 줄입니다.',strategy:'안정적인 중앙 배치와 범용 화력을 먼저 완성해 정보 제한 구간을 버티세요.',battle:'침묵 성단 방어 · 신호 차단전',reward:'신호 차단 대응'},
+    12:{name:'RIFT THRONE',ko:'균열 왕좌',arc:'용자리 심연 성좌',risk:'FINAL',tags:['RIFT KING','HYBRID','ENDGAME'],summary:'균열 왕좌는 이전 성역의 패턴이 모두 합쳐지는 시즌 1 최종 복합전입니다.',enemy:'균열 왕좌 혼합군은 장갑, 재생, 실드, 고속, 잔상 패턴을 순차적으로 압박합니다.',strategy:'핵심 타워를 빠르게 고레벨로 병합하고, 장판·전역 스킬을 모두 활용해야 합니다.',battle:'균열 왕좌 방어 · 최종 복합전',reward:'시즌 1 최종 정화'}
+  };
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value ?? '').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+  const clampStage = value => Math.max(1, Math.min(12, Number(value) || 1));
+  function selectedStage(){
+    const map = $('stageMap');
+    const active = document.querySelector('#stageMap .stageNode.active');
+    return clampStage(map?.dataset?.selected || active?.dataset?.stage || 1);
+  }
+  function unlockedStage(){
+    const map = $('stageMap');
+    return clampStage(map?.dataset?.unlocked || 1);
+  }
+  function renderTags(copy){
+    return copy.tags.map(tag => `<span class="stageTag">${esc(tag)}</span>`).join('');
+  }
+  function applyStageDescription(stageNo){
+    const n = clampStage(stageNo || selectedStage());
+    const copy = STAGE_UI_COPY[n] || STAGE_UI_COPY[1];
+    const canEnter = n <= unlockedStage();
+    const title = $('stageInfoTitle');
+    const risk = $('stageInfoRisk');
+    const mood = $('stageInfoMood');
+    const tags = $('stageInfoTags');
+    const hint = $('stageHint');
+    const panel = $('stageInfoPanel');
+    if(panel) panel.dataset.stage = String(n);
+    if(title) title.textContent = `${copy.arc} · ${n}. ${copy.name} / ${copy.ko}`;
+    if(risk) risk.textContent = copy.risk;
+    if(mood){
+      mood.textContent = `${copy.ko} 설명 · ${copy.summary} 적 특성: ${copy.enemy} 추천 전략: ${copy.strategy} 보상: ${copy.reward}`;
+      mood.title = mood.textContent;
+    }
+    if(tags) tags.innerHTML = renderTags(copy);
+    if(hint) hint.textContent = `${copy.arc} · ${n}. ${copy.name} / ${copy.ko} — ${canEnter ? '진입 가능' : '미개방 미리보기'}. ${copy.summary} 보상: ${copy.reward}`;
+    const bottom = $('offlineStagePanel');
+    if(bottom){
+      bottom.dataset.stage = String(n);
+      bottom.innerHTML = `<div class="stageFocusedNarrative" data-focused-stage="${n}">
+        <div class="stageFocusedTop"><div><div class="stageFocusedTitle">${n}장. ${esc(copy.ko)} — 스테이지 설명</div>
+        <div class="stageFocusedStory"><b>${esc(copy.name)} / ${esc(copy.ko)}</b> · ${esc(copy.summary)}</div></div></div>
+        <div class="stageFocusedMeta"><span class="stageFocusedPill">위험도 ${esc(copy.risk)}</span><span class="stageFocusedPill">${esc(copy.reward)}</span><span class="stageFocusedPill">${esc(copy.battle)}</span></div>
+        <div class="stageFocusedBoss"><div><small>ENEMY TRAIT</small><b>${esc(copy.enemy)}</b><span>${esc(copy.strategy)}</span></div></div>
+      </div>`;
+    }
+    const game = $('game');
+    if(game && getComputedStyle(game).display !== 'none'){
+      const label = $('stageLabel');
+      const labelStage = clampStage((label?.textContent || '').split(/[‑-]/)[0] || n);
+      const battleCopy = STAGE_UI_COPY[labelStage] || copy;
+      const stageType = $('stageType');
+      if(stageType){
+        stageType.textContent = battleCopy.battle;
+        stageType.title = `${battleCopy.summary} ${battleCopy.strategy}`;
+      }
+    }
+  }
+  function applyFromEvent(e){
+    const node = e?.target?.closest && e.target.closest('#stageMap .stageNode');
+    const jump = e?.target?.closest && e.target.closest('#stageMap [data-constellation-jump]');
+    const stageNo = node?.dataset?.stage || jump?.dataset?.constellationJump || selectedStage();
+    setTimeout(() => applyStageDescription(stageNo), 0);
+    setTimeout(() => applyStageDescription(stageNo), 80);
+  }
+  document.addEventListener('click', applyFromEvent, true);
+  document.addEventListener('pointerup', applyFromEvent, true);
+  document.addEventListener('touchend', applyFromEvent, true);
+  try{
+    const map = $('stageMap');
+    if(map){
+      new MutationObserver(() => setTimeout(() => applyStageDescription(), 0)).observe(map, {attributes:true, attributeFilter:['data-selected','data-unlocked','class']});
+    }
+  }catch(err){}
+  document.addEventListener('DOMContentLoaded', () => {
+    applyStageDescription();
+    setTimeout(() => applyStageDescription(), 100);
+    setTimeout(() => applyStageDescription(), 500);
+  });
+  setInterval(() => {
+    const map = $('stageMap');
+    const game = $('game');
+    if((map && getComputedStyle(map).display !== 'none') || (game && getComputedStyle(game).display !== 'none')) applyStageDescription();
+  }, 700);
 })();
 
 
@@ -13439,6 +14603,48 @@ try { renderHangar(); } catch(err) { console.error('renderHangar failed during i
     };
   }
 })();
+
+
+
+
+/* V18 Stage node caption sync: keep map captions short and non-overlapping. */
+const STAGE_NODE_SHORT_LABELS_V18 = {
+  1:'COSMIC', 2:'FROST', 3:'LAVA', 4:'JUNGLE',
+  5:'SMOG', 6:'CRYSTAL', 7:'MACHINE', 8:'GRAVITY',
+  9:'THUNDER', 10:'TIME', 11:'SILENT', 12:'RIFT'
+};
+function syncStageNodeCaptionsV18(){
+  document.querySelectorAll('#stageMap .stageNode').forEach(node => {
+    const stageNo = Number(node.dataset.stage || 1);
+    const def = typeof getStageDef === 'function' ? getStageDef(stageNo) : null;
+    const label = node.querySelector('.nodeLabel');
+    if(label){
+      label.textContent = STAGE_NODE_SHORT_LABELS_V18[stageNo] || (def?.name || label.textContent || '').split(/\s+/)[0];
+      if(def?.name) label.title = def.name;
+    }
+    const badge = node.querySelector('.nodeStarRow');
+    if(badge){
+      badge.setAttribute('aria-label', `Stage ${stageNo} mastery stars`);
+    }
+  });
+}
+try{
+  const _renderStageMapCaptionFixV18 = renderStageMap;
+  if(typeof _renderStageMapCaptionFixV18 === 'function'){
+    renderStageMap = function(){
+      const ret = _renderStageMapCaptionFixV18.apply(this, arguments);
+      syncStageNodeCaptionsV18();
+      return ret;
+    };
+  }
+}catch(err){
+  console.warn('stage node caption sync patch skipped', err);
+}
+window.addEventListener('DOMContentLoaded', () => {
+  syncStageNodeCaptionsV18();
+  setTimeout(syncStageNodeCaptionsV18, 80);
+  setTimeout(syncStageNodeCaptionsV18, 260);
+});
 
 </script>
 </body>
