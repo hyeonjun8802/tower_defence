@@ -9269,6 +9269,519 @@ h1{
   }
 }
 
+
+
+/* =========================================================
+   V23 MOBILE BATTLE LAYOUT FIX
+   - Phone landscape: board left, battle controls right, hangar as a thin bottom bar.
+   - Phone portrait: hangar moves below the board, so it never covers grid blocks.
+   - Uses late CSS overrides to neutralize older mobile patches.
+   ========================================================= */
+
+@media (max-width: 980px) and (orientation: landscape),
+       (max-height: 520px) and (min-width: 560px) {
+  html, body{
+    width:100% !important;
+    height:100dvh !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+
+  #wrap{
+    width:100vw !important;
+    height:100dvh !important;
+    min-height:0 !important;
+    padding:0 !important;
+    align-items:stretch !important;
+    justify-content:flex-start !important;
+    overflow:hidden !important;
+  }
+
+  #game{
+    width:100vw !important;
+    height:100dvh !important;
+    min-height:0 !important;
+    padding:6px !important;
+    gap:7px !important;
+    border:0 !important;
+    border-radius:0 !important;
+    flex-direction:row !important;
+    align-items:stretch !important;
+    justify-content:flex-start !important;
+    overflow:hidden !important;
+    background:rgba(2,6,23,.78) !important;
+    box-shadow:none !important;
+    backdrop-filter:none !important;
+  }
+
+  #field{
+    flex:1 1 auto !important;
+    width:auto !important;
+    height:calc(100dvh - 12px) !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-height:none !important;
+    margin:0 !important;
+    transform:none !important;
+    border-radius:14px !important;
+    overflow:hidden !important;
+    box-shadow:inset 0 0 34px rgba(0,0,0,.66),0 0 20px rgba(56,189,248,.08) !important;
+  }
+
+  #canvas,
+  canvas#canvas{
+    width:100% !important;
+    height:100% !important;
+  }
+
+  #side,
+  #side.battleMinimal{
+    flex:0 0 258px !important;
+    width:258px !important;
+    height:calc(100dvh - 12px) !important;
+    max-height:calc(100dvh - 12px) !important;
+    margin:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:6px !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    padding:0 !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  #side .panel,
+  #side section{
+    min-width:0 !important;
+  }
+
+  .battleHud,
+  .battleActions,
+  .battleSelected,
+  #selected{
+    flex:0 0 auto !important;
+    display:block !important;
+  }
+
+  #logPanel,
+  #offlinePanel{
+    display:none !important;
+  }
+
+  #wavePreviewLine{
+    margin-top:6px !important;
+    padding:6px 8px !important;
+    border-radius:10px !important;
+    font-size:9.5px !important;
+    line-height:1.32 !important;
+  }
+
+  .battleStageLine{
+    display:grid !important;
+    grid-template-columns:1fr auto !important;
+    grid-template-areas:'theme stage' 'type stage' !important;
+    gap:2px 8px !important;
+    align-items:start !important;
+  }
+
+  #themeName{grid-area:theme !important;font-size:9px !important;line-height:1.1 !important;}
+  #stageLabel{grid-area:stage !important;font-size:18px !important;line-height:1 !important;text-align:right !important;}
+  #stageType{grid-area:type !important;font-size:8px !important;line-height:1.2 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;}
+
+  .battleStatLine.statGrid{
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    gap:4px !important;
+  }
+
+  #side .stat{
+    padding:5px 5px !important;
+    border-radius:9px !important;
+  }
+
+  #side .label{
+    font-size:6.5px !important;
+    letter-spacing:.22px !important;
+  }
+
+  #side .value{
+    font-size:12px !important;
+    line-height:1.05 !important;
+  }
+
+  #side .miniBar,
+  #side .bar{
+    height:4px !important;
+    margin-top:4px !important;
+  }
+
+  #globalEffectLine{
+    margin-top:6px !important;
+    font-size:8.5px !important;
+    line-height:1.3 !important;
+  }
+
+  #side .row,
+  #side .row3{
+    gap:6px !important;
+  }
+
+  #side button{
+    min-height:34px !important;
+    padding:6px 6px !important;
+    border-radius:10px !important;
+    font-size:8.6px !important;
+    line-height:1.12 !important;
+    box-shadow:none !important;
+  }
+
+  #selected{
+    min-height:86px !important;
+    max-height:112px !important;
+    overflow:hidden !important;
+  }
+
+  #selectedText{
+    font-size:8.8px !important;
+    line-height:1.32 !important;
+  }
+
+  #selected .selectedHead{
+    margin:4px 0 6px !important;
+  }
+
+  .towerName{
+    font-size:10px !important;
+    margin-top:2px !important;
+  }
+
+  .tags{gap:4px !important;margin-top:5px !important;}
+  .tag{font-size:7px !important;padding:2px 5px !important;}
+
+  /* Landscape keeps the hangar in the field, matching the provided reference layout. */
+  #hangar{
+    position:absolute !important;
+    left:8px !important;
+    right:8px !important;
+    bottom:8px !important;
+    z-index:18 !important;
+    height:68px !important;
+    display:flex !important;
+    gap:6px !important;
+    padding:0 1px 2px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    background:linear-gradient(180deg,rgba(2,6,23,0),rgba(2,6,23,.34)) !important;
+    pointer-events:auto !important;
+  }
+
+  #hangar .planetCard{
+    flex:0 0 148px !important;
+    min-width:148px !important;
+    max-width:148px !important;
+    min-height:62px !important;
+    height:62px !important;
+    padding:7px 46px 7px 8px !important;
+    gap:8px !important;
+    border-radius:12px !important;
+  }
+
+  #hangar .planetThumb,
+  #hangar .planetThumb.liveThumb,
+  #hangar .planetThumb.thumbPng,
+  #hangar .planetThumb.liveThumb.thumbPng,
+  #hangar .planetCard[data-type="5"] .planetThumb,
+  #hangar .planetCard[data-type="6"] .planetThumb,
+  #hangar .planetCard[data-type="7"] .planetThumb{
+    width:38px !important;
+    height:38px !important;
+    flex:0 0 38px !important;
+    border-radius:10px !important;
+    background-size:contain !important;
+  }
+
+  #hangar .planetCardName{
+    max-width:72px !important;
+    font-size:8.6px !important;
+    line-height:1.12 !important;
+    margin-bottom:0 !important;
+  }
+
+  #hangar .planetCardRole,
+  #hangar .planetCardDesc,
+  #hangar .planetCard small,
+  #hangar .planetCard .sub,
+  #hangar .planetCard .tags{
+    display:none !important;
+  }
+
+  #hangar .planetCardCost{
+    top:7px !important;
+    right:8px !important;
+    font-size:7px !important;
+  }
+
+  #hangar .planetCardLevel,
+  #hangar .planetLevelBadge,
+  #hangar .levelPill{
+    right:8px !important;
+    bottom:7px !important;
+    min-width:38px !important;
+    height:16px !important;
+    padding:2px 5px !important;
+    font-size:6.4px !important;
+  }
+}
+
+@media (max-width: 600px) and (orientation: portrait) {
+  html, body{
+    width:100% !important;
+    height:100dvh !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+
+  #wrap{
+    width:100vw !important;
+    height:100dvh !important;
+    min-height:0 !important;
+    padding:0 !important;
+    align-items:flex-start !important;
+    justify-content:flex-start !important;
+    overflow:hidden !important;
+  }
+
+  #game{
+    width:100vw !important;
+    height:100dvh !important;
+    min-height:0 !important;
+    padding:6px !important;
+    gap:6px !important;
+    border:0 !important;
+    border-radius:0 !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    justify-content:flex-start !important;
+    overflow:hidden !important;
+    background:rgba(2,6,23,.78) !important;
+    box-shadow:none !important;
+    backdrop-filter:none !important;
+  }
+
+  #field{
+    width:calc(100vw - 12px) !important;
+    height:calc(100dvh - 318px - env(safe-area-inset-bottom)) !important;
+    min-height:0 !important;
+    max-height:none !important;
+    flex:0 0 auto !important;
+    margin:0 0 82px !important;
+    transform:none !important;
+    border-radius:14px !important;
+    overflow:visible !important;
+    box-shadow:inset 0 0 30px rgba(0,0,0,.64),0 0 18px rgba(56,189,248,.08) !important;
+  }
+
+  #field::after{
+    content:'';
+    position:absolute;
+    left:0;right:0;bottom:-86px;height:86px;
+    border-radius:0 0 14px 14px;
+    background:linear-gradient(180deg,rgba(2,6,23,.18),rgba(2,6,23,.68));
+    pointer-events:none;
+    z-index:7;
+  }
+
+  #canvas,
+  canvas#canvas{
+    width:100% !important;
+    height:100% !important;
+  }
+
+  /* Portrait: move the planet/tower list to the empty space under the board. */
+  #hangar{
+    position:absolute !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:-78px !important;
+    height:72px !important;
+    z-index:20 !important;
+    display:flex !important;
+    gap:7px !important;
+    padding:0 4px 4px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    pointer-events:auto !important;
+  }
+
+  #hangar .planetCard{
+    flex:0 0 160px !important;
+    min-width:160px !important;
+    max-width:160px !important;
+    min-height:66px !important;
+    height:66px !important;
+    padding:7px 50px 7px 8px !important;
+    gap:8px !important;
+    border-radius:12px !important;
+  }
+
+  #hangar .planetThumb,
+  #hangar .planetThumb.liveThumb,
+  #hangar .planetThumb.thumbPng,
+  #hangar .planetThumb.liveThumb.thumbPng,
+  #hangar .planetCard[data-type="5"] .planetThumb,
+  #hangar .planetCard[data-type="6"] .planetThumb,
+  #hangar .planetCard[data-type="7"] .planetThumb{
+    width:40px !important;
+    height:40px !important;
+    flex:0 0 40px !important;
+    border-radius:10px !important;
+    background-size:contain !important;
+  }
+
+  #hangar .planetCardName{
+    max-width:74px !important;
+    font-size:9px !important;
+    line-height:1.12 !important;
+    margin-bottom:0 !important;
+  }
+
+  #hangar .planetCardRole,
+  #hangar .planetCardDesc,
+  #hangar .planetCard small,
+  #hangar .planetCard .sub,
+  #hangar .planetCard .tags{
+    display:none !important;
+  }
+
+  #hangar .planetCardCost{
+    top:7px !important;
+    right:8px !important;
+    font-size:7.2px !important;
+  }
+
+  #hangar .planetCardLevel,
+  #hangar .planetLevelBadge,
+  #hangar .levelPill{
+    right:8px !important;
+    bottom:7px !important;
+    min-width:40px !important;
+    height:16px !important;
+    padding:2px 5px !important;
+    font-size:6.5px !important;
+  }
+
+  #side,
+  #side.battleMinimal{
+    width:100% !important;
+    height:calc(218px + env(safe-area-inset-bottom)) !important;
+    max-height:calc(218px + env(safe-area-inset-bottom)) !important;
+    flex:0 0 auto !important;
+    margin:0 !important;
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    grid-auto-rows:min-content !important;
+    gap:6px !important;
+    overflow:hidden !important;
+    padding:0 0 env(safe-area-inset-bottom) !important;
+  }
+
+  #side .panel,
+  #side section{
+    min-width:0 !important;
+    padding:7px 8px !important;
+    border-radius:12px !important;
+  }
+
+  .battleHud{grid-column:1 / 3 !important;}
+  .battleActions{grid-column:1 / 3 !important;}
+  #selected,
+  #logPanel,
+  #offlinePanel{
+    display:none !important;
+  }
+
+  #wavePreviewLine{
+    margin-top:5px !important;
+    padding:5px 8px !important;
+    font-size:9px !important;
+    line-height:1.26 !important;
+  }
+
+  .battleStageLine{
+    display:grid !important;
+    grid-template-columns:1fr auto !important;
+    gap:2px 8px !important;
+  }
+
+  #themeName{font-size:9px !important;line-height:1.1 !important;}
+  #stageLabel{font-size:16px !important;line-height:1 !important;}
+  #stageType{font-size:8px !important;line-height:1.2 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;}
+
+  .battleStatLine.statGrid{
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    gap:4px !important;
+  }
+
+  #side .stat{
+    padding:5px !important;
+    border-radius:9px !important;
+  }
+
+  #side .label{font-size:6.4px !important;letter-spacing:.18px !important;}
+  #side .value{font-size:12px !important;line-height:1.04 !important;}
+  #side .bar,#side .miniBar{height:4px !important;margin-top:4px !important;}
+  #globalEffectLine{display:none !important;}
+
+  #side .row,
+  #side .row3{
+    gap:5px !important;
+  }
+
+  #side button{
+    min-height:32px !important;
+    padding:6px 5px !important;
+    border-radius:10px !important;
+    font-size:8.4px !important;
+    line-height:1.08 !important;
+    box-shadow:none !important;
+  }
+}
+
+@media (max-width: 390px) and (orientation: portrait) {
+  #field{
+    height:calc(100dvh - 300px - env(safe-area-inset-bottom)) !important;
+    margin-bottom:76px !important;
+  }
+  #field::after{bottom:-80px;height:80px !important;}
+  #hangar{
+    bottom:-72px !important;
+    height:66px !important;
+  }
+  #hangar .planetCard{
+    flex-basis:148px !important;
+    min-width:148px !important;
+    max-width:148px !important;
+    height:61px !important;
+    min-height:61px !important;
+  }
+  #hangar .planetThumb,
+  #hangar .planetThumb.liveThumb,
+  #hangar .planetThumb.thumbPng,
+  #hangar .planetThumb.liveThumb.thumbPng,
+  #hangar .planetCard[data-type="5"] .planetThumb,
+  #hangar .planetCard[data-type="6"] .planetThumb,
+  #hangar .planetCard[data-type="7"] .planetThumb{
+    width:36px !important;
+    height:36px !important;
+    flex-basis:36px !important;
+  }
+  #side,
+  #side.battleMinimal{
+    height:calc(206px + env(safe-area-inset-bottom)) !important;
+    max-height:calc(206px + env(safe-area-inset-bottom)) !important;
+  }
+  #wavePreviewLine{display:none !important;}
+}
+
 </style>
 </head>
 <body>
