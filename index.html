@@ -9782,6 +9782,114 @@ h1{
   #wavePreviewLine{display:none !important;}
 }
 
+
+
+/* =========================================================
+   V24 MOBILE STAGE MAP SPACING TUNE
+   - Slightly reduce node size on phone portrait.
+   - Spread stage nodes further apart so labels/locks feel less crowded.
+   ========================================================= */
+@media (max-width: 900px), (max-aspect-ratio: 0.78) {
+  #stageMap .stageMapInner{
+    top: 150px !important;
+  }
+
+  #stageMap .stageNode{
+    width: 78px !important;
+    height: 78px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet,
+  #stageMap .stageNode[data-stage="5"] .nodePlanet,
+  #stageMap .stageNode[data-stage="6"] .nodePlanet,
+  #stageMap .stageNode[data-stage="7"] .nodePlanet{
+    width: 53px !important;
+    height: 53px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet::before{ inset:-10px !important; }
+  #stageMap .stageNode .nodePlanet::after{ inset:-19px !important; }
+
+  #stageMap .stageNode .nodeNo{ font-size: 17px !important; }
+  #stageMap .stageNode[data-stage="10"] .nodeNo,
+  #stageMap .stageNode[data-stage="11"] .nodeNo,
+  #stageMap .stageNode[data-stage="12"] .nodeNo{ font-size: 14px !important; }
+
+  #stageMap .stageNode .nodeLabel{
+    top: 61px !important;
+    max-width: 66px !important;
+    font-size: 4.95px !important;
+    letter-spacing: .16px !important;
+  }
+  #stageMap .nodeStarRow{
+    top: 72px !important;
+    max-width: 60px !important;
+    font-size: 5.25px !important;
+  }
+
+  #stageMap .stageNode[data-stage="1"]{ left:10.5% !important; top:63% !important; }
+  #stageMap .stageNode[data-stage="2"]{ left:27.5% !important; top:47.5% !important; }
+  #stageMap .stageNode[data-stage="3"]{ left:15.5% !important; top:29% !important; }
+  #stageMap .stageNode[data-stage="4"]{ left:37.5% !important; top:20% !important; }
+  #stageMap .stageNode[data-stage="5"]{ left:52.5% !important; top:35% !important; }
+  #stageMap .stageNode[data-stage="6"]{ left:41% !important; top:57.5% !important; }
+  #stageMap .stageNode[data-stage="7"]{ left:56.5% !important; top:75.5% !important; }
+  #stageMap .stageNode[data-stage="8"]{ left:71.5% !important; top:58% !important; }
+  #stageMap .stageNode[data-stage="9"]{ left:82.5% !important; top:42.5% !important; }
+  #stageMap .stageNode[data-stage="10"]{ left:74.5% !important; top:21.5% !important; }
+  #stageMap .stageNode[data-stage="11"]{ left:91.5% !important; top:18.5% !important; }
+  #stageMap .stageNode[data-stage="12"]{ left:91.5% !important; top:60% !important; }
+}
+
+@media (max-width: 430px) {
+  #stageMap .stageMapInner{
+    top: 146px !important;
+  }
+
+  #stageMap .stageNode{
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  #stageMap .stageNode .nodePlanet,
+  #stageMap .stageNode[data-stage="5"] .nodePlanet,
+  #stageMap .stageNode[data-stage="6"] .nodePlanet,
+  #stageMap .stageNode[data-stage="7"] .nodePlanet{
+    width: 47px !important;
+    height: 47px !important;
+  }
+
+  #stageMap .stageNode .nodeNo{ font-size: 15px !important; }
+  #stageMap .stageNode[data-stage="10"] .nodeNo,
+  #stageMap .stageNode[data-stage="11"] .nodeNo,
+  #stageMap .stageNode[data-stage="12"] .nodeNo{ font-size: 12px !important; }
+
+  #stageMap .stageNode .nodeLabel{
+    top: 55px !important;
+    max-width: 56px !important;
+    font-size: 4.6px !important;
+    letter-spacing: .12px !important;
+  }
+  #stageMap .nodeStarRow{
+    top: 65px !important;
+    max-width: 52px !important;
+    font-size: 4.8px !important;
+  }
+
+  #stageMap .stageNode[data-stage="1"]{ left:10% !important; top:64% !important; }
+  #stageMap .stageNode[data-stage="2"]{ left:27.5% !important; top:48% !important; }
+  #stageMap .stageNode[data-stage="3"]{ left:15.5% !important; top:30% !important; }
+  #stageMap .stageNode[data-stage="4"]{ left:37.5% !important; top:20.5% !important; }
+  #stageMap .stageNode[data-stage="5"]{ left:53% !important; top:35.5% !important; }
+  #stageMap .stageNode[data-stage="6"]{ left:41% !important; top:58% !important; }
+  #stageMap .stageNode[data-stage="7"]{ left:56.5% !important; top:76% !important; }
+  #stageMap .stageNode[data-stage="8"]{ left:72% !important; top:58.5% !important; }
+  #stageMap .stageNode[data-stage="9"]{ left:83% !important; top:43% !important; }
+  #stageMap .stageNode[data-stage="10"]{ left:75% !important; top:22% !important; }
+  #stageMap .stageNode[data-stage="11"]{ left:92% !important; top:19% !important; }
+  #stageMap .stageNode[data-stage="12"]{ left:92% !important; top:60.5% !important; }
+}
+
 </style>
 </head>
 <body>
