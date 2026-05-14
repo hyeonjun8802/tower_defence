@@ -9890,6 +9890,107 @@ h1{
   #stageMap .stageNode[data-stage="12"]{ left:92% !important; top:60.5% !important; }
 }
 
+
+
+/* =========================================================
+   V26 STAGE MAP HIGH-RES BACKGROUNDS FOR STAGES 8-12
+   - Add dedicated backdrop layers for late sanctuaries instead of reusing early-stage layers.
+   - Use high-resolution feather backgrounds with sharper, more consistent rendering.
+   ========================================================= */
+.stageBg.gravity,
+.stageBg.thunder,
+.stageBg.time,
+.stageBg.silent,
+.stageBg.rift{
+  opacity:0;
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  filter:brightness(.82) saturate(.98) contrast(1.04);
+}
+
+#stageMap .stageBg.gravity{
+  left:16% !important;
+  bottom:-8% !important;
+  width:66% !important;
+  height:68% !important;
+  background-image:url("biome_machine_feather.webp") !important;
+  filter:hue-rotate(20deg) saturate(.82) brightness(.72) contrast(1.06) !important;
+  transform:scale(.90) rotate(-1.5deg);
+}
+#stageMap .stageBg.thunder{
+  right:-10% !important;
+  top:-4% !important;
+  width:68% !important;
+  height:66% !important;
+  background-image:url("biome_machine_feather.webp") !important;
+  filter:hue-rotate(-24deg) saturate(1.18) brightness(.78) contrast(1.08) !important;
+  transform:scale(.90) rotate(2deg);
+}
+#stageMap .stageBg.time{
+  left:20% !important;
+  top:-8% !important;
+  width:64% !important;
+  height:64% !important;
+  background-image:url("biome_crystal_feather.webp") !important;
+  filter:hue-rotate(18deg) saturate(1.06) brightness(.78) contrast(1.06) !important;
+  transform:scale(.90) rotate(-2deg);
+}
+#stageMap .stageBg.silent{
+  right:-6% !important;
+  top:-8% !important;
+  width:60% !important;
+  height:60% !important;
+  background-image:url("biome_smog_feather.webp") !important;
+  filter:hue-rotate(-8deg) saturate(.72) brightness(.74) contrast(1.06) !important;
+  transform:scale(.90) rotate(1.5deg);
+}
+#stageMap .stageBg.rift{
+  right:-8% !important;
+  bottom:-10% !important;
+  width:72% !important;
+  height:72% !important;
+  background-image:url("biome_crystal_feather.webp") !important;
+  filter:hue-rotate(128deg) saturate(1.22) brightness(.68) contrast(1.10) !important;
+  transform:scale(.90) rotate(-1deg);
+}
+
+/* Disable the earlier reused backdrop mapping for 8-12 so dedicated layers can take over. */
+#stageMap[data-selected="8"] .stageBg.cosmic,
+#stageMap[data-selected="9"] .stageBg.machine,
+#stageMap[data-selected="10"] .stageBg.crystal,
+#stageMap[data-selected="11"] .stageBg.smog,
+#stageMap[data-selected="12"] .stageBg.machine{
+  opacity:0 !important;
+  transform:scale(.88) !important;
+}
+
+#stageMap[data-selected="8"] .stageBg.gravity,
+#stageMap[data-selected="9"] .stageBg.thunder,
+#stageMap[data-selected="10"] .stageBg.time,
+#stageMap[data-selected="11"] .stageBg.silent,
+#stageMap[data-selected="12"] .stageBg.rift{
+  opacity:.74 !important;
+  transform:scale(1.02) rotate(0deg) !important;
+}
+
+@media (max-width: 900px), (max-aspect-ratio: 0.78) {
+  #stageMap .stageBg.gravity,
+  #stageMap .stageBg.thunder,
+  #stageMap .stageBg.time,
+  #stageMap .stageBg.silent,
+  #stageMap .stageBg.rift{
+    width:74% !important;
+    height:66% !important;
+    background-size:cover !important;
+  }
+  #stageMap .stageBg.gravity{ left:10% !important; bottom:-4% !important; }
+  #stageMap .stageBg.thunder{ right:-12% !important; top:2% !important; }
+  #stageMap .stageBg.time{ left:14% !important; top:-2% !important; }
+  #stageMap .stageBg.silent{ right:-8% !important; top:-1% !important; }
+  #stageMap .stageBg.rift{ right:-10% !important; bottom:-4% !important; }
+}
+
 </style>
 </head>
 <body>
@@ -10001,6 +10102,11 @@ h1{
   <div class="stageBg smog"></div>
   <div class="stageBg crystal"></div>
   <div class="stageBg machine"></div>
+  <div class="stageBg gravity"></div>
+  <div class="stageBg thunder"></div>
+  <div class="stageBg time"></div>
+  <div class="stageBg silent"></div>
+  <div class="stageBg rift"></div>
   <div class="stageFrame"></div>
   <button id="stageMapBack" class="stageBackBtn">← MAIN</button>
   <div class="stageTopTitle">GALAXY MAP</div>
