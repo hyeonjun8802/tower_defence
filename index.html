@@ -22,7 +22,7 @@ html,body{
 }
 #bg{
   position:fixed;inset:0;z-index:-4;
-  background:url("bg_cosmic.png") center/cover no-repeat;
+  background:url("bg_cosmic.webp") center/cover no-repeat;
   filter:brightness(.38) saturate(1.25);
 }
 #nebula{
@@ -409,22 +409,22 @@ h1{
   transition:opacity .52s ease, filter .52s ease, transform .8s ease;
 }
 .stageBg.cosmic{
-  left:-20%;bottom:-20%;background-image:url("bg_cosmic.png");
+  left:-20%;bottom:-20%;background-image:url("bg_cosmic.webp");
   -webkit-mask-image:radial-gradient(circle at 74% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
   mask-image:radial-gradient(circle at 74% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
 }
 .stageBg.frost{
-  left:-20%;top:-20%;background-image:url("bg_frost.png");
+  left:-20%;top:-20%;background-image:url("bg_frost.webp");
   -webkit-mask-image:radial-gradient(circle at 74% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
   mask-image:radial-gradient(circle at 74% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
 }
 .stageBg.lava{
-  right:-20%;bottom:-20%;background-image:url("bg_lava.png");
+  right:-20%;bottom:-20%;background-image:url("bg_lava.webp");
   -webkit-mask-image:radial-gradient(circle at 26% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
   mask-image:radial-gradient(circle at 26% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
 }
 .stageBg.jungle{
-  right:-20%;top:-20%;background-image:url("bg_jungle.png");
+  right:-20%;top:-20%;background-image:url("bg_jungle.webp");
   -webkit-mask-image:radial-gradient(circle at 26% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
   mask-image:radial-gradient(circle at 26% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
 }
@@ -4277,19 +4277,19 @@ h1{
 
 /* 원본 배경 이미지 기반으로 자연스럽게 복원 */
 #stageMap .stageBg.cosmic {
-  background-image: url("bg_cosmic.png") !important;
+  background-image: url("bg_cosmic.webp") !important;
 }
 
 #stageMap .stageBg.frost {
-  background-image: url("bg_frost.png") !important;
+  background-image: url("bg_frost.webp") !important;
 }
 
 #stageMap .stageBg.lava {
-  background-image: url("bg_lava.png") !important;
+  background-image: url("bg_lava.webp") !important;
 }
 
 #stageMap .stageBg.jungle {
-  background-image: url("bg_jungle.png") !important;
+  background-image: url("bg_jungle.webp") !important;
 }
 
 /* 선택된 성역만 전체 화면 메인 배경으로 강조 */
@@ -4412,10 +4412,10 @@ h1{
   pointer-events: none !important;
 }
 
-#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.png") !important; }
-#stageMap .stageBg.frost { background-image: url("bg_frost.png") !important; }
-#stageMap .stageBg.lava { background-image: url("bg_lava.png") !important; }
-#stageMap .stageBg.jungle { background-image: url("bg_jungle.png") !important; }
+#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.webp") !important; }
+#stageMap .stageBg.frost { background-image: url("bg_frost.webp") !important; }
+#stageMap .stageBg.lava { background-image: url("bg_lava.webp") !important; }
+#stageMap .stageBg.jungle { background-image: url("bg_jungle.webp") !important; }
 
 #stageMap[data-selected="1"] .stageBg.cosmic,
 #stageMap[data-selected="2"] .stageBg.frost,
@@ -4956,10 +4956,10 @@ h1{
    - CSS는 더 이상 과도한 right position을 쓰지 않고 center 기준으로 안정화.
    ========================================================= */
 
-#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.png") !important; }
-#stageMap .stageBg.frost  { background-image: url("bg_frost.png") !important; }
-#stageMap .stageBg.lava   { background-image: url("bg_lava.png") !important; }
-#stageMap .stageBg.jungle { background-image: url("bg_jungle.png") !important; }
+#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.webp") !important; }
+#stageMap .stageBg.frost  { background-image: url("bg_frost.webp") !important; }
+#stageMap .stageBg.lava   { background-image: url("bg_lava.webp") !important; }
+#stageMap .stageBg.jungle { background-image: url("bg_jungle.webp") !important; }
 
 #stageMap .stageBg.lava,
 #stageMap[data-selected="3"] .stageBg.lava {
@@ -5203,10 +5203,10 @@ h1{
    - artificial wide canvas 제거 후 원본 Lava 16:9 이미지를 cover로 사용.
    ========================================================= */
 
-#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.png") !important; }
-#stageMap .stageBg.frost  { background-image: url("bg_frost.png") !important; }
-#stageMap .stageBg.lava   { background-image: url("bg_lava.png") !important; }
-#stageMap .stageBg.jungle { background-image: url("bg_jungle.png") !important; }
+#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.webp") !important; }
+#stageMap .stageBg.frost  { background-image: url("bg_frost.webp") !important; }
+#stageMap .stageBg.lava   { background-image: url("bg_lava.webp") !important; }
+#stageMap .stageBg.jungle { background-image: url("bg_jungle.webp") !important; }
 
 #stageMap .stageBg {
   position: absolute !important;
@@ -5297,10 +5297,10 @@ h1{
    - All backgrounds use direct 2560x1440 source images.
    ========================================================= */
 
-#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.png") !important; }
-#stageMap .stageBg.frost  { background-image: url("bg_frost.png") !important; }
-#stageMap .stageBg.lava   { background-image: url("bg_lava.png") !important; }
-#stageMap .stageBg.jungle { background-image: url("bg_jungle.png") !important; }
+#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.webp") !important; }
+#stageMap .stageBg.frost  { background-image: url("bg_frost.webp") !important; }
+#stageMap .stageBg.lava   { background-image: url("bg_lava.webp") !important; }
+#stageMap .stageBg.jungle { background-image: url("bg_jungle.webp") !important; }
 
 #stageMap .stageBg {
   position: absolute !important;
@@ -6529,7 +6529,7 @@ h1{
 
 /* Stage 5 Smog Wasteland patch */
 .stageBg.smog {
-  background-image:url("biome_smog_feather.png");
+  background-image:url("biome_smog_feather.webp");
   filter:hue-rotate(8deg) saturate(1.02) brightness(.82);
 }
 #stageMap .stageBg.smog {
@@ -6537,7 +6537,7 @@ h1{
   bottom:-18% !important;
   width:56% !important;
   height:55% !important;
-  background-image:url("biome_smog_feather.png") !important;
+  background-image:url("biome_smog_feather.webp") !important;
   background-size:cover !important;
   background-position:center !important;
   opacity:0;
@@ -6579,11 +6579,11 @@ h1{
 
 /* Stage 6 Crystal Nebula + Stage 7 Machine Core expansion */
 .stageBg.crystal {
-  background-image:url("biome_crystal_feather.png");
+  background-image:url("biome_crystal_feather.webp");
   filter:hue-rotate(-10deg) saturate(1.22) brightness(.92);
 }
 .stageBg.machine {
-  background-image:url("biome_machine_feather.png");
+  background-image:url("biome_machine_feather.webp");
   filter:saturate(1.08) brightness(.86) contrast(1.08);
 }
 #stageMap .stageBg.crystal {
@@ -6591,7 +6591,7 @@ h1{
   bottom:2% !important;
   width:52% !important;
   height:58% !important;
-  background-image:url("biome_crystal_feather.png") !important;
+  background-image:url("biome_crystal_feather.webp") !important;
   background-size:cover !important;
   background-position:center !important;
   opacity:0;
@@ -6602,7 +6602,7 @@ h1{
   bottom:0% !important;
   width:62% !important;
   height:66% !important;
-  background-image:url("biome_machine_feather.png") !important;
+  background-image:url("biome_machine_feather.webp") !important;
   background-size:cover !important;
   background-position:center !important;
   opacity:0;
@@ -6998,13 +6998,13 @@ h1{
 .stageNode:hover .nodePlanet,
 .stageNode.active .nodePlanet{ transform:scale(1.045); }
 .stageNode.locked .nodePlanet{ filter:grayscale(.16) brightness(.72) saturate(.72) drop-shadow(0 0 10px rgba(15,23,42,.8)); }
-.stageNode[data-stage="1"]{ --planetArt:url('stage_planet_cosmic.png'); }
-.stageNode[data-stage="2"]{ --planetArt:url('stage_planet_frost.png'); }
-.stageNode[data-stage="3"]{ --planetArt:url('stage_planet_lava.png'); }
-.stageNode[data-stage="4"]{ --planetArt:url('stage_planet_jungle.png'); }
-.stageNode[data-stage="5"]{ --planetArt:url('stage_planet_smog.png'); }
-.stageNode[data-stage="6"]{ --planetArt:url('stage_planet_crystal.png'); }
-.stageNode[data-stage="7"]{ --planetArt:url('stage_planet_machine.png'); }
+.stageNode[data-stage="1"]{ --planetArt:url('stage_planet_cosmic.webp'); }
+.stageNode[data-stage="2"]{ --planetArt:url('stage_planet_frost.webp'); }
+.stageNode[data-stage="3"]{ --planetArt:url('stage_planet_lava.webp'); }
+.stageNode[data-stage="4"]{ --planetArt:url('stage_planet_jungle.webp'); }
+.stageNode[data-stage="5"]{ --planetArt:url('stage_planet_smog.webp'); }
+.stageNode[data-stage="6"]{ --planetArt:url('stage_planet_crystal.webp'); }
+.stageNode[data-stage="7"]{ --planetArt:url('stage_planet_machine.webp'); }
 @media (max-width: 768px){
   .menuActionRow{ gap:10px; }
   .menuActionRow button{ min-width:220px; }
@@ -7061,10 +7061,10 @@ h1{
 #stageMap .stageArrow{display:none !important;}
 #stageMap .premiumRouteArrow{display:block !important;}
 #stageMap .stageBg.crystal{
-  background-image:url("biome_crystal_feather.png") !important;
+  background-image:url("biome_crystal_feather.webp") !important;
 }
 #stageMap .stageBg.machine{
-  background-image:url("biome_machine_feather.png") !important;
+  background-image:url("biome_machine_feather.webp") !important;
 }
 @media (max-width: 768px){
   #stageMap .stageMapInner{
@@ -7127,8 +7127,8 @@ h1{
 #stageMap[data-selected="7"] .stageBg.machine{
   opacity:.33 !important;
 }
-#stageMap .stageBg.crystal{background-image:url("biome_crystal_feather.png") !important;}
-#stageMap .stageBg.machine{background-image:url("biome_machine_feather.png") !important;}
+#stageMap .stageBg.crystal{background-image:url("biome_crystal_feather.webp") !important;}
+#stageMap .stageBg.machine{background-image:url("biome_machine_feather.webp") !important;}
 #stageMap .stageNode{
   width:138px !important;
   height:138px !important;
@@ -7897,6 +7897,180 @@ h1{
   #side.battleMinimal .globalEffectLine{font-size:8.5px!important;margin-top:4px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 }
 
+
+/* RELEASE UX: first-run tutorial and run log helpers */
+.tutorialOverlay,
+.releaseModalOverlay{position:fixed;inset:0;z-index:9997;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 20%,rgba(56,189,248,.16),rgba(2,6,23,.88) 54%,rgba(0,0,0,.94));backdrop-filter:blur(12px);padding:20px}
+.tutorialCard,
+.releaseModalCard{width:min(620px,94vw);border:1px solid rgba(103,232,249,.24);background:linear-gradient(145deg,rgba(15,23,42,.96),rgba(2,6,23,.98));border-radius:26px;padding:24px;box-shadow:0 30px 90px rgba(0,0,0,.52), inset 0 0 28px rgba(103,232,249,.06)}
+.tutorialKicker{font-family:'Orbitron';letter-spacing:.16em;font-size:10px;color:#67e8f9;margin-bottom:8px}
+.tutorialCard h2,.releaseModalCard h2{margin:0 0 10px;color:#fff;font-size:25px;line-height:1.2}
+.tutorialCard p,.releaseModalCard p{margin:0;color:#cbd5e1;line-height:1.65;font-size:14px}
+.tutorialSteps{display:grid;gap:10px;margin:18px 0}
+.tutorialStep{display:flex;gap:10px;align-items:flex-start;color:#dbeafe;font-size:14px;line-height:1.5}
+.tutorialStep b{font-family:'Orbitron';font-size:12px;color:#fde68a;min-width:30px}
+.tutorialActions,.releaseModalActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;justify-content:flex-end}
+.releaseTinyLink{border:0;background:transparent;color:#93c5fd;font-size:12px;text-decoration:underline;cursor:pointer;padding:8px 4px}
+#runLogBtn{white-space:nowrap}
+@media(max-width:720px){.tutorialCard,.releaseModalCard{padding:19px;border-radius:22px}.tutorialCard h2,.releaseModalCard h2{font-size:20px}.tutorialActions,.releaseModalActions{justify-content:stretch}.tutorialActions button,.releaseModalActions button{flex:1}}
+
+
+
+/* =========================================================
+   MOBILE PERF + COMPACT KOREAN NOTICE PATCH
+   ========================================================= */
+.toast{
+  top:10px!important;
+  min-width:0!important;
+  max-width:min(430px,72vw)!important;
+  padding:7px 12px!important;
+  font-size:10.5px!important;
+  line-height:1.25!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  letter-spacing:.01em!important;
+  z-index:12!important;
+}
+#toastLayer .toast:not(:last-child){display:none!important}
+.stageFxLabel{
+  top:12px!important;
+  max-width:min(460px,64%)!important;
+  padding:6px 12px!important;
+  font-size:10px!important;
+  line-height:1.25!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  letter-spacing:.02em!important;
+}
+#side.battleMinimal .battleStageLine{
+  align-items:center!important;
+  gap:6px!important;
+  min-width:0!important;
+}
+#side.battleMinimal .battleStageLine .title{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  max-width:56%!important;
+}
+#side.battleMinimal .battleStageLine .value,
+#stageLabel{
+  flex:0 0 auto!important;
+  min-width:max-content!important;
+  white-space:nowrap!important;
+  word-break:keep-all!important;
+  overflow-wrap:normal!important;
+  hyphens:none!important;
+  font-size:16px!important;
+}
+#side.battleMinimal .battleStageLine .sub{
+  flex:0 0 auto!important;
+  max-width:34%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#side.battleMinimal .globalEffectLine b::after{content:' ';}
+@media(max-width:768px){
+  .toast{
+    top:7px!important;
+    max-width:70vw!important;
+    padding:6px 10px!important;
+    font-size:8.5px!important;
+  }
+  .stageFxLabel{
+    top:7px!important;
+    max-width:66vw!important;
+    padding:6px 10px!important;
+    font-size:8.2px!important;
+  }
+  #side.battleMinimal .battleStageLine{gap:4px!important;align-items:center!important;}
+  #side.battleMinimal .battleStageLine .title{font-size:7.2px!important;max-width:46%!important;}
+  #side.battleMinimal .battleStageLine .value,
+  #stageLabel{font-size:10.5px!important;letter-spacing:-.02em!important;}
+  #side.battleMinimal .battleStageLine .sub{font-size:7px!important;max-width:32%!important;}
+}
+
+
+/* =========================================================
+   v4 Mobile Touch Target / Larger Block Patch
+   - Bigger canvas grid cells for easier finger placement.
+   - Larger hangar planet cards and thumbnails on mobile.
+   - Keep desktop layout unchanged.
+   ========================================================= */
+@media (max-width: 768px){
+  #field{
+    width:min(calc(100vw - 4px), calc((100dvh - 178px - env(safe-area-inset-bottom)) * 1.09))!important;
+    max-height:calc(100dvh - 178px - env(safe-area-inset-bottom))!important;
+  }
+  #hangar{
+    left:7px!important;
+    right:7px!important;
+    bottom:7px!important;
+    gap:8px!important;
+    padding:0 1px 2px!important;
+  }
+  #hangar .planetCard{
+    flex:0 0 184px!important;
+    min-width:184px!important;
+    max-width:184px!important;
+    min-height:76px!important;
+    padding:8px 58px 8px 10px!important;
+    gap:9px!important;
+    border-radius:13px!important;
+    touch-action:manipulation!important;
+  }
+  #hangar .planetThumb,
+  #hangar .planetThumb.thumbPng,
+  #hangar .planetThumb.liveThumb.thumbPng{
+    width:48px!important;
+    height:54px!important;
+    flex:0 0 48px!important;
+    border-radius:12px!important;
+    background-position:center!important;
+    background-size:cover!important;
+  }
+  #hangar .planetCardInfo{
+    padding-right:0!important;
+  }
+  #hangar .planetCardName{
+    max-width:86px!important;
+    font-size:10px!important;
+    line-height:1.08!important;
+    margin-bottom:0!important;
+  }
+  #hangar .planetCardCost{
+    top:9px!important;
+    right:10px!important;
+    font-size:7.8px!important;
+    white-space:nowrap!important;
+  }
+  #hangar .planetCardLevel,
+  #hangar .planetLevelBadge,
+  #hangar .levelPill{
+    right:10px!important;
+    bottom:10px!important;
+    min-width:46px!important;
+    height:18px!important;
+    font-size:6.8px!important;
+  }
+}
+@media (max-width: 390px){
+  #hangar .planetCard{
+    flex-basis:176px!important;
+    min-width:176px!important;
+    max-width:176px!important;
+    min-height:74px!important;
+  }
+  #hangar .planetThumb,
+  #hangar .planetThumb.thumbPng,
+  #hangar .planetThumb.liveThumb.thumbPng{
+    width:46px!important;
+    height:52px!important;
+    flex-basis:46px!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -7928,7 +8102,7 @@ h1{
           <div class="stat"><span class="label">EXP</span><b class="value" id="exp" style="color:#a78bfa">0/50</b><div class="miniBar"><span id="expBar"></span></div></div>
           <div class="stat"><span class="label">LV</span><b class="value" id="level" style="color:#67e8f9">1</b></div>
         </div>
-        <div id="globalEffectLine" class="globalEffectLine"><b>GLOBAL</b>전역 효과 없음</div>
+        <div id="globalEffectLine" class="globalEffectLine"><b>전역</b>효과 없음</div>
       </section>
 
       <section class="battleActions">
@@ -7974,7 +8148,7 @@ h1{
     <p style="max-width:780px;margin:0 auto;color:#cbd5e1;line-height:1.68;font-size:15px">
       붕괴된 은하의 마지막 코어를 지키기 위해 잠든 행성 병기를 깨우고 오염된 성역을 하나씩 정화하세요.
       일반 스킬은 성역 지도에서 스테이지 진행에 따라 하나씩 열리고, 전투 중에는 배치·병합·생존 판단에만 집중합니다.
-      행성별 고유 스킬은 타워 레벨에 따라 자동 해금됩니다.
+      첫 판 튜토리얼, 로컬 전투 로그, 3성 숙련도 루프로 반복 플레이 흐름을 정리했습니다.
     </p>
     <div class="menuGrid">
       <div class="info">
@@ -7999,6 +8173,7 @@ h1{
     <div class="menuActionRow">
       <button id="startBtn" style="font-size:18px;padding:15px 54px;border-radius:999px">START DEFENSE</button>
       <button id="testModeBtn" class="secondaryAction" style="font-size:18px;padding:15px 40px;border-radius:999px">TEST MODE</button>
+      <button id="runLogBtn" class="secondaryAction" style="font-size:15px;padding:15px 30px;border-radius:999px">RUN LOG CSV</button>
     </div>
   </div>
 </div>
@@ -8245,13 +8420,13 @@ function starLoop(now){
 const rand = (a,b)=>a+Math.random()*(b-a);
 
 const THEMES = [
-  {name:'COSMIC VOID', ko:'공허 성역', bg:'bg_cosmic.png', color:'#38bdf8', starSpeed:1.0},
-  {name:'FROST EXPANSE', ko:'빙결 외곽', bg:'bg_frost.png', color:'#67e8f9', starSpeed:.82},
-  {name:'LAVA NEBULA', ko:'용암 성운', bg:'bg_lava.png', color:'#fb923c', starSpeed:1.22},
-  {name:'JUNGLE CORE', ko:'생체 정글', bg:'bg_jungle.png', color:'#22c55e', starSpeed:.95},
-  {name:'SMOG WASTELAND', ko:'매연 폐역', bg:'bg_smog.png', color:'#9cab62', starSpeed:.72},
-  {name:'CRYSTAL NEBULA', ko:'수정 성운', bg:'bg_crystal.png', color:'#c084fc', starSpeed:.88},
-  {name:'MACHINE CORE', ko:'기계 핵성', bg:'bg_machine.png', color:'#60a5fa', starSpeed:.78}
+  {name:'COSMIC VOID', ko:'공허 성역', bg:'bg_cosmic.webp', color:'#38bdf8', starSpeed:1.0},
+  {name:'FROST EXPANSE', ko:'빙결 외곽', bg:'bg_frost.webp', color:'#67e8f9', starSpeed:.82},
+  {name:'LAVA NEBULA', ko:'용암 성운', bg:'bg_lava.webp', color:'#fb923c', starSpeed:1.22},
+  {name:'JUNGLE CORE', ko:'생체 정글', bg:'bg_jungle.webp', color:'#22c55e', starSpeed:.95},
+  {name:'SMOG WASTELAND', ko:'매연 폐역', bg:'bg_smog.webp', color:'#9cab62', starSpeed:.72},
+  {name:'CRYSTAL NEBULA', ko:'수정 성운', bg:'bg_crystal.webp', color:'#c084fc', starSpeed:.88},
+  {name:'MACHINE CORE', ko:'기계 핵성', bg:'bg_machine.webp', color:'#60a5fa', starSpeed:.78}
 ];
 
 
@@ -8283,13 +8458,13 @@ const WORLD_SCENARIO = {
 };
 
 const STAGE_AUDIO_CUES = {
-  0:{file:'bgm_stage_01_cosmic_void.wav', mood:'낮은 신스와 별빛 패드, 입문 방어 긴장감'},
-  1:{file:'bgm_stage_02_frost_expanse.wav', mood:'차가운 패드와 얇은 리듬, 빙결 외곽의 정적'},
-  2:{file:'bgm_stage_03_lava_nebula.wav', mood:'빠른 드럼과 저역 펄스, 용암 성운의 공격성'},
-  3:{file:'bgm_stage_04_jungle_core.wav', mood:'불규칙한 퍼커션과 생체 드론, 살아있는 성역'},
-  4:{file:'bgm_stage_05_smog_wasteland.wav', mood:'탁한 노이즈와 무거운 베이스, 매연 폐역의 압박'},
-  5:{file:'bgm_stage_06_crystal_nebula.wav', mood:'반짝이는 아르페지오와 긴 잔향, 프리즘 공명'},
-  6:{file:'bgm_stage_07_machine_core.wav', mood:'기계적 펄스와 경고음, 최종 방어망'}
+  0:{file:'bgm_stage_01_cosmic_void.ogg', mood:'낮은 신스와 별빛 패드, 입문 방어 긴장감'},
+  1:{file:'bgm_stage_02_frost_expanse.ogg', mood:'차가운 패드와 얇은 리듬, 빙결 외곽의 정적'},
+  2:{file:'bgm_stage_03_lava_nebula.ogg', mood:'빠른 드럼과 저역 펄스, 용암 성운의 공격성'},
+  3:{file:'bgm_stage_04_jungle_core.ogg', mood:'불규칙한 퍼커션과 생체 드론, 살아있는 성역'},
+  4:{file:'bgm_stage_05_smog_wasteland.ogg', mood:'탁한 노이즈와 무거운 베이스, 매연 폐역의 압박'},
+  5:{file:'bgm_stage_06_crystal_nebula.ogg', mood:'반짝이는 아르페지오와 긴 잔향, 프리즘 공명'},
+  6:{file:'bgm_stage_07_machine_core.ogg', mood:'기계적 펄스와 경고음, 최종 방어망'}
 };
 
 const STORY_EVENT_TEXT = {
@@ -8303,32 +8478,32 @@ const STORY_EVENT_TEXT = {
 
 const STAGE_BOSS_DEFS = {
   1: {
-    mid: {tier:'MID BOSS', name:'ASTRAL WARDEN', ko:'성운 감시자', title:'위상 수호체', color:'#7dd3fc', aura:'#38bdf8', hpMul:1.55, speedMul:.98, size:34, rewardMul:2.2, expMul:2.0, armor:.05, coreDamage:1, ability:'PHASE REGEN', desc:'짧은 주기로 위상 재생을 사용해 체력을 회복하고 순간 가속합니다.', effect:'phaseRegen', interval:165},
-    final: {tier:'FINAL BOSS', name:'OBLIVION HEART', ko:'공허 심핵', title:'최종 균열 군주', color:'#a78bfa', aura:'#c084fc', hpMul:2.45, speedMul:.93, size:42, rewardMul:3.8, expMul:3.0, armor:.10, coreDamage:3, ability:'SINGULARITY SURGE', desc:'공허 파동으로 자신을 강화하며 주기적으로 체력을 대량 회복합니다.', effect:'voidSurge', interval:145}
+    mid: {tier:'MID BOSS', name:'ASTRAL WARDEN', ko:'성운 감시자', title:'위상 수호체', color:'#7dd3fc', aura:'#38bdf8', hpMul:1.55, speedMul:.98, size:34, rewardMul:2.2, expMul:2.0, armor:.05, coreDamage:1, ability:'위상 재생', desc:'짧은 주기로 위상 재생을 사용해 체력을 회복하고 순간 가속합니다.', effect:'phaseRegen', interval:165},
+    final: {tier:'FINAL BOSS', name:'OBLIVION HEART', ko:'공허 심핵', title:'최종 균열 군주', color:'#a78bfa', aura:'#c084fc', hpMul:2.45, speedMul:.93, size:42, rewardMul:3.8, expMul:3.0, armor:.10, coreDamage:3, ability:'특이점 폭주', desc:'공허 파동으로 자신을 강화하며 주기적으로 체력을 대량 회복합니다.', effect:'voidSurge', interval:145}
   },
   2: {
-    mid: {tier:'MID BOSS', name:'GLACIER HOWLER', ko:'빙하 포효체', title:'극저온 추적자', color:'#bae6fd', aura:'#67e8f9', hpMul:1.65, speedMul:.94, size:35, rewardMul:2.3, expMul:2.0, armor:.06, coreDamage:1, ability:'FROST LOCK', desc:'가장 강한 아군 행성 하나를 잠시 얼려 공격을 멈추게 합니다.', effect:'frostLock', interval:160},
-    final: {tier:'FINAL BOSS', name:'ABSOLUTE ZERO', ko:'절대영도 핵', title:'빙결 군주', color:'#e0f2fe', aura:'#93c5fd', hpMul:2.5, speedMul:.90, size:42, rewardMul:4.0, expMul:3.0, armor:.12, coreDamage:3, ability:'BLIZZARD PRISON', desc:'복수의 행성을 동시에 얼리고 냉기 재생으로 피해를 줄입니다.', effect:'blizzardPrison', interval:148}
+    mid: {tier:'MID BOSS', name:'GLACIER HOWLER', ko:'빙하 포효체', title:'극저온 추적자', color:'#bae6fd', aura:'#67e8f9', hpMul:1.65, speedMul:.94, size:35, rewardMul:2.3, expMul:2.0, armor:.06, coreDamage:1, ability:'빙결 구속', desc:'가장 강한 아군 행성 하나를 잠시 얼려 공격을 멈추게 합니다.', effect:'frostLock', interval:160},
+    final: {tier:'FINAL BOSS', name:'ABSOLUTE ZERO', ko:'절대영도 핵', title:'빙결 군주', color:'#e0f2fe', aura:'#93c5fd', hpMul:2.5, speedMul:.90, size:42, rewardMul:4.0, expMul:3.0, armor:.12, coreDamage:3, ability:'눈보라 감옥', desc:'복수의 행성을 동시에 얼리고 냉기 재생으로 피해를 줄입니다.', effect:'blizzardPrison', interval:148}
   },
   3: {
-    mid: {tier:'MID BOSS', name:'EMBER TITAN', ko:'화염 거신', title:'융해 선봉장', color:'#fdba74', aura:'#fb923c', hpMul:1.70, speedMul:.96, size:36, rewardMul:2.35, expMul:2.1, armor:.08, coreDamage:1, ability:'MAGMA SHELL', desc:'용암 갑각을 덧입어 방어력을 끌어올리고 짧게 돌진합니다.', effect:'magmaShell', interval:160},
-    final: {tier:'FINAL BOSS', name:'SOL INFERNO', ko:'태양 화옥', title:'초열 군주', color:'#fb923c', aura:'#f97316', hpMul:2.60, speedMul:.94, size:44, rewardMul:4.1, expMul:3.15, armor:.14, coreDamage:4, ability:'CATACLYSM BURST', desc:'과열 상태에서 폭발적으로 가속하며 높은 장갑을 유지합니다.', effect:'cataclysmBurst', interval:144}
+    mid: {tier:'MID BOSS', name:'EMBER TITAN', ko:'화염 거신', title:'융해 선봉장', color:'#fdba74', aura:'#fb923c', hpMul:1.70, speedMul:.96, size:36, rewardMul:2.35, expMul:2.1, armor:.08, coreDamage:1, ability:'용암 장갑', desc:'용암 갑각을 덧입어 방어력을 끌어올리고 짧게 돌진합니다.', effect:'magmaShell', interval:160},
+    final: {tier:'FINAL BOSS', name:'SOL INFERNO', ko:'태양 화옥', title:'초열 군주', color:'#fb923c', aura:'#f97316', hpMul:2.60, speedMul:.94, size:44, rewardMul:4.1, expMul:3.15, armor:.14, coreDamage:4, ability:'대폭발', desc:'과열 상태에서 폭발적으로 가속하며 높은 장갑을 유지합니다.', effect:'cataclysmBurst', interval:144}
   },
   4: {
-    mid: {tier:'MID BOSS', name:'SPORE TYRANT', ko:'포자 군체', title:'생체 포식자', color:'#86efac', aura:'#4ade80', hpMul:1.68, speedMul:.95, size:36, rewardMul:2.4, expMul:2.1, armor:.08, coreDamage:1, ability:'SPORE BLOOM', desc:'주변 적을 치유하고 스스로 회복하는 생체 포자 구름을 분출합니다.', effect:'sporeBloom', interval:162},
-    final: {tier:'FINAL BOSS', name:'WORLDROOT PRIME', ko:'월드루트 프라임', title:'생태 핵군주', color:'#4ade80', aura:'#22c55e', hpMul:2.65, speedMul:.92, size:44, rewardMul:4.2, expMul:3.2, armor:.14, coreDamage:4, ability:'OVERGROWTH', desc:'주변 군체를 급속 성장시키며 자신의 체력도 지속적으로 끌어올립니다.', effect:'overgrowth', interval:142}
+    mid: {tier:'MID BOSS', name:'SPORE TYRANT', ko:'포자 군체', title:'생체 포식자', color:'#86efac', aura:'#4ade80', hpMul:1.68, speedMul:.95, size:36, rewardMul:2.4, expMul:2.1, armor:.08, coreDamage:1, ability:'포자 증식', desc:'주변 적을 치유하고 스스로 회복하는 생체 포자 구름을 분출합니다.', effect:'sporeBloom', interval:162},
+    final: {tier:'FINAL BOSS', name:'WORLDROOT PRIME', ko:'월드루트 프라임', title:'생태 핵군주', color:'#4ade80', aura:'#22c55e', hpMul:2.65, speedMul:.92, size:44, rewardMul:4.2, expMul:3.2, armor:.14, coreDamage:4, ability:'과성장', desc:'주변 군체를 급속 성장시키며 자신의 체력도 지속적으로 끌어올립니다.', effect:'overgrowth', interval:142}
   },
   5: {
-    mid: {tier:'MID BOSS', name:'CHIMNEY MAW', ko:'굴뚝 포식체', title:'매연 선봉장', color:'#a3a86a', aura:'#9cab62', hpMul:1.82, speedMul:.97, size:37, rewardMul:2.55, expMul:2.2, armor:.10, coreDamage:2, ability:'SOOT SCREEN', desc:'검은 매연 장막을 펼쳐 자신을 보호하고 주변 적의 이동을 돕습니다.', effect:'sootScreen', interval:156},
-    final: {tier:'FINAL BOSS', name:'SMOG OMEGA', ko:'스모그 오메가', title:'산업 폐역 군주', color:'#c9d16a', aura:'#b6c45f', hpMul:2.86, speedMul:.93, size:45, rewardMul:4.45, expMul:3.35, armor:.18, coreDamage:4, ability:'INDUSTRIAL VEIL', desc:'전장 전체에 매연을 확산시켜 방어력을 끌어올리고 지속 회복합니다.', effect:'industrialVeil', interval:138}
+    mid: {tier:'MID BOSS', name:'CHIMNEY MAW', ko:'굴뚝 포식체', title:'매연 선봉장', color:'#a3a86a', aura:'#9cab62', hpMul:1.82, speedMul:.97, size:37, rewardMul:2.55, expMul:2.2, armor:.10, coreDamage:2, ability:'매연 차폐', desc:'검은 매연 장막을 펼쳐 자신을 보호하고 주변 적의 이동을 돕습니다.', effect:'sootScreen', interval:156},
+    final: {tier:'FINAL BOSS', name:'SMOG OMEGA', ko:'스모그 오메가', title:'산업 폐역 군주', color:'#c9d16a', aura:'#b6c45f', hpMul:2.86, speedMul:.93, size:45, rewardMul:4.45, expMul:3.35, armor:.18, coreDamage:4, ability:'산업 장막', desc:'전장 전체에 매연을 확산시켜 방어력을 끌어올리고 지속 회복합니다.', effect:'industrialVeil', interval:138}
   },
   6: {
-    mid: {tier:'MID BOSS', name:'PRISM GUARDIAN', ko:'프리즘 가디언', title:'결정화된 균열 수호자', color:'#d8b4fe', aura:'#c084fc', hpMul:1.94, speedMul:.94, size:38, rewardMul:2.65, expMul:2.35, armor:.12, coreDamage:2, ability:'REFRACTION VEIL', desc:'프리즘 장막으로 약한 공격을 흡수하고 자신의 장갑을 일시 강화합니다.', effect:'refractionVeil', interval:150},
-    final: {tier:'FINAL BOSS', name:'CRYSTAL SOVEREIGN', ko:'수정 군주', title:'굴절된 균열의 심장', color:'#c4b5fd', aura:'#a78bfa', hpMul:3.00, speedMul:.91, size:46, rewardMul:4.6, expMul:3.5, armor:.20, coreDamage:4, ability:'CRYSTAL OVERLOAD', desc:'결정 과부하로 주변 적에게 보호막성 장갑을 부여하고 자신을 재결정화합니다.', effect:'crystalOverload', interval:136}
+    mid: {tier:'MID BOSS', name:'PRISM GUARDIAN', ko:'프리즘 가디언', title:'결정화된 균열 수호자', color:'#d8b4fe', aura:'#c084fc', hpMul:1.94, speedMul:.94, size:38, rewardMul:2.65, expMul:2.35, armor:.12, coreDamage:2, ability:'굴절 장막', desc:'프리즘 장막으로 약한 공격을 흡수하고 자신의 장갑을 일시 강화합니다.', effect:'refractionVeil', interval:150},
+    final: {tier:'FINAL BOSS', name:'CRYSTAL SOVEREIGN', ko:'수정 군주', title:'굴절된 균열의 심장', color:'#c4b5fd', aura:'#a78bfa', hpMul:3.00, speedMul:.91, size:46, rewardMul:4.6, expMul:3.5, armor:.20, coreDamage:4, ability:'수정 과부하', desc:'결정 과부하로 주변 적에게 보호막성 장갑을 부여하고 자신을 재결정화합니다.', effect:'crystalOverload', interval:136}
   },
   7: {
-    mid: {tier:'MID BOSS', name:'REPAIR DRONE HIVE', ko:'수리 드론 군집', title:'폭주 보조 시스템', color:'#93c5fd', aura:'#60a5fa', hpMul:2.02, speedMul:.95, size:38, rewardMul:2.75, expMul:2.45, armor:.16, coreDamage:2, ability:'FIELD REPAIR', desc:'주변 기계 유닛을 수리하고 자신의 장갑을 재가동합니다.', effect:'fieldRepair', interval:148},
-    final: {tier:'FINAL BOSS', name:'AUTOMATON CORE', ko:'오토마톤 코어', title:'폭주한 고대 방어망', color:'#bfdbfe', aura:'#ef4444', hpMul:3.16, speedMul:.90, size:48, rewardMul:4.8, expMul:3.7, armor:.24, coreDamage:5, ability:'CORE REBOOT', desc:'코어 실드를 재부팅하고 수리 드론을 호출하며 마지막 구간에서 장갑을 전개합니다.', effect:'coreReboot', interval:132}
+    mid: {tier:'MID BOSS', name:'REPAIR DRONE HIVE', ko:'수리 드론 군집', title:'폭주 보조 시스템', color:'#93c5fd', aura:'#60a5fa', hpMul:2.02, speedMul:.95, size:38, rewardMul:2.75, expMul:2.45, armor:.16, coreDamage:2, ability:'전장 수리', desc:'주변 기계 유닛을 수리하고 자신의 장갑을 재가동합니다.', effect:'fieldRepair', interval:148},
+    final: {tier:'FINAL BOSS', name:'AUTOMATON CORE', ko:'오토마톤 코어', title:'폭주한 고대 방어망', color:'#bfdbfe', aura:'#ef4444', hpMul:3.16, speedMul:.90, size:48, rewardMul:4.8, expMul:3.7, armor:.24, coreDamage:5, ability:'코어 재부팅', desc:'코어 실드를 재부팅하고 수리 드론을 호출하며 마지막 구간에서 장갑을 전개합니다.', effect:'coreReboot', interval:132}
   }
 };
 
@@ -8614,7 +8789,7 @@ function markOfflineStory(stageNo, phase){
 function recordOfflineWaveProgress(){
   if(!S || !META) return;
   const stageNo = String(S.stageNo || StageMapState.current || 1);
-  META.bestWave[stageNo] = Math.max(Number(META.bestWave[stageNo] || 0), Number(S.wave || 1));
+  META.bestWave[stageNo] = Math.max(Number(META.bestWave[stageNo] || 0), Number(S.ogge || 1));
   saveOfflineMeta();
   renderOfflineMetaPanel();
 }
@@ -8622,7 +8797,7 @@ function recordOfflineRunEnd(cleared=false, stageNoOverride=null){
   if(!S || !META || S.runEnded) return;
   S.runEnded = true;
   const stageNo = String(stageNoOverride || S.stageNo || StageMapState.current || 1);
-  META.bestWave[stageNo] = Math.max(Number(META.bestWave[stageNo] || 0), Number(S.wave || 1));
+  META.bestWave[stageNo] = Math.max(Number(META.bestWave[stageNo] || 0), Number(S.ogge || 1));
   if(cleared){
     META.totalClears += 1;
     META.clears[stageNo] = Number(META.clears[stageNo] || 0) + 1;
@@ -8633,7 +8808,7 @@ function recordOfflineRunEnd(cleared=false, stageNoOverride=null){
     unlockStageTower(stageNo);
   }else{
     META.totalDefeats += 1;
-    const consolation = Math.max(2, Math.floor((Number(S.wave || 1) + Number(S.level || 1)) / 2));
+    const consolation = Math.max(2, Math.floor((Number(S.ogge || 1) + Number(S.level || 1)) / 2));
     META.shards += consolation;
     toast(`전투 기록 회수 — 성흔 조각 +${fmt2(consolation)}`);
   }
@@ -8643,8 +8818,8 @@ function recordOfflineRunEnd(cleared=false, stageNoOverride=null){
 
 function gameOverTipText(){
   const g = getGlobalUpgradeStats();
-  if(S.wave >= 5 && !g.bossDamage) return '5웨이브 이후 보스가 부담스럽다면 성역 지도에서 보스 대응 연구를 먼저 올리는 편이 좋습니다.';
-  if((S.runKills || 0) < Math.max(8, S.wave * 8)) return '초반 처치 수가 낮습니다. 공격력 연구 또는 공격속도 연구를 올린 뒤 재도전해 보세요.';
+  if(S.ogge >= 5 && !g.bossDamage) return '5웨이브 이후 보스가 부담스럽다면 성역 지도에서 보스 대응 연구를 먼저 올리는 편이 좋습니다.';
+  if((S.runKills || 0) < Math.max(8, S.ogge * 8)) return '초반 처치 수가 낮습니다. 공격력 연구 또는 공격속도 연구를 올린 뒤 재도전해 보세요.';
   if((S.leakedEnemies || 0) >= 4) return '적이 많이 새어 나갔습니다. 병목 구간에 행성을 모으고 자동 병합으로 핵심 타워 레벨을 먼저 올려보세요.';
   if(S.gold < currentSummonCost()) return '수정이 부족했던 판입니다. 전장 회수 연구가 열려 있다면 보상 증가를 올리면 운영이 안정됩니다.';
   return '실패 보상으로 얻은 성흔 조각을 성역 지도에서 일반 스킬에 투자한 뒤 같은 성역에 재도전하세요.';
@@ -8667,7 +8842,7 @@ function showGameOverOverlay(summary){
     <h2 id="gameOverTitle">${STORY_EVENT_TEXT.gameOverTitle}</h2>
     <p>${escapeHtml(def.name)} ${fmt2(stageNo)}성역에서 코어가 파괴되었습니다. ${escapeHtml(STORY_EVENT_TEXT.gameOverBody)} 획득한 성흔 조각으로 일반 스킬을 강화할 수 있습니다.</p>
     <div class="gameOverStats">
-      <div class="gameOverStat"><span>STAGE</span><b>${fmt2(stageNo)}-${fmt2(summary.wave)}</b></div>
+      <div class="gameOverStat"><span>STAGE</span><b>${fmt2(stageNo)}-${fmt2(summary.ogge)}</b></div>
       <div class="gameOverStat"><span>KILLS</span><b>${fmt2(summary.kills)}</b></div>
       <div class="gameOverStat"><span>BEST COMBO</span><b>x${fmt2(summary.bestCombo)}</b></div>
       <div class="gameOverStat"><span>SHARDS</span><b>+${fmt2(summary.shardsGained)}</b></div>
@@ -8720,7 +8895,7 @@ function triggerGameOver(reason='core'){
   const summary = {
     reason,
     stageNo: Number(S.stageNo || StageMapState.current || 1),
-    wave: Number(S.wave || 1),
+    wave: Number(S.ogge || 1),
     kills: Number(S.runKills || 0),
     bestCombo: Number(S.combo?.best || 0),
     shardsGained: Math.max(0, afterShards - beforeShards)
@@ -8728,7 +8903,7 @@ function triggerGameOver(reason='core'){
   sound('gameover');
   playResultBgm('gameover');
   toast('코어 파괴 — 전투 기록 회수 완료');
-  log(`게임 오버: ${fmt2(summary.stageNo)}성역 ${fmt2(summary.wave)}웨이브 / 처치 ${fmt2(summary.kills)} / 조각 +${fmt2(summary.shardsGained)}`);
+  log(`게임 오버: ${fmt2(summary.stageNo)}성역 ${fmt2(summary.ogge)}웨이브 / 처치 ${fmt2(summary.kills)} / 조각 +${fmt2(summary.shardsGained)}`);
   updateUI();
   setTimeout(() => showGameOverOverlay(summary), 260);
 }
@@ -8913,7 +9088,7 @@ function startSelectedStageFromMap(){
   S.stageNo = stageNo;
   S.stageMapKey = def.key;
   S.theme = def.theme;
-  S.wave = 1;
+  S.ogge = 1;
   resetBattleUnitsForStageMap();
   const logBox = $('log');
   if(logBox) logBox.innerHTML = '';
@@ -8924,6 +9099,8 @@ function startSelectedStageFromMap(){
   log(`시나리오: ${getOfflineStoryLog(stageNo, 'intro')}`);
   renderOfflineMetaPanel();
   prepareWave();
+  if(shouldShowBattleTutorial(stageNo)) setTimeout(() => showBattleTutorial(stageNo), 180);
+  else setTimeout(() => showStageQuickTip(stageNo), 180);
   last=performance.now();
   cancelAnimationFrame(raf);
   raf=requestAnimationFrame(loop);
@@ -8955,10 +9132,10 @@ function showStageClearOverlay(summary){
       <div class="stageClearStat"><span>SHARDS</span><b>+${fmt2(summary.shardsGained)}</b></div>
       <div class="stageClearStat"><span>REWARD</span><b>${reward ? escapeHtml(reward.name) : '완료'}</b></div>
     </div>
-    <div class="stageClearReward">${escapeHtml(STORY_EVENT_TEXT.clearBody)} ${isFinal ? '모든 성역이 안정화되었습니다.' : `다음 항로: ${nextDef.name} / ${nextDef.ko}`}</div>
+    <div class="stageClearReward">${escapeHtml(STORY_EVENT_TEXT.clearBody)} ${isFinal ? '모든 성역이 안정화되었습니다. 이제 각 성역의 3성 숙련도와 최고 웨이브 기록을 노려 재정화 루프를 이어갈 수 있습니다.' : `다음 항로: ${nextDef.name} / ${nextDef.ko}`}</div>
     <div class="stageClearActions">
       <button id="stageClearMapBtn" class="btnAlt">성역 지도에서 강화</button>
-      <button id="stageClearNextBtn" class="btnGreen">${isFinal ? '최종 성역 재도전' : '다음 성역 진입'}</button>
+      <button id="stageClearNextBtn" class="btnGreen">${isFinal ? '기계 핵성 재정화' : '다음 성역 진입'}</button>
     </div>
   </div>`;
   document.body.appendChild(overlay);
@@ -9035,19 +9212,19 @@ const STAGE_BGS = THEMES.map(t => {
 });
 
 const PLANET_ICON_SHEET = new Image();
-PLANET_ICON_SHEET.src = 'planet_units_planet_style_v15.png?v=15';
+PLANET_ICON_SHEET.src = 'planet_units_planet_style_v15.webp?v=15';
 
 const PLANET_EVOLUTION_FILES = {
-  solar:'solar_levels.png?v=1',
-  frost:'frost_levels.png?v=1',
-  storm:'storm_levels.png?v=1',
-  toxic:'toxic_levels.png?v=1',
-  void:'void_levels.png?v=1',
-  laser:'laser_levels.png?v=1',
-  smog:'smog_levels.png?v=2',
-  crystal:'crystal_levels.png?v=2',
-  mecha:'mecha_levels.png?v=1',
-  starengine:'starengine_levels.png?v=1'
+  solar:'solar_levels.webp?v=1',
+  frost:'frost_levels.webp?v=1',
+  storm:'storm_levels.webp?v=1',
+  toxic:'toxic_levels.webp?v=1',
+  void:'void_levels.webp?v=1',
+  laser:'laser_levels.webp?v=1',
+  smog:'smog_levels.webp?v=2',
+  crystal:'crystal_levels.webp?v=2',
+  mecha:'mecha_levels.webp?v=1',
+  starengine:'starengine_levels.webp?v=1'
 };
 const PLANET_EVOLUTION_COLS = 5;
 const PLANET_EVOLUTION_SHEETS = Object.fromEntries(Object.entries(PLANET_EVOLUTION_FILES).map(([key, src]) => {
@@ -9056,7 +9233,7 @@ const PLANET_EVOLUTION_SHEETS = Object.fromEntries(Object.entries(PLANET_EVOLUTI
   return [key, img];
 }));
 
-const STAGE_FX_IMAGES = ['fx_cosmic.png?v=6','fx_frost.png?v=6','fx_lava.png?v=6','fx_jungle.png?v=6','fx_smog.png?v=1','fx_crystal.png?v=1','fx_machine.png?v=1'].map(src=>{
+const STAGE_FX_IMAGES = ['fx_cosmic.webp?v=6','fx_frost.webp?v=6','fx_lava.webp?v=6','fx_jungle.webp?v=6','fx_smog.webp?v=1','fx_crystal.webp?v=1','fx_machine.webp?v=1'].map(src=>{
   const img = new Image();
   img.src = src;
   return img;
@@ -9091,7 +9268,7 @@ function planetThumbLevel(level){
 function planetThumbSrc(type, level=1){
   const p = PLANETS?.[Number(type)];
   if(!p?.id) return '';
-  return `thumbs/${p.id}_lv${planetThumbLevel(level)}.png?v=align2`;
+  return `thumbs/${p.id}_lv${planetThumbLevel(level)}.webp?v=align2`;
 }
 function planetThumbImage(type, level=1){
   const src = planetThumbSrc(type, level);
@@ -9116,25 +9293,25 @@ function drawImageContainCentered(img, cx, cy, maxW, maxH){
 
 const AUDIO_URLS = {
   bgm: {
-    map:'audio/bgm_map_starmap.wav',
-    boss:'audio/bgm_boss_incursion.wav',
-    clear:'audio/bgm_result_sanctuary_restored.wav',
-    gameover:'audio/bgm_result_core_collapse.wav',
+    map:'audio/bgm_map_starmap.ogg',
+    boss:'audio/bgm_boss_incursion.ogg',
+    clear:'audio/bgm_result_sanctuary_restored.ogg',
+    gameover:'audio/bgm_result_core_collapse.ogg',
     stages:[
-      'audio/bgm_stage_01_cosmic_void.wav',
-      'audio/bgm_stage_02_frost_expanse.wav',
-      'audio/bgm_stage_03_lava_nebula.wav',
-      'audio/bgm_stage_04_jungle_core.wav',
-      'audio/bgm_stage_05_smog_wasteland.wav',
-      'audio/bgm_stage_06_crystal_nebula.wav',
-      'audio/bgm_stage_07_machine_core.wav'
+      'audio/bgm_stage_01_cosmic_void.ogg',
+      'audio/bgm_stage_02_frost_expanse.ogg',
+      'audio/bgm_stage_03_lava_nebula.ogg',
+      'audio/bgm_stage_04_jungle_core.ogg',
+      'audio/bgm_stage_05_smog_wasteland.ogg',
+      'audio/bgm_stage_06_crystal_nebula.ogg',
+      'audio/bgm_stage_07_machine_core.ogg'
     ]
   },
   sfx: {
-    shot:'audio/sfx_shot.wav', beam:'audio/sfx_beam.wav', blackhole:'audio/sfx_blackhole.wav',
-    nova:'audio/sfx_nova.wav', hit:'audio/sfx_hit.wav', kill:'audio/sfx_kill.wav',
-    treasure:'audio/sfx_treasure.wav', level:'audio/sfx_level.wav', summon:'audio/sfx_summon.wav', merge:'audio/sfx_merge.wav',
-    boss:'audio/sfx_boss_warning.wav', clear:'audio/sfx_stage_clear.wav', gameover:'audio/sfx_core_collapse.wav', core:'audio/sfx_core_damage.wav', unlock:'audio/sfx_unlock.wav'
+    shot:'audio/sfx_shot.ogg', beam:'audio/sfx_beam.ogg', blackhole:'audio/sfx_blackhole.ogg',
+    nova:'audio/sfx_nova.ogg', hit:'audio/sfx_hit.ogg', kill:'audio/sfx_kill.ogg',
+    treasure:'audio/sfx_treasure.ogg', level:'audio/sfx_level.ogg', summon:'audio/sfx_summon.ogg', merge:'audio/sfx_merge.ogg',
+    boss:'audio/sfx_boss_warning.ogg', clear:'audio/sfx_stage_clear.ogg', gameover:'audio/sfx_core_collapse.ogg', core:'audio/sfx_core_damage.ogg', unlock:'audio/sfx_unlock.ogg'
   }
 };
 
@@ -9329,16 +9506,16 @@ function updateAndDrawFieldStars(raw){
 
 
 const PLANETS = [
-  {id:'solar', name:'솔라 행성', color:'#fb923c', range:132, dmg:48, cd:34, kind:'splash', cost:90, card:'광역 폭발 · 연소', tags:['광역','연소','합류점']},
-  {id:'frost', name:'프로스트 행성', color:'#67e8f9', range:145, dmg:30, cd:30, kind:'slow', cost:95, card:'빙결 감속 · 제어', tags:['감속','빙결','제어']},
-  {id:'storm', name:'스톰 행성', color:'#facc15', range:128, dmg:36, cd:32, kind:'chain', cost:100, card:'연쇄 번개 · 장갑 파괴', tags:['연쇄','장갑파괴','다중경로']},
-  {id:'toxic', name:'바이오 행성', color:'#22c55e', range:126, dmg:24, cd:27, kind:'poison', cost:100, card:'독성 침식 · 지속 피해', tags:['독','지속피해','보스']},
-  {id:'void', name:'블랙홀 행성', color:'#c084fc', range:122, dmg:22, cd:48, kind:'gravity', cost:110, card:'소형 블랙홀 · 구속', tags:['끌어당김','디버프','군중제어']},
-  {id:'laser', name:'광자 행성', color:'#a78bfa', range:165, dmg:58, cd:44, kind:'beam', cost:120, card:'고출력 광자 빔', tags:['관통','저격','직선']},
-  {id:'smog', name:'스모그 행성', color:'#9cab62', range:138, dmg:28, cd:31, kind:'poison', cost:115, card:'정화 장막 · 응축/역류', tags:['정화','장판제어','역류']},
-  {id:'crystal', name:'크리스탈 행성', color:'#c084fc', range:142, dmg:34, cd:33, kind:'crystal', cost:125, card:'축전 · 프리즘 링크', tags:['축전','장판설계','공명']},
-  {id:'mecha', name:'메카 행성', color:'#60a5fa', range:134, dmg:42, cd:39, kind:'mecha', cost:135, card:'실드 해체 · 방어망', tags:['실드해체','위성','방벽']},
-  {id:'starengine', name:'히든 스타 엔진', color:'#f8fafc', range:230, dmg:220, cd:18, cost:0, kind:'crit', card:'히든 · 초고출력 크리티컬 코어', tags:['히든','치명타','융합','최종병기'], critChance:.68, critMul:3.6, explodeChance:.26, explodeRadius:126, bossMul:1.35}
+  {id:'solar', name:'솔라 행성', role:'보스 딜러 / 광역 연소', identity:'합류점에 쌓인 적을 태우고 보스에게 폭발 피해를 누적하는 화력 핵심입니다.', color:'#fb923c', range:132, dmg:48, cd:34, kind:'splash', cost:90, card:'광역 폭발 · 연소', tags:['광역','연소','합류점']},
+  {id:'frost', name:'프로스트 행성', role:'감속 / 제어', identity:'빠른 적과 보스의 진행을 늦춰 다른 행성이 오래 공격할 시간을 벌어줍니다.', color:'#67e8f9', range:145, dmg:30, cd:30, kind:'slow', cost:95, card:'빙결 감속 · 제어', tags:['감속','빙결','제어']},
+  {id:'storm', name:'스톰 행성', role:'연쇄 딜러 / 다중 타깃', identity:'적이 이어져 들어오는 라인에서 번개가 튕기며 웨이브 정리에 강합니다.', color:'#facc15', range:128, dmg:36, cd:32, kind:'chain', cost:100, card:'연쇄 번개 · 장갑 파괴', tags:['연쇄','장갑파괴','다중경로']},
+  {id:'toxic', name:'바이오 행성', role:'지속 피해 / 회복 억제', identity:'체력이 높은 적에게 독성 피해를 누적해 장기전과 보스전 안정성을 올립니다.', color:'#22c55e', range:126, dmg:24, cd:27, kind:'poison', cost:100, card:'독성 침식 · 지속 피해', tags:['독','지속피해','보스']},
+  {id:'void', name:'블랙홀 행성', role:'몰이 / 군중 제어', identity:'적을 끌어당겨 광역 타워의 효율을 높이고 코어 접근 시간을 늦춥니다.', color:'#c084fc', range:122, dmg:22, cd:48, kind:'gravity', cost:110, card:'소형 블랙홀 · 구속', tags:['끌어당김','디버프','군중제어']},
+  {id:'laser', name:'광자 행성', role:'관통 저격 / 직선 화력', identity:'긴 직선 경로에서 여러 적을 한 번에 관통해 후방 화력을 담당합니다.', color:'#a78bfa', range:165, dmg:58, cd:44, kind:'beam', cost:120, card:'고출력 광자 빔', tags:['관통','저격','직선']},
+  {id:'smog', name:'스모그 행성', role:'약화 / 장판 제어', identity:'매연 장막으로 적을 약화시키고 둔화시켜 후반 압박을 안정적으로 낮춥니다.', color:'#9cab62', range:138, dmg:28, cd:31, kind:'poison', cost:115, card:'정화 장막 · 응축/역류', tags:['정화','장판제어','역류']},
+  {id:'crystal', name:'크리스탈 행성', role:'축전 / 공명 설계', identity:'초과 피해를 저장하고 장판 공명을 만들어 배치 설계의 보상을 키웁니다.', color:'#c084fc', range:142, dmg:34, cd:33, kind:'crystal', cost:125, card:'축전 · 프리즘 링크', tags:['축전','장판설계','공명']},
+  {id:'mecha', name:'메카 행성', role:'실드 해체 / 후반 안정성', identity:'장갑과 실드를 해체하고 위성포/방벽으로 최종 성역 압박을 버팁니다.', color:'#60a5fa', range:134, dmg:42, cd:39, kind:'mecha', cost:135, card:'실드 해체 · 방어망', tags:['실드해체','위성','방벽']},
+  {id:'starengine', name:'히든 스타 엔진', role:'최종 융합 병기', identity:'기본 9종의 고레벨 융합으로 열리는 초고출력 치명타 코어입니다.', color:'#f8fafc', range:230, dmg:220, cd:18, cost:0, kind:'crit', card:'히든 · 초고출력 크리티컬 코어', tags:['히든','치명타','융합','최종병기'], critChance:.68, critMul:3.6, explodeChance:.26, explodeRadius:126, bossMul:1.35}
 ];
 
 
@@ -9549,6 +9726,12 @@ let mouse = {x:0,y:0};
 let audio = null;
 let audioCtx = null;
 const towerSfxLimiter = {};
+const audioBufferCache = {};
+const htmlAudioCache = {};
+const soundLimiter = {};
+function isLowPowerAudioMode(){
+  return window.matchMedia?.('(max-width: 768px)').matches || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+}
 
 const GRID = 8;
 
@@ -9558,12 +9741,12 @@ const GRID = 8;
 const IS_MOBILE_BOARD = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
 
 // Mobile playability patch: larger cells make planets easier to see and tap.
-const CELL = IS_MOBILE_BOARD ? 62 : 56;
+const CELL = IS_MOBILE_BOARD ? 72 : 56;
 const GX = Math.round((W - GRID*CELL)/2);
-const GY = IS_MOBILE_BOARD ? 88 : 120;
+const GY = IS_MOBILE_BOARD ? 64 : 120;
 const CORE = {
-  x: IS_MOBILE_BOARD ? W - 62 : W - 74,
-  y: IS_MOBILE_BOARD ? H - 126 : H - 95
+  x: IS_MOBILE_BOARD ? W - 58 : W - 74,
+  y: IS_MOBILE_BOARD ? H - 82 : H - 95
 };
 
 
@@ -9785,7 +9968,7 @@ function showPlanetDetail(type){
       <div>
         <div class="planetDetailEyebrow">PLANET DETAIL</div>
         <h2 class="planetDetailTitle" id="planetDetailTitle" style="color:${p.color}">${escapeHtml(p.name)}</h2>
-        <div class="planetDetailSubtitle">${escapeHtml(p.card || '')} · ${escapeHtml(planetKindLabel(p.kind))}</div>
+        <div class="planetDetailSubtitle">${escapeHtml(p.role || p.card || '')} · ${escapeHtml(planetKindLabel(p.kind))}</div>
         <div class="planetDetailTags">${tags.map(x=>`<span class="tag">${escapeHtml(x)}</span>`).join('')}</div>
       </div>
     </div>
@@ -9802,8 +9985,9 @@ function showPlanetDetail(type){
       <div class="planetDetailStat"><small>현재 사거리</small><b>${fmt2(st.range)}</b></div>` : ''}
     </div>
     <div class="planetDetailSection">
-      <h3>운용 설명</h3>
-      <p>${escapeHtml(planetPlayGuide(type))}</p>
+      <h3>역할과 운용</h3>
+      <p><b style="color:${p.color}">${escapeHtml(p.role || planetKindLabel(p.kind))}</b> — ${escapeHtml(p.identity || '')}</p>
+      <p style="margin-top:6px">${escapeHtml(planetPlayGuide(type))}</p>
     </div>
     <div class="planetDetailSection">
       <h3>타워별 고유 스킬</h3>
@@ -10011,26 +10195,55 @@ function drawBossTelegraphs(){
     ctx.globalAlpha = alpha * .86;
     roundRect(pillX, pillY, pillW, 22, 11, 'rgba(2,6,23,.82)', 'rgba(255,255,255,.14)');
     ctx.fillStyle = t.color;
-    ctx.font = '900 10px Orbitron';
+    ctx.font = '900 10px Noto Sans KR';
     ctx.fillText(t.label, t.x, pillY + 15);
   });
   ctx.restore();
 }
 
+
+const BOSS_SKILL_KO = {
+  '위상 재생':'위상 재생',
+  '특이점 폭주':'특이점 폭주',
+  '빙결 구속':'빙결 구속',
+  '눈보라 감옥':'눈보라 감옥',
+  '용암 장갑':'용암 장갑',
+  '대폭발':'대폭발',
+  '포자 증식':'포자 증식',
+  '과성장':'과성장',
+  '매연 차폐':'매연 차폐',
+  '산업 장막':'산업 장막',
+  '굴절 장막':'굴절 장막',
+  '수정 과부하':'수정 과부하',
+  '전장 수리':'전장 수리',
+  '코어 재부팅':'코어 재부팅',
+  '보스 폭발':'보스 폭발',
+  '성흔 폭발':'성흔 폭발',
+  '치명타':'치명타',
+  '치명타':'치명타',
+  '과열':'과열'
+};
+function bossSkillKo(label){
+  const key = String(label || '').trim().toUpperCase();
+  return BOSS_SKILL_KO[key] || String(label || '보스 스킬');
+}
+
 function bossWarning(enemy,label,color){
-  pushBossTelegraph(enemy, label, color);
+  const labelKo = bossSkillKo(label);
+  pushBossTelegraph(enemy, labelKo, color);
   const node = $('stageFxLabel');
   if(node){
-    node.textContent = `${enemy.bossTier === 'final' ? 'FINAL BOSS' : 'MID BOSS'} · ${label}`;
+    const tierKo = enemy.bossTier === 'final' ? '최종 보스' : '중간 보스';
+    node.textContent = `${tierKo} 스킬 · ${labelKo}`;
     node.style.opacity = 1;
     node.style.color = '#f8fafc';
     node.style.borderColor = 'rgba(248,113,113,.38)';
-    node.style.boxShadow = `0 0 34px ${color}40`;
-    setTimeout(()=>{ if(node){ node.style.opacity = 0; node.style.borderColor='rgba(255,255,255,.08)'; node.style.boxShadow=''; } }, 1180);
+    node.style.boxShadow = `0 0 24px ${color}35`;
+    clearTimeout(node._hideTimer);
+    node._hideTimer = setTimeout(()=>{ if(node){ node.style.opacity = 0; node.style.borderColor='rgba(255,255,255,.08)'; node.style.boxShadow=''; } }, 900);
   }
   ring(enemy.x, enemy.y, enemy.size + 22, color);
   ring(enemy.x, enemy.y, enemy.size + 42, 'rgba(255,255,255,.75)');
-  toast(`${enemy.bossName} — ${label}`);
 }
 
 function impactEffect(kind, x, y, color, level){
@@ -10101,6 +10314,8 @@ function reset(){
     combo:{kills:0,timer:0,best:0},
     mergeCombo:{count:0,timer:0},
     runKills:0,
+    runSummons:0,
+    runMerges:0,
     leakedEnemies:0,
     coreDamageTaken:0,
     gameOver:false,
@@ -10126,7 +10341,10 @@ function theme(){return THEMES[S.theme]}
 function center(i){return {x:GX+(i%GRID)*CELL+CELL/2,y:GY+Math.floor(i/GRID)*CELL+CELL/2}}
 function gridPoint(col,row){return {x:GX+col*CELL+CELL/2,y:GY+row*CELL+CELL/2}}
 function idxAt(x,y){
-  const gx=Math.floor((x-GX)/CELL), gy=Math.floor((y-GY)/CELL);
+  const pad = IS_MOBILE_BOARD ? 8 : 0;
+  if(x < GX - pad || y < GY - pad || x > GX + GRID*CELL + pad || y > GY + GRID*CELL + pad) return -1;
+  const gx=Math.floor((clamp(x, GX, GX + GRID*CELL - 1)-GX)/CELL);
+  const gy=Math.floor((clamp(y, GY, GY + GRID*CELL - 1)-GY)/CELL);
   if(gx<0||gx>=GRID||gy<0||gy>=GRID)return -1;
   return gy*GRID+gx;
 }
@@ -10184,7 +10402,7 @@ function makeRoute(){
     n: gridPoint(6,6)
   };
 
-  if(S.wave < 4){
+  if(S.ogge < 4){
     route = [
       {x:-50,y:p.a.y},
       {x:p.c.x,y:p.a.y},
@@ -10193,7 +10411,7 @@ function makeRoute(){
       {x:p.g.x,y:CORE.y},
       {x:CORE.x,y:CORE.y}
     ];
-  }else if(S.wave < 8){
+  }else if(S.ogge < 8){
     route = [
       {x:-50,y:p.a.y},
       {x:p.b.x,y:p.a.y},
@@ -10253,27 +10471,27 @@ function prepareWave(){
   S.hazardTimer=150;
   buildDustClouds();
   S.queue.length=0;
-  const count = 28 + S.wave*6 + S.theme*6;
+  const count = 28 + S.ogge*6 + S.theme*6;
   for(let i=0;i<count;i++){
     let type='grunt';
     if(i%4===1) type='runner';
     if(i%6===3) type='brute';
-    if(S.wave>=2 && i%8===5) type='regen';
-    if(S.wave>=3 && i%5===0) type='brute';
-    if(S.wave>=6 && i%7===2) type='regen';
+    if(S.ogge>=2 && i%8===5) type='regen';
+    if(S.ogge>=3 && i%5===0) type='brute';
+    if(S.ogge>=6 && i%7===2) type='regen';
     if(Math.random()<.02+S.mods.treasure) type='treasure';
     S.queue.push(type);
   }
   S.currentBossInfo = null;
-  if(S.wave===5){
+  if(S.ogge===5){
     const bossData = getStageBossDef(S.stageNo || StageMapState.current || 1, 'mid');
     S.queue.push({type:'midboss', bossTier:'mid', bossData});
     S.currentBossInfo = bossData;
-  }else if(S.wave===10){
+  }else if(S.ogge===10){
     const bossData = getStageBossDef(S.stageNo || StageMapState.current || 1, 'final');
     S.queue.push({type:'finalboss', bossTier:'final', bossData});
     S.currentBossInfo = bossData;
-  }else if(S.wave%4===0){
+  }else if(S.ogge%4===0){
     S.queue.push('boss');
   }
   S.total=S.queue.length;
@@ -10285,7 +10503,7 @@ function prepareWave(){
   if(audio && audio.on) playStageBgm();
   toast(`${theme().ko} 진입 — 장판 활용이 필수입니다`);
   if(S.currentBossInfo){
-    const storyPhase = S.wave===10 ? 'final' : 'mid';
+    const storyPhase = S.ogge===10 ? 'final' : 'mid';
     markOfflineStory(S.stageNo || StageMapState.current || 1, storyPhase);
     sound('boss', { intensity: storyPhase === 'final' ? 1.2 : 1 });
     playStageBgm();
@@ -10293,7 +10511,7 @@ function prepareWave(){
     log(`보스 경보: ${S.currentBossInfo.name} / ${S.currentBossInfo.ability} — ${S.currentBossInfo.desc}`);
     log(`시나리오: ${getOfflineStoryLog(S.stageNo || StageMapState.current || 1, storyPhase)}`);
   }
-  log(`웨이브 ${S.wave}: ${theme().ko} / 장판 없이 방어 어려움 / 적 ${S.total}체 접근`);
+  log(`웨이브 ${S.ogge}: ${theme().ko} / 장판 없이 방어 어려움 / 적 ${S.total}체 접근`);
   updateUI();
 }
 
@@ -10720,7 +10938,7 @@ class Planet{
     if(!target)return;
     const st=this.stats();
     this.cool=st.cd;
-    if(st.over && Math.random()<.08){this.cool+=24;floatText(this.pos.x,this.pos.y-30,'OVERHEAT','#fb7185')}
+    if(st.over && Math.random()<.08){this.cool+=24;floatText(this.pos.x,this.pos.y-30,'과열','#fb7185')}
     if(this.def.kind==='beam') fireBeam(this,target,st);
     else if(this.def.kind==='gravity') blackholePulse(this,target,st);
     else bullets.push(new Bullet(this,target,st));
@@ -10730,7 +10948,7 @@ class Planet{
     const p=this.pos,d=this.def;
     const frameIndex = currentPlanetFrameIndex();
     const tier = planetEvolutionTier(this.level);
-    const baseSize = PLANET_BASE_SIZE + this.level * 2.8 + tier * 2.3;
+    const baseSize = (IS_MOBILE_BOARD ? PLANET_BASE_SIZE + 5 : PLANET_BASE_SIZE) + this.level * 2.8 + tier * 2.3;
     const bobY = Math.sin(performance.now()/420 + this.phase * 1.7 + this.level * .42) * (1.6 + Math.min(3.2, this.level * .12));
     const bobX = Math.cos(performance.now()/620 + this.phase * .9) * .9;
     const rx = p.x + bobX, ry = p.y + bobY;
@@ -10866,13 +11084,13 @@ class Enemy{
     Object.assign(this,m);
     this.x=route[0].x;this.y=route[0].y;this.seg=0;this.progress=0;
     const hpScale = this.hpScale || 1;
-    this.maxHp=Math.floor(295*m.hp*(1+S.wave*.30+S.theme*.38) * hpScale);
+    this.maxHp=Math.floor(295*m.hp*(1+S.ogge*.30+S.theme*.38) * hpScale);
     this.hp=this.maxHp;
     this.dead=false;this.slow=0;this.freeze=0;this.dot=0;this.dotTime=0;this.mark=0;
   }
   update(dt){
     if(this.dotTime>0){this.hp-=this.dot*dt;this.dotTime-=dt}
-    if(this.regen)this.hp=Math.min(this.maxHp,this.hp+.18*dt*(1+S.wave*.045));
+    if(this.regen)this.hp=Math.min(this.maxHp,this.hp+.18*dt*(1+S.ogge*.045));
     if(this.slow>0)this.slow-=dt;
     if(this.freeze>0)this.freeze-=dt;
     if(this.mark>0)this.mark-=dt;
@@ -10884,7 +11102,7 @@ class Enemy{
       }
     }
     if(this.hp<=0){this.kill();return}
-    let speed=this.spd*(1+S.wave*.032+S.theme*.028);
+    let speed=this.spd*(1+S.ogge*.032+S.theme*.028);
     if(this.slow>0)speed*=.55;
     if(this.freeze>0)speed*=.12;
     const to=route[this.seg+1];
@@ -10921,7 +11139,7 @@ class Enemy{
     this.dead=true;
     S.runKills = (S.runKills || 0) + 1;
     const g = getGlobalUpgradeStats();
-    const reward=Math.max(1,Math.floor((6+S.wave*.9)*this.reward*(1+S.mods.reward+(g.reward||0))));
+    const reward=Math.max(1,Math.floor((6+S.ogge*.9)*this.reward*(1+S.mods.reward+(g.reward||0))));
     S.gold+=reward;
     gainExp(this.exp);
     burst(this.x,this.y,this.color,22,38);
@@ -10929,13 +11147,13 @@ class Enemy{
     if(this.treasure){
       triggerTreasureImpact(this);
       if(Math.random()<.55){
-        const bonus=45+S.wave*8;
+        const bonus=45+S.ogge*8;
         S.gold+=bonus;
         toast(`황금 보물성 파괴! 수정 +${fmt2(bonus)}`);
         impactLabel(this.x,this.y-this.size-34,`+${fmt2(bonus)} CRYSTAL`,'#fde68a',18,78);
         sound('treasure');
       }else{
-        const shardBonus = Math.max(2, Math.floor(2 + S.wave / 3));
+        const shardBonus = Math.max(2, Math.floor(2 + S.ogge / 3));
         if(META){ META.shards += shardBonus; saveOfflineMeta(); renderOfflineMetaPanel(); }
         toast(`황금 보물성 파괴! 성흔 조각 +${fmt2(shardBonus)}`);
         impactLabel(this.x,this.y-this.size-34,`+${fmt2(shardBonus)} SHARD`,'#fde68a',18,78);
@@ -11008,7 +11226,7 @@ class Enemy{
     }
     if(this.stageBoss){
       ctx.fillStyle='#f8fafc';ctx.font='900 10px Orbitron';ctx.textAlign='center';
-      ctx.fillText(this.bossName, this.x, this.y - this.size - 22);
+      ctx.fillText(this.bossKo || this.bossName, this.x, this.y - this.size - 22);
     }
     ctx.restore();
   }
@@ -11214,7 +11432,7 @@ class Bullet{
       const finalDmg = (crit ? dmg * this.st.critMul : dmg) * bossMul;
       this.target.damage(finalDmg,'starengine',this.color);
       if(crit){
-        floatText(this.target.x, this.target.y - this.target.size - 10, this.target.stageBoss ? 'CORE CRIT' : 'CRIT', '#fef3c7');
+        floatText(this.target.x, this.target.y - this.target.size - 10, this.target.stageBoss ? '치명타' : '치명타', '#fef3c7');
         ring(this.target.x, this.target.y, 50 + this.tower.level * 3, '#f8fafc');
         this.target.mark = Math.max(this.target.mark, 150);
       }
@@ -11224,7 +11442,7 @@ class Bullet{
         areaDamage(this.target.x, this.target.y, this.tower.def.explodeRadius || 126, blast, 'starengine_burst', '#fff8dc');
         burst(this.target.x, this.target.y, '#fff8dc', 56, 76);
         ring(this.target.x, this.target.y, this.tower.def.explodeRadius || 126, '#fff8dc');
-        impactLabel(this.target.x, this.target.y - this.target.size - 24, this.target.stageBoss ? 'BOSS BURST x4.8' : 'STAR BURST x3.8', '#fff7cc', 20, 88);
+        impactLabel(this.target.x, this.target.y - this.target.size - 24, this.target.stageBoss ? '보스 폭발' : '성흔 폭발', '#fff7cc', 20, 88);
         shake = Math.max(shake, 18);
         flash = Math.max(flash, .16);
       }
@@ -11280,56 +11498,56 @@ function triggerBossSkill(enemy){
   };
   switch(enemy.bossEffect){
     case 'phaseRegen':
-      bossWarning(enemy,'PHASE REGEN', labelColor);
+      bossWarning(enemy,'위상 재생', labelColor);
       healPct(.06);
       enemy.spd *= 1.06;
       ring(enemy.x, enemy.y, enemy.size + 28, labelColor);
       spawnImpactSparks(enemy.x, enemy.y, labelColor, 8, 1.0);
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'PHASE REGEN', labelColor, 16, 74);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '위상 재생', labelColor, 16, 74);
       break;
     case 'voidSurge':
-      bossWarning(enemy,'SINGULARITY SURGE', labelColor);
+      bossWarning(enemy,'특이점 폭주', labelColor);
       healPct(.09);
       enemy.armor = Math.min(.72, (enemy.armor || 0) + .03);
       burst(enemy.x, enemy.y, labelColor, 22, 42);
       ring(enemy.x, enemy.y, enemy.size + 34, labelColor);
       anomalies.push({x:enemy.x,y:enemy.y,target:null,kind:'bossSurge',radius:122,visualRadius:28,damage:0,pull:0,color:labelColor,life:18,maxLife:18,tick:999});
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'SINGULARITY SURGE', labelColor, 16, 80);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '특이점 폭주', labelColor, 16, 80);
       break;
     case 'frostLock':
-      bossWarning(enemy,'FROST LOCK', labelColor);{
+      bossWarning(enemy,'빙결 구속', labelColor);{
       const targets = choosePlacedPlanets(1);
       targets.forEach(t => t.frozen = Math.max(t.frozen, 70));
       burst(enemy.x, enemy.y, '#dbeafe', 18, 24); spawnImpactShards(enemy.x, enemy.y, '#dbeafe', 10);
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'FROST LOCK', '#dbeafe', 16, 76);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '빙결 구속', '#dbeafe', 16, 76);
       break;
     }
     case 'blizzardPrison':
-      bossWarning(enemy,'BLIZZARD PRISON', labelColor);{
+      bossWarning(enemy,'눈보라 감옥', labelColor);{
       const targets = choosePlacedPlanets(2);
       targets.forEach(t => t.frozen = Math.max(t.frozen, 96));
       burst(enemy.x, enemy.y, '#bfdbfe', 18, 24); spawnImpactShards(enemy.x, enemy.y, '#dbeafe', 14);
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'BLIZZARD PRISON', '#dbeafe', 16, 78);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '눈보라 감옥', '#dbeafe', 16, 78);
       break;
     }
     case 'magmaShell':
-      bossWarning(enemy,'MAGMA SHELL', labelColor);
+      bossWarning(enemy,'용암 장갑', labelColor);
       enemy.armor = Math.min(.72, (enemy.armor || 0) + .05);
       enemy.spd *= 1.05;
       burst(enemy.x, enemy.y, '#fb923c', 18, 26); spawnImpactSparks(enemy.x, enemy.y, '#fdba74', 12, 1.15);
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'MAGMA SHELL', '#fdba74', 16, 76);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '용암 장갑', '#fdba74', 16, 76);
       break;
     case 'cataclysmBurst':
-      bossWarning(enemy,'CATACLYSM BURST', labelColor);
+      bossWarning(enemy,'대폭발', labelColor);
       enemy.armor = Math.min(.75, (enemy.armor || 0) + .06);
       enemy.spd *= 1.08;
       ring(enemy.x, enemy.y, enemy.size + 42, '#fb923c');
       burst(enemy.x, enemy.y, '#fb923c', 24, 36);
       spawnImpactSparks(enemy.x, enemy.y, '#fdba74', 16, 1.28);
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'CATACLYSM BURST', '#fdba74', 16, 80);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '대폭발', '#fdba74', 16, 80);
       break;
     case 'sporeBloom':
-      bossWarning(enemy,'SPORE BLOOM', labelColor);
+      bossWarning(enemy,'포자 증식', labelColor);
       for(const e of enemies){
         if(!e.dead && e !== enemy && dist(e.x,e.y,enemy.x,enemy.y) < 120){
           e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .18));
@@ -11338,10 +11556,10 @@ function triggerBossSkill(enemy){
       }
       healPct(.05);
       ring(enemy.x, enemy.y, enemy.size + 34, '#4ade80'); spawnImpactMist(enemy.x, enemy.y, 'rgba(34,197,94,.24)', 7);
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'SPORE BLOOM', '#bbf7d0', 16, 76);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '포자 증식', '#bbf7d0', 16, 76);
       break;
     case 'overgrowth':
-      bossWarning(enemy,'OVERGROWTH', labelColor);
+      bossWarning(enemy,'과성장', labelColor);
       for(const e of enemies){
         if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 150){
           e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .22));
@@ -11350,18 +11568,18 @@ function triggerBossSkill(enemy){
       healPct(.08);
       enemy.armor = Math.min(.74, (enemy.armor || 0) + .04);
       burst(enemy.x, enemy.y, '#4ade80', 22, 34); spawnImpactMist(enemy.x, enemy.y, 'rgba(34,197,94,.26)', 9);
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'OVERGROWTH', '#86efac', 16, 80);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '과성장', '#86efac', 16, 80);
       break;
     case 'sootScreen':
-      bossWarning(enemy,'SOOT SCREEN', labelColor);
+      bossWarning(enemy,'매연 차폐', labelColor);
       enemy.armor = Math.min(.70, (enemy.armor || 0) + .04);
       enemy.slow = Math.max(0, (enemy.slow || 0) - 18);
       ring(enemy.x, enemy.y, enemy.size + 38, '#a3a86a');
       spawnImpactMist(enemy.x, enemy.y, 'rgba(156,171,98,.26)', 9);
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'SOOT SCREEN', '#d9f99d', 16, 76);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '매연 차폐', '#d9f99d', 16, 76);
       break;
     case 'industrialVeil':
-      bossWarning(enemy,'INDUSTRIAL VEIL', labelColor);
+      bossWarning(enemy,'산업 장막', labelColor);
       healPct(.06);
       enemy.armor = Math.min(.78, (enemy.armor || 0) + .05);
       for(const e of enemies){
@@ -11372,17 +11590,17 @@ function triggerBossSkill(enemy){
       }
       burst(enemy.x, enemy.y, '#a3a86a', 24, 40);
       spawnImpactMist(enemy.x, enemy.y, 'rgba(92,100,58,.32)', 12);
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'INDUSTRIAL VEIL', '#d9f99d', 16, 80);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '산업 장막', '#d9f99d', 16, 80);
       break;
     case 'refractionVeil':
-      bossWarning(enemy,'REFRACTION VEIL', labelColor);
+      bossWarning(enemy,'굴절 장막', labelColor);
       enemy.armor = Math.min(.78, (enemy.armor || 0) + .045);
       ring(enemy.x, enemy.y, enemy.size + 42, '#c084fc');
       spawnImpactShards(enemy.x, enemy.y, '#e9d5ff', 12);
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'REFRACTION VEIL', '#e9d5ff', 16, 76);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '굴절 장막', '#e9d5ff', 16, 76);
       break;
     case 'crystalOverload':
-      bossWarning(enemy,'CRYSTAL OVERLOAD', labelColor);
+      bossWarning(enemy,'수정 과부하', labelColor);
       healPct(.055);
       enemy.armor = Math.min(.80, (enemy.armor || 0) + .055);
       for(const e of enemies){
@@ -11390,10 +11608,10 @@ function triggerBossSkill(enemy){
       }
       ring(enemy.x, enemy.y, enemy.size + 48, '#a78bfa');
       spawnImpactShards(enemy.x, enemy.y, '#ddd6fe', 16);
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'CRYSTAL OVERLOAD', '#e9d5ff', 16, 82);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '수정 과부하', '#e9d5ff', 16, 82);
       break;
     case 'fieldRepair':
-      bossWarning(enemy,'FIELD REPAIR', labelColor);
+      bossWarning(enemy,'전장 수리', labelColor);
       for(const e of enemies){
         if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 132){
           e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .12));
@@ -11401,10 +11619,10 @@ function triggerBossSkill(enemy){
         }
       }
       ring(enemy.x, enemy.y, enemy.size + 40, '#60a5fa');
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'FIELD REPAIR', '#bfdbfe', 16, 78);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '전장 수리', '#bfdbfe', 16, 78);
       break;
     case 'coreReboot':
-      bossWarning(enemy,'CORE REBOOT', labelColor);
+      bossWarning(enemy,'코어 재부팅', labelColor);
       healPct(.06);
       enemy.armor = Math.min(.82, (enemy.armor || 0) + .06);
       for(const e of enemies){
@@ -11412,7 +11630,7 @@ function triggerBossSkill(enemy){
       }
       burst(enemy.x, enemy.y, '#60a5fa', 24, 38);
       ring(enemy.x, enemy.y, enemy.size + 52, '#ef4444');
-      impactLabel(enemy.x, enemy.y - enemy.size - 18, 'CORE REBOOT', '#bfdbfe', 16, 84);
+      impactLabel(enemy.x, enemy.y - enemy.size - 18, '코어 재부팅', '#bfdbfe', 16, 84);
       break;
   }
   sound('boss', { intensity: enemy.bossTier === 'final' ? 1.2 : .95 });
@@ -11545,60 +11763,14 @@ function applyUnitSkillCandidate(c){
   return applyGlobalUpgradeCandidate(c);
 }
 function openSkillChoice(rare){
-  S.paused=true;
-  S.skillModalOpen=true;
-  if(!rare && S.skillQueue>0) S.skillQueue--;
-  const modal=$('modal'), box=$('choices');
-  box.innerHTML='';
-  const picks=[];
-  const used = new Set();
-  let guard=0;
-  while(picks.length<3 && guard++<30){
-    const c=makeGlobalUpgradeCandidate(rare, used);
-    if(!c) break;
-    used.add(c.upgrade.id);
-    picks.push(c);
+  // RELEASE CLEANUP: 전투 중 랜덤/일반 스킬 선택 모달은 최종 UX에서 제거되었습니다.
+  // 일반 스킬은 성역 지도에서만 관리하고, 전투 화면에서는 전역 효과 한 줄만 표시합니다.
+  if(S){
+    S.skillModalOpen = false;
+    S.skillQueue = 0;
+    S.paused = false;
   }
-  if(!picks.length){
-    box.innerHTML='<div class="choice"><div class="choiceSkillRow"><div class="choiceSkillIcon"></div><div class="choiceSkillMeta"><h3>전술 업그레이드 완료</h3></div></div><p class="choiceDesc">모든 기본 전술 업그레이드가 최대 레벨입니다.</p></div>';
-  }
-  picks.forEach(c=>{
-    const div=document.createElement('div');
-    div.className=`choice ${c.rarity || 'common'}`;
-    const icon = skillIconSvg(c.upgrade.icon || c.upgrade.id);
-    const currentText = c.currentLevel > 0 ? `현재 Lv.${fmt2(c.currentLevel)}` : '미습득';
-    div.innerHTML=`<span class="choiceBadge">${rarityLabel(c.rarity)}</span>
-      <div class="choiceTop">
-        <div>
-          <span class="choiceMode">${rare?'TREASURE GLOBAL UPGRADE':'GLOBAL UPGRADE'}</span>
-          <div class="choicePlanetName" style="color:${c.color}">${c.upgrade.type}</div>
-        </div>
-      </div>
-      <div class="choiceSkillRow">
-        <div class="choiceSkillIcon"><img alt="upgrade icon" src="${icon}"></div>
-        <div class="choiceSkillMeta">
-          <h3>${c.upgrade.name}</h3>
-          <div class="choiceLevel">${currentText} → Lv.${fmt2(c.nextLevel)}</div>
-        </div>
-      </div>
-      <p class="choiceDesc">${globalUpgradeText(c.upgrade, c.nextLevel)}</p>
-      <span class="choiceBoost">${fmt2(c.nextLevel-c.currentLevel)}단계 성장 · 모든 행성과 앞으로 소환될 행성에 적용</span>`;
-    div.onclick=()=>{
-      const ok=applyGlobalUpgradeCandidate(c);
-      modal.style.display='none';
-      S.skillModalOpen=false;
-      if(ok){
-        toast(`${rarityLabel(c.rarity)} 전술 강화: ${c.upgrade.name}`);
-        log(`전술 업그레이드(${rarityLabel(c.rarity)}): ${c.upgrade.name} Lv.${fmt2(c.nextLevel)} — ${globalUpgradeText(c.upgrade, c.nextLevel)}`);
-        sound('level');
-      }
-      updateSelected(); updateUI();
-      if(S.skillQueue>0) setTimeout(()=>openSkillChoice(false),160);
-      else S.paused=false;
-    };
-    box.appendChild(div);
-  });
-  modal.style.display='flex';
+  return false;
 }
 
 function updateTacticalCooldowns(dt){
@@ -11634,7 +11806,7 @@ function useSkill(type){
     if(!targets.length){toast('포격 대상이 없습니다');S.exp+=75;S.tacticalCd.nova=0;return}
     targets.forEach((e,i)=>{
       setTimeout(()=>{
-        areaDamage(e.x,e.y,86,230+S.wave*12,'orbital','#fb923c');
+        areaDamage(e.x,e.y,86,230+S.ogge*12,'orbital','#fb923c');
         burst(e.x,e.y,'#fb923c',30,46);
         ring(e.x,e.y,92,'#f97316');
       },i*90);
@@ -11664,6 +11836,7 @@ function summon(typeOverride=null){
   if(!free.length)return toast('배치 가능한 장판이 없습니다');
   const idx=free[Math.floor(Math.random()*free.length)];
   grid[idx]=new Planet(type,1,idx);
+  S.runSummons = (S.runSummons || 0) + 1;
   S.gold-=cost;selected=idx;
   burst(center(idx).x,center(idx).y,PLANETS[type].color,24,42);
   toast(`랜덤 소환 — ${PLANETS[type].name} 착지 완료`);
@@ -11680,6 +11853,7 @@ function autoMerge(){
         grid[i]=createMergedPlanet(a,b,i);
         grid[j]=null;selected=i;
         triggerMergeImpact(i,a.def.color,a.level+1);
+        S.runMerges = (S.runMerges || 0) + 1;
         updateSelected();updateUI();
         setTimeout(autoMerge,80);
         return;
@@ -11722,8 +11896,8 @@ function spawn(entry){
   enemies.push(enemy);
   if(enemy.stageBoss){
     impactLabel(enemy.x + 56, enemy.y - 26, enemy.bossTier === 'final' ? 'FINAL BOSS' : 'MID BOSS', enemy.auraColor || enemy.color, 16, 120);
-    toast(`${enemy.bossName} 출현 — ${enemy.abilityName}`);
-    log(`보스 출현: ${enemy.bossName} / ${enemy.abilityName}`);
+    toast(`${enemy.bossKo || enemy.bossName} 출현`, 'important');
+    log(`보스 출현: ${enemy.bossKo || enemy.bossName} / ${bossSkillKo(enemy.abilityName)}`);
     shake = Math.max(shake, 7);
   }
   S.spawned++;
@@ -11735,7 +11909,7 @@ function triggerStageFx(reason){
   S.stageFx = {kind, life:150, maxLife:150, reason};
   const label=$('stageFxLabel');
   if(label){
-    const names={cosmic:'AURORA SHIFT', ice:'FROST BLIZZARD', lava:'SOLAR FLARE', jungle:'BIO SPORE FIELD', smog:'SMOG VEIL', crystal:'PRISM RESONANCE', machine:'CORE REBOOT'};
+    const names={cosmic:'AURORA SHIFT', ice:'FROST BLIZZARD', lava:'SOLAR FLARE', jungle:'BIO SPORE FIELD', smog:'SMOG VEIL', crystal:'PRISM RESONANCE', machine:'코어 재부팅'};
     label.textContent=names[kind] || 'STAGE EFFECT';
     label.style.opacity=1;
     setTimeout(()=>{ if(label) label.style.opacity=0; }, 1400);
@@ -11746,7 +11920,7 @@ function triggerStageFx(reason){
     const freezeCount=Math.min(3, Math.max(1, Math.ceil(towers.length*.22)));
     for(let i=0;i<freezeCount;i++){
       const t=towers[Math.floor(Math.random()*towers.length)];
-      if(t) t.frozen=Math.max(t.frozen||0, 130+S.wave*5);
+      if(t) t.frozen=Math.max(t.frozen||0, 130+S.ogge*5);
     }
     toast('눈보라 발생 — 일부 행성이 잠시 빙결됩니다');
     log('스테이지 효과: 눈보라 / 일부 행성 공격 정지');
@@ -11798,20 +11972,20 @@ function drawStageFx(){
 
 function waveDone(){
   S.active=false;
-  const bonus=150+S.wave*24+S.theme*55;
+  const bonus=150+S.ogge*24+S.theme*55;
   S.gold+=bonus;
   S.hp=Math.min(S.maxHp,S.hp+S.mods.repair);
   toast(`웨이브 클리어! 수정 +${fmt2(bonus)}`);
   log(`웨이브 클리어 보상: 수정 ${fmt2(bonus)}`);
   recordOfflineWaveProgress();
 
-  if(S.wave >= 10){
+  if(S.ogge >= 10){
     log(`성역 ${S.stageNo || StageMapState.current || 1} 클리어 — 유닛 초기화 및 다음 항로 개방`);
     completeStageFromBattle();
     return;
   }
 
-  S.wave++;
+  S.ogge++;
   prepareWave();
 }
 
@@ -12065,7 +12239,7 @@ function drawDragging(){
   ctx.globalAlpha=.84;
   const previewLevel = Math.max(1, Number(dragging.dragPreviewLevel ?? dragging.level ?? 1));
   const previewType = Number.isFinite(dragging.dragPreviewType) ? dragging.dragPreviewType : dragging.type;
-  const ok = drawPlanetSprite(previewType, mouse.x, mouse.y, 46 + previewLevel*2.1, currentPlanetFrameIndex(), previewLevel);
+  const ok = drawPlanetSprite(previewType, mouse.x, mouse.y, (IS_MOBILE_BOARD ? 54 : 46) + previewLevel*2.1, currentPlanetFrameIndex(), previewLevel);
   if(!ok) drawProceduralPlanetBody({...dragging, type:previewType, level:previewLevel}, mouse.x, mouse.y);
   ctx.strokeStyle='rgba(255,255,255,.5)';ctx.beginPath();ctx.ellipse(mouse.x,mouse.y,36,11,0,0,TAU);ctx.stroke();
   ctx.restore();
@@ -12089,7 +12263,7 @@ function loop(now){
 
   if(dt>0 && S.hp>0){
     spawnTimer-=dt;
-    const interval=Math.max(18,54-S.wave*1.8-S.theme*3);
+    const interval=Math.max(18,54-S.ogge*1.8-S.theme*3);
     if(S.active&&S.queue.length&&spawnTimer<=0){spawn(S.queue.shift());spawnTimer=interval}
     grid.forEach(t=>t&&t.update(dt));
     tryCreateHiddenPlanet();
@@ -12122,9 +12296,9 @@ function loop(now){
 }
 
 function updateUI(){
-  $('themeName').textContent=`${theme().name} / ${theme().ko}`;
-  $('stageLabel').textContent=`${S.theme+1}-${S.wave}`;
-  const waveLabel = S.wave===5 ? '중간 보스 웨이브' : S.wave===10 ? '최종 보스 웨이브' : (S.wave%4===0 ? '압박 웨이브' : '장판 방어');
+  $('themeName').textContent=theme().ko || theme().name;
+  $('stageLabel').textContent=`${S.theme+1}‑${S.ogge}`;
+  const waveLabel = S.ogge===5 ? '중간 보스 웨이브' : S.ogge===10 ? '최종 보스 웨이브' : (S.ogge%4===0 ? '압박 웨이브' : '장판 방어');
   $('stageType').textContent=waveLabel;
   $('gold').textContent=fmt2(S.gold);
   $('hp').textContent=S.coreShield ? `${fmt2(S.hp)}+${fmt2(S.coreShield)}` : fmt2(S.hp);
@@ -12136,7 +12310,7 @@ function updateUI(){
   $('pauseBtn').textContent=S.paused?'재개':'일시정지';
   $('summonBtn').textContent=`랜덤 소환 ${fmt2(currentSummonCost())}`;
   const globalLine = $('globalEffectLine');
-  if(globalLine) globalLine.innerHTML = `<b>GLOBAL</b>${escapeHtml(globalSkillSummaryText())}`;
+  if(globalLine) globalLine.innerHTML = `<b>전역</b>${escapeHtml(globalSkillSummaryText())}`;
   renderOfflineMetaPanel();
   updateHangarState();
 }
@@ -12169,15 +12343,38 @@ function updateSelected(){
   updateHangarState();
 }
 function log(t){
-  const box=$('log'), line=document.createElement('div');
+  const box=$('log');
+  if(!box) return;
+  const line=document.createElement('div');
   line.textContent='• '+t;box.prepend(line);
   while(box.children.length>6)box.lastChild.remove();
 }
-function toast(t){
+let lastToastAt = 0;
+let lastToastText = '';
+function compactNoticeText(t){
+  let text = String(t || '').trim();
+  if(!text) return '';
+  text = text.replace(/—/g, '·');
+  Object.entries(BOSS_SKILL_KO || {}).forEach(([en, ko]) => { text = text.replaceAll(en, ko); });
+  text = text.replace(/FINAL BOSS/g, '최종 보스').replace(/MID BOSS/g, '중간 보스');
+  text = text.replace(/HP/g, '체력');
+  return text.length > 34 ? `${text.slice(0, 33)}…` : text;
+}
+function toast(t, priority='normal'){
+  const layer = $('toastLayer');
+  if(!layer) return;
+  const now = performance.now();
+  const text = compactNoticeText(t);
+  if(!text) return;
+  if(priority !== 'important' && (now - lastToastAt < 950 || text === lastToastText)) return;
+  lastToastAt = now;
+  lastToastText = text;
+  while(layer.firstChild) layer.firstChild.remove();
   const div=document.createElement('div');
-  div.className='toast';div.textContent=t;
-  $('toastLayer').appendChild(div);
-  setTimeout(()=>div.remove(),3000);
+  div.className='toast';
+  div.textContent=text;
+  layer.appendChild(div);
+  setTimeout(()=>div.remove(),2200);
 }
 function floatText(x,y,text,color,size=12,life=54){floats.push({x,y,text:(typeof text === 'number' ? fmt2(text) : String(text)),color,life,maxLife:life,vy:-.52,size})}
 function burst(x,y,color,count,force){
@@ -12345,7 +12542,7 @@ window.addEventListener('touchend',onUp,{passive:false});
 
 function initAudio(){
   if(audio)return;
-  audio = {on:true, bgm:null, bgmSrc:null, unlocked:true};
+  audio = {on:true, bgm:null, bgmSrc:null, unlocked:true, perfMode:isLowPowerAudioMode()};
   ensureAudioContext();
   // 브라우저 자동재생 정책 때문에 사용자가 BGM 버튼을 누른 뒤부터 재생됩니다.
   playStageBgm();
@@ -12395,14 +12592,16 @@ function synthShot(kind='solar', intensity=1){
 }
 
 function playTowerSfx(kind='solar', intensity=1){
+  if(audio?.perfMode && kind !== 'boss') return;
   const stamp = performance.now();
   const last = towerSfxLimiter[kind] || 0;
-  if(stamp - last < 55) return;
+  const gap = audio?.perfMode ? 360 : 135;
+  if(stamp - last < gap) return;
   towerSfxLimiter[kind] = stamp;
-  synthShot(kind, intensity);
+  synthShot(kind, Math.min(1, intensity));
 }
 
-function playBgmSrc(src, volume=.34){
+function playBgmSrc(src, volume=.30){
   if(!audio || !audio.on || !src) return;
   if(audio.bgm && audio.bgmSrc === src){
     audio.bgm.volume = volume;
@@ -12411,12 +12610,13 @@ function playBgmSrc(src, volume=.34){
   }
   if(audio.bgm){
     audio.bgm.pause();
-    audio.bgm.currentTime = 0;
   }
-  const bgm = new Audio(src);
+  const bgm = htmlAudioCache[src] || new Audio(src);
+  htmlAudioCache[src] = bgm;
   bgm.loop = true;
   bgm.volume = volume;
-  bgm.preload = 'auto';
+  bgm.preload = 'metadata';
+  try{ bgm.currentTime = 0; }catch(_){ }
   audio.bgm = bgm;
   audio.bgmSrc = src;
   bgm.play().catch(()=>{});
@@ -12426,7 +12626,7 @@ function playStageBgm(){
   const stageList = AUDIO_URLS.bgm?.stages || [];
   const fallbackList = Array.isArray(AUDIO_URLS.bgm) ? AUDIO_URLS.bgm : [];
   const baseSrc = stageList[S.theme % stageList.length] || fallbackList[S.theme % fallbackList.length];
-  const bossWave = !!S.currentBossInfo && (S.wave === 5 || S.wave === 10);
+  const bossWave = !!S.currentBossInfo && (S.ogge === 5 || S.ogge === 10);
   const src = bossWave ? (AUDIO_URLS.bgm?.boss || baseSrc) : baseSrc;
   playBgmSrc(src, bossWave ? .40 : .34);
 }
@@ -12446,11 +12646,18 @@ function stopStageBgm(){
 
 function sound(type, opts={}){
   if(!audio || !audio.on)return;
+  const now = performance.now();
+  const important = new Set(['boss','core','clear','gameover','summon','merge','unlock','level','treasure']);
+  const minGap = {shot:240, beam:280, hit:260, kill:320, boss:900, core:520, summon:180, merge:220, treasure:360, level:420, clear:1000, gameover:1000, unlock:600}[type] || 260;
+  if(audio.perfMode && !important.has(type)) return;
+  if(now - (soundLimiter[type] || 0) < minGap) return;
+  soundLimiter[type] = now;
   if(type === 'boss'){
     const srcBoss = AUDIO_URLS.sfx?.boss;
     if(srcBoss){
-      const a = new Audio(srcBoss);
-      a.volume = .46 * (opts.intensity || 1);
+      const a = (htmlAudioCache[srcBoss] || new Audio(srcBoss)).cloneNode(true);
+      htmlAudioCache[srcBoss] = htmlAudioCache[srcBoss] || new Audio(srcBoss);
+      a.volume = .34 * (opts.intensity || 1);
       a.play().catch(()=>{});
     }
     playTowerSfx('boss', opts.intensity || 1);
@@ -12458,8 +12665,11 @@ function sound(type, opts={}){
   }
   const src = AUDIO_URLS.sfx[type];
   if(!src)return;
-  const a = new Audio(src);
-  const volume = {shot:.24, beam:.26, blackhole:.40, nova:.46, treasure:.50, level:.40, hit:.32, kill:.28, summon:.26, merge:.32, clear:.48, gameover:.48, core:.44, unlock:.42}[type] || .28;
+  const base = htmlAudioCache[src] || new Audio(src);
+  htmlAudioCache[src] = base;
+  base.preload = 'metadata';
+  const a = base.cloneNode(true);
+  const volume = {shot:.16, beam:.16, blackhole:.34, nova:.38, treasure:.38, level:.34, hit:.18, kill:.16, summon:.22, merge:.26, clear:.42, gameover:.42, core:.38, unlock:.36}[type] || .22;
   a.volume = volume * (opts.volumeMul || 1);
   a.play().catch(()=>{});
 }
@@ -12486,9 +12696,191 @@ $('stageMapBack').onclick=()=>{
   }
 };
 
+
+
+/* =========================================================
+   Release UX Patch v2
+   - First-run tutorial, battle run logs, lean export flow.
+   ========================================================= */
+const RELEASE_TUTORIAL_KEY = 'planetRiftTutorialSeenV2';
+const RELEASE_RUN_LOG_KEY = 'planetRiftBattleRunLogsV2';
+const RELEASE_RUN_LOG_LIMIT = 80;
+
+function shouldShowBattleTutorial(stageNo){
+  try{ return !localStorage.getItem(RELEASE_TUTORIAL_KEY); }
+  catch(err){ return Number(stageNo || 1) === 1; }
+}
+
+function closeBattleTutorial(skipSave=false){
+  const overlay = $('tutorialOverlay');
+  if(overlay) overlay.remove();
+  if(!skipSave){
+    try{ localStorage.setItem(RELEASE_TUTORIAL_KEY, '1'); }catch(err){}
+  }
+  if(S && !S.gameOver) S.paused = false;
+  updateUI();
+}
+
+function showBattleTutorial(stageNo){
+  if($('tutorialOverlay')) return;
+  if(S) S.paused = true;
+  const def = getStageDef(stageNo || StageMapState.current || 1);
+  const overlay = document.createElement('div');
+  overlay.id = 'tutorialOverlay';
+  overlay.className = 'tutorialOverlay';
+  overlay.innerHTML = `<div class="tutorialCard" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle">
+    <div class="tutorialKicker">FIRST DEFENSE BRIEFING</div>
+    <h2 id="tutorialTitle">${escapeHtml(def.ko)} 방어 시작</h2>
+    <p>전투 화면은 일부러 단순하게 유지했습니다. 지금 필요한 판단만 보면 됩니다.</p>
+    <div class="tutorialSteps">
+      <div class="tutorialStep"><b>01</b><span><strong>랜덤 소환</strong>으로 행성을 배치하세요. 배치 가능한 장판에 자동 착지합니다.</span></div>
+      <div class="tutorialStep"><b>02</b><span><strong>같은 행성 + 같은 레벨</strong>은 자동 병합으로 성장합니다. 고유 스킬은 Lv.3 / Lv.6 / Lv.9에 자동 해금됩니다.</span></div>
+      <div class="tutorialStep"><b>03</b><span><strong>일반 스킬</strong>은 전투 중에 고르지 않습니다. 실패/클리어 보상인 성흔 조각으로 성역 지도에서 강화합니다.</span></div>
+      <div class="tutorialStep"><b>04</b><span><strong>10웨이브와 보스</strong>를 막으면 다음 성역과 신규 행성이 열립니다. 실패해도 조각과 기록은 남습니다.</span></div>
+    </div>
+    <div class="tutorialActions">
+      <button class="releaseTinyLink" id="tutorialNeverBtn">다시 보지 않기</button>
+      <button class="btnGreen" id="tutorialStartBtn">방어 시작</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  const start = overlay.querySelector('#tutorialStartBtn');
+  const never = overlay.querySelector('#tutorialNeverBtn');
+  if(start) start.onclick = () => closeBattleTutorial(false);
+  if(never) never.onclick = () => closeBattleTutorial(false);
+}
+
+function showStageQuickTip(stageNo){
+  if(!S || S.gameOver) return;
+  const def = getStageDef(stageNo || StageMapState.current || 1);
+  toast(`${def.ko} 진입`, 'important');
+}
+
+function currentTowerUsageSummary(){
+  const usage = {};
+  if(Array.isArray(grid)){
+    grid.forEach(t => {
+      if(!t) return;
+      const id = PLANETS[t.type]?.id || `type_${t.type}`;
+      if(!usage[id]) usage[id] = {count:0,maxLevel:0};
+      usage[id].count += 1;
+      usage[id].maxLevel = Math.max(usage[id].maxLevel, Number(t.level || 1));
+    });
+  }
+  let topTower = 'none';
+  let topScore = -1;
+  Object.entries(usage).forEach(([id, v]) => {
+    const score = v.count * 100 + v.maxLevel;
+    if(score > topScore){ topScore = score; topTower = id; }
+  });
+  return {usage, topTower};
+}
+
+function buildBattleRunLog(cleared=false, stageNoOverride=null){
+  const stageNo = Number(stageNoOverride || S?.stageNo || StageMapState.current || 1);
+  const def = getStageDef(stageNo);
+  const towers = currentTowerUsageSummary();
+  const hp = Number(S?.hp || 0);
+  const maxHp = Math.max(1, Number(S?.maxHp || 1));
+  const now = new Date();
+  return {
+    id: `${now.toISOString()}_${Math.random().toString(36).slice(2,8)}`,
+    at: now.toISOString(),
+    stage: stageNo,
+    stageKey: def.key,
+    stageName: def.ko,
+    result: cleared ? 'clear' : 'defeat',
+    wave: Number(S?.ogge || 0),
+    kills: Number(S?.runKills || 0),
+    summons: Number(S?.runSummons || 0),
+    merges: Number(S?.runMerges || 0),
+    leaked: Number(S?.leakedEnemies || 0),
+    coreHp: hp,
+    coreHpRatio: Number((hp / maxHp).toFixed(4)),
+    bestCombo: Number(S?.combo?.best || 0),
+    gold: Number(S?.gold || 0),
+    battleLevel: Number(S?.level || 1),
+    topTower: towers.topTower,
+    towerUsage: towers.usage,
+    globalEffects: globalSkillSummaryText ? globalSkillSummaryText() : ''
+  };
+}
+
+function appendBattleRunLog(entry){
+  if(!entry) return;
+  try{
+    const prev = JSON.parse(localStorage.getItem(RELEASE_RUN_LOG_KEY) || '[]');
+    const logs = Array.isArray(prev) ? prev : [];
+    logs.unshift(entry);
+    localStorage.setItem(RELEASE_RUN_LOG_KEY, JSON.stringify(logs.slice(0, RELEASE_RUN_LOG_LIMIT)));
+    if(typeof console !== 'undefined') console.table([entry]);
+  }catch(err){
+    console.warn('battle run log save failed', err);
+  }
+}
+
+function battleRunLogsToCsv(logs){
+  const cols = ['at','stage','stageKey','stageName','result','wave','kills','summons','merges','leaked','coreHp','coreHpRatio','bestCombo','gold','battleLevel','topTower','globalEffects','towerUsage'];
+  const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const rows = [cols.join(',')];
+  logs.forEach(log => {
+    rows.push(cols.map(c => esc(c === 'towerUsage' ? JSON.stringify(log[c] || {}) : log[c])).join(','));
+  });
+  return rows.join('\n');
+}
+
+function exportBattleLogs(){
+  let logs = [];
+  try{ logs = JSON.parse(localStorage.getItem(RELEASE_RUN_LOG_KEY) || '[]'); }catch(err){ logs = []; }
+  if(!Array.isArray(logs) || !logs.length){
+    toast('아직 저장된 전투 로그가 없습니다');
+    return;
+  }
+  const csv = battleRunLogsToCsv(logs);
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `planet_rift_run_logs_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 300);
+  toast(`${logs.length}개 전투 로그 CSV 저장`);
+}
+
+function showBattleLogSummary(){
+  let logs = [];
+  try{ logs = JSON.parse(localStorage.getItem(RELEASE_RUN_LOG_KEY) || '[]'); }catch(err){ logs = []; }
+  if(!logs.length){ toast('아직 저장된 전투 로그가 없습니다'); return; }
+  const recent = logs.slice(0, 5).map(x => `${x.stageName} ${x.result} · ${x.ogge}W · 처치 ${x.kills}`).join('<br>');
+  const overlay = document.createElement('div');
+  overlay.className = 'releaseModalOverlay';
+  overlay.innerHTML = `<div class="releaseModalCard" role="dialog" aria-modal="true">
+    <h2>RUN LOG</h2>
+    <p>최근 기록 ${fmt2(logs.length)}개가 로컬 브라우저에 저장되어 있습니다.</p>
+    <p style="margin-top:12px">${recent}</p>
+    <div class="releaseModalActions">
+      <button class="btnAlt" id="runLogCloseBtn">닫기</button>
+      <button class="btnGreen" id="runLogExportBtn">CSV 다운로드</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('#runLogCloseBtn').onclick = () => overlay.remove();
+  overlay.querySelector('#runLogExportBtn').onclick = () => { exportBattleLogs(); overlay.remove(); };
+}
+
+const _recordOfflineRunEndRelease = recordOfflineRunEnd;
+recordOfflineRunEnd = function(cleared=false, stageNoOverride=null){
+  const entry = buildBattleRunLog(cleared, stageNoOverride);
+  const result = _recordOfflineRunEndRelease(cleared, stageNoOverride);
+  appendBattleRunLog(entry);
+  return result;
+};
+
 $('stageEnterBtn').onclick=()=>{
   startSelectedStageFromMap();
 };
+if($('runLogBtn')) $('runLogBtn').onclick = showBattleLogSummary;
 
 document.querySelectorAll('#stageMap .stageNode').forEach(node => {
   node.addEventListener('click', () => {
