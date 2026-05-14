@@ -8071,6 +8071,71 @@ h1{
   }
 }
 
+
+
+/* =========================================================
+   v5 Bottom Control Spacing Patch
+   - 모바일/태블릿 전투 화면에서 행성 리스트를 보드 아래 여유 공간으로 내림.
+   - 행성 카드가 캔버스 블록을 가리지 않도록 field 바깥에 배치.
+   - HUD/조작 패널도 자연스럽게 아래로 밀어 겹침을 줄임.
+   ========================================================= */
+@media (max-width: 1180px){
+  html, body{
+    overflow-y:auto !important;
+    height:auto !important;
+    min-height:100dvh !important;
+  }
+  #wrap{
+    height:auto !important;
+    min-height:100dvh !important;
+    align-items:flex-start !important;
+    justify-content:center !important;
+  }
+  #game{
+    overflow:visible !important;
+  }
+  #field{
+    overflow:visible !important;
+    margin-bottom:104px !important;
+  }
+  #hangar{
+    bottom:-96px !important;
+    left:0 !important;
+    right:0 !important;
+    padding:0 8px 6px !important;
+    z-index:14 !important;
+  }
+  #side.battleMinimal,
+  #side{
+    margin-top:0 !important;
+  }
+}
+@media (max-width: 768px){
+  #game{
+    gap:8px !important;
+  }
+  #field{
+    margin-bottom:94px !important;
+  }
+  #hangar{
+    bottom:-88px !important;
+    left:0 !important;
+    right:0 !important;
+    padding:0 7px 6px !important;
+  }
+  #side.battleMinimal{
+    height:calc(128px + env(safe-area-inset-bottom)) !important;
+  }
+}
+@media (max-width: 390px){
+  #field{
+    margin-bottom:90px !important;
+  }
+  #hangar{
+    bottom:-84px !important;
+  }
+}
+
 </style>
 </head>
 <body>
