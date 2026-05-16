@@ -28453,3 +28453,231 @@ window.addEventListener('DOMContentLoaded', () => {
     #stageMap .stageTagRow > *{font-size:6.2px !important; padding:3px 7px !important;}
   }
 </style>
+
+
+<style id="v143-battle-topright-controls-compact">
+/* v143: make in-battle top-right tower/BGM buttons smaller and tuck them closer to the top-right corner so they do not overlap the board blocks. */
+#field .fieldTopControls{
+  top:10px !important;
+  right:10px !important;
+  left:auto !important;
+  bottom:auto !important;
+  gap:6px !important;
+  align-items:flex-end !important;
+  z-index:40 !important;
+}
+#field .fieldTopControls .fieldIconBtn,
+#field .fieldTopControls #towerMenuBtn,
+#field .fieldTopControls #audioBtn{
+  width:44px !important;
+  height:44px !important;
+  min-width:44px !important;
+  min-height:44px !important;
+  max-width:44px !important;
+  max-height:44px !important;
+  padding:0 !important;
+}
+#field .fieldTopControls .fieldIconBtn img,
+#field .fieldTopControls #towerMenuBtn img,
+#field .fieldTopControls #audioBtn img{
+  width:18px !important;
+  height:18px !important;
+}
+@media (max-width:920px){
+  #field .fieldTopControls{
+    top:8px !important;
+    right:8px !important;
+    gap:5px !important;
+  }
+  #field .fieldTopControls .fieldIconBtn,
+  #field .fieldTopControls #towerMenuBtn,
+  #field .fieldTopControls #audioBtn{
+    width:40px !important;
+    height:40px !important;
+    min-width:40px !important;
+    min-height:40px !important;
+    max-width:40px !important;
+    max-height:40px !important;
+  }
+  #field .fieldTopControls .fieldIconBtn img,
+  #field .fieldTopControls #towerMenuBtn img,
+  #field .fieldTopControls #audioBtn img{
+    width:16px !important;
+    height:16px !important;
+  }
+}
+@media (max-width:640px){
+  #field .fieldTopControls{
+    top:6px !important;
+    right:6px !important;
+    gap:4px !important;
+  }
+  #field .fieldTopControls .fieldIconBtn,
+  #field .fieldTopControls #towerMenuBtn,
+  #field .fieldTopControls #audioBtn{
+    width:36px !important;
+    height:36px !important;
+    min-width:36px !important;
+    min-height:36px !important;
+    max-width:36px !important;
+    max-height:36px !important;
+    border-width:1px !important;
+  }
+  #field .fieldTopControls .fieldIconBtn img,
+  #field .fieldTopControls #towerMenuBtn img,
+  #field .fieldTopControls #audioBtn img{
+    width:14px !important;
+    height:14px !important;
+  }
+}
+</style>
+
+
+
+<style id="v144-stage-map-topright-two-buttons-restore">
+/* v144: show the two compact circular controls on the stage planet map.
+   Keep the old square stageTowerManageBtn removed; use a separate circular stack instead. */
+#stageMap .stageQuickControls{
+  position:absolute !important;
+  top:8px !important;
+  right:8px !important;
+  left:auto !important;
+  bottom:auto !important;
+  z-index:1400 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:5px !important;
+  pointer-events:auto !important;
+}
+#stageMap .stageQuickBtn{
+  width:38px !important;
+  height:38px !important;
+  min-width:38px !important;
+  min-height:38px !important;
+  max-width:38px !important;
+  max-height:38px !important;
+  display:grid !important;
+  place-items:center !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  border:1px solid rgba(43,224,255,.30) !important;
+  background:radial-gradient(circle at 50% 42%,rgba(9,35,66,.96),rgba(1,8,21,.96) 72%) !important;
+  box-shadow:
+    0 0 0 2px rgba(0,0,0,.18),
+    inset 0 0 0 1px rgba(255,255,255,.035),
+    0 0 13px rgba(54,221,255,.11) !important;
+  opacity:.94 !important;
+  cursor:pointer !important;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  transform:none !important;
+}
+#stageMap .stageQuickBtn img{
+  width:15px !important;
+  height:15px !important;
+  object-fit:contain !important;
+  filter:drop-shadow(0 0 7px rgba(77,236,255,.30)) !important;
+  pointer-events:none !important;
+}
+#stageMap .stageQuickBtn:hover,
+#stageMap .stageQuickBtn:focus-visible{
+  opacity:1 !important;
+  filter:brightness(1.07) !important;
+  outline:none !important;
+}
+#stageMap .stageQuickBtn.is-off{
+  opacity:.55 !important;
+  filter:saturate(.65) brightness(.86) !important;
+}
+@media (max-width:760px){
+  #stageMap .stageQuickControls{
+    top:6px !important;
+    right:6px !important;
+    gap:4px !important;
+  }
+  #stageMap .stageQuickBtn{
+    width:34px !important;
+    height:34px !important;
+    min-width:34px !important;
+    min-height:34px !important;
+    max-width:34px !important;
+    max-height:34px !important;
+  }
+  #stageMap .stageQuickBtn img{
+    width:13px !important;
+    height:13px !important;
+  }
+}
+</style>
+<script id="v144-stage-map-topright-two-buttons-restore-js">
+(function(){
+  function syncStageAudioButton(){
+    var stageAudio = document.getElementById('stageAudioQuickBtn');
+    var battleAudio = document.getElementById('audioBtn');
+    if(!stageAudio) return;
+    var isOff = battleAudio ? battleAudio.classList.contains('is-off') : false;
+    stageAudio.classList.toggle('is-off', isOff);
+    stageAudio.setAttribute('aria-label', isOff ? 'BGM 켜기' : 'BGM 끄기');
+    stageAudio.setAttribute('title', isOff ? 'BGM OFF' : 'BGM ON');
+  }
+  function ensureStageQuickControls(){
+    var stageMap = document.getElementById('stageMap');
+    if(!stageMap) return;
+    var oldSquare = document.getElementById('stageTowerManageBtn');
+    if(oldSquare && oldSquare.parentNode) oldSquare.parentNode.removeChild(oldSquare);
+
+    var wrap = document.getElementById('stageQuickControls');
+    if(!wrap){
+      wrap = document.createElement('div');
+      wrap.id = 'stageQuickControls';
+      wrap.className = 'stageQuickControls';
+      wrap.setAttribute('aria-label', '스테이지 맵 빠른 조작');
+      wrap.innerHTML =
+        '<button id="stageTowerQuickBtn" class="stageQuickBtn stageQuickBtn--tower" type="button" aria-label="강화 관리" title="강화 관리"><img src="ui_icon_tower.png" alt="" aria-hidden="true"></button>' +
+        '<button id="stageAudioQuickBtn" class="stageQuickBtn stageQuickBtn--bgm" type="button" aria-label="BGM 끄기" title="BGM ON"><img src="ui_icon_bgm.png" alt="" aria-hidden="true"></button>';
+      stageMap.appendChild(wrap);
+    }
+
+    var tower = document.getElementById('stageTowerQuickBtn');
+    var audio = document.getElementById('stageAudioQuickBtn');
+
+    if(tower && tower.dataset.v144Bound !== '1'){
+      tower.dataset.v144Bound = '1';
+      tower.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var fieldTower = document.getElementById('towerMenuBtn');
+        if(fieldTower){
+          fieldTower.click();
+        }
+      });
+    }
+    if(audio && audio.dataset.v144Bound !== '1'){
+      audio.dataset.v144Bound = '1';
+      audio.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var fieldAudio = document.getElementById('audioBtn');
+        if(fieldAudio){
+          fieldAudio.click();
+          setTimeout(syncStageAudioButton, 0);
+        }
+      });
+    }
+    syncStageAudioButton();
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', ensureStageQuickControls, {once:true});
+  }else{
+    ensureStageQuickControls();
+  }
+  window.addEventListener('load', ensureStageQuickControls, {once:true});
+  document.addEventListener('click', function(){
+    setTimeout(syncStageAudioButton, 0);
+  }, true);
+})();
+</script>
+
