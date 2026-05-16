@@ -15997,7 +15997,7 @@ function drawElectricArc(x1,y1,x2,y2,options={}){
   ctx.stroke();
   ctx.strokeStyle=main;
   ctx.lineWidth=options.innerWidth || 1.25;
-  ctx.shadowBlur=5;
+  ctx.shadowBlur=7;
   ctx.stroke();
   ctx.restore();
 }
@@ -19272,15 +19272,15 @@ function drawPremiumTileBase(c, i, key){
     ctx.save();
     ctx.textAlign='center';
     ctx.textBaseline='middle';
-    ctx.font=`900 ${Math.max(7, CELL*.092)}px Orbitron`;
+    ctx.font=`900 ${Math.max(12.5, CELL*.155)}px Orbitron`;
     ctx.fillStyle=plateColorWithAlpha(accent, .82);
     ctx.shadowColor=accent;
     ctx.shadowBlur=9;
-    ctx.fillText(symbol, c.x, c.y - CELL*.105);
-    ctx.font=`900 ${Math.max(5.8, CELL*.064)}px Orbitron`;
-    ctx.shadowBlur=5;
-    ctx.fillStyle='rgba(226,232,240,.62)';
-    if(label) ctx.fillText(label, c.x, c.y + CELL*.105);
+    ctx.fillText(symbol, c.x, c.y - CELL*.11);
+    ctx.font=`900 ${Math.max(10.6, CELL*.118)}px Orbitron`;
+    ctx.shadowBlur=7;
+    ctx.fillStyle='rgba(248,250,252,.98)';
+    if(label) ctx.fillText(label, c.x, c.y + CELL*.18);
     ctx.restore();
   }else if(blocked){
     ctx.save();
@@ -21134,15 +21134,10 @@ window.addEventListener('DOMContentLoaded', () => {
     if(!wallet) return;
     const api = window.TowerDefenseGrowth;
     const shards = Math.max(0, Number(api?.getShards ? api.getShards() : 0) || 0);
-    const gold = Math.max(0, Number(window.S?.gold || 0) || 0);
     wallet.innerHTML = `
       <div class="towerWalletItem shard">
         <span>성흔 조각</span>
         <b>${esc(shards.toLocaleString('ko-KR'))}</b>
-      </div>
-      <div class="towerWalletItem gold">
-        <span>수정</span>
-        <b>${esc(gold.toLocaleString('ko-KR'))}</b>
       </div>`;
   }
   function towerImg(t, cls=''){
@@ -21295,13 +21290,31 @@ window.addEventListener('DOMContentLoaded', () => {
     renderCommonDetail(preferred.key);
   }
   function renderLockedCommonDetail(u){
-    const title = '공통 연구 잠금';
-    const reason = `${commonUnlockText(u)} 연구 정보와 업그레이드가 열립니다.`;
-    const masked = `
-      <div class="armoryCommonHero v82Hero" style="--skill-color:${esc(u.color)}"><div class="armoryCommonIcon">${commonIconImg(u.icon, 'hero')}</div><div><h2 class="armoryCommonTitle">미개방 연구</h2><div class="armoryCommonSubtitle">공용 패시브 / 정보 잠금</div><div class="armoryTags"><span class="tag">성역 조건</span><span class="tag">잠금</span></div></div></div>
-      <div class="armoryQuickGrid"><div class="armoryQuickCard"><small>해금 조건</small><b>${esc(commonUnlockText(u))}</b></div><div class="armoryQuickCard"><small>현재 효과</small><b>???</b></div><div class="armoryQuickCard"><small>다음 효과</small><b>???</b></div></div>
-      <div class="armorySection compact"><h3>스킬 정보</h3><p>조건을 달성하기 전까지 연구 상세 효과는 표시되지 않습니다.</p></div>`;
-    detail.innerHTML = lockShell(masked, title, reason);
+    const unlockText = commonUnlockText(u);
+    const title = commonDisplayTitle(u);
+    const subtitle = commonSubtitle(u);
+    const tags = commonTags(u);
+    detail.innerHTML = `
+      <div class="lockedResearchPolish" style="--skill-color:${esc(u.color)}">
+        <div class="lockedResearchHero">
+          <div class="lockedResearchIconWrap">
+            ${commonIconImg(u.icon, 'hero')}
+            <span class="lockedResearchLock" aria-hidden="true">🔒</span>
+          </div>
+          <div class="lockedResearchCopy">
+            <div class="lockedResearchKicker">LOCKED COMMON RESEARCH</div>
+            <h2 class="lockedResearchTitle">${esc(title)}</h2>
+            <p class="lockedResearchDesc">${esc(unlockText)} 연구 정보와 업그레이드가 열립니다.</p>
+            <div class="armoryTags lockedResearchTags">${tagsHtml(tags)}</div>
+          </div>
+        </div>
+        <div class="lockedResearchInfoGrid">
+          <div><small>해금 조건</small><b>${esc(unlockText)}</b></div>
+          <div><small>현재 상태</small><b>잠금</b></div>
+          <div><small>연구 타입</small><b>${esc(subtitle)}</b></div>
+        </div>
+        <div class="lockedResearchNotice">성역을 진행하면 이 슬롯의 상세 효과와 업그레이드 버튼이 자동으로 활성화됩니다.</div>
+      </div>`;
   }
   function renderCommonDetail(key){
     const api = window.TowerDefenseGrowth;
@@ -21337,13 +21350,13 @@ window.addEventListener('DOMContentLoaded', () => {
         <div><small>NEXT UPGRADE</small><b>${u.maxed ? '최대 연구 완료' : esc(u.nextEffect)}</b><span>${u.maxed ? '해당 연구의 모든 보너스가 적용 중입니다.' : `비용 ${costText} · 보유 ${esc(shards.toLocaleString('ko-KR'))} 조각`}</span></div>
         <button class="commonResearchBuy" type="button" data-common-research-buy="${esc(u.key)}" ${canBuy ? '' : 'disabled'}>${u.maxed ? 'MAX' : (canBuy ? `업그레이드` : `조각 부족`)}</button>
       </div>
-      <div class="armoryQuickGrid commonQuickGrid">
-        <div class="armoryQuickCard highlight"><small>현재 레벨</small><b>Lv.${esc(u.level)}</b></div>
-        <div class="armoryQuickCard"><small>현재 효과</small><b>${esc(u.level > 0 ? u.effect : '아직 연구 없음')}</b></div>
-        <div class="armoryQuickCard"><small>다음 효과</small><b>${esc(u.maxed ? '최대 연구 완료' : u.nextEffect)}</b></div>
-        <div class="armoryQuickCard"><small>업그레이드 비용</small><b>${costText}</b></div>
-        <div class="armoryQuickCard"><small>부족 조각</small><b>${u.maxed ? '0' : esc(need.toLocaleString('ko-KR'))}</b></div>
-        <div class="armoryQuickCard"><small>적용 범위</small><b>전장 전체</b></div>
+      <div class="commonInfoPanel">
+        <div class="commonInfoGrid">
+          <div class="commonInfoItem highlight"><small>현재 레벨</small><b>Lv.${esc(u.level)}</b></div>
+          <div class="commonInfoItem"><small>현재 효과</small><b>${esc(u.level > 0 ? u.effect : '아직 연구 없음')}</b></div>
+          <div class="commonInfoItem"><small>다음 효과</small><b>${esc(u.maxed ? '최대 연구 완료' : u.nextEffect)}</b></div>
+          <div class="commonInfoItem"><small>업그레이드 비용</small><b>${costText}</b></div>
+        </div>
       </div>
       <div class="armorySection compact"><h3>스킬 정보</h3><p>${esc(u.desc)}</p></div>
       ${commonTimelineHtml(u)}`;
@@ -28785,5 +28798,472 @@ window.addEventListener('DOMContentLoaded', () => {
 /* v149: the bottom 'applicable common research' hint cards were removed from tower detail.
    The actual common research system, including global_plate gameplay effects, remains active. */
 #towerPopup .armorySection.compact .armoryGeneralGrid:empty{display:none!important;}
+</style>
+
+
+
+<style id="v150-common-research-layout-cleanup">
+/* v150: remove the unused crystal wallet from armory, simplify common-research info into one panel, and tone down oversized typography. */
+#towerPopup .towerPopupWallet{gap:0 !important;}
+#towerPopup .towerPopupWallet .towerWalletItem{max-width:170px !important;}
+#towerPopup .towerPopupWallet .towerWalletItem.gold{display:none !important;}
+
+#towerPopup[data-active-tab="common"] .armoryCommonTitle,
+#towerPopup[data-active-tab="common"] .commonResearchTitle{
+  font-size:18px !important;
+  line-height:1.14 !important;
+  letter-spacing:-0.03em !important;
+  margin:0 0 6px !important;
+  max-width:320px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryCommonSubtitle,
+#towerPopup[data-active-tab="common"] .commonResearchSubtitle{
+  font-size:10px !important;
+  line-height:1.45 !important;
+}
+#towerPopup[data-active-tab="common"] .armoryTags .tag{
+  font-size:10px !important;
+  min-height:24px !important;
+  padding:0 8px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+  min-height:auto !important;
+  grid-template-columns:minmax(0,1fr) 132px !important;
+  gap:12px !important;
+  padding:14px 16px !important;
+  margin:0 0 14px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock small{
+  font-size:10px !important;
+  margin-bottom:6px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock b{
+  font-size:18px !important;
+  line-height:1.24 !important;
+  letter-spacing:-0.035em !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock span{
+  font-size:11px !important;
+  line-height:1.42 !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchBuy{
+  min-height:42px !important;
+  font-size:13px !important;
+}
+#towerPopup[data-active-tab="common"] .commonInfoPanel{
+  margin:0 0 14px !important;
+  padding:14px 16px !important;
+  border:1px solid rgba(80,210,255,.18) !important;
+  background:linear-gradient(180deg,rgba(7,19,40,.82),rgba(2,9,23,.96)) !important;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px) !important;
+}
+#towerPopup[data-active-tab="common"] .commonInfoGrid{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:10px 14px !important;
+}
+#towerPopup[data-active-tab="common"] .commonInfoItem{
+  min-width:0 !important;
+}
+#towerPopup[data-active-tab="common"] .commonInfoItem small{
+  display:block !important;
+  margin:0 0 5px !important;
+  color:#94aac0 !important;
+  font-size:11px !important;
+  font-weight:820 !important;
+  line-height:1.1 !important;
+}
+#towerPopup[data-active-tab="common"] .commonInfoItem b{
+  display:block !important;
+  color:#f7fbff !important;
+  font-size:15px !important;
+  font-weight:920 !important;
+  line-height:1.32 !important;
+  letter-spacing:-0.03em !important;
+  word-break:keep-all !important;
+}
+#towerPopup[data-active-tab="common"] .commonInfoItem.highlight b{
+  color:#81e6ff !important;
+}
+#towerPopup[data-active-tab="common"] .armorySection h3,
+#towerPopup[data-active-tab="common"] .commonTimelineTitle{
+  font-size:16px !important;
+}
+#towerPopup[data-active-tab="common"] .armorySection p{
+  font-size:12px !important;
+  line-height:1.56 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow b{font-size:11px !important;}
+#towerPopup[data-active-tab="common"] .commonTimelineRow span{font-size:11px !important;line-height:1.35 !important;}
+#towerPopup[data-active-tab="common"] .commonTimelineRow em{font-size:9px !important;}
+@media (max-width:900px){
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+    grid-template-columns:1fr !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonInfoGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px 10px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock b{font-size:16px !important;}
+  #towerPopup[data-active-tab="common"] .commonInfoItem b{font-size:14px !important;}
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup[data-active-tab="common"] .commonResearchTitle{font-size:16px !important;max-width:100% !important;}
+  #towerPopup[data-active-tab="common"] .commonInfoGrid{grid-template-columns:1fr !important;}
+  #towerPopup[data-active-tab="common"] .commonInfoPanel{padding:12px !important;}
+  #towerPopup[data-active-tab="common"] .commonInfoItem small{font-size:10px !important;}
+  #towerPopup[data-active-tab="common"] .commonInfoItem b{font-size:13px !important;}
+}
+</style>
+
+
+<style id="v151-locked-common-research-polish">
+/* v151: make locked common-research detail look complete instead of a blurred unfinished page. */
+#towerPopup[data-active-tab="common"] .lockedResearchPolish{
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:18px;
+  padding:34px 36px;
+  border:1px solid rgba(80,210,255,.18);
+  background:
+    radial-gradient(circle at 18% 22%, color-mix(in srgb,var(--skill-color,#67e8f9) 16%,transparent), transparent 34%),
+    linear-gradient(180deg,rgba(5,16,35,.86),rgba(1,7,18,.98));
+  clip-path:polygon(22px 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%,0 22px);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),0 0 26px rgba(0,0,0,.20);
+}
+#towerPopup[data-active-tab="common"] .lockedResearchHero{
+  display:grid;
+  grid-template-columns:128px minmax(0,1fr);
+  align-items:center;
+  gap:24px;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchIconWrap{
+  position:relative;
+  width:116px;
+  height:116px;
+  display:grid;
+  place-items:center;
+  border:1px solid color-mix(in srgb,var(--skill-color,#67e8f9) 28%,rgba(255,255,255,.08));
+  background:radial-gradient(circle at 50% 45%, color-mix(in srgb,var(--skill-color,#67e8f9) 12%,transparent), rgba(2,8,22,.82) 68%);
+  clip-path:polygon(20px 0,100% 0,100% calc(100% - 20px),calc(100% - 20px) 100%,0 100%,0 20px);
+}
+#towerPopup[data-active-tab="common"] .lockedResearchIconWrap .commonResearchImg{
+  width:58px !important;
+  height:58px !important;
+  opacity:.52 !important;
+  filter:grayscale(.45) brightness(.82) drop-shadow(0 0 12px var(--skill-color,#67e8f9)) !important;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchLock{
+  position:absolute;
+  right:9px;
+  bottom:9px;
+  width:32px;
+  height:32px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  font-size:16px;
+  background:rgba(2,8,22,.92);
+  border:1px solid rgba(255,230,155,.35);
+}
+#towerPopup[data-active-tab="common"] .lockedResearchKicker{
+  font-family:'Orbitron','Pretendard',sans-serif;
+  font-size:10px;
+  letter-spacing:.18em;
+  color:var(--skill-color,#67e8f9);
+  font-weight:900;
+  margin-bottom:8px;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchTitle{
+  margin:0 0 10px;
+  font-size:24px;
+  line-height:1.15;
+  letter-spacing:-.035em;
+  color:#f8fbff;
+  font-weight:950;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchDesc{
+  margin:0;
+  max-width:520px;
+  font-size:14px;
+  line-height:1.55;
+  color:#b7c7d8;
+  font-weight:760;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchTags{
+  margin-top:14px;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchInfoGrid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchInfoGrid>div{
+  min-height:76px;
+  padding:12px 14px;
+  border:1px solid rgba(80,210,255,.14);
+  background:rgba(3,13,30,.58);
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
+}
+#towerPopup[data-active-tab="common"] .lockedResearchInfoGrid small{
+  display:block;
+  margin-bottom:6px;
+  font-size:10px;
+  color:#8ea4bc;
+  font-weight:820;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchInfoGrid b{
+  display:block;
+  font-size:14px;
+  line-height:1.35;
+  color:#eef7ff;
+  font-weight:900;
+  word-break:keep-all;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchNotice{
+  padding:13px 15px;
+  border-left:3px solid var(--skill-color,#67e8f9);
+  background:rgba(80,210,255,.055);
+  color:#aebed0;
+  font-size:12px;
+  line-height:1.45;
+  font-weight:760;
+}
+@media(max-width:900px){
+  #towerPopup[data-active-tab="common"] .lockedResearchPolish{padding:24px 22px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchHero{grid-template-columns:96px minmax(0,1fr);gap:16px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap{width:88px;height:88px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap .commonResearchImg{width:46px !important;height:46px !important;}
+  #towerPopup[data-active-tab="common"] .lockedResearchTitle{font-size:20px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchDesc{font-size:12px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchInfoGrid{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  #towerPopup[data-active-tab="common"] .lockedResearchPolish{padding:18px 16px;justify-content:flex-start;}
+  #towerPopup[data-active-tab="common"] .lockedResearchHero{grid-template-columns:1fr;}
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap{width:78px;height:78px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchTitle{font-size:18px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchInfoGrid>div{min-height:58px;}
+}
+</style>
+
+
+<style id="v152-common-timeline-row-compact-fix">
+/* v152: make common research timeline rows feel denser and vertically centered. */
+#towerPopup[data-active-tab="common"] .commonTimelineList{
+  gap:8px !important;
+  padding-left:32px !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineList::before{
+  left:12px !important;
+  top:8px !important;
+  bottom:8px !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow{
+  grid-template-columns:66px minmax(0,1fr) 72px !important;
+  align-items:center !important;
+  min-height:48px !important;
+  padding:8px 12px !important;
+  margin:0 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow::before{
+  left:-24px !important;
+  width:14px !important;
+  height:14px !important;
+  border-width:3px !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow b,
+#towerPopup[data-active-tab="common"] .commonTimelineRow span,
+#towerPopup[data-active-tab="common"] .commonTimelineRow em{
+  align-self:center !important;
+  margin:0 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow b{
+  font-size:14px !important;
+  line-height:1 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow span{
+  display:flex !important;
+  align-items:center !important;
+  min-height:100% !important;
+  font-size:12px !important;
+  line-height:1.28 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow em{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-height:28px !important;
+  padding:0 8px !important;
+  font-size:11px !important;
+  justify-self:end !important;
+  text-align:center !important;
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="common"] .commonTimelineList{
+    padding-left:22px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineList::before{
+    left:8px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineRow{
+    grid-template-columns:46px minmax(0,1fr) 52px !important;
+    min-height:42px !important;
+    padding:7px 9px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineRow::before{
+    left:-18px !important;
+    width:12px !important;
+    height:12px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineRow b{font-size:12px !important;}
+  #towerPopup[data-active-tab="common"] .commonTimelineRow span{font-size:10px !important;line-height:1.25 !important;}
+  #towerPopup[data-active-tab="common"] .commonTimelineRow em{min-height:24px !important;font-size:9px !important;padding:0 6px !important;}
+}
+</style>
+
+
+
+<style id="v153-common-timeline-more-compact-center-fix">
+/* v153: further reduce research timeline row height and hard-center text vertically. */
+#towerPopup[data-active-tab="common"] .commonTimelineList{
+  gap:6px !important;
+  padding-left:30px !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineList::before{
+  left:11px !important;
+  top:7px !important;
+  bottom:7px !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow{
+  grid-template-columns:64px minmax(0,1fr) 70px !important;
+  align-items:center !important;
+  min-height:40px !important;
+  height:auto !important;
+  padding:6px 12px !important;
+  margin:0 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow::before{
+  left:-23px !important;
+  width:12px !important;
+  height:12px !important;
+  border-width:3px !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow > b,
+#towerPopup[data-active-tab="common"] .commonTimelineRow > span,
+#towerPopup[data-active-tab="common"] .commonTimelineRow > em{
+  display:flex !important;
+  align-items:center !important;
+  align-self:center !important;
+  min-height:100% !important;
+  margin:0 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow > b{
+  font-size:13px !important;
+  line-height:1 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow > span{
+  font-size:11px !important;
+  line-height:1.2 !important;
+  justify-content:flex-start !important;
+  padding:0 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow > em{
+  justify-content:center !important;
+  justify-self:end !important;
+  min-height:22px !important;
+  padding:0 7px !important;
+  font-size:10px !important;
+  line-height:1 !important;
+  text-align:center !important;
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="common"] .commonTimelineList{
+    gap:5px !important;
+    padding-left:20px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineList::before{
+    left:7px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineRow{
+    grid-template-columns:42px minmax(0,1fr) 48px !important;
+    min-height:36px !important;
+    padding:5px 8px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineRow::before{
+    left:-16px !important;
+    width:10px !important;
+    height:10px !important;
+    border-width:2px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineRow > b{font-size:11px !important;}
+  #towerPopup[data-active-tab="common"] .commonTimelineRow > span{font-size:10px !important;line-height:1.15 !important;}
+  #towerPopup[data-active-tab="common"] .commonTimelineRow > em{min-height:20px !important;font-size:9px !important;padding:0 6px !important;}
+}
+</style>
+
+
+
+<style id="v154-tower-skill-row-compact-match-fix">
+/* v154: make tower unique-skill rows denser like the common research rows and vertically center content. */
+#towerPopup .armorySkillList{
+  gap:8px !important;
+}
+#towerPopup .armorySkillRow{
+  grid-template-columns:64px 42px minmax(0,1fr) !important;
+  align-items:center !important;
+  min-height:48px !important;
+  height:auto !important;
+  padding:8px 12px !important;
+  margin:0 !important;
+}
+#towerPopup .armorySkillRow > b,
+#towerPopup .armorySkillRow > .skillIcon,
+#towerPopup .armorySkillRow > div{
+  align-self:center !important;
+}
+#towerPopup .armorySkillRow > b{
+  display:flex !important;
+  align-items:center !important;
+  min-height:100% !important;
+  font-size:14px !important;
+  line-height:1 !important;
+}
+#towerPopup .armorySkillRow .skillIcon{
+  width:34px !important;
+  height:34px !important;
+  font-size:20px !important;
+}
+#towerPopup .armorySkillRow > div{
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  min-height:100% !important;
+}
+#towerPopup .armorySkillRow strong{
+  margin:0 0 2px !important;
+  font-size:14px !important;
+  line-height:1.18 !important;
+}
+#towerPopup .armorySkillRow span{
+  margin-top:0 !important;
+  font-size:11px !important;
+  line-height:1.24 !important;
+}
+@media (max-width:640px){
+  #towerPopup .armorySkillList{gap:6px !important;}
+  #towerPopup .armorySkillRow{
+    grid-template-columns:44px minmax(0,1fr) !important;
+    min-height:42px !important;
+    padding:7px 9px !important;
+  }
+  #towerPopup .armorySkillRow .skillIcon{display:none !important;}
+  #towerPopup .armorySkillRow > b{font-size:12px !important;}
+  #towerPopup .armorySkillRow strong{font-size:12px !important;line-height:1.16 !important;}
+  #towerPopup .armorySkillRow span{font-size:10px !important;line-height:1.18 !important;}
+}
 </style>
 

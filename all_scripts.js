@@ -1547,7 +1547,7 @@ function drawElectricArc(x1,y1,x2,y2,options={}){
   ctx.stroke();
   ctx.strokeStyle=main;
   ctx.lineWidth=options.innerWidth || 1.25;
-  ctx.shadowBlur=5;
+  ctx.shadowBlur=7;
   ctx.stroke();
   ctx.restore();
 }
@@ -4716,14 +4716,14 @@ function drawTerrain(){
     ctx.strokeStyle='rgba(255,255,255,.04)';ctx.strokeRect(c.x-CELL/2+3,c.y-CELL/2+3,CELL-6,CELL-6);
     if(key!=='empty'&&key!=='path'){
       ctx.fillStyle=key==='blocked'?'#475569':(getPlateAffinity(i)?.color || theme().color);
-      ctx.font='900 16px Orbitron';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.font='900 22px Orbitron';ctx.textAlign='center';ctx.textBaseline='middle';
       const s={blocked:'×',amp:'▲',coil:'»',lens:'◇',mine:'◆',rift:'!'}[key];
       ctx.fillText(s,c.x,c.y);
       if(isSpecialPlateKey(key)){
-        ctx.font='900 7px Orbitron';
-        ctx.fillStyle='rgba(255,255,255,.72)';
+        ctx.font='900 12px Orbitron';
+        ctx.fillStyle='rgba(255,255,255,.96)';
         const label = plateAffinityName(i).slice(0,4).toUpperCase();
-        if(label) ctx.fillText(label, c.x, c.y + CELL * .28);
+        if(label) ctx.fillText(label, c.x, c.y + CELL * .33);
       }
     }
   }
@@ -6553,15 +6553,10 @@ window.addEventListener('DOMContentLoaded', () => {
     if(!wallet) return;
     const api = window.TowerDefenseGrowth;
     const shards = Math.max(0, Number(api?.getShards ? api.getShards() : 0) || 0);
-    const gold = Math.max(0, Number(window.S?.gold || 0) || 0);
     wallet.innerHTML = `
       <div class="towerWalletItem shard">
         <span>성흔 조각</span>
         <b>${esc(shards.toLocaleString('ko-KR'))}</b>
-      </div>
-      <div class="towerWalletItem gold">
-        <span>수정</span>
-        <b>${esc(gold.toLocaleString('ko-KR'))}</b>
       </div>`;
   }
   function towerImg(t, cls=''){
@@ -6714,13 +6709,31 @@ window.addEventListener('DOMContentLoaded', () => {
     renderCommonDetail(preferred.key);
   }
   function renderLockedCommonDetail(u){
-    const title = '공통 연구 잠금';
-    const reason = `${commonUnlockText(u)} 연구 정보와 업그레이드가 열립니다.`;
-    const masked = `
-      <div class="armoryCommonHero v82Hero" style="--skill-color:${esc(u.color)}"><div class="armoryCommonIcon">${commonIconImg(u.icon, 'hero')}</div><div><h2 class="armoryCommonTitle">미개방 연구</h2><div class="armoryCommonSubtitle">공용 패시브 / 정보 잠금</div><div class="armoryTags"><span class="tag">성역 조건</span><span class="tag">잠금</span></div></div></div>
-      <div class="armoryQuickGrid"><div class="armoryQuickCard"><small>해금 조건</small><b>${esc(commonUnlockText(u))}</b></div><div class="armoryQuickCard"><small>현재 효과</small><b>???</b></div><div class="armoryQuickCard"><small>다음 효과</small><b>???</b></div></div>
-      <div class="armorySection compact"><h3>스킬 정보</h3><p>조건을 달성하기 전까지 연구 상세 효과는 표시되지 않습니다.</p></div>`;
-    detail.innerHTML = lockShell(masked, title, reason);
+    const unlockText = commonUnlockText(u);
+    const title = commonDisplayTitle(u);
+    const subtitle = commonSubtitle(u);
+    const tags = commonTags(u);
+    detail.innerHTML = `
+      <div class="lockedResearchPolish" style="--skill-color:${esc(u.color)}">
+        <div class="lockedResearchHero">
+          <div class="lockedResearchIconWrap">
+            ${commonIconImg(u.icon, 'hero')}
+            <span class="lockedResearchLock" aria-hidden="true">🔒</span>
+          </div>
+          <div class="lockedResearchCopy">
+            <div class="lockedResearchKicker">LOCKED COMMON RESEARCH</div>
+            <h2 class="lockedResearchTitle">${esc(title)}</h2>
+            <p class="lockedResearchDesc">${esc(unlockText)} 연구 정보와 업그레이드가 열립니다.</p>
+            <div class="armoryTags lockedResearchTags">${tagsHtml(tags)}</div>
+          </div>
+        </div>
+        <div class="lockedResearchInfoGrid">
+          <div><small>해금 조건</small><b>${esc(unlockText)}</b></div>
+          <div><small>현재 상태</small><b>잠금</b></div>
+          <div><small>연구 타입</small><b>${esc(subtitle)}</b></div>
+        </div>
+        <div class="lockedResearchNotice">성역을 진행하면 이 슬롯의 상세 효과와 업그레이드 버튼이 자동으로 활성화됩니다.</div>
+      </div>`;
   }
   function renderCommonDetail(key){
     const api = window.TowerDefenseGrowth;
@@ -6756,13 +6769,13 @@ window.addEventListener('DOMContentLoaded', () => {
         <div><small>NEXT UPGRADE</small><b>${u.maxed ? '최대 연구 완료' : esc(u.nextEffect)}</b><span>${u.maxed ? '해당 연구의 모든 보너스가 적용 중입니다.' : `비용 ${costText} · 보유 ${esc(shards.toLocaleString('ko-KR'))} 조각`}</span></div>
         <button class="commonResearchBuy" type="button" data-common-research-buy="${esc(u.key)}" ${canBuy ? '' : 'disabled'}>${u.maxed ? 'MAX' : (canBuy ? `업그레이드` : `조각 부족`)}</button>
       </div>
-      <div class="armoryQuickGrid commonQuickGrid">
-        <div class="armoryQuickCard highlight"><small>현재 레벨</small><b>Lv.${esc(u.level)}</b></div>
-        <div class="armoryQuickCard"><small>현재 효과</small><b>${esc(u.level > 0 ? u.effect : '아직 연구 없음')}</b></div>
-        <div class="armoryQuickCard"><small>다음 효과</small><b>${esc(u.maxed ? '최대 연구 완료' : u.nextEffect)}</b></div>
-        <div class="armoryQuickCard"><small>업그레이드 비용</small><b>${costText}</b></div>
-        <div class="armoryQuickCard"><small>부족 조각</small><b>${u.maxed ? '0' : esc(need.toLocaleString('ko-KR'))}</b></div>
-        <div class="armoryQuickCard"><small>적용 범위</small><b>전장 전체</b></div>
+      <div class="commonInfoPanel">
+        <div class="commonInfoGrid">
+          <div class="commonInfoItem highlight"><small>현재 레벨</small><b>Lv.${esc(u.level)}</b></div>
+          <div class="commonInfoItem"><small>현재 효과</small><b>${esc(u.level > 0 ? u.effect : '아직 연구 없음')}</b></div>
+          <div class="commonInfoItem"><small>다음 효과</small><b>${esc(u.maxed ? '최대 연구 완료' : u.nextEffect)}</b></div>
+          <div class="commonInfoItem"><small>업그레이드 비용</small><b>${costText}</b></div>
+        </div>
       </div>
       <div class="armorySection compact"><h3>스킬 정보</h3><p>${esc(u.desc)}</p></div>
       ${commonTimelineHtml(u)}`;
