@@ -418,6 +418,86 @@ const STAGE_TOWER_REWARDS = {
   6:{type:7, name:'크리스탈 행성', theme:'수정 성운 기술', desc:'초과 피해를 축전하고 프리즘 선로와 공명 장판으로 전장 구조를 바꿉니다.'},
   7:{type:8, name:'메카 행성', theme:'기계 핵성 기술', desc:'실드와 장갑을 해체하고 임시 위성포와 코어 방벽을 재가동합니다.'}
 };
+
+
+// v141: canonical progression manifest. Stage unlocks and planet rewards are derived from
+// this single table, while still respecting already-saved stage progress.
+const STAGE_UNLOCK_MANIFEST = STAGE_MAP_DEFS.map(def => ({
+  stage: def.stage,
+  opensNextStageOnClear: Math.min(STAGE_MAP_DEFS.length, def.stage + 1),
+  towerReward: STAGE_TOWER_REWARDS[def.stage] || null
+}));
+function isTestModeActiveCanonical(){
+  return !!(TEST_MODE_CONFIG && TEST_MODE_CONFIG.enabled);
+}
+function allTowerTypesFromManifest(){
+  const set = new Set(STARTER_PLANET_TYPES);
+  Object.values(STAGE_TOWER_REWARDS || {}).forEach(r => {
+    if(r && Number.isInteger(Number(r.type))) set.add(Number(r.type));
+  });
+  return Array.from(set).sort((a,b)=>a-b);
+}
+function deriveProgressFromManifest(savedProgress=null){
+  const max = STAGE_MAP_DEFS.length;
+  if(isTestModeActiveCanonical()){
+    return {
+      unlocked:max,
+      selected:clamp(Number(StageMapState.selected || 1), 1, max),
+      current:clamp(Number(StageMapState.current || StageMapState.selected || 1), 1, max),
+      towers:allTowerTypesFromManifest()
+    };
+  }
+  const clears = META?.clears || {};
+  const savedUnlocked = clamp(Number(savedProgress?.unlocked || StageMapState?.unlocked || 1), 1, max);
+  let unlocked = savedUnlocked;
+  const towerSet = new Set(normalizeUnlockedTowers(META?.unlockedTowers, clears));
+  for(const row of STAGE_UNLOCK_MANIFEST){
+    if(Number(clears[String(row.stage)] || clears[row.stage] || 0) > 0){
+      unlocked = Math.max(unlocked, row.opensNextStageOnClear);
+      if(row.towerReward) towerSet.add(Number(row.towerReward.type));
+    }
+  }
+  return {
+    unlocked:clamp(unlocked, 1, max),
+    selected:clamp(Number(savedProgress?.selected || StageMapState.selected || unlocked), 1, max),
+    current:clamp(Number(savedProgress?.current || StageMapState.current || StageMapState.selected || unlocked), 1, max),
+    towers:Array.from(towerSet).filter(v => Number.isInteger(Number(v))).map(Number).sort((a,b)=>a-b)
+  };
+}
+function applyCanonicalProgressToState(opts={}){
+  const max = STAGE_MAP_DEFS.length;
+  const progress = deriveProgressFromManifest(opts.savedProgress || null);
+  const keepSelected = opts.keepSelected === true || opts.preferSelected === true;
+  StageMapState.unlocked = progress.unlocked;
+  if(opts.selectStage){
+    StageMapState.selected = clamp(Number(opts.selectStage), 1, max);
+  }else if(keepSelected){
+    StageMapState.selected = clamp(Number(StageMapState.selected || progress.selected || 1), 1, max);
+  }else{
+    StageMapState.selected = clamp(Number(progress.selected || StageMapState.selected || 1), 1, max);
+  }
+  if(!opts.allowLockedPreview && !isTestModeActiveCanonical() && StageMapState.selected > StageMapState.unlocked){
+    StageMapState.selected = StageMapState.unlocked;
+  }
+  StageMapState.current = clamp(Number(opts.currentStage || progress.current || StageMapState.selected || 1), 1, max);
+  if(META) META.unlockedTowers = progress.towers.slice();
+  if(opts.save !== false){
+    saveOfflineMeta();
+    saveStageMapProgress();
+  }
+  return progress;
+}
+
+function deriveUnlockedStageFromMeta(){
+  if(typeof deriveProgressFromManifest === 'function') return deriveProgressFromManifest({unlocked:StageMapState?.unlocked || 1}).unlocked;
+  return clamp(Number(StageMapState?.unlocked || 1), 1, STAGE_MAP_DEFS.length);
+}
+function syncStageUnlockFromClears(){
+  if(typeof applyCanonicalProgressToState === 'function'){
+    return applyCanonicalProgressToState({keepSelected:true, allowLockedPreview:true, save:!TEST_MODE_CONFIG.enabled});
+  }
+  return null;
+}
 const OFFLINE_CHAPTERS = {
   1:{title:'1장. 공허 성역 — 첫 균열', intro:'오리온 외곽 성좌의 입구에서 첫 균열이 열린다. 지휘관은 불안정한 장판 위에 행성 병기를 배치해 코어를 지켜야 한다.', mid:'성운 감시자가 방어선을 시험한다. 재생을 끊지 못하면 전선이 계속 밀린다.', final:'공허 심핵이 모습을 드러낸다. 이는 균열 너머 지휘체의 전조에 불과하다.', clear:'첫 성역이 안정화되며 오리온 성좌의 항로가 이어진다.'},
   2:{title:'2장. 빙결 외곽 — 멈춘 궤도', intro:'냉각 폭풍이 항로를 봉쇄한다. 배치와 병합 타이밍이 전투의 핵심이 된다.', mid:'빙하 포효체가 가장 강한 행성을 얼린다. 단일 화력만 믿으면 방어선이 무너진다.', final:'절대영도 핵은 복수의 행성을 봉쇄한다. 균형 잡힌 장판 운용이 필요하다.', clear:'얼어붙은 항로가 풀리며 다음 태양 플레어 구역 좌표가 열린다.'},
@@ -531,6 +611,7 @@ function loadOfflineMeta(){
       }
     }
     META = normalizeOfflineMeta(JSON.parse(rawText || 'null'));
+    if(typeof applyCanonicalProgressToState === 'function') applyCanonicalProgressToState({preferSelected:true, allowLockedPreview:true, save:false});
     if(!TEST_MODE_CONFIG.enabled) saveOfflineMeta();
   }
   catch(err){ META = defaultOfflineMeta(); }
@@ -648,6 +729,17 @@ function recordOfflineRunEnd(cleared=false, stageNoOverride=null){
     markOfflineStory(stageNo, 'clear');
     toast(`성역 클리어 보상 — 성흔 조각 +${fmt2(reward)}`);
     unlockStageTower(stageNo);
+    // Immediately persist stage + tower progression from the manifest.
+    // This prevents the map from falling back to the previous unlock count if a later render runs first.
+    const nextStageNo = Math.min(STAGE_MAP_DEFS.length, Number(stageNo) + 1);
+    StageMapState.unlocked = Math.max(Number(StageMapState.unlocked || 1), nextStageNo);
+    StageMapState.current = nextStageNo;
+    if(Number(StageMapState.selected || 1) <= Number(stageNo)) StageMapState.selected = nextStageNo;
+    if(typeof applyCanonicalProgressToState === 'function'){
+      applyCanonicalProgressToState({selectStage:StageMapState.selected, currentStage:StageMapState.current, keepSelected:true, allowLockedPreview:true, save:true});
+    }else{
+      saveStageMapProgress();
+    }
   }else{
     META.totalDefeats += 1;
     const consolation = Math.max(2, Math.floor((Number(S.ogge || 1) + Number(S.level || 1)) / 2));
@@ -933,12 +1025,20 @@ function loadStageMapProgress(){
         if(raw) break;
       }
     }
-    if(!raw) return;
-    const saved = JSON.parse(raw);
-    StageMapState.unlocked = clamp(Number(saved.unlocked || 1), 1, STAGE_MAP_DEFS.length);
-    StageMapState.selected = clamp(Number(saved.selected || StageMapState.unlocked), 1, STAGE_MAP_DEFS.length);
-    StageMapState.current = clamp(Number(saved.current || Math.min(StageMapState.selected, StageMapState.unlocked)), 1, STAGE_MAP_DEFS.length);
-    if(!TEST_MODE_CONFIG.enabled) saveStageMapProgress();
+    let saved = null;
+    if(raw) saved = JSON.parse(raw);
+    if(saved){
+      StageMapState.unlocked = clamp(Number(saved.unlocked || 1), 1, STAGE_MAP_DEFS.length);
+      StageMapState.selected = clamp(Number(saved.selected || StageMapState.unlocked), 1, STAGE_MAP_DEFS.length);
+      StageMapState.current = clamp(Number(saved.current || Math.min(StageMapState.selected, StageMapState.unlocked)), 1, STAGE_MAP_DEFS.length);
+    }
+    // Saved map progress and META.clears can drift apart after previous patches.
+    // Reconcile them here so a cleared stage always opens the next stage and its planet reward.
+    if(typeof applyCanonicalProgressToState === 'function'){
+      applyCanonicalProgressToState({savedProgress:saved, keepSelected:true, allowLockedPreview:true, save:!TEST_MODE_CONFIG.enabled});
+    }else if(!TEST_MODE_CONFIG.enabled){
+      saveStageMapProgress();
+    }
   }catch(err){
     StageMapState.unlocked = 1;
     StageMapState.selected = 1;
@@ -1162,7 +1262,11 @@ function completeStageFromBattle(){
     StageMapState.current = finalSelected;
     StageMapState.unlocked = finalUnlocked;
     StageMapState.selected = finalSelected;
-    saveStageMapProgress();
+    if(typeof applyCanonicalProgressToState === 'function'){
+      applyCanonicalProgressToState({selectStage:finalSelected, currentStage:finalSelected, keepSelected:true, allowLockedPreview:false, save:true});
+    }else{
+      saveStageMapProgress();
+    }
     renderStageMap();
     const nextDef = getStageDef(finalSelected);
     const hint = $('stageHint');
@@ -4057,25 +4161,148 @@ function summon(typeOverride=null){
   sound('summon');
   updateSelected();updateUI();
 }
-function autoMerge(){
-  if(S.gameOver) return;
+const MERGE_TERRAIN_PRIORITY = {
+  rift:60, amp:52, coil:46, lens:42, mine:34, empty:20, blocked:-100, path:-100
+};
+let mergeFocusSession = null;
+function mergeAnchorScore(idx, tower){
+  if(!tower) return -Infinity;
+  const selectedBonus = idx === selected ? 120 : 0;
+  const terrainBonus = MERGE_TERRAIN_PRIORITY[terrain[idx] || 'empty'] ?? 20;
+  return tower.level * 1000 + selectedBonus + terrainBonus;
+}
+function canEventuallyFeedAnchor(anchorIdx){
+  const anchor = grid[anchorIdx];
+  if(!anchor || anchor.level >= 12) return false;
+  const counts = Array(13).fill(0);
   for(let i=0;i<grid.length;i++){
-    const a=grid[i];if(!a)continue;
+    const t = grid[i];
+    if(!t || i === anchorIdx || t.type !== anchor.type || t.level >= 12) continue;
+    counts[t.level]++;
+  }
+  if(counts[anchor.level] > 0) return true;
+  for(let lv=1; lv<anchor.level; lv++){
+    const carry = Math.floor(counts[lv] / 2);
+    if(carry > 0) counts[lv+1] += carry;
+  }
+  return counts[anchor.level] > 0;
+}
+function chooseMergeFocusAnchor(){
+  let bestAnchor = null;
+  for(let i=0;i<grid.length;i++){
+    const t = grid[i];
+    if(!t || t.level >= 12) continue;
+    if(!canEventuallyFeedAnchor(i)) continue;
+    const score = t.level * 100000 + mergeAnchorScore(i,t);
+    if(!bestAnchor || score > bestAnchor.score) bestAnchor = {anchor:i, type:t.type, score};
+  }
+  if(bestAnchor) return bestAnchor;
+
+  const pair = findBestMergePair();
+  if(!pair) return null;
+  const t = grid[pair.anchor];
+  return t ? {anchor:pair.anchor, type:t.type, score:pair.pairScore || 0} : null;
+}
+function findBestMergePair(typeFilter=null, maxLevel=Infinity, excludeIdx=-1, preferIdx=-1){
+  let best = null;
+  for(let i=0;i<grid.length;i++){
+    const a=grid[i]; if(!a || i===excludeIdx) continue;
+    if(typeFilter !== null && a.type !== typeFilter) continue;
     for(let j=i+1;j<grid.length;j++){
-      const b=grid[j];if(!b)continue;
-      if(a.type===b.type&&a.level===b.level&&a.level<12){
-        grid[i]=createMergedPlanet(a,b,i);
-        grid[j]=null;selected=i;
-        triggerMergeImpact(i,a.def.color,a.level+1);
-        S.runMerges = (S.runMerges || 0) + 1;
-        updateSelected();updateUI();
-        setTimeout(autoMerge,80);
-        return;
+      const b=grid[j]; if(!b || j===excludeIdx) continue;
+      if(a.type!==b.type || a.level!==b.level || a.level>=12 || a.level>maxLevel) continue;
+
+      const scoreI = mergeAnchorScore(i,a);
+      const scoreJ = mergeAnchorScore(j,b);
+      let anchor = scoreJ > scoreI ? j : i;
+      if(preferIdx === i || preferIdx === j) anchor = preferIdx;
+      const consume = anchor === i ? j : i;
+      const anchorScore = Math.max(scoreI, scoreJ);
+      const selectedPairBonus = (i === selected || j === selected) ? 80 : 0;
+      const focusBonus = (preferIdx === i || preferIdx === j) ? 1000000 : 0;
+      const pairScore = focusBonus + a.level * 10000 + selectedPairBonus + anchorScore;
+
+      if(!best || pairScore > best.pairScore){
+        best = {anchor, consume, pairScore, level:a.level, type:a.type};
       }
     }
   }
-  toast('병합 가능한 행성이 없습니다');
+  return best;
 }
+function findFocusedMergeStep(){
+  if(!mergeFocusSession) return null;
+  const anchorIdx = mergeFocusSession.anchor;
+  const anchor = grid[anchorIdx];
+  if(!anchor || anchor.type !== mergeFocusSession.type || anchor.level >= 12) return null;
+
+  let consume = -1;
+  let bestScore = -Infinity;
+  for(let i=0;i<grid.length;i++){
+    const t = grid[i];
+    if(!t || i === anchorIdx) continue;
+    if(t.type !== anchor.type || t.level !== anchor.level) continue;
+    const score = mergeAnchorScore(i,t);
+    if(score > bestScore){ bestScore = score; consume = i; }
+  }
+  if(consume >= 0) return {anchor:anchorIdx, consume, type:anchor.type, level:anchor.level};
+
+  // No tower can merge into the focus yet. Build the highest same-type feeder first,
+  // then keep feeding the result into the original highest-level anchor.
+  return findBestMergePair(anchor.type, anchor.level - 1, anchorIdx, -1);
+}
+let mergeAutoRunId = 0;
+function autoMerge(continueSession=false, runId=null){
+  // onclick handlers pass a MouseEvent as the first argument. Treat only the
+  // internal recursive call `autoMerge(true, runId)` as a continuation; every
+  // user click must start a fresh merge focus session.
+  continueSession = continueSession === true;
+  if(S.gameOver) return;
+
+  if(!continueSession){
+    mergeAutoRunId++;
+    runId = mergeAutoRunId;
+    mergeFocusSession = chooseMergeFocusAnchor();
+    if(!mergeFocusSession){
+      toast('병합 가능한 행성이 없습니다');
+      return;
+    }
+  }else if(runId !== mergeAutoRunId){
+    return;
+  }
+
+  let pair = findFocusedMergeStep();
+
+  // 기존에는 최초 기준 타워 쪽으로 몇 번 합친 뒤 그 기준 타워에 더 이상
+  // 먹일 수 없으면 자동 병합이 끝나버렸다. 이제는 그 시점마다 남은 보드를
+  // 다시 검사해서, 병합 가능한 다음 최고 레벨 기준점을 잡고 계속 진행한다.
+  // 그래서 버튼 한 번으로 현재 가능한 병합이 끝까지 이어진다.
+  while(!pair){
+    mergeFocusSession = chooseMergeFocusAnchor();
+    if(!mergeFocusSession){
+      if(!continueSession) toast('병합 가능한 행성이 없습니다');
+      return;
+    }
+    pair = findFocusedMergeStep();
+    if(!pair){
+      mergeFocusSession = null;
+      if(!continueSession) toast('병합 가능한 행성이 없습니다');
+      return;
+    }
+  }
+
+  const a = grid[pair.anchor];
+  const b = grid[pair.consume];
+  if(!a || !b){ mergeFocusSession = null; return; }
+
+  grid[pair.anchor] = createMergedPlanet(a,b,pair.anchor);
+  grid[pair.consume] = null;
+  selected = mergeFocusSession?.anchor ?? pair.anchor;
+  triggerMergeImpact(pair.anchor,a.def.color,a.level+1);
+  S.runMerges = (S.runMerges || 0) + 1;
+  updateSelected();updateUI();
+  setTimeout(()=>autoMerge(true, runId),80);
+}
+
 
 function tryCreateHiddenPlanet(){
   if(grid.some(t => t && t.type === HIDDEN_PLANET_TYPE)) return false;
@@ -5318,7 +5545,7 @@ document.addEventListener('click', e => {
 });
 
 $('summonBtn').onclick=summon;
-$('mergeBtn').onclick=autoMerge;
+$('mergeBtn').onclick=()=>autoMerge();
 $('speedBtn').onclick=()=>{S.speed=S.speed===1?2:S.speed===2?3:1;updateUI()};
 $('pauseBtn').onclick=()=>{if(S.gameOver)return;S.paused=!S.paused;updateUI()};
 function syncAudioControl(){
@@ -5919,6 +6146,9 @@ window.showGalaxyMapClean = (typeof showGalaxyMapClean === 'function') ? showGal
 window.bindGalaxyMapClean = (typeof bindGalaxyMapClean === 'function') ? bindGalaxyMapClean : undefined;
 window.loadOfflineMeta = loadOfflineMeta;
 window.loadStageMapProgress = loadStageMapProgress;
+window.applyCanonicalProgressToState = (typeof applyCanonicalProgressToState === 'function') ? applyCanonicalProgressToState : undefined;
+window.deriveUnlockedStageFromMeta = (typeof deriveUnlockedStageFromMeta === 'function') ? deriveUnlockedStageFromMeta : undefined;
+window.syncStageUnlockFromClears = (typeof syncStageUnlockFromClears === 'function') ? syncStageUnlockFromClears : undefined;
 window.refreshScreenStarfields = refreshScreenStarfields;
 window.setTestModeEnabled = setTestModeEnabled;
 window.applyTestModeOverrides = applyTestModeOverrides;

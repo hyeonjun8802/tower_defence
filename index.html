@@ -14888,13 +14888,14 @@ function allTowerTypesFromManifest(){
   Object.values(STAGE_TOWER_REWARDS || {}).forEach(r => { if(r && Number.isInteger(Number(r.type))) set.add(Number(r.type)); });
   return Array.from(set).sort((a,b)=>a-b);
 }
-function deriveProgressFromManifest(){
+function deriveProgressFromManifest(savedProgress=null){
   const max = STAGE_MAP_DEFS.length;
   if(isTestModeActiveCanonical()){
     return {unlocked:max, selected:clamp(Number(StageMapState.selected || 1), 1, max), current:clamp(Number(StageMapState.current || StageMapState.selected || 1), 1, max), towers:allTowerTypesFromManifest()};
   }
   const clears = META?.clears || {};
-  let unlocked = 1;
+  const savedUnlocked = clamp(Number(savedProgress?.unlocked || StageMapState?.unlocked || 1), 1, max);
+  let unlocked = savedUnlocked;
   const towerSet = new Set(normalizeUnlockedTowers(META?.unlockedTowers, clears));
   for(const row of STAGE_UNLOCK_MANIFEST){
     if(Number(clears[String(row.stage)] || clears[row.stage] || 0) > 0){
@@ -14902,18 +14903,39 @@ function deriveProgressFromManifest(){
       if(row.towerReward) towerSet.add(Number(row.towerReward.type));
     }
   }
-  return {unlocked:clamp(unlocked,1,max), selected:clamp(Number(StageMapState.selected || unlocked), 1, max), current:clamp(Number(StageMapState.current || StageMapState.selected || unlocked), 1, max), towers:Array.from(towerSet).filter(v=>Number.isInteger(Number(v))).map(Number).sort((a,b)=>a-b)};
+  return {unlocked:clamp(unlocked,1,max), selected:clamp(Number(savedProgress?.selected || StageMapState.selected || unlocked), 1, max), current:clamp(Number(savedProgress?.current || StageMapState.current || StageMapState.selected || unlocked), 1, max), towers:Array.from(towerSet).filter(v=>Number.isInteger(Number(v))).map(Number).sort((a,b)=>a-b)};
 }
-function applyCanonicalProgressToState({preferSelected=false}={}){
+function applyCanonicalProgressToState(opts={}){
   const max = STAGE_MAP_DEFS.length;
-  const progress = deriveProgressFromManifest();
+  const progress = deriveProgressFromManifest(opts.savedProgress || null);
+  const keepSelected = opts.keepSelected === true || opts.preferSelected === true;
   StageMapState.unlocked = progress.unlocked;
-  StageMapState.selected = clamp(Number(StageMapState.selected || progress.selected || 1), 1, max);
-  if(!isTestModeActiveCanonical() && StageMapState.selected > StageMapState.unlocked) StageMapState.selected = StageMapState.unlocked;
-  if(!preferSelected && progress.selected) StageMapState.selected = clamp(progress.selected, 1, max);
-  StageMapState.current = clamp(Number(StageMapState.current || StageMapState.selected || 1), 1, max);
+  if(opts.selectStage){
+    StageMapState.selected = clamp(Number(opts.selectStage), 1, max);
+  }else if(keepSelected){
+    StageMapState.selected = clamp(Number(StageMapState.selected || progress.selected || 1), 1, max);
+  }else{
+    StageMapState.selected = clamp(Number(progress.selected || StageMapState.selected || 1), 1, max);
+  }
+  if(!opts.allowLockedPreview && !isTestModeActiveCanonical() && StageMapState.selected > StageMapState.unlocked) StageMapState.selected = StageMapState.unlocked;
+  StageMapState.current = clamp(Number(opts.currentStage || progress.current || StageMapState.selected || 1), 1, max);
   if(META){ META.unlockedTowers = progress.towers.slice(); }
+  if(opts.save !== false){
+    saveOfflineMeta();
+    saveStageMapProgress();
+  }
   return progress;
+}
+
+function deriveUnlockedStageFromMeta(){
+  if(typeof deriveProgressFromManifest === 'function') return deriveProgressFromManifest({unlocked:StageMapState?.unlocked || 1}).unlocked;
+  return clamp(Number(StageMapState?.unlocked || 1), 1, STAGE_MAP_DEFS.length);
+}
+function syncStageUnlockFromClears(){
+  if(typeof applyCanonicalProgressToState === 'function'){
+    return applyCanonicalProgressToState({keepSelected:true, allowLockedPreview:true, save:!TEST_MODE_CONFIG.enabled});
+  }
+  return null;
 }
 const OFFLINE_CHAPTERS = {
   1:{title:'1장. 공허 성역 — 첫 균열', intro:'오리온 외곽 성좌의 입구에서 첫 균열이 열린다. 지휘관은 불안정한 장판 위에 행성 병기를 배치해 코어를 지켜야 한다.', mid:'성운 감시자가 방어선을 시험한다. 재생을 끊지 못하면 전선이 계속 밀린다.', final:'공허 심핵이 모습을 드러낸다. 이는 균열 너머 지휘체의 전조에 불과하다.', clear:'첫 성역이 안정화되며 오리온 성좌의 항로가 이어진다.'},
@@ -15146,6 +15168,15 @@ function recordOfflineRunEnd(cleared=false, stageNoOverride=null){
     markOfflineStory(stageNo, 'clear');
     toast(`성역 클리어 보상 — 성흔 조각 +${fmt2(reward)}`);
     unlockStageTower(stageNo);
+    const nextStageNo = Math.min(STAGE_MAP_DEFS.length, Number(stageNo) + 1);
+    StageMapState.unlocked = Math.max(Number(StageMapState.unlocked || 1), nextStageNo);
+    StageMapState.current = nextStageNo;
+    if(Number(StageMapState.selected || 1) <= Number(stageNo)) StageMapState.selected = nextStageNo;
+    if(typeof applyCanonicalProgressToState === 'function'){
+      applyCanonicalProgressToState({selectStage:StageMapState.selected, currentStage:StageMapState.current, keepSelected:true, allowLockedPreview:true, save:true});
+    }else{
+      saveStageMapProgress();
+    }
   }else{
     META.totalDefeats += 1;
     const consolation = Math.max(2, Math.floor((Number(S.ogge || 1) + Number(S.level || 1)) / 2));
@@ -15431,40 +15462,24 @@ function loadStageMapProgress(){
         if(raw) break;
       }
     }
-    if(raw){
-      const saved = JSON.parse(raw);
+    let saved = null;
+    if(raw) saved = JSON.parse(raw);
+    if(saved){
       StageMapState.unlocked = clamp(Number(saved.unlocked || 1), 1, STAGE_MAP_DEFS.length);
       StageMapState.selected = clamp(Number(saved.selected || StageMapState.unlocked), 1, STAGE_MAP_DEFS.length);
       StageMapState.current = clamp(Number(saved.current || Math.min(StageMapState.selected, StageMapState.unlocked)), 1, STAGE_MAP_DEFS.length);
     }
-    applyCanonicalProgressToState({preferSelected:true});
-    if(!TEST_MODE_CONFIG.enabled) saveStageMapProgress();
+    if(typeof applyCanonicalProgressToState === 'function'){
+      applyCanonicalProgressToState({savedProgress:saved, keepSelected:true, allowLockedPreview:true, save:!TEST_MODE_CONFIG.enabled});
+    }else if(!TEST_MODE_CONFIG.enabled){
+      saveStageMapProgress();
+    }
   }catch(err){
-    StageMapState.unlocked = TEST_MODE_CONFIG.enabled ? STAGE_MAP_DEFS.length : 1;
+    StageMapState.unlocked = 1;
     StageMapState.selected = 1;
     StageMapState.current = 1;
-    applyCanonicalProgressToState({preferSelected:true});
   }
 }
-
-
-function deriveUnlockedStageFromMeta(){
-  return deriveProgressFromManifest().unlocked;
-}
-
-
-function syncStageUnlockFromClears(){
-  const before = Number(StageMapState.unlocked || 1);
-  const beforeTowers = JSON.stringify(META?.unlockedTowers || []);
-  applyCanonicalProgressToState({preferSelected:true});
-  const changed = before !== Number(StageMapState.unlocked || 1) || beforeTowers !== JSON.stringify(META?.unlockedTowers || []);
-  if(changed && !TEST_MODE_CONFIG.enabled){
-    saveStageMapProgress();
-    saveOfflineMeta();
-  }
-  return changed;
-}
-
 
 function saveStageMapProgress(){
   if(TEST_MODE_CONFIG.enabled) return;
@@ -18596,25 +18611,148 @@ function summon(typeOverride=null){
   sound('summon');
   updateSelected();updateUI();
 }
-function autoMerge(){
-  if(S.gameOver) return;
+const MERGE_TERRAIN_PRIORITY = {
+  rift:60, amp:52, coil:46, lens:42, mine:34, empty:20, blocked:-100, path:-100
+};
+let mergeFocusSession = null;
+function mergeAnchorScore(idx, tower){
+  if(!tower) return -Infinity;
+  const selectedBonus = idx === selected ? 120 : 0;
+  const terrainBonus = MERGE_TERRAIN_PRIORITY[terrain[idx] || 'empty'] ?? 20;
+  return tower.level * 1000 + selectedBonus + terrainBonus;
+}
+function canEventuallyFeedAnchor(anchorIdx){
+  const anchor = grid[anchorIdx];
+  if(!anchor || anchor.level >= 12) return false;
+  const counts = Array(13).fill(0);
   for(let i=0;i<grid.length;i++){
-    const a=grid[i];if(!a)continue;
+    const t = grid[i];
+    if(!t || i === anchorIdx || t.type !== anchor.type || t.level >= 12) continue;
+    counts[t.level]++;
+  }
+  if(counts[anchor.level] > 0) return true;
+  for(let lv=1; lv<anchor.level; lv++){
+    const carry = Math.floor(counts[lv] / 2);
+    if(carry > 0) counts[lv+1] += carry;
+  }
+  return counts[anchor.level] > 0;
+}
+function chooseMergeFocusAnchor(){
+  let bestAnchor = null;
+  for(let i=0;i<grid.length;i++){
+    const t = grid[i];
+    if(!t || t.level >= 12) continue;
+    if(!canEventuallyFeedAnchor(i)) continue;
+    const score = t.level * 100000 + mergeAnchorScore(i,t);
+    if(!bestAnchor || score > bestAnchor.score) bestAnchor = {anchor:i, type:t.type, score};
+  }
+  if(bestAnchor) return bestAnchor;
+
+  const pair = findBestMergePair();
+  if(!pair) return null;
+  const t = grid[pair.anchor];
+  return t ? {anchor:pair.anchor, type:t.type, score:pair.pairScore || 0} : null;
+}
+function findBestMergePair(typeFilter=null, maxLevel=Infinity, excludeIdx=-1, preferIdx=-1){
+  let best = null;
+  for(let i=0;i<grid.length;i++){
+    const a=grid[i]; if(!a || i===excludeIdx) continue;
+    if(typeFilter !== null && a.type !== typeFilter) continue;
     for(let j=i+1;j<grid.length;j++){
-      const b=grid[j];if(!b)continue;
-      if(a.type===b.type&&a.level===b.level&&a.level<12){
-        grid[i]=createMergedPlanet(a,b,i);
-        grid[j]=null;selected=i;
-        triggerMergeImpact(i,a.def.color,a.level+1);
-        S.runMerges = (S.runMerges || 0) + 1;
-        updateSelected();updateUI();
-        setTimeout(autoMerge,80);
-        return;
+      const b=grid[j]; if(!b || j===excludeIdx) continue;
+      if(a.type!==b.type || a.level!==b.level || a.level>=12 || a.level>maxLevel) continue;
+
+      const scoreI = mergeAnchorScore(i,a);
+      const scoreJ = mergeAnchorScore(j,b);
+      let anchor = scoreJ > scoreI ? j : i;
+      if(preferIdx === i || preferIdx === j) anchor = preferIdx;
+      const consume = anchor === i ? j : i;
+      const anchorScore = Math.max(scoreI, scoreJ);
+      const selectedPairBonus = (i === selected || j === selected) ? 80 : 0;
+      const focusBonus = (preferIdx === i || preferIdx === j) ? 1000000 : 0;
+      const pairScore = focusBonus + a.level * 10000 + selectedPairBonus + anchorScore;
+
+      if(!best || pairScore > best.pairScore){
+        best = {anchor, consume, pairScore, level:a.level, type:a.type};
       }
     }
   }
-  toast('병합 가능한 행성이 없습니다');
+  return best;
 }
+function findFocusedMergeStep(){
+  if(!mergeFocusSession) return null;
+  const anchorIdx = mergeFocusSession.anchor;
+  const anchor = grid[anchorIdx];
+  if(!anchor || anchor.type !== mergeFocusSession.type || anchor.level >= 12) return null;
+
+  let consume = -1;
+  let bestScore = -Infinity;
+  for(let i=0;i<grid.length;i++){
+    const t = grid[i];
+    if(!t || i === anchorIdx) continue;
+    if(t.type !== anchor.type || t.level !== anchor.level) continue;
+    const score = mergeAnchorScore(i,t);
+    if(score > bestScore){ bestScore = score; consume = i; }
+  }
+  if(consume >= 0) return {anchor:anchorIdx, consume, type:anchor.type, level:anchor.level};
+
+  // No tower can merge into the focus yet. Build the highest same-type feeder first,
+  // then keep feeding the result into the original highest-level anchor.
+  return findBestMergePair(anchor.type, anchor.level - 1, anchorIdx, -1);
+}
+let mergeAutoRunId = 0;
+function autoMerge(continueSession=false, runId=null){
+  // onclick handlers pass a MouseEvent as the first argument. Treat only the
+  // internal recursive call `autoMerge(true, runId)` as a continuation; every
+  // user click must start a fresh merge focus session.
+  continueSession = continueSession === true;
+  if(S.gameOver) return;
+
+  if(!continueSession){
+    mergeAutoRunId++;
+    runId = mergeAutoRunId;
+    mergeFocusSession = chooseMergeFocusAnchor();
+    if(!mergeFocusSession){
+      toast('병합 가능한 행성이 없습니다');
+      return;
+    }
+  }else if(runId !== mergeAutoRunId){
+    return;
+  }
+
+  let pair = findFocusedMergeStep();
+
+  // 기존에는 최초 기준 타워 쪽으로 몇 번 합친 뒤 그 기준 타워에 더 이상
+  // 먹일 수 없으면 자동 병합이 끝나버렸다. 이제는 그 시점마다 남은 보드를
+  // 다시 검사해서, 병합 가능한 다음 최고 레벨 기준점을 잡고 계속 진행한다.
+  // 그래서 버튼 한 번으로 현재 가능한 병합이 끝까지 이어진다.
+  while(!pair){
+    mergeFocusSession = chooseMergeFocusAnchor();
+    if(!mergeFocusSession){
+      if(!continueSession) toast('병합 가능한 행성이 없습니다');
+      return;
+    }
+    pair = findFocusedMergeStep();
+    if(!pair){
+      mergeFocusSession = null;
+      if(!continueSession) toast('병합 가능한 행성이 없습니다');
+      return;
+    }
+  }
+
+  const a = grid[pair.anchor];
+  const b = grid[pair.consume];
+  if(!a || !b){ mergeFocusSession = null; return; }
+
+  grid[pair.anchor] = createMergedPlanet(a,b,pair.anchor);
+  grid[pair.consume] = null;
+  selected = mergeFocusSession?.anchor ?? pair.anchor;
+  triggerMergeImpact(pair.anchor,a.def.color,a.level+1);
+  S.runMerges = (S.runMerges || 0) + 1;
+  updateSelected();updateUI();
+  setTimeout(()=>autoMerge(true, runId),80);
+}
+
 
 function tryCreateHiddenPlanet(){
   if(grid.some(t => t && t.type === HIDDEN_PLANET_TYPE)) return false;
@@ -19987,7 +20125,7 @@ document.addEventListener('click', e => {
 });
 
 $('summonBtn').onclick=summon;
-$('mergeBtn').onclick=autoMerge;
+$('mergeBtn').onclick=()=>autoMerge();
 $('speedBtn').onclick=()=>{S.speed=S.speed===1?2:S.speed===2?3:1;updateUI()};
 $('pauseBtn').onclick=()=>{if(S.gameOver)return;S.paused=!S.paused;updateUI()};
 function syncAudioControl(){
@@ -20588,6 +20726,9 @@ window.showGalaxyMapClean = (typeof showGalaxyMapClean === 'function') ? showGal
 window.bindGalaxyMapClean = (typeof bindGalaxyMapClean === 'function') ? bindGalaxyMapClean : undefined;
 window.loadOfflineMeta = loadOfflineMeta;
 window.loadStageMapProgress = loadStageMapProgress;
+window.applyCanonicalProgressToState = (typeof applyCanonicalProgressToState === 'function') ? applyCanonicalProgressToState : undefined;
+window.deriveUnlockedStageFromMeta = (typeof deriveUnlockedStageFromMeta === 'function') ? deriveUnlockedStageFromMeta : undefined;
+window.syncStageUnlockFromClears = (typeof syncStageUnlockFromClears === 'function') ? syncStageUnlockFromClears : undefined;
 window.refreshScreenStarfields = refreshScreenStarfields;
 window.setTestModeEnabled = setTestModeEnabled;
 window.applyTestModeOverrides = applyTestModeOverrides;
@@ -25259,7 +25400,7 @@ window.addEventListener('DOMContentLoaded', () => {
 (function(){
   'use strict';
   function safe(fn){ try{return fn();}catch(e){console.warn('[v128 manifest unlock]', e);} }
-  function apply(){ safe(function(){ if(typeof applyCanonicalProgressToState === 'function') applyCanonicalProgressToState({preferSelected:true}); }); }
+  function apply(){ safe(function(){ if(typeof applyCanonicalProgressToState === 'function') applyCanonicalProgressToState({keepSelected:true, allowLockedPreview:true, save:true}); }); }
   function rerender(){ safe(function(){ if(typeof renderStageMap === 'function' && document.getElementById('stageMap')?.style.display !== 'none') renderStageMap(); }); safe(function(){ if(typeof renderHangar === 'function') renderHangar(); }); }
   var oldTest = typeof applyTestModeOverrides === 'function' ? applyTestModeOverrides : null;
   if(oldTest){ applyTestModeOverrides = function(){ var ret = oldTest.apply(this, arguments); safe(function(){ TEST_MODE_CONFIG.enabled=true; StageMapState.unlocked=STAGE_MAP_DEFS.length; META.unlockedTowers=allTowerTypesFromManifest(); }); rerender(); return ret; }; }
@@ -25276,6 +25417,61 @@ window.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 
+
+<style id="v142-stage-map-top-right-tower-shortcut-remove">
+/* v142: remove the unused square tower shortcut on the constellation map top-right. */
+#stageMap #stageTowerManageBtn,
+#stageMap .stageManageBtn{
+  display:none !important;
+  visibility:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  width:0 !important;
+  height:0 !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  max-width:0 !important;
+  max-height:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  background:none !important;
+  box-shadow:none !important;
+  overflow:hidden !important;
+}
+#stageMap #stageTowerManageBtn::before,
+#stageMap #stageTowerManageBtn::after,
+#stageMap .stageManageBtn::before,
+#stageMap .stageManageBtn::after{
+  content:none !important;
+  display:none !important;
+}
+/* keep title centered after removing the shortcut */
+#stageMap .stageTopTitle{
+  width:min(640px, calc(100vw - 220px)) !important;
+}
+@media (max-width:760px){
+  #stageMap .stageTopTitle{
+    width:min(520px, calc(100vw - 120px)) !important;
+    min-width:220px !important;
+  }
+}
+</style>
+<script id="v142-stage-map-top-right-tower-shortcut-remove-js">
+(function(){
+  function removeStageTowerShortcut(){
+    document.querySelectorAll('#stageMap #stageTowerManageBtn, #stageMap .stageManageBtn').forEach(function(el){
+      if(el && el.parentNode) el.parentNode.removeChild(el);
+    });
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', removeStageTowerShortcut, {once:true});
+  } else {
+    removeStageTowerShortcut();
+  }
+  window.addEventListener('load', removeStageTowerShortcut, {once:true});
+})();
+</script>
 </body> 내부로 정리 -->
 <style id="v101-single-stage-tower-button-safe">
 #stageMap #stageMapBack,
@@ -27174,7 +27370,7 @@ window.addEventListener('DOMContentLoaded', () => {
 (function(){
   'use strict';
   function safe(fn){ try{return fn();}catch(e){console.warn('[v128 manifest unlock]', e);} }
-  function apply(){ safe(function(){ if(typeof applyCanonicalProgressToState === 'function') applyCanonicalProgressToState({preferSelected:true}); }); }
+  function apply(){ safe(function(){ if(typeof applyCanonicalProgressToState === 'function') applyCanonicalProgressToState({keepSelected:true, allowLockedPreview:true, save:true}); }); }
   function rerender(){ safe(function(){ if(typeof renderStageMap === 'function' && document.getElementById('stageMap')?.style.display !== 'none') renderStageMap(); }); safe(function(){ if(typeof renderHangar === 'function') renderHangar(); }); }
   var oldTest = typeof applyTestModeOverrides === 'function' ? applyTestModeOverrides : null;
   if(oldTest){ applyTestModeOverrides = function(){ var ret = oldTest.apply(this, arguments); safe(function(){ TEST_MODE_CONFIG.enabled=true; StageMapState.unlocked=STAGE_MAP_DEFS.length; META.unlockedTowers=allTowerTypesFromManifest(); }); rerender(); return ret; }; }
@@ -27191,6 +27387,61 @@ window.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 
+
+<style id="v142-stage-map-top-right-tower-shortcut-remove">
+/* v142: remove the unused square tower shortcut on the constellation map top-right. */
+#stageMap #stageTowerManageBtn,
+#stageMap .stageManageBtn{
+  display:none !important;
+  visibility:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  width:0 !important;
+  height:0 !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  max-width:0 !important;
+  max-height:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  background:none !important;
+  box-shadow:none !important;
+  overflow:hidden !important;
+}
+#stageMap #stageTowerManageBtn::before,
+#stageMap #stageTowerManageBtn::after,
+#stageMap .stageManageBtn::before,
+#stageMap .stageManageBtn::after{
+  content:none !important;
+  display:none !important;
+}
+/* keep title centered after removing the shortcut */
+#stageMap .stageTopTitle{
+  width:min(640px, calc(100vw - 220px)) !important;
+}
+@media (max-width:760px){
+  #stageMap .stageTopTitle{
+    width:min(520px, calc(100vw - 120px)) !important;
+    min-width:220px !important;
+  }
+}
+</style>
+<script id="v142-stage-map-top-right-tower-shortcut-remove-js">
+(function(){
+  function removeStageTowerShortcut(){
+    document.querySelectorAll('#stageMap #stageTowerManageBtn, #stageMap .stageManageBtn').forEach(function(el){
+      if(el && el.parentNode) el.parentNode.removeChild(el);
+    });
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', removeStageTowerShortcut, {once:true});
+  } else {
+    removeStageTowerShortcut();
+  }
+  window.addEventListener('load', removeStageTowerShortcut, {once:true});
+})();
+</script>
 </body>
 </html>
 
