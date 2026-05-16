@@ -22,7 +22,7 @@ html,body{
 }
 #bg{
   position:fixed;inset:0;z-index:-4;
-  background:url("bg_cosmic.webp") center/cover no-repeat;
+  background:url("assets/images/backgrounds/bg_cosmic.webp") center/cover no-repeat;
   filter:brightness(.38) saturate(1.25);
 }
 #nebula{
@@ -416,22 +416,22 @@ h1{
   transition:opacity .52s ease, filter .52s ease, transform .8s ease;
 }
 .stageBg.cosmic{
-  left:-20%;bottom:-20%;background-image:url("bg_cosmic.webp");
+  left:-20%;bottom:-20%;background-image:url("assets/images/backgrounds/bg_cosmic.webp");
   -webkit-mask-image:radial-gradient(circle at 74% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
   mask-image:radial-gradient(circle at 74% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
 }
 .stageBg.frost{
-  left:-20%;top:-20%;background-image:url("bg_frost.webp");
+  left:-20%;top:-20%;background-image:url("assets/images/backgrounds/bg_frost.webp");
   -webkit-mask-image:radial-gradient(circle at 74% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
   mask-image:radial-gradient(circle at 74% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
 }
 .stageBg.lava{
-  right:-20%;bottom:-20%;background-image:url("bg_lava.webp");
+  right:-20%;bottom:-20%;background-image:url("assets/images/backgrounds/bg_lava.webp");
   -webkit-mask-image:radial-gradient(circle at 26% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
   mask-image:radial-gradient(circle at 26% 24%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.42) 58%, transparent 86%);
 }
 .stageBg.jungle{
-  right:-20%;top:-20%;background-image:url("bg_jungle.webp");
+  right:-20%;top:-20%;background-image:url("assets/images/backgrounds/bg_jungle.webp");
   -webkit-mask-image:radial-gradient(circle at 26% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
   mask-image:radial-gradient(circle at 26% 76%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.9) 30%, rgba(255,255,255,.40) 58%, transparent 86%);
 }
@@ -4146,22 +4146,22 @@ h1{
 /* 기존 hard-edge 배경 이미지를 feather alpha 이미지로 교체 */
 #stageMap .stageBg.cosmic {
   left: 13% !important;
-  background-image: url("biome_cosmic_feather.webp") !important;
+  background-image: url("assets/images/biomes/biome_cosmic_feather.webp") !important;
 }
 
 #stageMap .stageBg.frost {
   left: -10% !important;
-  background-image: url("biome_frost_feather.webp") !important;
+  background-image: url("assets/images/biomes/biome_frost_feather.webp") !important;
 }
 
 #stageMap .stageBg.lava {
   right: 13% !important;
-  background-image: url("biome_lava_feather.webp") !important;
+  background-image: url("assets/images/biomes/biome_lava_feather.webp") !important;
 }
 
 #stageMap .stageBg.jungle {
   right: -10% !important;
-  background-image: url("biome_jungle_feather.webp") !important;
+  background-image: url("assets/images/biomes/biome_jungle_feather.webp") !important;
 }
 
 /* 선택된 스테이지의 바이옴은 살짝 더 선명하게 */
@@ -4284,19 +4284,19 @@ h1{
 
 /* 원본 배경 이미지 기반으로 자연스럽게 복원 */
 #stageMap .stageBg.cosmic {
-  background-image: url("bg_cosmic.webp") !important;
+  background-image: url("assets/images/backgrounds/bg_cosmic.webp") !important;
 }
 
 #stageMap .stageBg.frost {
-  background-image: url("bg_frost.webp") !important;
+  background-image: url("assets/images/backgrounds/bg_frost.webp") !important;
 }
 
 #stageMap .stageBg.lava {
-  background-image: url("bg_lava.webp") !important;
+  background-image: url("assets/images/backgrounds/bg_lava.webp") !important;
 }
 
 #stageMap .stageBg.jungle {
-  background-image: url("bg_jungle.webp") !important;
+  background-image: url("assets/images/backgrounds/bg_jungle.webp") !important;
 }
 
 /* 선택된 성역만 전체 화면 메인 배경으로 강조 */
@@ -4419,10 +4419,10 @@ h1{
   pointer-events: none !important;
 }
 
-#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.webp") !important; }
-#stageMap .stageBg.frost { background-image: url("bg_frost.webp") !important; }
-#stageMap .stageBg.lava { background-image: url("bg_lava.webp") !important; }
-#stageMap .stageBg.jungle { background-image: url("bg_jungle.webp") !important; }
+#stageMap .stageBg.cosmic { background-image: url("assets/images/backgrounds/bg_cosmic.webp") !important; }
+#stageMap .stageBg.frost { background-image: url("assets/images/backgrounds/bg_frost.webp") !important; }
+#stageMap .stageBg.lava { background-image: url("assets/images/backgrounds/bg_lava.webp") !important; }
+#stageMap .stageBg.jungle { background-image: url("assets/images/backgrounds/bg_jungle.webp") !important; }
 
 #stageMap[data-selected="1"] .stageBg.cosmic,
 #stageMap[data-selected="2"] .stageBg.frost,
@@ -4963,10 +4963,10 @@ h1{
    - CSS는 더 이상 과도한 right position을 쓰지 않고 center 기준으로 안정화.
    ========================================================= */
 
-#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.webp") !important; }
-#stageMap .stageBg.frost  { background-image: url("bg_frost.webp") !important; }
-#stageMap .stageBg.lava   { background-image: url("bg_lava.webp") !important; }
-#stageMap .stageBg.jungle { background-image: url("bg_jungle.webp") !important; }
+#stageMap .stageBg.cosmic { background-image: url("assets/images/backgrounds/bg_cosmic.webp") !important; }
+#stageMap .stageBg.frost  { background-image: url("assets/images/backgrounds/bg_frost.webp") !important; }
+#stageMap .stageBg.lava   { background-image: url("assets/images/backgrounds/bg_lava.webp") !important; }
+#stageMap .stageBg.jungle { background-image: url("assets/images/backgrounds/bg_jungle.webp") !important; }
 
 #stageMap .stageBg.lava,
 #stageMap[data-selected="3"] .stageBg.lava {
@@ -5210,10 +5210,10 @@ h1{
    - artificial wide canvas 제거 후 원본 Lava 16:9 이미지를 cover로 사용.
    ========================================================= */
 
-#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.webp") !important; }
-#stageMap .stageBg.frost  { background-image: url("bg_frost.webp") !important; }
-#stageMap .stageBg.lava   { background-image: url("bg_lava.webp") !important; }
-#stageMap .stageBg.jungle { background-image: url("bg_jungle.webp") !important; }
+#stageMap .stageBg.cosmic { background-image: url("assets/images/backgrounds/bg_cosmic.webp") !important; }
+#stageMap .stageBg.frost  { background-image: url("assets/images/backgrounds/bg_frost.webp") !important; }
+#stageMap .stageBg.lava   { background-image: url("assets/images/backgrounds/bg_lava.webp") !important; }
+#stageMap .stageBg.jungle { background-image: url("assets/images/backgrounds/bg_jungle.webp") !important; }
 
 #stageMap .stageBg {
   position: absolute !important;
@@ -5304,10 +5304,10 @@ h1{
    - All backgrounds use direct 2560x1440 source images.
    ========================================================= */
 
-#stageMap .stageBg.cosmic { background-image: url("bg_cosmic.webp") !important; }
-#stageMap .stageBg.frost  { background-image: url("bg_frost.webp") !important; }
-#stageMap .stageBg.lava   { background-image: url("bg_lava.webp") !important; }
-#stageMap .stageBg.jungle { background-image: url("bg_jungle.webp") !important; }
+#stageMap .stageBg.cosmic { background-image: url("assets/images/backgrounds/bg_cosmic.webp") !important; }
+#stageMap .stageBg.frost  { background-image: url("assets/images/backgrounds/bg_frost.webp") !important; }
+#stageMap .stageBg.lava   { background-image: url("assets/images/backgrounds/bg_lava.webp") !important; }
+#stageMap .stageBg.jungle { background-image: url("assets/images/backgrounds/bg_jungle.webp") !important; }
 
 #stageMap .stageBg {
   position: absolute !important;
@@ -6536,7 +6536,7 @@ h1{
 
 /* Stage 5 Smog Wasteland patch */
 .stageBg.smog {
-  background-image:url("biome_smog_feather.webp");
+  background-image:url("assets/images/biomes/biome_smog_feather.webp");
   filter:hue-rotate(8deg) saturate(1.02) brightness(.82);
 }
 #stageMap .stageBg.smog {
@@ -6544,7 +6544,7 @@ h1{
   bottom:-18% !important;
   width:56% !important;
   height:55% !important;
-  background-image:url("biome_smog_feather.webp") !important;
+  background-image:url("assets/images/biomes/biome_smog_feather.webp") !important;
   background-size:cover !important;
   background-position:center !important;
   opacity:0;
@@ -6586,11 +6586,11 @@ h1{
 
 /* Stage 6 Crystal Nebula + Stage 7 Machine Core expansion */
 .stageBg.crystal {
-  background-image:url("biome_crystal_feather.webp");
+  background-image:url("assets/images/biomes/biome_crystal_feather.webp");
   filter:hue-rotate(-10deg) saturate(1.22) brightness(.92);
 }
 .stageBg.machine {
-  background-image:url("biome_machine_feather.webp");
+  background-image:url("assets/images/biomes/biome_machine_feather.webp");
   filter:saturate(1.08) brightness(.86) contrast(1.08);
 }
 #stageMap .stageBg.crystal {
@@ -6598,7 +6598,7 @@ h1{
   bottom:2% !important;
   width:52% !important;
   height:58% !important;
-  background-image:url("biome_crystal_feather.webp") !important;
+  background-image:url("assets/images/biomes/biome_crystal_feather.webp") !important;
   background-size:cover !important;
   background-position:center !important;
   opacity:0;
@@ -6609,7 +6609,7 @@ h1{
   bottom:0% !important;
   width:62% !important;
   height:66% !important;
-  background-image:url("biome_machine_feather.webp") !important;
+  background-image:url("assets/images/biomes/biome_machine_feather.webp") !important;
   background-size:cover !important;
   background-position:center !important;
   opacity:0;
@@ -7005,13 +7005,13 @@ h1{
 .stageNode:hover .nodePlanet,
 .stageNode.active .nodePlanet{ transform:scale(1.045); }
 .stageNode.locked .nodePlanet{ filter:grayscale(.16) brightness(.72) saturate(.72) drop-shadow(0 0 10px rgba(15,23,42,.8)); }
-.stageNode[data-stage="1"]{ --planetArt:url('stage_planet_cosmic.webp'); }
-.stageNode[data-stage="2"]{ --planetArt:url('stage_planet_frost.webp'); }
-.stageNode[data-stage="3"]{ --planetArt:url('stage_planet_lava.webp'); }
-.stageNode[data-stage="4"]{ --planetArt:url('stage_planet_jungle.webp'); }
-.stageNode[data-stage="5"]{ --planetArt:url('stage_planet_smog.webp'); }
-.stageNode[data-stage="6"]{ --planetArt:url('stage_planet_crystal.webp'); }
-.stageNode[data-stage="7"]{ --planetArt:url('stage_planet_machine.webp'); }
+.stageNode[data-stage="1"]{ --planetArt:url('assets/images/planets/stage_planet_cosmic.webp'); }
+.stageNode[data-stage="2"]{ --planetArt:url('assets/images/planets/stage_planet_frost.webp'); }
+.stageNode[data-stage="3"]{ --planetArt:url('assets/images/planets/stage_planet_lava.webp'); }
+.stageNode[data-stage="4"]{ --planetArt:url('assets/images/planets/stage_planet_jungle.webp'); }
+.stageNode[data-stage="5"]{ --planetArt:url('assets/images/planets/stage_planet_smog.webp'); }
+.stageNode[data-stage="6"]{ --planetArt:url('assets/images/planets/stage_planet_crystal.webp'); }
+.stageNode[data-stage="7"]{ --planetArt:url('assets/images/planets/stage_planet_machine.webp'); }
 @media (max-width: 768px){
   .menuActionRow{ gap:10px; }
   .menuActionRow button{ min-width:220px; }
@@ -7068,10 +7068,10 @@ h1{
 #stageMap .stageArrow{display:none !important;}
 #stageMap .premiumRouteArrow{display:block !important;}
 #stageMap .stageBg.crystal{
-  background-image:url("biome_crystal_feather.webp") !important;
+  background-image:url("assets/images/biomes/biome_crystal_feather.webp") !important;
 }
 #stageMap .stageBg.machine{
-  background-image:url("biome_machine_feather.webp") !important;
+  background-image:url("assets/images/biomes/biome_machine_feather.webp") !important;
 }
 @media (max-width: 768px){
   #stageMap .stageMapInner{
@@ -7134,8 +7134,8 @@ h1{
 #stageMap[data-selected="7"] .stageBg.machine{
   opacity:.33 !important;
 }
-#stageMap .stageBg.crystal{background-image:url("biome_crystal_feather.webp") !important;}
-#stageMap .stageBg.machine{background-image:url("biome_machine_feather.webp") !important;}
+#stageMap .stageBg.crystal{background-image:url("assets/images/biomes/biome_crystal_feather.webp") !important;}
+#stageMap .stageBg.machine{background-image:url("assets/images/biomes/biome_machine_feather.webp") !important;}
 #stageMap .stageNode{
   width:138px !important;
   height:138px !important;
@@ -8506,11 +8506,11 @@ h1{
 .constellationCard.locked{opacity:.56;filter:saturate(.7);cursor:not-allowed}.constellationCard.active{border-color:rgba(96,165,250,.52);box-shadow:0 0 0 1px rgba(96,165,250,.18),0 16px 30px rgba(37,99,235,.18);background:linear-gradient(180deg, rgba(15,23,42,.86), rgba(6,10,24,.82))}
 #stageMap .stageMapInner{top:206px !important;bottom:300px !important}
 #stageMap .stageInfoPanel{height:260px !important}
-#stageMap .stageNode[data-stage="8"]{--planetArt:url('stage_planet_cosmic.webp');}
-#stageMap .stageNode[data-stage="9"]{--planetArt:url('stage_planet_machine.webp');}
-#stageMap .stageNode[data-stage="10"]{--planetArt:url('stage_planet_crystal.webp');}
-#stageMap .stageNode[data-stage="11"]{--planetArt:url('stage_planet_smog.webp');}
-#stageMap .stageNode[data-stage="12"]{--planetArt:url('stage_planet_machine.webp');}
+#stageMap .stageNode[data-stage="8"]{--planetArt:url('assets/images/planets/stage_planet_cosmic.webp');}
+#stageMap .stageNode[data-stage="9"]{--planetArt:url('assets/images/planets/stage_planet_machine.webp');}
+#stageMap .stageNode[data-stage="10"]{--planetArt:url('assets/images/planets/stage_planet_crystal.webp');}
+#stageMap .stageNode[data-stage="11"]{--planetArt:url('assets/images/planets/stage_planet_smog.webp');}
+#stageMap .stageNode[data-stage="12"]{--planetArt:url('assets/images/planets/stage_planet_machine.webp');}
 #stageMap[data-selected="8"] .stageBg.cosmic,
 #stageMap[data-selected="9"] .stageBg.machine,
 #stageMap[data-selected="10"] .stageBg.crystal,
@@ -9914,7 +9914,7 @@ h1{
   bottom:-8% !important;
   width:66% !important;
   height:68% !important;
-  background-image:url("biome_machine_feather.webp") !important;
+  background-image:url("assets/images/biomes/biome_machine_feather.webp") !important;
   filter:hue-rotate(20deg) saturate(.82) brightness(.72) contrast(1.06) !important;
   transform:scale(.90) rotate(-1.5deg);
 }
@@ -9923,7 +9923,7 @@ h1{
   top:-4% !important;
   width:68% !important;
   height:66% !important;
-  background-image:url("biome_machine_feather.webp") !important;
+  background-image:url("assets/images/biomes/biome_machine_feather.webp") !important;
   filter:hue-rotate(-24deg) saturate(1.18) brightness(.78) contrast(1.08) !important;
   transform:scale(.90) rotate(2deg);
 }
@@ -9932,7 +9932,7 @@ h1{
   top:-8% !important;
   width:64% !important;
   height:64% !important;
-  background-image:url("biome_crystal_feather.webp") !important;
+  background-image:url("assets/images/biomes/biome_crystal_feather.webp") !important;
   filter:hue-rotate(18deg) saturate(1.06) brightness(.78) contrast(1.06) !important;
   transform:scale(.90) rotate(-2deg);
 }
@@ -9941,7 +9941,7 @@ h1{
   top:-8% !important;
   width:60% !important;
   height:60% !important;
-  background-image:url("biome_smog_feather.webp") !important;
+  background-image:url("assets/images/biomes/biome_smog_feather.webp") !important;
   filter:hue-rotate(-8deg) saturate(.72) brightness(.74) contrast(1.06) !important;
   transform:scale(.90) rotate(1.5deg);
 }
@@ -9950,7 +9950,7 @@ h1{
   bottom:-10% !important;
   width:72% !important;
   height:72% !important;
-  background-image:url("biome_crystal_feather.webp") !important;
+  background-image:url("assets/images/biomes/biome_crystal_feather.webp") !important;
   filter:hue-rotate(128deg) saturate(1.22) brightness(.68) contrast(1.10) !important;
   transform:scale(.90) rotate(-1deg);
 }
@@ -10230,10 +10230,10 @@ h1{
   inset:0;
   background:radial-gradient(circle at center, rgba(255,255,255,.10), transparent 38%), linear-gradient(180deg, rgba(1,4,11,.38), rgba(1,4,11,.12) 28%, rgba(1,4,11,.60));
 }
-.galaxyBackdrop.milky-rift{background-image:url('galaxy_milky_rift.png');}
-.galaxyBackdrop.andromeda-frost{background-image:url('galaxy_andromeda_frost.png');}
-.galaxyBackdrop.ember-spiral{background-image:url('galaxy_ember_spiral.png');}
-.galaxyBackdrop.void-crown{background-image:url('galaxy_void_crown.png');}
+.galaxyBackdrop.milky-rift{background-image:url('assets/images/galaxies/galaxy_milky_rift.png');}
+.galaxyBackdrop.andromeda-frost{background-image:url('assets/images/galaxies/galaxy_andromeda_frost.png');}
+.galaxyBackdrop.ember-spiral{background-image:url('assets/images/galaxies/galaxy_ember_spiral.png');}
+.galaxyBackdrop.void-crown{background-image:url('assets/images/galaxies/galaxy_void_crown.png');}
 #galaxyMap[data-selected-galaxy="milky-rift"] .galaxyBackdrop.milky-rift,
 #galaxyMap[data-selected-galaxy="andromeda-frost"] .galaxyBackdrop.andromeda-frost,
 #galaxyMap[data-selected-galaxy="ember-spiral"] .galaxyBackdrop.ember-spiral,
@@ -13380,7 +13380,7 @@ html, body{overflow-x:hidden !important;}
    v80 ICON-ONLY UPGRADE ARMORY
    - 타워/공통 연구 모두 좌측 세로 아이콘 리스트로 통일.
    - 텍스트는 우측 상세 패널에만 표시해 가독성/집중도를 높임.
-   - 공통 연구는 신규 SVG 리소스(common_skill_icons/*.svg)를 사용.
+   - 공통 연구는 신규 SVG 리소스(assets/images/common_skill_icons/*.svg)를 사용.
    ========================================================= */
 #towerPopup{
   --armory-cyan:#22e7ff;
@@ -14147,8 +14147,8 @@ html, body{overflow-x:hidden !important;}
       <div id="stageFxLabel" class="stageFxLabel"></div>
       <div id="hangar"></div>
       <div class="fieldTopControls" aria-label="전투 빠른 조작">
-        <button id="towerMenuBtn" class="towerMenuBtn fieldIconBtn fieldIconBtn--tower" type="button" aria-haspopup="dialog" aria-controls="towerPopup" aria-label="강화 관리" title="강화 관리"><img src="ui_icon_tower.png" alt="" aria-hidden="true"></button>
-        <button id="audioBtn" class="fieldIconBtn fieldIconBtn--bgm" type="button" aria-label="BGM 켜기" title="BGM"><img src="ui_icon_bgm.png" alt="" aria-hidden="true"></button>
+        <button id="towerMenuBtn" class="towerMenuBtn fieldIconBtn fieldIconBtn--tower" type="button" aria-haspopup="dialog" aria-controls="towerPopup" aria-label="강화 관리" title="강화 관리"><img src="assets/images/ui/icons/ui_icon_tower.png" alt="" aria-hidden="true"></button>
+        <button id="audioBtn" class="fieldIconBtn fieldIconBtn--bgm" type="button" aria-label="BGM 켜기" title="BGM"><img src="assets/images/ui/icons/ui_icon_bgm.png" alt="" aria-hidden="true"></button>
       </div>
     </div>
 
@@ -14292,19 +14292,19 @@ html, body{overflow-x:hidden !important;}
     </svg>
     <div id="galaxyNodeLayer" class="galaxyNodeLayer">
       <button class="galaxyNode active open" type="button" data-galaxy-id="milky-rift" style="left:18%;top:69%;--galaxyA:#60a5fa;--galaxyB:#1d4ed8;">
-        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('galaxy_milky_rift.png')"></div>
+        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('assets/images/galaxies/galaxy_milky_rift.png')"></div>
         <div class="galaxyNodeBadge">OPEN</div><div class="galaxyNodeLabel"><div class="galaxyNodeName">MILKY RIFT</div><div class="galaxyNodeKo">은하수 균열</div></div>
       </button>
       <button class="galaxyNode locked" type="button" data-galaxy-id="andromeda-frost" style="left:38%;top:29%;--galaxyA:#67e8f9;--galaxyB:#0f766e;">
-        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('galaxy_andromeda_frost.png')"></div>
+        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('assets/images/galaxies/galaxy_andromeda_frost.png')"></div>
         <div class="galaxyNodeBadge">LOCKED</div><div class="galaxyLockMark">🔒</div><div class="galaxyNodeLabel"><div class="galaxyNodeName">ANDROMEDA FROST</div><div class="galaxyNodeKo">안드로메다 빙하</div></div>
       </button>
       <button class="galaxyNode locked" type="button" data-galaxy-id="ember-spiral" style="left:63%;top:63%;--galaxyA:#fb923c;--galaxyB:#991b1b;">
-        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('galaxy_ember_spiral.png')"></div>
+        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('assets/images/galaxies/galaxy_ember_spiral.png')"></div>
         <div class="galaxyNodeBadge">LOCKED</div><div class="galaxyLockMark">🔒</div><div class="galaxyNodeLabel"><div class="galaxyNodeName">EMBER SPIRAL</div><div class="galaxyNodeKo">잿불 나선은하</div></div>
       </button>
       <button class="galaxyNode locked" type="button" data-galaxy-id="void-crown" style="left:82%;top:30%;--galaxyA:#c084fc;--galaxyB:#5b21b6;">
-        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('galaxy_void_crown.png')"></div>
+        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('assets/images/galaxies/galaxy_void_crown.png')"></div>
         <div class="galaxyNodeBadge">LOCKED</div><div class="galaxyLockMark">🔒</div><div class="galaxyNodeLabel"><div class="galaxyNodeName">VOID CROWN</div><div class="galaxyNodeKo">공허 왕관</div></div>
       </button>
     </div>
@@ -14345,7 +14345,7 @@ html, body{overflow-x:hidden !important;}
   <div class="stageBg rift"></div>
   <div class="stageFrame"></div>
   <button id="stageMapBack" class="stageBackBtn">← GALAXY</button>
-  <button id="stageTowerManageBtn" class="stageManageBtn" type="button" aria-haspopup="dialog" aria-controls="towerPopup" aria-label="강화 관리" title="강화 관리"><img src="ui_icon_tower.png" alt="" aria-hidden="true"><span>강화 관리</span></button>
+  <button id="stageTowerManageBtn" class="stageManageBtn" type="button" aria-haspopup="dialog" aria-controls="towerPopup" aria-label="강화 관리" title="강화 관리"><img src="assets/images/ui/icons/ui_icon_tower.png" alt="" aria-hidden="true"><span>강화 관리</span></button>
   <div class="stageTopTitle">CONSTELLATION MAP</div>
   <div class="stageStatus">
     <span id="stageProgressLabel">ORION CONSTELLATION · SANCTUARY 1 / 12</span>
@@ -14639,13 +14639,13 @@ function screenStarLoop(now){
 }
 
 const THEMES = [
-  {name:'COSMIC VOID', ko:'공허 성역', bg:'bg_cosmic.webp', color:'#38bdf8', starSpeed:1.0},
-  {name:'FROST EXPANSE', ko:'빙결 외곽', bg:'bg_frost.webp', color:'#67e8f9', starSpeed:.82},
-  {name:'LAVA NEBULA', ko:'용암 성운', bg:'bg_lava.webp', color:'#fb923c', starSpeed:1.22},
-  {name:'JUNGLE CORE', ko:'생체 정글', bg:'bg_jungle.webp', color:'#22c55e', starSpeed:.95},
-  {name:'SMOG WASTELAND', ko:'매연 폐역', bg:'bg_smog.webp', color:'#9cab62', starSpeed:.72},
-  {name:'CRYSTAL NEBULA', ko:'수정 성운', bg:'bg_crystal.webp', color:'#c084fc', starSpeed:.88},
-  {name:'MACHINE CORE', ko:'기계 핵성', bg:'bg_machine.webp', color:'#60a5fa', starSpeed:.78}
+  {name:'COSMIC VOID', ko:'공허 성역', bg:'assets/images/backgrounds/bg_cosmic.webp', color:'#38bdf8', starSpeed:1.0},
+  {name:'FROST EXPANSE', ko:'빙결 외곽', bg:'assets/images/backgrounds/bg_frost.webp', color:'#67e8f9', starSpeed:.82},
+  {name:'LAVA NEBULA', ko:'용암 성운', bg:'assets/images/backgrounds/bg_lava.webp', color:'#fb923c', starSpeed:1.22},
+  {name:'JUNGLE CORE', ko:'생체 정글', bg:'assets/images/backgrounds/bg_jungle.webp', color:'#22c55e', starSpeed:.95},
+  {name:'SMOG WASTELAND', ko:'매연 폐역', bg:'assets/images/backgrounds/bg_smog.webp', color:'#9cab62', starSpeed:.72},
+  {name:'CRYSTAL NEBULA', ko:'수정 성운', bg:'assets/images/backgrounds/bg_crystal.webp', color:'#c084fc', starSpeed:.88},
+  {name:'MACHINE CORE', ko:'기계 핵성', bg:'assets/images/backgrounds/bg_machine.webp', color:'#60a5fa', starSpeed:.78}
 ];
 
 
@@ -15734,19 +15734,19 @@ const STAGE_BGS = THEMES.map(t => {
 });
 
 const PLANET_ICON_SHEET = new Image();
-PLANET_ICON_SHEET.src = 'planet_units_planet_style_v15.webp?v=15';
+PLANET_ICON_SHEET.src = 'assets/images/towers/planet_units_planet_style_v15.webp?v=15';
 
 const PLANET_EVOLUTION_FILES = {
-  solar:'solar_levels.webp?v=1',
-  frost:'frost_levels.webp?v=1',
-  storm:'storm_levels.webp?v=1',
-  toxic:'toxic_levels.webp?v=1',
-  void:'void_levels.webp?v=1',
-  laser:'laser_levels.webp?v=1',
-  smog:'smog_levels.webp?v=2',
-  crystal:'crystal_levels.webp?v=2',
-  mecha:'mecha_levels.webp?v=1',
-  starengine:'starengine_levels.webp?v=1'
+  solar:'assets/images/towers/solar_levels.webp?v=1',
+  frost:'assets/images/towers/frost_levels.webp?v=1',
+  storm:'assets/images/towers/storm_levels.webp?v=1',
+  toxic:'assets/images/towers/toxic_levels.webp?v=1',
+  void:'assets/images/towers/void_levels.webp?v=1',
+  laser:'assets/images/towers/laser_levels.webp?v=1',
+  smog:'assets/images/towers/smog_levels.webp?v=2',
+  crystal:'assets/images/towers/crystal_levels.webp?v=2',
+  mecha:'assets/images/towers/mecha_levels.webp?v=1',
+  starengine:'assets/images/towers/starengine_levels.webp?v=1'
 };
 const PLANET_EVOLUTION_COLS = 5;
 const PLANET_EVOLUTION_SHEETS = Object.fromEntries(Object.entries(PLANET_EVOLUTION_FILES).map(([key, src]) => {
@@ -15755,7 +15755,7 @@ const PLANET_EVOLUTION_SHEETS = Object.fromEntries(Object.entries(PLANET_EVOLUTI
   return [key, img];
 }));
 
-const STAGE_FX_IMAGES = ['fx_cosmic.webp?v=6','fx_frost.webp?v=6','fx_lava.webp?v=6','fx_jungle.webp?v=6','fx_smog.webp?v=1','fx_crystal.webp?v=1','fx_machine.webp?v=1'].map(src=>{
+const STAGE_FX_IMAGES = ['assets/images/effects/fx_cosmic.webp?v=6','assets/images/effects/fx_frost.webp?v=6','assets/images/effects/fx_lava.webp?v=6','assets/images/effects/fx_jungle.webp?v=6','assets/images/effects/fx_smog.webp?v=1','assets/images/effects/fx_crystal.webp?v=1','assets/images/effects/fx_machine.webp?v=1'].map(src=>{
   const img = new Image();
   img.src = src;
   return img;
@@ -15790,7 +15790,7 @@ function planetThumbLevel(level){
 function planetThumbSrc(type, level=1){
   const p = PLANETS?.[Number(type)];
   if(!p?.id) return '';
-  return `thumbs/${p.id}_lv${planetThumbLevel(level)}.webp?v=align2`;
+  return `assets/images/thumbs/${p.id}_lv${planetThumbLevel(level)}.webp?v=align2`;
 }
 function planetThumbImage(type, level=1){
   const src = planetThumbSrc(type, level);
@@ -21146,7 +21146,7 @@ window.addEventListener('DOMContentLoaded', () => {
       </div>`;
   }
   function towerImg(t, cls=''){
-    const src = t?.thumb || `thumbs/${esc(t?.id || 'solar')}_lv1.webp?v=align2`;
+    const src = t?.thumb || `assets/images/thumbs/${esc(t?.id || 'solar')}_lv1.webp?v=align2`;
     return `<img class="${cls}" src="${esc(src)}" alt="" aria-hidden="true" draggable="false">`;
   }
   function tagsHtml(tags){
@@ -21451,7 +21451,7 @@ window.addEventListener('DOMContentLoaded', () => {
 }
 #towerPopup .towerPopupPanel::before{
   content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
-  background:url('ui_armory/frame_outer.png') center/100% 100% no-repeat;
+  background:url('assets/images/ui/armory/frame_outer.png') center/100% 100% no-repeat;
   opacity:.52;mix-blend-mode:screen;
 }
 #towerPopup .towerPopupPanel::after{
@@ -21497,7 +21497,7 @@ window.addEventListener('DOMContentLoaded', () => {
 #towerPopup .towerWalletItem b{font-family:'Orbitron',Pretendard,sans-serif !important;font-size:18px !important;color:#fff !important;line-height:1 !important;letter-spacing:-.015em !important;}
 #towerPopup .towerPopupClose{
   width:64px !important;height:64px !important;min-height:64px !important;align-self:start !important;border-radius:0 !important;padding:0 !important;
-  background:url('ui_armory/close_btn.png') center/100% 100% no-repeat !important;border:0 !important;box-shadow:none !important;
+  background:url('assets/images/ui/armory/close_btn.png') center/100% 100% no-repeat !important;border:0 !important;box-shadow:none !important;
   color:transparent !important;font-size:0 !important;text-shadow:none !important;
 }
 #towerPopup .towerPopupClose::before,#towerPopup .towerPopupClose::after{display:none !important;}
@@ -21513,7 +21513,7 @@ window.addEventListener('DOMContentLoaded', () => {
   font-family:Pretendard,'Noto Sans KR',sans-serif !important;font-size:26px !important;font-weight:920 !important;letter-spacing:-.05em !important;box-shadow:none !important;
 }
 #towerPopup .towerPopupTab::before{
-  content:"";position:absolute;inset:0;pointer-events:none;background:url('ui_armory/tab_frame.png') center/100% 100% no-repeat;opacity:.22;mix-blend-mode:screen;
+  content:"";position:absolute;inset:0;pointer-events:none;background:url('assets/images/ui/armory/tab_frame.png') center/100% 100% no-repeat;opacity:.22;mix-blend-mode:screen;
 }
 #towerPopup .towerPopupTab.active{
   color:#fff !important;background:linear-gradient(180deg,rgba(23,120,170,.60),rgba(4,17,39,.96)) !important;border-color:rgba(53,233,255,.72) !important;
@@ -21535,7 +21535,7 @@ window.addEventListener('DOMContentLoaded', () => {
 #towerPopup .towerPopupDetail::before{
   content:"";position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.22;mix-blend-mode:screen;
 }
-#towerPopup .towerPopupList::before{background:url('ui_armory/detail_panel.png') center/100% 100% no-repeat;}
+#towerPopup .towerPopupList::before{background:url('assets/images/ui/armory/detail_panel.png') center/100% 100% no-repeat;}
 #towerPopup .towerPopupItem,
 #towerPopup .commonResearchItem{
   position:relative !important;z-index:1 !important;width:92px !important;height:92px !important;min-width:92px !important;min-height:92px !important;padding:8px !important;
@@ -21572,7 +21572,7 @@ window.addEventListener('DOMContentLoaded', () => {
   clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px) !important;
   border:1px solid rgba(84,201,255,.20) !important;background:linear-gradient(180deg,rgba(6,18,42,.86),rgba(3,10,22,.95)) !important;
 }
-#towerPopup .towerPopupDetail::before{background:url('ui_armory/detail_panel.png') center/100% 100% no-repeat;}
+#towerPopup .towerPopupDetail::before{background:url('assets/images/ui/armory/detail_panel.png') center/100% 100% no-repeat;}
 #towerPopup .towerPopupDetail > *{position:relative;z-index:1;}
 #towerPopup .armoryTowerHero,
 #towerPopup .armoryCommonHero,
@@ -21662,7 +21662,7 @@ window.addEventListener('DOMContentLoaded', () => {
   clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px) !important;
   background:linear-gradient(180deg,rgba(7,18,40,.90),rgba(4,11,25,.98)) !important;border:1px solid rgba(255,166,86,.34) !important;box-shadow:0 20px 48px rgba(0,0,0,.42) !important;position:relative !important;overflow:hidden !important;
 }
-#towerPopup .armoryLockBox::before{content:"";position:absolute;inset:0;background:url('ui_armory/lock_panel.png') center/100% 100% no-repeat;opacity:.18;mix-blend-mode:screen;pointer-events:none;}
+#towerPopup .armoryLockBox::before{content:"";position:absolute;inset:0;background:url('assets/images/ui/armory/lock_panel.png') center/100% 100% no-repeat;opacity:.18;mix-blend-mode:screen;pointer-events:none;}
 #towerPopup .armoryLockIcon{font-size:34px !important;position:relative;z-index:1;}
 #towerPopup .armoryLockBox b,#towerPopup .armoryLockBox span{position:relative;z-index:1;}
 #towerPopup .armoryLockBox b{font-size:23px !important;}
@@ -21735,7 +21735,7 @@ window.addEventListener('DOMContentLoaded', () => {
 }
 #towerPopup .towerPopupPanel::before{
   content:""; position:absolute; inset:0; pointer-events:none; z-index:0;
-  background:url('ui_generated/hud_main_panel.png') center/100% 100% no-repeat;
+  background:url('assets/images/ui/generated/hud_main_panel.png') center/100% 100% no-repeat;
   opacity:.98;
 }
 #towerPopup .towerPopupPanel::after{
@@ -21798,7 +21798,7 @@ window.addEventListener('DOMContentLoaded', () => {
   color:transparent !important; font-size:0 !important;
 }
 #towerPopup .towerPopupClose::before{
-  content:""; position:absolute; inset:0; background:url('ui_generated/close_btn.png') center/contain no-repeat;
+  content:""; position:absolute; inset:0; background:url('assets/images/ui/generated/close_btn.png') center/contain no-repeat;
 }
 #towerPopup .towerPopupTabs{
   display:grid !important; grid-template-columns:repeat(2, minmax(0, 340px)) !important; gap:14px !important;
@@ -21810,10 +21810,10 @@ window.addEventListener('DOMContentLoaded', () => {
   letter-spacing:-.03em !important; color:#8fa5bc !important; text-align:center !important;
 }
 #towerPopup .towerPopupTab::before{
-  content:""; position:absolute; inset:0; background:url('ui_generated/tab_inactive.png') center/100% 100% no-repeat; z-index:-1;
+  content:""; position:absolute; inset:0; background:url('assets/images/ui/generated/tab_inactive.png') center/100% 100% no-repeat; z-index:-1;
 }
 #towerPopup .towerPopupTab.active{color:#f5fbff !important; text-shadow:0 0 16px rgba(69,230,255,.24) !important;}
-#towerPopup .towerPopupTab.active::before{background-image:url('ui_generated/tab_active.png');}
+#towerPopup .towerPopupTab.active::before{background-image:url('assets/images/ui/generated/tab_active.png');}
 #towerPopup .towerPopupBody{
   grid-template-columns:132px minmax(0,1fr) !important;
   gap:18px !important; padding:8px 34px 28px !important;
@@ -21831,12 +21831,12 @@ window.addEventListener('DOMContentLoaded', () => {
 }
 #towerPopup .towerPopupItem::before,
 #towerPopup .commonResearchItem::before{
-  content:""; position:absolute; inset:0; background:url('ui_generated/slot_inactive.png') center/100% 100% no-repeat !important;
+  content:""; position:absolute; inset:0; background:url('assets/images/ui/generated/slot_inactive.png') center/100% 100% no-repeat !important;
 }
 #towerPopup .towerPopupItem.active::before,
-#towerPopup .commonResearchItem.active::before{background-image:url('ui_generated/slot_active.png') !important;}
+#towerPopup .commonResearchItem.active::before{background-image:url('assets/images/ui/generated/slot_active.png') !important;}
 #towerPopup .towerPopupItem.locked::before,
-#towerPopup .commonResearchItem.locked::before{background-image:url('ui_generated/slot_locked.png') !important;}
+#towerPopup .commonResearchItem.locked::before{background-image:url('assets/images/ui/generated/slot_locked.png') !important;}
 #towerPopup .towerPopupItem.active::after,
 #towerPopup .commonResearchItem.active::after{
   content:""; position:absolute; left:-8px; top:50%; transform:translateY(-50%);
@@ -21846,7 +21846,7 @@ window.addEventListener('DOMContentLoaded', () => {
 #towerPopup .towerPopupItem.locked::after,
 #towerPopup .commonResearchItem.locked::after{
   content:"" !important; position:absolute !important; right:8px !important; bottom:8px !important;
-  width:26px !important; height:26px !important; background:url('ui_generated/lock_badge.png') center/contain no-repeat !important;
+  width:26px !important; height:26px !important; background:url('assets/images/ui/generated/lock_badge.png') center/contain no-repeat !important;
   border:0 !important; border-radius:0 !important;
 }
 #towerPopup .towerPopupThumb{width:74px !important; height:74px !important; background:none !important; border:0 !important; box-shadow:none !important; z-index:1 !important;}
@@ -21858,11 +21858,11 @@ window.addEventListener('DOMContentLoaded', () => {
   padding:24px 28px 20px !important; background:transparent !important; border:0 !important; border-radius:0 !important;
 }
 #towerPopup .towerPopupDetail::before{
-  content:""; position:absolute; inset:0; background:url('ui_generated/detail_frame.png') center/100% 100% no-repeat; pointer-events:none; z-index:0;
+  content:""; position:absolute; inset:0; background:url('assets/images/ui/generated/detail_frame.png') center/100% 100% no-repeat; pointer-events:none; z-index:0;
 }
 #towerPopup .towerPopupDetail::after{
   content:""; position:absolute; right:14px; bottom:12px; width:150px; height:150px;
-  background:url('ui_generated/radar.png') center/contain no-repeat; opacity:.72; pointer-events:none; z-index:0;
+  background:url('assets/images/ui/generated/radar.png') center/contain no-repeat; opacity:.72; pointer-events:none; z-index:0;
 }
 #towerPopup .towerPopupDetail > *{position:relative; z-index:1;}
 #towerPopup .armoryTowerHero,
@@ -21881,7 +21881,7 @@ window.addEventListener('DOMContentLoaded', () => {
 #towerPopup .armoryTowerThumb::before,
 #towerPopup .armoryCommonIcon::before,
 #towerPopup .commonResearchIcon::before{
-  content:""; position:absolute; inset:0; background:url('ui_generated/hero_plate.png') center/100% 100% no-repeat;
+  content:""; position:absolute; inset:0; background:url('assets/images/ui/generated/hero_plate.png') center/100% 100% no-repeat;
 }
 #towerPopup .armoryTowerThumb img{position:relative; z-index:1; width:136px !important; height:136px !important; object-fit:contain !important; filter:drop-shadow(0 0 24px rgba(0,0,0,.32));}
 #towerPopup .armoryCommonIcon img,#towerPopup .commonResearchIcon img{position:relative; z-index:1; width:92px !important; height:92px !important; object-fit:contain !important;}
@@ -21927,7 +21927,7 @@ window.addEventListener('DOMContentLoaded', () => {
 }
 #towerPopup .armorySection h3::before,
 #towerPopup .commonTimelineTitle::before{
-  content:""; width:14px; height:14px; background:url('ui_generated/bullet.png') center/contain no-repeat;
+  content:""; width:14px; height:14px; background:url('assets/images/ui/generated/bullet.png') center/contain no-repeat;
   filter:drop-shadow(0 0 10px rgba(80,226,255,.42)); flex:0 0 14px;
 }
 #towerPopup .armorySection p{font-size:14px !important; line-height:1.66 !important; color:#dbe7f4 !important; letter-spacing:-.015em !important; margin:0 !important;}
@@ -21948,7 +21948,7 @@ window.addEventListener('DOMContentLoaded', () => {
 #towerPopup .armoryUpgradeDock{
   position:relative !important; display:grid !important; grid-template-columns:minmax(0,1fr) 170px !important; gap:16px !important; align-items:center !important;
   min-height:128px !important; padding:22px 22px 18px !important; margin-bottom:16px !important;
-  border:0 !important; background:url('ui_generated/next_upgrade_panel.png') center/100% 100% no-repeat !important; box-shadow:none !important;
+  border:0 !important; background:url('assets/images/ui/generated/next_upgrade_panel.png') center/100% 100% no-repeat !important; box-shadow:none !important;
 }
 #towerPopup .armoryUpgradeDock small{display:block !important; font-family:'Orbitron',Pretendard,sans-serif !important; font-size:13px !important; letter-spacing:.12em !important; color:#ffad39 !important; margin-bottom:8px !important;}
 #towerPopup .armoryUpgradeDock b{display:block !important; font-size:20px !important; color:#f7fbff !important; font-weight:900 !important; line-height:1.22 !important;}
@@ -21966,9 +21966,9 @@ window.addEventListener('DOMContentLoaded', () => {
   min-height:74px !important; padding:0 20px !important; display:grid !important; grid-template-columns:84px minmax(0,1fr) 84px !important; align-items:center !important; gap:10px !important;
   border:0 !important; background-position:center !important; background-repeat:no-repeat !important; background-size:100% 100% !important;
 }
-#towerPopup .commonTimelineRow.done{background-image:url('ui_generated/timeline_done.png') !important;}
-#towerPopup .commonTimelineRow.current{background-image:url('ui_generated/timeline_current.png') !important;}
-#towerPopup .commonTimelineRow.locked{background-image:url('ui_generated/timeline_locked.png') !important;}
+#towerPopup .commonTimelineRow.done{background-image:url('assets/images/ui/generated/timeline_done.png') !important;}
+#towerPopup .commonTimelineRow.current{background-image:url('assets/images/ui/generated/timeline_current.png') !important;}
+#towerPopup .commonTimelineRow.locked{background-image:url('assets/images/ui/generated/timeline_locked.png') !important;}
 #towerPopup .commonTimelineRow b{font-family:'Orbitron',Pretendard,sans-serif !important; font-size:16px !important; color:#a8f4ff !important;}
 #towerPopup .commonTimelineRow span{font-size:14px !important; color:#edf5ff !important; font-weight:700 !important; letter-spacing:-.02em !important;}
 #towerPopup .commonTimelineRow em{font-style:normal !important; text-align:right !important; font-size:13px !important; color:#8fdcff !important; font-weight:800 !important;}
@@ -23025,7 +23025,7 @@ window.addEventListener('DOMContentLoaded', () => {
   height:30px !important;
   transform:translateY(-50%) !important;
   border-radius:50% !important;
-  background:url('ui_icon_tower.png') center/contain no-repeat, radial-gradient(circle,rgba(81,221,255,.2),transparent 66%) !important;
+  background:url('assets/images/ui/icons/ui_icon_tower.png') center/contain no-repeat, radial-gradient(circle,rgba(81,221,255,.2),transparent 66%) !important;
   filter:drop-shadow(0 0 10px rgba(81,221,255,.45)) !important;
 }
 #stageMap .stageBackBtn::after{
@@ -28635,8 +28635,8 @@ window.addEventListener('DOMContentLoaded', () => {
       wrap.className = 'stageQuickControls';
       wrap.setAttribute('aria-label', '스테이지 맵 빠른 조작');
       wrap.innerHTML =
-        '<button id="stageTowerQuickBtn" class="stageQuickBtn stageQuickBtn--tower" type="button" aria-label="강화 관리" title="강화 관리"><img src="ui_icon_tower.png" alt="" aria-hidden="true"></button>' +
-        '<button id="stageAudioQuickBtn" class="stageQuickBtn stageQuickBtn--bgm" type="button" aria-label="BGM 끄기" title="BGM ON"><img src="ui_icon_bgm.png" alt="" aria-hidden="true"></button>';
+        '<button id="stageTowerQuickBtn" class="stageQuickBtn stageQuickBtn--tower" type="button" aria-label="강화 관리" title="강화 관리"><img src="assets/images/ui/icons/ui_icon_tower.png" alt="" aria-hidden="true"></button>' +
+        '<button id="stageAudioQuickBtn" class="stageQuickBtn stageQuickBtn--bgm" type="button" aria-label="BGM 끄기" title="BGM ON"><img src="assets/images/ui/icons/ui_icon_bgm.png" alt="" aria-hidden="true"></button>';
       stageMap.appendChild(wrap);
     }
 

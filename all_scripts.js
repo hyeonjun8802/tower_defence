@@ -192,13 +192,13 @@ function screenStarLoop(now){
 }
 
 const THEMES = [
-  {name:'COSMIC VOID', ko:'공허 성역', bg:'bg_cosmic.webp', color:'#38bdf8', starSpeed:1.0},
-  {name:'FROST EXPANSE', ko:'빙결 외곽', bg:'bg_frost.webp', color:'#67e8f9', starSpeed:.82},
-  {name:'LAVA NEBULA', ko:'용암 성운', bg:'bg_lava.webp', color:'#fb923c', starSpeed:1.22},
-  {name:'JUNGLE CORE', ko:'생체 정글', bg:'bg_jungle.webp', color:'#22c55e', starSpeed:.95},
-  {name:'SMOG WASTELAND', ko:'매연 폐역', bg:'bg_smog.webp', color:'#9cab62', starSpeed:.72},
-  {name:'CRYSTAL NEBULA', ko:'수정 성운', bg:'bg_crystal.webp', color:'#c084fc', starSpeed:.88},
-  {name:'MACHINE CORE', ko:'기계 핵성', bg:'bg_machine.webp', color:'#60a5fa', starSpeed:.78}
+  {name:'COSMIC VOID', ko:'공허 성역', bg:'assets/images/backgrounds/bg_cosmic.webp', color:'#38bdf8', starSpeed:1.0},
+  {name:'FROST EXPANSE', ko:'빙결 외곽', bg:'assets/images/backgrounds/bg_frost.webp', color:'#67e8f9', starSpeed:.82},
+  {name:'LAVA NEBULA', ko:'용암 성운', bg:'assets/images/backgrounds/bg_lava.webp', color:'#fb923c', starSpeed:1.22},
+  {name:'JUNGLE CORE', ko:'생체 정글', bg:'assets/images/backgrounds/bg_jungle.webp', color:'#22c55e', starSpeed:.95},
+  {name:'SMOG WASTELAND', ko:'매연 폐역', bg:'assets/images/backgrounds/bg_smog.webp', color:'#9cab62', starSpeed:.72},
+  {name:'CRYSTAL NEBULA', ko:'수정 성운', bg:'assets/images/backgrounds/bg_crystal.webp', color:'#c084fc', starSpeed:.88},
+  {name:'MACHINE CORE', ko:'기계 핵성', bg:'assets/images/backgrounds/bg_machine.webp', color:'#60a5fa', starSpeed:.78}
 ];
 
 
@@ -1286,19 +1286,19 @@ const STAGE_BGS = THEMES.map(t => {
 });
 
 const PLANET_ICON_SHEET = new Image();
-PLANET_ICON_SHEET.src = 'planet_units_planet_style_v15.webp?v=15';
+PLANET_ICON_SHEET.src = 'assets/images/towers/planet_units_planet_style_v15.webp?v=15';
 
 const PLANET_EVOLUTION_FILES = {
-  solar:'solar_levels.webp?v=1',
-  frost:'frost_levels.webp?v=1',
-  storm:'storm_levels.webp?v=1',
-  toxic:'toxic_levels.webp?v=1',
-  void:'void_levels.webp?v=1',
-  laser:'laser_levels.webp?v=1',
-  smog:'smog_levels.webp?v=2',
-  crystal:'crystal_levels.webp?v=2',
-  mecha:'mecha_levels.webp?v=1',
-  starengine:'starengine_levels.webp?v=1'
+  solar:'assets/images/towers/solar_levels.webp?v=1',
+  frost:'assets/images/towers/frost_levels.webp?v=1',
+  storm:'assets/images/towers/storm_levels.webp?v=1',
+  toxic:'assets/images/towers/toxic_levels.webp?v=1',
+  void:'assets/images/towers/void_levels.webp?v=1',
+  laser:'assets/images/towers/laser_levels.webp?v=1',
+  smog:'assets/images/towers/smog_levels.webp?v=2',
+  crystal:'assets/images/towers/crystal_levels.webp?v=2',
+  mecha:'assets/images/towers/mecha_levels.webp?v=1',
+  starengine:'assets/images/towers/starengine_levels.webp?v=1'
 };
 const PLANET_EVOLUTION_COLS = 5;
 const PLANET_EVOLUTION_SHEETS = Object.fromEntries(Object.entries(PLANET_EVOLUTION_FILES).map(([key, src]) => {
@@ -1307,7 +1307,7 @@ const PLANET_EVOLUTION_SHEETS = Object.fromEntries(Object.entries(PLANET_EVOLUTI
   return [key, img];
 }));
 
-const STAGE_FX_IMAGES = ['fx_cosmic.webp?v=6','fx_frost.webp?v=6','fx_lava.webp?v=6','fx_jungle.webp?v=6','fx_smog.webp?v=1','fx_crystal.webp?v=1','fx_machine.webp?v=1'].map(src=>{
+const STAGE_FX_IMAGES = ['assets/images/effects/fx_cosmic.webp?v=6','assets/images/effects/fx_frost.webp?v=6','assets/images/effects/fx_lava.webp?v=6','assets/images/effects/fx_jungle.webp?v=6','assets/images/effects/fx_smog.webp?v=1','assets/images/effects/fx_crystal.webp?v=1','assets/images/effects/fx_machine.webp?v=1'].map(src=>{
   const img = new Image();
   img.src = src;
   return img;
@@ -1342,7 +1342,7 @@ function planetThumbLevel(level){
 function planetThumbSrc(type, level=1){
   const p = PLANETS?.[Number(type)];
   if(!p?.id) return '';
-  return `thumbs/${p.id}_lv${planetThumbLevel(level)}.webp?v=align2`;
+  return `assets/images/thumbs/${p.id}_lv${planetThumbLevel(level)}.webp?v=align2`;
 }
 function planetThumbImage(type, level=1){
   const src = planetThumbSrc(type, level);
@@ -6565,7 +6565,7 @@ window.addEventListener('DOMContentLoaded', () => {
       </div>`;
   }
   function towerImg(t, cls=''){
-    const src = t?.thumb || `thumbs/${esc(t?.id || 'solar')}_lv1.webp?v=align2`;
+    const src = t?.thumb || `assets/images/thumbs/${esc(t?.id || 'solar')}_lv1.webp?v=align2`;
     return `<img class="${cls}" src="${esc(src)}" alt="" aria-hidden="true" draggable="false">`;
   }
   function tagsHtml(tags){
