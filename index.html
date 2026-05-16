@@ -21082,7 +21082,7 @@ window.addEventListener('DOMContentLoaded', () => {
   let selectedCommonKey = 'global_damage';
   let activeTab = 'tower';
 
-  const COMMON_ICON_DIR = 'common_skill_icons';
+  const COMMON_ICON_DIR = 'assets/images/common_skill_icons';
   const COMMON_DISPLAY_TITLES = {
     global_damage:'전역 공격력 증폭',
     global_crit:'치명타 매트릭스',
@@ -21128,7 +21128,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
   function commonIconImg(icon, extra=''){
     const safeIcon = esc(icon || 'global_damage');
-    return `<img class="commonResearchImg ${extra}" src="${COMMON_ICON_DIR}/${safeIcon}.svg" alt="" aria-hidden="true" draggable="false">`;
+    return `<img class="commonResearchImg ${extra}" src="${COMMON_ICON_DIR}/${safeIcon}.svg" alt="" aria-hidden="true" draggable="false" onerror="if(!this.dataset.fallback){this.dataset.fallback=1;this.src=\'common_skill_icons/${safeIcon}.svg\';}">`;
   }
   function renderWallet(){
     if(!wallet) return;
@@ -21252,8 +21252,7 @@ window.addEventListener('DOMContentLoaded', () => {
         <div class="armoryQuickCard"><small>주기/비용</small><b>${esc(fmt(t.cd))} / ${esc(fmt(t.cost))}</b></div>
       </div>
       <div class="armorySection compact"><h3>역할과 운용</h3><p><b style="color:${esc(t.color)}">${esc(t.role)}</b> — ${esc(t.identity)}</p></div>
-      <div class="armorySection compact"><h3>타워별 고유 스킬</h3>${towerSkillRows(t)}</div>
-      <div class="armorySection compact"><h3>적용 가능한 공통 연구</h3><div class="armoryGeneralGrid"><div class="armoryGeneralCard"><span class="armoryGeneralIcon">⚔</span><div><b>전역 공격력</b><span>기본 및 스킬 피해 강화</span></div></div><div class="armoryGeneralCard"><span class="armoryGeneralIcon">⬡</span><div><b>장판 증폭</b><span>장판 위 배치 효율 강화</span></div></div></div></div>`;
+      <div class="armorySection compact"><h3>타워별 고유 스킬</h3>${towerSkillRows(t)}</div>`;
   }
   function buildTowerList(){
     list.classList.remove('commonList');
@@ -28680,4 +28679,111 @@ window.addEventListener('DOMContentLoaded', () => {
   }, true);
 })();
 </script>
+
+
+
+<style id="v147-common-research-icon-and-title-fix">
+/* v147: after moving images into assets/images, fix common research icon paths and reduce the oversized common research title. */
+#towerPopup[data-active-tab="common"] .armoryCommonTitle,
+#towerPopup[data-active-tab="common"] .commonResearchTitle{
+  font-size:22px !important;
+  line-height:1.12 !important;
+  letter-spacing:-0.035em !important;
+  max-width:320px !important;
+  word-break:keep-all !important;
+  overflow-wrap:anywhere !important;
+  margin:0 0 8px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryCommonSubtitle,
+#towerPopup[data-active-tab="common"] .commonResearchSubtitle{
+  font-size:11px !important;
+  line-height:1.45 !important;
+}
+#towerPopup .commonResearchImg{
+  object-fit:contain !important;
+}
+@media (max-width:900px){
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup[data-active-tab="common"] .commonResearchTitle{
+    font-size:19px !important;
+    max-width:260px !important;
+  }
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup[data-active-tab="common"] .commonResearchTitle{
+    font-size:17px !important;
+    line-height:1.16 !important;
+    max-width:100% !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonSubtitle,
+  #towerPopup[data-active-tab="common"] .commonResearchSubtitle{
+    font-size:10px !important;
+  }
+}
+</style>
+
+
+
+<style id="v148-armory-general-icon-enlarge">
+/* v148: enlarge the two common-research icons shown at the bottom of tower detail. */
+#towerPopup .armorySection.compact .armoryGeneralCard{
+  grid-template-columns:68px minmax(0,1fr) !important;
+  gap:14px !important;
+  min-height:92px !important;
+  padding:14px 16px !important;
+}
+#towerPopup .armorySection.compact .armoryGeneralIcon{
+  width:60px !important;
+  height:60px !important;
+  min-width:60px !important;
+  min-height:60px !important;
+  font-size:31px !important;
+  border-width:1px !important;
+  filter:drop-shadow(0 0 12px rgba(70,205,255,.18)) !important;
+}
+#towerPopup .armorySection.compact .armoryGeneralCard b{
+  font-size:18px !important;
+}
+#towerPopup .armorySection.compact .armoryGeneralCard span{
+  font-size:13px !important;
+}
+@media (max-width:900px){
+  #towerPopup .armorySection.compact .armoryGeneralCard{
+    grid-template-columns:60px minmax(0,1fr) !important;
+    min-height:84px !important;
+  }
+  #towerPopup .armorySection.compact .armoryGeneralIcon{
+    width:52px !important;
+    height:52px !important;
+    min-width:52px !important;
+    min-height:52px !important;
+    font-size:27px !important;
+  }
+}
+@media (max-width:640px){
+  #towerPopup .armorySection.compact .armoryGeneralCard{
+    grid-template-columns:52px minmax(0,1fr) !important;
+    min-height:72px !important;
+    padding:11px 12px !important;
+  }
+  #towerPopup .armorySection.compact .armoryGeneralIcon{
+    width:44px !important;
+    height:44px !important;
+    min-width:44px !important;
+    min-height:44px !important;
+    font-size:23px !important;
+  }
+  #towerPopup .armorySection.compact .armoryGeneralCard b{font-size:15px !important;}
+  #towerPopup .armorySection.compact .armoryGeneralCard span{font-size:11px !important;}
+}
+</style>
+
+
+
+<style id="v149-remove-tower-detail-common-hint-cards">
+/* v149: the bottom 'applicable common research' hint cards were removed from tower detail.
+   The actual common research system, including global_plate gameplay effects, remains active. */
+#towerPopup .armorySection.compact .armoryGeneralGrid:empty{display:none!important;}
+</style>
 

@@ -6501,7 +6501,7 @@ window.addEventListener('DOMContentLoaded', () => {
   let selectedCommonKey = 'global_damage';
   let activeTab = 'tower';
 
-  const COMMON_ICON_DIR = 'common_skill_icons';
+  const COMMON_ICON_DIR = 'assets/images/common_skill_icons';
   const COMMON_DISPLAY_TITLES = {
     global_damage:'전역 공격력 증폭',
     global_crit:'치명타 매트릭스',
@@ -6547,7 +6547,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
   function commonIconImg(icon, extra=''){
     const safeIcon = esc(icon || 'global_damage');
-    return `<img class="commonResearchImg ${extra}" src="${COMMON_ICON_DIR}/${safeIcon}.svg" alt="" aria-hidden="true" draggable="false">`;
+    return `<img class="commonResearchImg ${extra}" src="${COMMON_ICON_DIR}/${safeIcon}.svg" alt="" aria-hidden="true" draggable="false" onerror="if(!this.dataset.fallback){this.dataset.fallback=1;this.src=\'common_skill_icons/${safeIcon}.svg\';}">`;
   }
   function renderWallet(){
     if(!wallet) return;
@@ -6671,8 +6671,7 @@ window.addEventListener('DOMContentLoaded', () => {
         <div class="armoryQuickCard"><small>주기/비용</small><b>${esc(fmt(t.cd))} / ${esc(fmt(t.cost))}</b></div>
       </div>
       <div class="armorySection compact"><h3>역할과 운용</h3><p><b style="color:${esc(t.color)}">${esc(t.role)}</b> — ${esc(t.identity)}</p></div>
-      <div class="armorySection compact"><h3>타워별 고유 스킬</h3>${towerSkillRows(t)}</div>
-      <div class="armorySection compact"><h3>적용 가능한 공통 연구</h3><div class="armoryGeneralGrid"><div class="armoryGeneralCard"><span class="armoryGeneralIcon">⚔</span><div><b>전역 공격력</b><span>기본 및 스킬 피해 강화</span></div></div><div class="armoryGeneralCard"><span class="armoryGeneralIcon">⬡</span><div><b>장판 증폭</b><span>장판 위 배치 효율 강화</span></div></div></div></div>`;
+      <div class="armorySection compact"><h3>타워별 고유 스킬</h3>${towerSkillRows(t)}</div>`;
   }
   function buildTowerList(){
     list.classList.remove('commonList');
