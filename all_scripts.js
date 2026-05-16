@@ -2493,6 +2493,40 @@ function pointSeg(px,py,x1,y1,x2,y2){
   return dist(px,py,x1+t*dx,y1+t*dy);
 }
 
+function applyRouteChamfers(points){
+  if(!Array.isArray(points) || points.length < 3) return Array.isArray(points) ? points.slice() : [];
+  const out = [points[0]];
+  const bevel = Math.max(22, Math.min(40, CELL * .34));
+  const minDotForStraight = .985;
+
+  function unit(a, b){
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    return {x: dx / len, y: dy / len, len};
+  }
+
+  for(let i=1;i<points.length-1;i++){
+    const prev = points[i-1], p = points[i], next = points[i+1];
+    const from = unit(p, prev);
+    const to = unit(p, next);
+    const dot = from.x * to.x + from.y * to.y;
+
+    // Straight or near-180-degree points stay untouched. Real turns become
+    // short diagonal bevels so enemies glide through 90-degree corners without
+    // a hard square corner. This is intentionally a straight chamfer, not a curve.
+    if(Math.abs(dot) > minDotForStraight){
+      out.push(p);
+      continue;
+    }
+
+    const d = Math.min(bevel, from.len * .42, to.len * .42);
+    out.push({ x: p.x + from.x * d, y: p.y + from.y * d, chamfer:true });
+    out.push({ x: p.x + to.x * d, y: p.y + to.y * d, chamfer:true });
+  }
+  out.push(points[points.length-1]);
+  return out;
+}
+
 function makeRoute(){
   const p = {
     a: gridPoint(0,1),
@@ -2511,8 +2545,9 @@ function makeRoute(){
     n: gridPoint(6,6)
   };
 
+  let baseRoute;
   if(S.ogge < 4){
-    route = [
+    baseRoute = [
       {x:-50,y:p.a.y},
       {x:p.c.x,y:p.a.y},
       {x:p.c.x,y:p.d.y},
@@ -2521,7 +2556,7 @@ function makeRoute(){
       {x:CORE.x,y:CORE.y}
     ];
   }else if(S.ogge < 8){
-    route = [
+    baseRoute = [
       {x:-50,y:p.a.y},
       {x:p.b.x,y:p.a.y},
       {x:p.b.x,y:p.k.y},
@@ -2531,7 +2566,7 @@ function makeRoute(){
       {x:CORE.x,y:CORE.y}
     ];
   }else{
-    route = [
+    baseRoute = [
       {x:-50,y:p.e.y},
       {x:p.d.x,y:p.e.y},
       {x:p.d.x,y:p.b.y},
@@ -2542,6 +2577,8 @@ function makeRoute(){
       {x:CORE.x,y:CORE.y}
     ];
   }
+
+  route = applyRouteChamfers(baseRoute);
 }
 
 function makeTerrain(){
@@ -4452,55 +4489,142 @@ function drawBackground(raw=1){
   ctx.fill();
   ctx.globalAlpha=1;
 }
-function drawRouteChevron(x, y, angle, size, color, alpha=.34){
+function drawRouteChevron(x, y, angle, size, color, alpha=.48){
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(angle);
   ctx.globalAlpha = alpha;
   ctx.shadowColor = color;
-  ctx.shadowBlur = 8;
+  ctx.shadowBlur = 12;
   ctx.strokeStyle = color;
-  ctx.lineWidth = 2.2;
+  ctx.lineWidth = 2.4;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   ctx.beginPath();
   ctx.moveTo(-size * .62, -size * .42);
-  ctx.lineTo(size * .12, 0);
+  ctx.lineTo(size * .14, 0);
   ctx.lineTo(-size * .62, size * .42);
   ctx.stroke();
-  ctx.globalAlpha = alpha * .36;
-  ctx.fillStyle = color;
+  ctx.globalAlpha = alpha * .30;
+  ctx.strokeStyle = 'rgba(255,255,255,.95)';
+  ctx.lineWidth = 1.05;
   ctx.beginPath();
-  ctx.moveTo(-size * .38, -size * .22);
+  ctx.moveTo(-size * .48, -size * .30);
   ctx.lineTo(size * .04, 0);
-  ctx.lineTo(-size * .38, size * .22);
-  ctx.closePath();
-  ctx.fill();
+  ctx.lineTo(-size * .48, size * .30);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function traceRoutePath(){
+  ctx.beginPath();
+  ctx.moveTo(route[0].x, route[0].y);
+  for(let i=1;i<route.length;i++) ctx.lineTo(route[i].x, route[i].y);
+}
+
+function lineCross(ax, ay, bx, by){ return ax * by - ay * bx; }
+
+function offsetRoutePoints(offset){
+  const pts = route || [];
+  if(pts.length < 2) return pts.slice();
+
+  function unit(a, b){
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    return { x: dx / len, y: dy / len };
+  }
+  function normal(d){ return { x: -d.y, y: d.x }; }
+  function addNormal(p, n){ return { x: p.x + n.x * offset, y: p.y + n.y * offset }; }
+  function intersect(p1, d1, p2, d2){
+    const denom = lineCross(d1.x, d1.y, d2.x, d2.y);
+    if(Math.abs(denom) < 0.0001) return null;
+    const qx = p2.x - p1.x, qy = p2.y - p1.y;
+    const t = lineCross(qx, qy, d2.x, d2.y) / denom;
+    return { x: p1.x + d1.x * t, y: p1.y + d1.y * t };
+  }
+
+  const out = [];
+  for(let i=0;i<pts.length;i++){
+    const p = pts[i];
+    if(i === 0){
+      const d = unit(pts[0], pts[1]);
+      out.push(addNormal(p, normal(d)));
+      continue;
+    }
+    if(i === pts.length - 1){
+      const d = unit(pts[i-1], pts[i]);
+      out.push(addNormal(p, normal(d)));
+      continue;
+    }
+
+    const dPrev = unit(pts[i-1], p);
+    const dNext = unit(p, pts[i+1]);
+    const nPrev = normal(dPrev);
+    const nNext = normal(dNext);
+    const pPrev = addNormal(p, nPrev);
+    const pNext = addNormal(p, nNext);
+    let m = intersect(pPrev, dPrev, pNext, dNext);
+
+    // Guard against long miters on tiny/mobile layouts. A clean bevel is better than
+    // the old overlapped rail caps at ninety-degree corners.
+    if(!m || Math.hypot(m.x - p.x, m.y - p.y) > Math.abs(offset) * 2.35){
+      const ax = nPrev.x + nNext.x;
+      const ay = nPrev.y + nNext.y;
+      const alen = Math.hypot(ax, ay) || 1;
+      m = { x: p.x + (ax / alen) * Math.abs(offset) * 1.12 * Math.sign(offset || 1),
+            y: p.y + (ay / alen) * Math.abs(offset) * 1.12 * Math.sign(offset || 1) };
+    }
+    out.push(m);
+  }
+  return out;
+}
+
+function drawPolyline(points){
+  if(!points || points.length < 2) return;
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for(let i=1;i<points.length;i++) ctx.lineTo(points[i].x, points[i].y);
+}
+
+function drawRouteRail(offset, width, stroke, alpha=.8, blur=8){
+  const pts = offsetRoutePoints(offset);
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.strokeStyle = stroke;
+  ctx.shadowColor = stroke;
+  ctx.shadowBlur = blur;
+  ctx.lineWidth = width;
+  ctx.lineCap = 'butt';
+  ctx.lineJoin = 'miter';
+  ctx.miterLimit = 2.8;
+  drawPolyline(pts);
+  ctx.stroke();
   ctx.restore();
 }
 
 function drawRouteSegmentMarkers(){
   const tNow = performance.now();
-  const pulse = .28 + Math.sin(tNow / 520) * .08;
+  const pulse = .44 + Math.sin(tNow / 520) * .12;
   for(let i=0;i<route.length-1;i++){
     const a = route[i], b = route[i+1];
     const dx = b.x - a.x, dy = b.y - a.y;
     const len = Math.hypot(dx, dy) || 1;
     const angle = Math.atan2(dy, dx);
-    const count = Math.max(1, Math.floor(len / 78));
+    const count = Math.max(1, Math.floor(len / 82));
     for(let j=1;j<=count;j++){
-      const t = (j / (count + 1) + (tNow % 1800) / 1800 * .08) % 1;
+      const t = (j / (count + 1) + (tNow % 2100) / 2100 * .06) % 1;
       const x = a.x + dx * t;
       const y = a.y + dy * t;
-      drawRouteChevron(x, y, angle, 14, '#dffbff', pulse);
+      drawRouteChevron(x, y, angle, 13.5, '#c9fbff', pulse);
     }
     ctx.save();
-    ctx.globalAlpha = .20;
-    ctx.fillStyle = theme().color;
-    ctx.shadowColor = theme().color;
-    ctx.shadowBlur = 16;
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = .30;
+    ctx.fillStyle = '#67e8f9';
+    ctx.shadowColor = '#22d3ee';
+    ctx.shadowBlur = 18;
     ctx.beginPath();
-    ctx.arc(b.x, b.y, 4.2, 0, TAU);
+    ctx.arc(b.x, b.y, 3.4, 0, TAU);
     ctx.fill();
     ctx.restore();
   }
@@ -4509,41 +4633,66 @@ function drawRouteSegmentMarkers(){
 function drawRoute(){
   ctx.save();
   ctx.lineCap='round';ctx.lineJoin='round';
-  const color = theme().color;
+  const color = theme().color || '#22d3ee';
+  const glowWidth = Math.max(22, CELL*.34);
+  const glassWidth = Math.max(13, CELL*.205);
+  const railOffset = Math.max(9, CELL*.155);
 
-  // outer shadow lane
-  ctx.shadowColor='rgba(0,0,0,.42)';
-  ctx.shadowBlur=16;
-  ctx.strokeStyle='rgba(2,6,18,.78)';ctx.lineWidth=Math.max(40, CELL*.62);
-  ctx.beginPath();ctx.moveTo(route[0].x,route[0].y);
-  for(let i=1;i<route.length;i++)ctx.lineTo(route[i].x,route[i].y);
+  // premium HUD glow: no more heavy black road fill.
+  ctx.globalCompositeOperation = 'screen';
+  ctx.shadowColor = 'rgba(34,211,238,.46)';
+  ctx.shadowBlur = 24;
+  ctx.strokeStyle = 'rgba(34,211,238,.075)';
+  ctx.lineWidth = glowWidth;
+  traceRoutePath();
   ctx.stroke();
 
-  // metallic road body
-  ctx.shadowBlur=0;
-  ctx.strokeStyle='rgba(52,76,92,.28)';ctx.lineWidth=Math.max(34, CELL*.52);
-  ctx.beginPath();ctx.moveTo(route[0].x,route[0].y);
-  for(let i=1;i<route.length;i++)ctx.lineTo(route[i].x,route[i].y);
+  // very light transparent glass body so the board remains visible under the route.
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.shadowBlur = 0;
+  const glass = ctx.createLinearGradient(0,0,W,H);
+  glass.addColorStop(0,'rgba(8,145,178,.042)');
+  glass.addColorStop(.45,'rgba(56,189,248,.068)');
+  glass.addColorStop(1,'rgba(168,85,247,.035)');
+  ctx.strokeStyle = glass;
+  ctx.lineWidth = glassWidth;
+  traceRoutePath();
   ctx.stroke();
 
-  // center moving guide strip
-  const g=ctx.createLinearGradient(0,0,W,H);
-  g.addColorStop(0,'rgba(180,240,255,.18)');
-  g.addColorStop(.5,'rgba(66,231,255,.34)');
-  g.addColorStop(1,'rgba(168,85,247,.16)');
-  ctx.strokeStyle=g;ctx.lineWidth=Math.max(12, CELL*.17);ctx.globalAlpha=.74;
-  ctx.beginPath();ctx.moveTo(route[0].x,route[0].y);
-  for(let i=1;i<route.length;i++)ctx.lineTo(route[i].x,route[i].y);
-  ctx.stroke();
+  // twin neon rails matching the reference: mostly line + arrow, not a filled road.
+  ctx.globalCompositeOperation = 'lighter';
+  drawRouteRail( railOffset, 2.6, 'rgba(103,232,249,.82)', .86, 13);
+  drawRouteRail(-railOffset, 2.6, 'rgba(103,232,249,.82)', .86, 13);
+  drawRouteRail( railOffset*.62, 1.0, 'rgba(255,255,255,.70)', .42, 6);
+  drawRouteRail(-railOffset*.62, 1.0, 'rgba(255,255,255,.70)', .42, 6);
 
-  // slim inner rail
-  ctx.globalAlpha=.24;ctx.strokeStyle='rgba(255,255,255,.88)';ctx.lineWidth=2;
-  ctx.setLineDash([18,18]);
-  ctx.beginPath();ctx.moveTo(route[0].x,route[0].y);
-  for(let i=1;i<route.length;i++)ctx.lineTo(route[i].x,route[i].y);
+  // animated dotted center guide.
+  ctx.globalCompositeOperation = 'screen';
+  ctx.globalAlpha = .32;
+  ctx.strokeStyle = 'rgba(207,250,254,.78)';
+  ctx.lineWidth = 1.25;
+  ctx.setLineDash([3, 18]);
+  ctx.lineDashOffset = -performance.now() / 42;
+  traceRoutePath();
   ctx.stroke();
   ctx.setLineDash([]);
-  ctx.globalAlpha=1;
+  ctx.globalAlpha = 1;
+
+  // subtle corner nodes. Small circular dots keep turns clean instead of creating
+  // boxy artifacts on the neon rail corners.
+  ctx.globalCompositeOperation = 'lighter';
+  for(let i=1;i<route.length-1;i++){
+    const p = route[i];
+    ctx.save();
+    ctx.globalAlpha = .28;
+    ctx.fillStyle = '#9ff8ff';
+    ctx.shadowColor = '#22d3ee';
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 2.35, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
 
   drawRouteSegmentMarkers();
   ctx.restore();
