@@ -9050,7 +9050,7 @@ h1{
   #stageMap .stageNode[data-stage="6"]{ left:42% !important; top:57% !important; }
   #stageMap .stageNode[data-stage="7"]{ left:56% !important; top:74% !important; }
   #stageMap .stageNode[data-stage="8"]{ left:69% !important; top:58% !important; }
-  #stageMap .stageNode[data-stage="9"]{ left:80% !important; top:44% !important; }
+  #stageMap .stageNode[data-stage="9"]{ left:80% !important; top:62% !important; }
   #stageMap .stageNode[data-stage="10"]{ left:73% !important; top:24% !important; }
   #stageMap .stageNode[data-stage="11"]{ left:89% !important; top:21% !important; }
   #stageMap .stageNode[data-stage="12"]{ left:89% !important; top:59% !important; }
@@ -10839,14 +10839,14 @@ h1{
 
   /* 3-tier vertical rhythm for clearer up/down spacing */
   #stageMap .stageNode[data-stage="1"]{ left:14% !important; top:59% !important; }
-  #stageMap .stageNode[data-stage="2"]{ left:30% !important; top:44% !important; }
+  #stageMap .stageNode[data-stage="2"]{ left:30% !important; top:62% !important; }
   #stageMap .stageNode[data-stage="3"]{ left:18% !important; top:25% !important; }
   #stageMap .stageNode[data-stage="4"]{ left:40% !important; top:20% !important; }
   #stageMap .stageNode[data-stage="5"]{ left:54% !important; top:38% !important; }
   #stageMap .stageNode[data-stage="6"]{ left:42% !important; top:53% !important; }
   #stageMap .stageNode[data-stage="7"]{ left:56% !important; top:66% !important; }
   #stageMap .stageNode[data-stage="8"]{ left:70% !important; top:58% !important; }
-  #stageMap .stageNode[data-stage="9"]{ left:82% !important; top:42% !important; }
+  #stageMap .stageNode[data-stage="9"]{ left:82% !important; top:60% !important; }
   #stageMap .stageNode[data-stage="10"]{ left:72% !important; top:23% !important; }
   #stageMap .stageNode[data-stage="11"]{ left:88% !important; top:18% !important; }
   #stageMap .stageNode[data-stage="12"]{ left:90% !important; top:56% !important; }
@@ -14132,6 +14132,464 @@ html, body{overflow-x:hidden !important;}
 }
 </style>
 
+
+<style id="v195-armory-close-wallet-polish">
+/* Make the close control read clearly as a button, not a percent sign. */
+#towerPopup .towerPopupClose{
+  width:88px !important;
+  height:60px !important;
+  min-height:60px !important;
+  align-self:start !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 10px !important;
+  border-radius:0 !important;
+  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px) !important;
+  background:linear-gradient(180deg,rgba(18,48,84,.94),rgba(7,19,40,.98)) !important;
+  background-image:none !important;
+  border:1px solid rgba(95,218,255,.42) !important;
+  box-shadow:0 0 20px rgba(50,241,255,.10), inset 0 0 0 1px rgba(255,255,255,.05) !important;
+  color:#f3fbff !important;
+  font-family:Pretendard,'Noto Sans KR',sans-serif !important;
+  font-size:18px !important;
+  font-weight:900 !important;
+  letter-spacing:-.05em !important;
+  text-shadow:0 0 12px rgba(255,255,255,.18) !important;
+}
+#towerPopup .towerPopupClose:hover{
+  transform:translateY(-1px) !important;
+  filter:brightness(1.08) !important;
+  box-shadow:0 0 24px rgba(50,241,255,.16), inset 0 0 0 1px rgba(255,255,255,.07) !important;
+}
+#towerPopup .towerPopupClose:active{
+  transform:translateY(0) scale(.99) !important;
+}
+
+/* Make shards feel like an important currency without bringing back the bulky box. */
+#towerPopup .towerPopupWallet{
+  margin-top:10px !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem{
+  display:inline-flex !important;
+  align-items:flex-end !important;
+  gap:12px !important;
+  position:relative !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem::before{
+  display:block !important;
+  content:"" !important;
+  position:static !important;
+  transform:none !important;
+  width:20px !important;
+  height:20px !important;
+  flex:0 0 20px !important;
+  margin:0 2px 6px 0 !important;
+  border-radius:50% !important;
+  background:radial-gradient(circle,#ffffff 0 24%,#89f4ff 25% 56%,#0aa2ff 57% 100%) !important;
+  box-shadow:0 0 18px rgba(74,231,255,.42), 0 0 6px rgba(255,255,255,.20) !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem span{
+  font-size:20px !important;
+  line-height:1.05 !important;
+  font-weight:900 !important;
+  color:#ecfbff !important;
+  letter-spacing:-.04em !important;
+  text-shadow:0 0 12px rgba(50,241,255,.12) !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem b{
+  font-size:40px !important;
+  line-height:.94 !important;
+  font-weight:900 !important;
+  color:#ffffff !important;
+  letter-spacing:-.04em !important;
+  text-shadow:0 0 18px rgba(255,255,255,.14), 0 0 28px rgba(50,241,255,.08) !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerPopupClose{
+    width:76px !important;
+    height:52px !important;
+    min-height:52px !important;
+    font-size:16px !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem{
+    gap:9px !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem::before{
+    width:16px !important;
+    height:16px !important;
+    flex-basis:16px !important;
+    margin-bottom:4px !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem span{
+    font-size:15px !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem b{
+    font-size:28px !important;
+  }
+}
+</style>
+
+
+<style id="v196-close-wallet-refine">
+/* v196: make the close button read clearly as a close action and give the shard currency more presence. */
+#towerPopup .towerPopupClose{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:90px !important;
+  height:60px !important;
+  min-width:90px !important;
+  min-height:60px !important;
+  padding:0 14px !important;
+  border-radius:0 !important;
+  clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px) !important;
+  background:linear-gradient(180deg,rgba(12,36,62,.97),rgba(3,12,28,.98)) !important;
+  border:1px solid rgba(99,222,255,.48) !important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.04) inset,0 0 16px rgba(71,222,255,.14) !important;
+  color:#f2fbff !important;
+  font-size:18px !important;
+  font-weight:900 !important;
+  letter-spacing:-.04em !important;
+  text-shadow:0 0 14px rgba(255,255,255,.12) !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+}
+#towerPopup .towerPopupClose::before,
+#towerPopup .towerPopupClose::after{
+  display:none !important;
+  content:none !important;
+}
+#towerPopup .towerPopupClose:hover,
+#towerPopup .towerPopupClose:focus-visible{
+  transform:translateY(-1px) !important;
+  filter:brightness(1.08) !important;
+  border-color:rgba(122,236,255,.7) !important;
+}
+
+#towerPopup .towerPopupWallet{
+  display:inline-flex !important;
+  align-items:flex-end !important;
+  justify-content:flex-start !important;
+  gap:12px !important;
+  padding:0 !important;
+  background:none !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+#towerPopup .towerPopupWallet::before,
+#towerPopup .towerPopupWallet::after{
+  display:none !important;
+  content:none !important;
+}
+#towerPopup .towerPopupWallet > span{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  font-size:20px !important;
+  font-weight:900 !important;
+  color:#dffbff !important;
+  letter-spacing:-.04em !important;
+  line-height:1.05 !important;
+  text-shadow:0 0 12px rgba(78,231,255,.12) !important;
+}
+#towerPopup .towerPopupWallet > span::before{
+  content:"" !important;
+  width:18px !important;
+  height:18px !important;
+  flex:0 0 18px !important;
+  border-radius:50% !important;
+  background:radial-gradient(circle at 38% 36%,#ffffff 0 18%,#9cf3ff 19% 47%,#3ab6ff 48% 72%,rgba(58,182,255,.35) 73% 100%) !important;
+  box-shadow:0 0 14px rgba(83,232,255,.45),0 0 4px rgba(255,255,255,.35) !important;
+}
+#towerPopup .towerPopupWallet > b{
+  font-family:'Orbitron',Pretendard,sans-serif !important;
+  font-size:48px !important;
+  font-weight:900 !important;
+  line-height:.92 !important;
+  letter-spacing:-.04em !important;
+  color:#fff1b5 !important;
+  text-shadow:0 0 10px rgba(255,232,153,.18),0 0 20px rgba(97,228,255,.10) !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerPopupClose{
+    width:70px !important;
+    height:48px !important;
+    min-width:70px !important;
+    min-height:48px !important;
+    font-size:15px !important;
+  }
+  #towerPopup .towerPopupWallet{gap:8px !important;}
+  #towerPopup .towerPopupWallet > span{font-size:15px !important;gap:8px !important;}
+  #towerPopup .towerPopupWallet > span::before{width:14px !important;height:14px !important;flex-basis:14px !important;}
+  #towerPopup .towerPopupWallet > b{font-size:32px !important;}
+}
+</style>
+
+
+<style id="v197-wallet-emphasis">
+/* v197: keep the shard counter simple text-only, but make it feel like an important currency. */
+#towerPopup .towerPopupWallet{
+  margin-top:10px !important;
+  display:flex !important;
+  align-items:flex-end !important;
+  gap:12px !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem.shard,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:flex-end !important;
+  gap:12px !important;
+  padding:0 0 6px 0 !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem.shard::before,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+  content:"" !important;
+  display:inline-block !important;
+  width:20px !important;
+  height:20px !important;
+  min-width:20px !important;
+  border-radius:50% !important;
+  align-self:center !important;
+  background:radial-gradient(circle at 38% 36%,#ffffff 0 18%,#c7fbff 19% 35%,#6ad7ff 36% 58%,#1b7de0 59% 76%,rgba(28,125,224,.18) 77% 100%) !important;
+  box-shadow:0 0 16px rgba(98,229,255,.48),0 0 4px rgba(255,255,255,.34) !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem.shard::after,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::after{
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  right:auto !important;
+  bottom:0 !important;
+  width:100% !important;
+  height:1px !important;
+  background:linear-gradient(90deg,rgba(100,232,255,.45),rgba(100,232,255,.12),transparent 92%) !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem.shard span,
+#towerPopup .towerPopupWallet > span{
+  font-size:18px !important;
+  line-height:1.05 !important;
+  font-weight:900 !important;
+  color:#8feeff !important;
+  letter-spacing:-0.04em !important;
+  text-transform:none !important;
+  text-shadow:0 0 10px rgba(95,230,255,.16) !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem.shard b,
+#towerPopup .towerPopupWallet > b{
+  font-family:'Orbitron',Pretendard,sans-serif !important;
+  font-size:40px !important;
+  line-height:.88 !important;
+  font-weight:900 !important;
+  color:#fff2af !important;
+  letter-spacing:-0.04em !important;
+  text-shadow:0 0 12px rgba(255,231,140,.18),0 0 24px rgba(92,225,255,.10) !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerPopupWallet{margin-top:8px !important;gap:8px !important;}
+  #towerPopup .towerPopupWallet .towerWalletItem.shard,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){gap:8px !important;padding-bottom:4px !important;}
+  #towerPopup .towerPopupWallet .towerWalletItem.shard::before,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{width:15px !important;height:15px !important;min-width:15px !important;}
+  #towerPopup .towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup .towerPopupWallet > span{font-size:14px !important;}
+  #towerPopup .towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup .towerPopupWallet > b{font-size:28px !important;}
+}
+</style>
+
+
+<style id="v198-wallet-orange-fix">
+/* v198: make shard wallet easier to read, prevent number clipping, and switch icon to orange. */
+#towerPopup .towerPopupWallet{
+  overflow:visible !important;
+  max-width:none !important;
+}
+#towerPopup .towerWalletItem.shard,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+  width:auto !important;
+  min-width:214px !important;
+  max-width:none !important;
+  overflow:visible !important;
+  grid-template-columns:24px minmax(68px,1fr) auto !important;
+  gap:10px !important;
+  padding:0 16px 0 12px !important;
+}
+#towerPopup .towerWalletItem.shard::before,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+  background:radial-gradient(circle at 36% 34%,#fff7d1 0 16%,#ffd489 17% 36%,#ffae41 37% 58%,#ff7f1c 59% 76%,rgba(255,127,28,.14) 77% 100%) !important;
+  box-shadow:0 0 16px rgba(255,165,61,.48),0 0 5px rgba(255,223,140,.34) !important;
+}
+#towerPopup .towerWalletItem.shard span,
+#towerPopup .towerPopupWallet > span{
+  color:#ffc35a !important;
+}
+#towerPopup .towerWalletItem.shard b,
+#towerPopup .towerPopupWallet > b{
+  color:#fff1a4 !important;
+  display:inline-block !important;
+  min-width:2.2ch !important;
+  padding-right:4px !important;
+  line-height:1 !important;
+  overflow:visible !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerWalletItem.shard,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+    min-width:154px !important;
+    grid-template-columns:18px minmax(46px,1fr) auto !important;
+    gap:7px !important;
+    padding:0 10px 0 8px !important;
+  }
+  #towerPopup .towerWalletItem.shard::before,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+    width:18px !important;
+    height:18px !important;
+    min-width:18px !important;
+  }
+  #towerPopup .towerWalletItem.shard b,
+  #towerPopup .towerPopupWallet > b{
+    min-width:2ch !important;
+    padding-right:2px !important;
+  }
+}
+@media (min-width:721px){
+  #towerPopup .towerWalletItem.shard,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+    min-width:228px !important;
+  }
+}
+</style>
+
+
+<style id="v202-wallet-icon-center-with-shard-text">
+/* v202: place the shard icon lower so its visual center matches the vertical center of the "성혼 조각" text row. */
+#towerPopup .towerWalletItem.shard::before,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+  top:calc(50% + 12px) !important;
+  transform:translateY(-50%) !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerWalletItem.shard::before,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+    top:calc(50% + 13px) !important;
+  }
+}
+</style>
+
+
+
+<style id="v203-wallet-icon-row-align-final">
+/* v203: stop absolutely positioning the shard icon and align it as a normal grid item with the shard text row. */
+#towerPopup .towerPopupWallet{
+  align-items:center !important;
+}
+#towerPopup .towerWalletItem.shard,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+  display:grid !important;
+  grid-template-columns:20px auto auto !important;
+  align-items:center !important;
+  column-gap:10px !important;
+  row-gap:0 !important;
+  padding:0 !important;
+}
+#towerPopup .towerWalletItem.shard::before,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+  position:static !important;
+  left:auto !important;
+  top:auto !important;
+  transform:none !important;
+  display:block !important;
+  margin:6px 0 0 0 !important;
+  align-self:center !important;
+  justify-self:start !important;
+}
+#towerPopup .towerWalletItem.shard span,
+#towerPopup .towerPopupWallet > span,
+#towerPopup .towerWalletItem.shard b,
+#towerPopup .towerPopupWallet > b{
+  align-self:center !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerWalletItem.shard,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+    grid-template-columns:18px auto auto !important;
+    column-gap:8px !important;
+  }
+  #towerPopup .towerWalletItem.shard::before,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+    margin-top:5px !important;
+  }
+}
+</style>
+
+
+
+<style id="v204-close-button-clear-label-final">
+/* v204: redesign the armory close button so it reads clearly as a close action, not a percent sign. */
+#towerPopup .towerPopupClose{
+  width:76px !important;
+  height:76px !important;
+  min-width:76px !important;
+  min-height:76px !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+  background:
+    linear-gradient(180deg, rgba(16,44,72,.98), rgba(5,16,34,.99)) !important;
+  border:1px solid rgba(98,229,255,.42) !important;
+  border-radius:0 !important;
+  clip-path:polygon(16px 0,calc(100% - 16px) 0,100% 16px,100% calc(100% - 16px),calc(100% - 16px) 100%,16px 100%,0 calc(100% - 16px),0 16px) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.06),
+    inset 0 -10px 20px rgba(0,0,0,.18),
+    0 0 18px rgba(62,223,255,.12) !important;
+  color:#eefcff !important;
+  font-family:Pretendard,'Noto Sans KR',sans-serif !important;
+  font-size:17px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  letter-spacing:-.05em !important;
+  text-shadow:0 0 12px rgba(255,255,255,.12) !important;
+  text-indent:0 !important;
+  white-space:nowrap !important;
+}
+#towerPopup .towerPopupClose::before,
+#towerPopup .towerPopupClose::after,
+#towerPopup .towerPopupClose span,
+#towerPopup .towerPopupClose i{
+  content:none !important;
+  display:none !important;
+}
+#towerPopup .towerPopupClose:hover,
+#towerPopup .towerPopupClose:focus-visible{
+  border-color:rgba(124,238,255,.72) !important;
+  filter:brightness(1.08) !important;
+  transform:translateY(-1px) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    inset 0 -10px 20px rgba(0,0,0,.16),
+    0 0 24px rgba(62,223,255,.18) !important;
+}
+#towerPopup .towerPopupClose:active{
+  transform:translateY(0) scale(.99) !important;
+}
+#towerPopup .towerPopupClose > *{pointer-events:none !important;}
+@media (max-width:720px){
+  #towerPopup .towerPopupClose{
+    width:66px !important;
+    height:66px !important;
+    min-width:66px !important;
+    min-height:66px !important;
+    font-size:15px !important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div id="bg"></div>
@@ -14211,11 +14669,11 @@ html, body{overflow-x:hidden !important;}
       <div id="towerPopupWallet" class="towerPopupWallet" aria-label="보유 성흔 조각">
         <span>성흔 조각</span><b>0</b>
       </div>
-      <button id="towerPopupClose" class="towerPopupClose" type="button" aria-label="닫기">×</button>
+      <button id="towerPopupClose" class="towerPopupClose" type="button" aria-label="닫기">닫기</button>
     </div>
     <div class="towerPopupTabs" role="tablist" aria-label="강화 관리 탭">
-      <button class="towerPopupTab active" type="button" role="tab" aria-selected="true" data-tower-popup-tab="tower">타워</button>
-      <button class="towerPopupTab" type="button" role="tab" aria-selected="false" data-tower-popup-tab="common">공통 연구</button>
+      <button class="towerPopupTab active" type="button" role="tab" aria-selected="true" data-tower-popup-tab="common">공통 연구</button>
+      <button class="towerPopupTab" type="button" role="tab" aria-selected="false" data-tower-popup-tab="tower">타워</button>
     </div>
     <div class="towerPopupBody">
       <div id="towerPopupList" class="towerPopupList"></div>
@@ -15815,20 +16273,24 @@ function drawImageContainCentered(img, cx, cy, maxW, maxH){
 
 const AUDIO_URLS = {
   bgm: {
-    // Uploaded main background music converted from MP3 to OGG.
-    main:'audio/bgm_space_main.ogg',
-    map:'audio/bgm_space_main.ogg',
-    boss:'audio/bgm_space_main.ogg',
+    main:'audio/bgm_general_glass_horizon.ogg',
+    map:'audio/bgm_general_glass_horizon.ogg',
+    boss:'audio/bgm_boss_beneath_the_iron_crust.ogg',
     clear:'audio/bgm_result_sanctuary_restored.ogg',
     gameover:'audio/bgm_result_core_collapse.ogg',
     stages:[
-      'audio/bgm_space_main.ogg',
-      'audio/bgm_space_main.ogg',
-      'audio/bgm_space_main.ogg',
-      'audio/bgm_space_main.ogg',
-      'audio/bgm_space_main.ogg',
-      'audio/bgm_space_main.ogg',
-      'audio/bgm_space_main.ogg'
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg'
     ]
   },
   sfx: {
@@ -21373,7 +21835,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if(activeTab === 'common') buildCommonResearch();
     else buildTowerList();
   }
-  function openPopup(tab='tower'){
+  function openPopup(tab='common'){
     renderWallet();
     popup.classList.add('open');
     requestAnimationFrame(refreshScreenStarfields);
@@ -21385,7 +21847,7 @@ window.addEventListener('DOMContentLoaded', () => {
     popup.setAttribute('aria-hidden','true');
   }
 
-  fieldBtn?.addEventListener('click', () => openPopup('tower'));
+  fieldBtn?.addEventListener('click', () => openPopup('common'));
   stageBtn?.addEventListener('click', () => openPopup('common'));
   tabs.forEach(btn => btn.addEventListener('click', () => setActiveTab(btn.dataset.towerPopupTab)));
   closeBtn?.addEventListener('click', closePopup);
@@ -24583,11 +25045,11 @@ window.addEventListener('DOMContentLoaded', () => {
       stageBtn.setAttribute('title','강화 관리');
       const txt = stageBtn.querySelector('span');
       if(txt) txt.setAttribute('aria-hidden','true');
-      // 기존 핸들러가 common 탭으로 열더라도, 성좌 지도 우측 타워 버튼은 타워 탭으로 통일한다.
+      // 성좌 지도 우측 타워 버튼도 기본 진입 탭을 공통 연구로 맞춘다.
       stageBtn.addEventListener('click', function(){
         setTimeout(function(){
-          const towerTab = document.querySelector('[data-tower-popup-tab="tower"]');
-          if(towerTab) towerTab.click();
+          const commonTab = document.querySelector('[data-tower-popup-tab="common"]');
+          if(commonTab) commonTab.click();
         }, 0);
       }, true);
     }
@@ -25671,7 +26133,7 @@ window.addEventListener('DOMContentLoaded', () => {
   function esc(v){return String(v ?? '').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];});}
   function fmt(v){var n=Number(v);return Number.isFinite(n)?String(Math.round(n)):String(v??'-');}
   function els(){return {popup:$('towerPopup'),list:$('towerPopupList'),detail:$('towerPopupDetail'),close:$('towerPopupClose'),tabs:Array.prototype.slice.call(document.querySelectorAll('#towerPopup [data-tower-popup-tab]'))};}
-  var activeTab='tower';
+  var activeTab='common';
   var selectedTowerType=0;
   var selectedCommonKey='global_damage';
   var selectedPlateKey='amp';
@@ -25692,7 +26154,7 @@ window.addEventListener('DOMContentLoaded', () => {
   function towerImg(t){var src=t&&t.thumb?t.thumb:'assets/images/thumbs/'+esc((t&&t.id)||'solar')+'_lv1.webp?v=align2';return '<img src="'+esc(src)+'" alt="" aria-hidden="true" draggable="false">';}
   function kindText(kind){var m={splash:'광역 폭발형',slow:'감속 제어형',chain:'연쇄 공격형',poison:'지속 피해형',gravity:'군중 제어형',beam:'관통 저격형',crystal:'축전 공명형',mecha:'실드 해체형',crit:'치명 폭발형'};return m[kind]||kind||'전투형';}
   function setWallet(){var w=$('towerPopupWallet');if(!w)return;var api=window.TowerDefenseGrowth;var shards=Math.max(0,Number(api&&api.getShards?api.getShards():0)||0);w.innerHTML='<div class="towerWalletItem shard"><span>성흔 조각</span><b>'+esc(shards.toLocaleString('ko-KR'))+'</b></div>';}
-  function ensureTabs(){var wrap=document.querySelector('#towerPopup .towerPopupTabs');if(!wrap)return;var common=wrap.querySelector('[data-tower-popup-tab="common"]');if(!wrap.querySelector('[data-tower-popup-tab="plate"]')){var b=document.createElement('button');b.className='towerPopupTab';b.type='button';b.setAttribute('role','tab');b.setAttribute('aria-selected','false');b.dataset.towerPopupTab='plate';b.textContent='장판';wrap.appendChild(b);} }
+  function ensureTabs(){var wrap=document.querySelector('#towerPopup .towerPopupTabs');if(!wrap)return;var common=wrap.querySelector('[data-tower-popup-tab="common"]');var tower=wrap.querySelector('[data-tower-popup-tab="tower"]');var plate=wrap.querySelector('[data-tower-popup-tab="plate"]');if(!plate){plate=document.createElement('button');plate.className='towerPopupTab';plate.type='button';plate.setAttribute('role','tab');plate.setAttribute('aria-selected','false');plate.dataset.towerPopupTab='plate';plate.textContent='장판';} if(common)wrap.appendChild(common);if(tower)wrap.appendChild(tower);if(plate)wrap.appendChild(plate); }
   function setActive(tab){var e=els();activeTab=(tab==='common'||tab==='plate')?tab:'tower';if(e.popup)e.popup.dataset.activeTab=activeTab;document.querySelectorAll('#towerPopup [data-tower-popup-tab]').forEach(function(b){var on=b.dataset.towerPopupTab===activeTab;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');});}
   function getTowers(){var api=window.TowerDefenseCatalog;return api&&typeof api.getTowers==='function'?api.getTowers():[];}
   function getSkills(type){var api=window.TowerDefenseCatalog;return api&&typeof api.getTowerSkills==='function'?api.getTowerSkills(type):[];}
@@ -25703,14 +26165,15 @@ window.addEventListener('DOMContentLoaded', () => {
   function renderCommonDetail(key){var e=els();var api=window.TowerDefenseGrowth;var ups=api&&api.getUpgrades?api.getUpgrades():[];var u=ups.find(function(x){return x.key===key;})||ups[0];if(!u){e.detail.innerHTML='<div class="towerPopupEmpty">공통 연구 데이터가 없습니다.</div>';return;}selectedCommonKey=u.key;e.list.querySelectorAll('[data-v164-common]').forEach(function(b){b.classList.toggle('active',b.dataset.v164Common===selectedCommonKey);});if(!u.unlocked){var stage=Math.max(1,Number(u.unlockStage||1));var unlock=stage<=1?'기본 연구':(stage-1)+'성역 클리어 후';e.detail.innerHTML='<div class="lockedResearchPolish" style="--skill-color:'+esc(u.color)+'"><div class="lockedResearchHero"><div class="lockedResearchIconWrap">'+iconImg(u.icon,'hero')+'<span class="lockedResearchLock">🔒</span></div><div class="lockedResearchCopy"><div class="lockedResearchKicker">LOCKED COMMON RESEARCH</div><h2 class="lockedResearchTitle">'+esc(commonTitle(u))+'</h2><p class="lockedResearchDesc">'+esc(unlock)+' 연구 정보와 업그레이드가 열립니다.</p><div class="armoryTags">'+tagsHtml(commonTags[u.key]||['공용'])+'</div></div></div></div>';return;}var shards=Number(api&&api.getShards?api.getShards():0)||0;var cost=Number(u.cost||0)||0;var canBuy=u.unlocked&&!u.maxed&&shards>=cost;var costText=u.maxed?'MAX':cost.toLocaleString('ko-KR')+' 조각';e.detail.innerHTML='<div class="armoryCommonHero v82Hero" style="--skill-color:'+esc(u.color)+'"><div class="armoryCommonIcon">'+iconImg(u.icon,'hero')+'</div><div><h2 class="armoryCommonTitle">'+esc(commonTitle(u))+'</h2><div class="armoryCommonSubtitle">'+esc(commonSubtitle(u))+'</div><div class="armoryTags">'+tagsHtml(commonTags[u.key]||['공용'])+'</div></div></div><div class="armoryUpgradeDock" style="--skill-color:'+esc(u.color)+'"><div><small>NEXT UPGRADE</small><b>'+(u.maxed?'최대 연구 완료':esc(u.nextEffect))+'</b><span>'+(u.maxed?'해당 연구의 모든 보너스가 적용 중입니다.':'비용 '+esc(costText)+' · 보유 '+esc(shards.toLocaleString('ko-KR'))+' 조각')+'</span></div><button class="commonResearchBuy" type="button" data-v164-buy="'+esc(u.key)+'" '+(canBuy?'':'disabled')+'>'+(u.maxed?'MAX':(canBuy?'업그레이드':'조각 부족'))+'</button></div><div class="armoryQuickGrid v164InfoGrid"><div class="armoryQuickCard highlight"><small>현재 레벨</small><b>Lv.'+esc(u.level)+'</b></div><div class="armoryQuickCard"><small>현재 효과</small><b>'+esc(u.level>0?u.effect:'아직 연구 없음')+'</b></div><div class="armoryQuickCard"><small>다음 효과</small><b>'+esc(u.maxed?'최대 연구 완료':u.nextEffect)+'</b></div><div class="armoryQuickCard"><small>업그레이드 비용</small><b>'+esc(costText)+'</b></div></div><div class="v164Section"><h3>스킬 정보</h3><p>'+esc(u.desc||'')+'</p></div>';}
   function renderCommonList(){var e=els();e.list.classList.add('commonList');var api=window.TowerDefenseGrowth;var ups=api&&api.getUpgrades?api.getUpgrades():[];if(!ups.length){e.list.innerHTML='';e.detail.innerHTML='<div class="towerPopupEmpty">공통 연구 데이터가 없습니다.</div>';return;}if(!ups.some(function(u){return u.key===selectedCommonKey;}))selectedCommonKey=ups[0].key;e.list.innerHTML=ups.map(function(u){return '<button class="commonResearchItem '+(u.key===selectedCommonKey?'active ':'')+(u.unlocked?'':'locked')+(u.maxed?' maxed':'')+'" style="--skill-color:'+esc(u.color)+'" type="button" data-v164-common="'+esc(u.key)+'" aria-label="'+esc(commonTitle(u))+'" title="'+esc(commonTitle(u))+'">'+iconImg(u.icon)+'</button>';}).join('');renderCommonDetail(selectedCommonKey);}
   function plateTile(p){return '<span class="v164PlateTile plate-'+esc(p.key)+'"><span class="v164PlateCode">'+esc(p.symbol)+'</span><span class="v164PlateLabel">'+esc(p.label)+'</span></span>';}
-  function renderPlateDetail(key){var e=els();var p=plates[key]||plates.amp;selectedPlateKey=p.key;e.list.querySelectorAll('[data-v164-plate]').forEach(function(b){b.classList.toggle('active',b.dataset.v164Plate===selectedPlateKey);});e.detail.innerHTML='<div class="v164PlateHero"><div class="v164PlateHeroVisual">'+plateTile(p)+'</div><div><h2 class="armoryCommonTitle">'+esc(p.name)+'</h2><div class="armoryCommonSubtitle">'+esc(p.subtitle)+'</div><div class="armoryTags">'+tagsHtml(p.tags)+'</div></div></div><div class="armoryQuickGrid v164InfoGrid"><div class="armoryQuickCard highlight"><small>핵심 효과</small><b>'+esc(p.effect)+'</b></div><div class="armoryQuickCard"><small>추천 배치</small><b>'+esc(p.best)+'</b></div><div class="armoryQuickCard"><small>공명 보너스</small><b>같은 계열 배치 시 피해 +30% · 공속 +8%</b></div><div class="armoryQuickCard"><small>주의 사항</small><b>'+esc(p.caution)+'</b></div></div><div class="v164Section"><h3>장판 설명</h3><p>'+esc(p.summary)+'</p></div><div class="v164Section"><h3>추천 운용</h3><p>'+esc(p.tips)+'</p></div><div class="v164Section"><h3>공명 규칙</h3><p>장판 중앙 약어와 보조 이름은 현재 공명 계열을 의미합니다. 같은 계열 행성을 그 장판 위에 배치하면 추가 공명 보너스가 적용됩니다.</p></div>';}
+  function renderPlateDetail(key){var e=els();var p=plates[key]||plates.amp;selectedPlateKey=p.key;e.list.querySelectorAll('[data-v164-plate]').forEach(function(b){b.classList.toggle('active',b.dataset.v164Plate===selectedPlateKey);});e.detail.innerHTML='<div class="v164PlateHero"><div class="v164PlateHeroVisual">'+plateTile(p)+'</div><div><h2 class="armoryCommonTitle">'+esc(p.name)+'</h2><div class="armoryCommonSubtitle">'+esc(p.subtitle)+'</div><div class="armoryTags">'+tagsHtml(p.tags)+'</div></div></div><div class="armoryQuickGrid v164InfoGrid"><div class="armoryQuickCard highlight"><small>핵심 효과</small><b>'+esc(p.effect)+'</b></div><div class="armoryQuickCard"><small>추천 배치</small><b>'+esc(p.best)+'</b></div><div class="armoryQuickCard"><small>공명 보너스</small><b>같은 색상/계열 배치 시 피해 +30% · 공속 +8%</b></div><div class="armoryQuickCard"><small>주의 사항</small><b>'+esc(p.caution)+'</b></div></div><div class="v164Section"><h3>장판 설명</h3><p>'+esc(p.summary)+'</p></div><div class="v164Section"><h3>추천 운용</h3><p>'+esc(p.tips)+'</p></div><div class="v164Section"><h3>색상 매칭</h3><p>장판 색상은 타워 색상과 맞춰서 보면 됩니다. 금색 계열 장판은 금색 계열 타워와, 보라색 계열 장판은 보라색 계열 타워와 맞춰 배치하는 방식으로 이해하면 쉽습니다.</p></div><div class="v164Section"><h3>공명 규칙</h3><p>장판 중앙 약어와 보조 이름은 현재 공명 계열을 의미합니다. 같은 계열 행성을 그 장판 위에 배치하면 추가 공명 보너스가 적용됩니다.</p></div>';}
   function renderPlateList(){var e=els();e.list.classList.add('commonList');e.list.innerHTML=plateKeys.map(function(k){var p=plates[k];return '<button class="commonResearchItem plateInfoItem '+(k===selectedPlateKey?'active':'')+'" type="button" data-v164-plate="'+esc(k)+'" aria-label="'+esc(p.name)+'" title="'+esc(p.name)+'">'+plateTile(p)+'</button>';}).join('');renderPlateDetail(selectedPlateKey);}
   function render(tab){ensureTabs();setWallet();setActive(tab||activeTab);var e=els();if(!e.popup||!e.list||!e.detail)return;if(activeTab==='common')renderCommonList();else if(activeTab==='plate')renderPlateList();else renderTowerList();e.detail.scrollTop=0;}
-  function open(tab){var e=els();if(!e.popup)return;ensureTabs();e.popup.classList.add('open');e.popup.setAttribute('aria-hidden','false');render(tab||'tower');}
+  function resetCommonSelectionToFirst(){var api=window.TowerDefenseGrowth;var ups=api&&api.getUpgrades?api.getUpgrades():[];if(ups&&ups.length)selectedCommonKey=ups[0].key;}
+  function open(tab){var e=els();if(!e.popup)return;ensureTabs();var firstTab=(tab==='tower'||tab==='plate'||tab==='common')?tab:'common';if(firstTab==='common')resetCommonSelectionToFirst();e.popup.classList.add('open');e.popup.setAttribute('aria-hidden','false');render(firstTab);}
   function close(){var e=els();if(!e.popup)return;e.popup.classList.remove('open');e.popup.setAttribute('aria-hidden','true');}
   window.openTowerArmoryPopup=open;window.setTowerArmoryTab=function(tab){render(tab);};window.closeTowerArmoryPopup=close;
   document.addEventListener('click',function(ev){var t=ev.target;if(!t||!t.closest)return;var tab=t.closest('#towerPopup [data-tower-popup-tab]');var closeBtn=t.closest('#towerPopupClose,#towerPopup .towerPopupClose,[data-tower-popup-close]');var towerOpen=t.closest('#towerMenuBtn,#stageTowerManageBtn');var towerItem=t.closest('#towerPopup [data-v164-tower]');var commonItem=t.closest('#towerPopup [data-v164-common]');var plateItem=t.closest('#towerPopup [data-v164-plate]');var buy=t.closest('#towerPopup [data-v164-buy]');if(tab||closeBtn||towerOpen||towerItem||commonItem||plateItem||buy){ev.preventDefault();ev.stopPropagation();if(ev.stopImmediatePropagation)ev.stopImmediatePropagation();}
-    if(closeBtn){close();return;} if(towerOpen){open('tower');return;} if(tab){render(tab.dataset.towerPopupTab||'tower');return;} if(towerItem){renderTowerDetail(towerItem.dataset.v164Tower);return;} if(commonItem){renderCommonDetail(commonItem.dataset.v164Common);return;} if(plateItem){renderPlateDetail(plateItem.dataset.v164Plate);return;} if(buy){var api=window.TowerDefenseGrowth;if(api&&typeof api.buy==='function')api.buy(buy.dataset.v164Buy);if(api&&typeof api.refresh==='function')api.refresh();setWallet();selectedCommonKey=buy.dataset.v164Buy;renderCommonList();return;} },true);
+    if(closeBtn){close();return;} if(towerOpen){open('common');return;} if(tab){render(tab.dataset.towerPopupTab||'common');return;} if(towerItem){renderTowerDetail(towerItem.dataset.v164Tower);return;} if(commonItem){renderCommonDetail(commonItem.dataset.v164Common);return;} if(plateItem){renderPlateDetail(plateItem.dataset.v164Plate);return;} if(buy){var api=window.TowerDefenseGrowth;if(api&&typeof api.buy==='function')api.buy(buy.dataset.v164Buy);if(api&&typeof api.refresh==='function')api.refresh();setWallet();selectedCommonKey=buy.dataset.v164Buy;renderCommonList();return;} },true);
   document.addEventListener('keydown',function(e){if(e.key==='Escape')close();},true);
 })();
 </script>
@@ -25719,6 +26182,1011 @@ window.addEventListener('DOMContentLoaded', () => {
 <script id="v167-armory-refresh-guard-marker">
 (function(){ window.__armoryControllerRebuildV164 = true; })();
 </script>
+
+<style id="v168-plate-tile-first-image-style">
+/* Match the in-game plate tile look for both the left list and the right detail hero. */
+#towerPopup .v164PlateTile{
+  position:relative !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:74px !important;
+  height:74px !important;
+  padding:0 !important;
+  border-radius:12px !important;
+  clip-path:polygon(14% 0,86% 0,100% 14%,100% 86%,86% 100%,14% 100%,0 86%,0 14%) !important;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(9,20,42,.28) 32%, rgba(3,10,25,.72) 100%) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.03), 0 0 18px rgba(130,216,255,.08) !important;
+  overflow:hidden !important;
+}
+#towerPopup .v164PlateTile::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:6px !important;
+  border-radius:9px !important;
+  clip-path:polygon(14% 0,86% 0,100% 14%,100% 86%,86% 100%,14% 100%,0 86%,0 14%) !important;
+  border:1.5px solid rgba(255,255,255,.18) !important;
+  opacity:.9 !important;
+}
+#towerPopup .v164PlateTile::after{
+  content:"" !important;
+  position:absolute !important;
+  left:18% !important;
+  right:18% !important;
+  top:55% !important;
+  height:1.5px !important;
+  transform:rotate(-39deg) !important;
+  background:linear-gradient(90deg, transparent, rgba(245,248,255,.45), transparent) !important;
+  box-shadow:0 0 8px rgba(245,248,255,.16) !important;
+}
+#towerPopup .v164PlateCode{
+  position:relative !important;
+  z-index:2 !important;
+  font-family:'Orbitron', Pretendard, 'Noto Sans KR', sans-serif !important;
+  font-size:15px !important;
+  font-weight:900 !important;
+  letter-spacing:.06em !important;
+  line-height:1 !important;
+  color:#f5f7fb !important;
+  text-shadow:0 0 10px rgba(255,255,255,.14) !important;
+}
+#towerPopup .v164PlateLabel{
+  position:relative !important;
+  z-index:2 !important;
+  margin-top:12px !important;
+  font-size:10px !important;
+  font-weight:900 !important;
+  letter-spacing:-.03em !important;
+  line-height:1 !important;
+  color:#f3f5fa !important;
+  text-shadow:0 0 8px rgba(255,255,255,.10) !important;
+}
+/* Gold family */
+#towerPopup .v164PlateTile.plate-amp,
+#towerPopup .v164PlateTile.plate-lens,
+#towerPopup .v164PlateTile.plate-mine{
+  border:1.5px solid rgba(241, 198, 79, .68) !important;
+  background:linear-gradient(180deg, rgba(255,233,150,.07), rgba(63,51,10,.12) 28%, rgba(24,20,6,.32) 44%, rgba(11,16,30,.78) 100%) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,237,167,.04), 0 0 18px rgba(236,196,84,.12) !important;
+}
+#towerPopup .v164PlateTile.plate-amp::before,
+#towerPopup .v164PlateTile.plate-lens::before,
+#towerPopup .v164PlateTile.plate-mine::before{
+  border-color:rgba(255, 223, 135, .44) !important;
+}
+#towerPopup .v164PlateTile.plate-amp .v164PlateCode,
+#towerPopup .v164PlateTile.plate-lens .v164PlateCode,
+#towerPopup .v164PlateTile.plate-mine .v164PlateCode,
+#towerPopup .v164PlateTile.plate-amp .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-lens .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-mine .v164PlateLabel{
+  color:#f6d96f !important;
+  text-shadow:0 0 12px rgba(246,217,111,.18) !important;
+}
+/* Violet family */
+#towerPopup .v164PlateTile.plate-coil,
+#towerPopup .v164PlateTile.plate-rift{
+  border:1.5px solid rgba(171, 136, 255, .62) !important;
+  background:linear-gradient(180deg, rgba(219,202,255,.08), rgba(63,40,92,.12) 28%, rgba(24,14,42,.30) 44%, rgba(11,16,30,.78) 100%) !important;
+  box-shadow:inset 0 0 0 1px rgba(229,220,255,.04), 0 0 18px rgba(171,136,255,.11) !important;
+}
+#towerPopup .v164PlateTile.plate-coil::before,
+#towerPopup .v164PlateTile.plate-rift::before{
+  border-color:rgba(208, 190, 255, .40) !important;
+}
+#towerPopup .v164PlateTile.plate-coil .v164PlateCode,
+#towerPopup .v164PlateTile.plate-rift .v164PlateCode,
+#towerPopup .v164PlateTile.plate-coil .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-rift .v164PlateLabel{
+  color:#d7c4ff !important;
+  text-shadow:0 0 12px rgba(215,196,255,.16) !important;
+}
+#towerPopup .plateInfoItem{
+  min-height:90px !important;
+  padding:10px 8px !important;
+}
+#towerPopup .plateInfoItem.active .v164PlateTile{
+  border-color:rgba(92, 240, 255, .90) !important;
+  box-shadow:inset 0 0 0 1px rgba(92, 240, 255, .22), 0 0 18px rgba(92,240,255,.18) !important;
+}
+#towerPopup .v164PlateHero{grid-template-columns:120px minmax(0,1fr) !important; gap:18px !important;}
+#towerPopup .v164PlateHero .v164PlateTile{
+  width:96px !important;
+  height:96px !important;
+}
+#towerPopup .v164PlateHero .v164PlateTile::before{inset:8px !important;}
+#towerPopup .v164PlateHero .v164PlateCode{font-size:24px !important;}
+#towerPopup .v164PlateHero .v164PlateLabel{margin-top:16px !important; font-size:14px !important;}
+@media (max-width:900px){
+  #towerPopup .v164PlateTile{width:66px !important;height:66px !important;}
+  #towerPopup .v164PlateCode{font-size:13px !important;}
+  #towerPopup .v164PlateLabel{font-size:9px !important;}
+  #towerPopup .v164PlateHero .v164PlateTile{width:84px !important;height:84px !important;}
+  #towerPopup .v164PlateHero .v164PlateCode{font-size:20px !important;}
+  #towerPopup .v164PlateHero .v164PlateLabel{font-size:12px !important;}
+}
+@media (max-width:640px){
+  #towerPopup .plateInfoItem{min-height:76px !important; padding:8px 6px !important;}
+  #towerPopup .v164PlateTile{width:52px !important;height:52px !important; border-radius:10px !important;}
+  #towerPopup .v164PlateTile::before{inset:4px !important; border-radius:7px !important;}
+  #towerPopup .v164PlateCode{font-size:11px !important;}
+  #towerPopup .v164PlateLabel{margin-top:8px !important;font-size:8px !important;}
+  #towerPopup .v164PlateHero{grid-template-columns:1fr !important; gap:10px !important;}
+  #towerPopup .v164PlateHero .v164PlateTile{width:76px !important;height:76px !important;}
+  #towerPopup .v164PlateHero .v164PlateCode{font-size:17px !important;}
+  #towerPopup .v164PlateHero .v164PlateLabel{font-size:11px !important;}
+}
+</style>
+
+
+<style id="v170-plate-unified-color-width-fix">
+/* Left list width: keep a fixed lane so icons never look clipped, especially on mobile. */
+#towerPopup .towerPopupBody{
+  grid-template-columns:112px minmax(0,1fr) !important;
+}
+#towerPopup .towerPopupList,
+#towerPopup .towerPopupList.commonList{
+  width:112px !important;
+  min-width:112px !important;
+  max-width:112px !important;
+  flex:0 0 112px !important;
+  align-items:center !important;
+  padding:12px 8px !important;
+  overflow-x:hidden !important;
+}
+#towerPopup .plateInfoItem{
+  width:92px !important;
+  min-width:92px !important;
+  max-width:92px !important;
+  height:92px !important;
+  min-height:92px !important;
+  padding:8px 6px !important;
+  margin:0 auto !important;
+}
+
+/* Unify the plate tile color/style to one clean gold scheme. */
+#towerPopup .v164PlateTile,
+#towerPopup .v164PlateTile.plate-amp,
+#towerPopup .v164PlateTile.plate-coil,
+#towerPopup .v164PlateTile.plate-lens,
+#towerPopup .v164PlateTile.plate-mine,
+#towerPopup .v164PlateTile.plate-rift{
+  position:relative !important;
+  z-index:2 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:76px !important;
+  height:76px !important;
+  border-radius:12px !important;
+  clip-path:polygon(14% 0,86% 0,100% 14%,100% 86%,86% 100%,14% 100%,0 86%,0 14%) !important;
+  border:1.5px solid rgba(241,198,79,.72) !important;
+  background:linear-gradient(180deg, rgba(255,233,150,.07), rgba(63,51,10,.10) 26%, rgba(24,20,6,.26) 42%, rgba(9,16,33,.92) 100%) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,237,167,.04), 0 0 18px rgba(236,196,84,.10) !important;
+  overflow:hidden !important;
+}
+#towerPopup .v164PlateTile::before,
+#towerPopup .v164PlateTile.plate-amp::before,
+#towerPopup .v164PlateTile.plate-coil::before,
+#towerPopup .v164PlateTile.plate-lens::before,
+#towerPopup .v164PlateTile.plate-mine::before,
+#towerPopup .v164PlateTile.plate-rift::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:6px !important;
+  border-radius:9px !important;
+  clip-path:polygon(14% 0,86% 0,100% 14%,100% 86%,86% 100%,14% 100%,0 86%,0 14%) !important;
+  border:1.5px solid rgba(255,223,135,.44) !important;
+  opacity:.96 !important;
+  background:transparent !important;
+}
+#towerPopup .v164PlateTile::after,
+#towerPopup .v164PlateTile.plate-amp::after,
+#towerPopup .v164PlateTile.plate-coil::after,
+#towerPopup .v164PlateTile.plate-lens::after,
+#towerPopup .v164PlateTile.plate-mine::after,
+#towerPopup .v164PlateTile.plate-rift::after{
+  content:"" !important;
+  position:absolute !important;
+  left:18% !important;
+  right:18% !important;
+  top:57% !important;
+  height:1.5px !important;
+  transform:rotate(-39deg) !important;
+  background:linear-gradient(90deg, transparent, rgba(255,235,170,.40), transparent) !important;
+  box-shadow:0 0 8px rgba(255,235,170,.12) !important;
+}
+#towerPopup .v164PlateCode,
+#towerPopup .v164PlateTile.plate-amp .v164PlateCode,
+#towerPopup .v164PlateTile.plate-coil .v164PlateCode,
+#towerPopup .v164PlateTile.plate-lens .v164PlateCode,
+#towerPopup .v164PlateTile.plate-mine .v164PlateCode,
+#towerPopup .v164PlateTile.plate-rift .v164PlateCode,
+#towerPopup .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-amp .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-coil .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-lens .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-mine .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-rift .v164PlateLabel{
+  position:relative !important;
+  z-index:3 !important;
+  color:#f6d96f !important;
+  text-shadow:0 0 10px rgba(246,217,111,.14) !important;
+}
+#towerPopup .v164PlateCode{
+  font-size:15px !important;
+  font-weight:900 !important;
+  letter-spacing:.05em !important;
+  line-height:1 !important;
+}
+#towerPopup .v164PlateLabel{
+  margin-top:11px !important;
+  font-size:10px !important;
+  font-weight:900 !important;
+  letter-spacing:-.03em !important;
+  line-height:1 !important;
+}
+/* Remove the distorted ellipse feeling; use a clean centered circle accent. */
+#towerPopup .v164PlateTile > .v164PlateCode::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:46px;
+  height:46px;
+  transform:translate(-50%,-38%);
+  border-radius:50%;
+  border:1px solid rgba(255,226,145,.24);
+  opacity:.55;
+  z-index:-1;
+}
+
+#towerPopup .plateInfoItem.active .v164PlateTile{
+  border-color:rgba(92,240,255,.90) !important;
+  box-shadow:inset 0 0 0 1px rgba(92,240,255,.22), 0 0 18px rgba(92,240,255,.18) !important;
+}
+
+#towerPopup .v164PlateHero .v164PlateTile{
+  width:96px !important;
+  height:96px !important;
+}
+#towerPopup .v164PlateHero .v164PlateTile::before{inset:8px !important;}
+#towerPopup .v164PlateHero .v164PlateCode{font-size:24px !important;}
+#towerPopup .v164PlateHero .v164PlateLabel{margin-top:15px !important; font-size:14px !important;}
+#towerPopup .v164PlateHero .v164PlateTile > .v164PlateCode::before{
+  width:58px; height:58px; transform:translate(-50%,-36%);
+}
+
+@media (max-width:900px){
+  #towerPopup .towerPopupBody{grid-template-columns:96px minmax(0,1fr) !important;}
+  #towerPopup .towerPopupList,#towerPopup .towerPopupList.commonList{width:96px !important; min-width:96px !important; max-width:96px !important; flex-basis:96px !important; padding:10px 6px !important;}
+  #towerPopup .plateInfoItem{width:80px !important; min-width:80px !important; max-width:80px !important; height:80px !important; min-height:80px !important;}
+  #towerPopup .v164PlateTile{width:66px !important; height:66px !important;}
+  #towerPopup .v164PlateCode{font-size:13px !important;}
+  #towerPopup .v164PlateLabel{font-size:9px !important;}
+  #towerPopup .v164PlateTile > .v164PlateCode::before{width:40px;height:40px;}
+}
+@media (max-width:640px){
+  #towerPopup .towerPopupBody{grid-template-columns:86px minmax(0,1fr) !important;}
+  #towerPopup .towerPopupList,#towerPopup .towerPopupList.commonList{width:86px !important; min-width:86px !important; max-width:86px !important; flex-basis:86px !important; padding:8px 4px !important;}
+  #towerPopup .plateInfoItem{width:74px !important; min-width:74px !important; max-width:74px !important; height:74px !important; min-height:74px !important; padding:6px 4px !important;}
+  #towerPopup .v164PlateTile{width:60px !important;height:60px !important;border-radius:10px !important;}
+  #towerPopup .v164PlateTile::before{inset:5px !important;border-radius:7px !important;}
+  #towerPopup .v164PlateCode{font-size:12px !important;}
+  #towerPopup .v164PlateLabel{margin-top:9px !important;font-size:8px !important;}
+  #towerPopup .v164PlateTile > .v164PlateCode::before{width:36px;height:36px;}
+  #towerPopup .v164PlateHero{grid-template-columns:1fr !important; gap:10px !important;}
+  #towerPopup .v164PlateHero .v164PlateTile{width:76px !important;height:76px !important;}
+  #towerPopup .v164PlateHero .v164PlateCode{font-size:18px !important;}
+  #towerPopup .v164PlateHero .v164PlateLabel{font-size:11px !important;}
+}
+</style>
+
+
+<style id="v171-plate-active-ring-remove">
+/* Remove only the circular accent from the selected plate tile in the left list. */
+#towerPopup .plateInfoItem.active .v164PlateTile > .v164PlateCode::before{
+  display:none !important;
+  content:none !important;
+}
+</style>
+
+
+<style id="v172-plate-ring-remove-list-size-unify">
+/* 1) Remove the circular ring/accent from the LEFT plate list tiles completely. */
+#towerPopup .towerPopupList .v164PlateTile > .v164PlateCode::before,
+#towerPopup .towerPopupList .v164PlateTile::selection {
+  display:none !important;
+  content:none !important;
+}
+
+/* 2) Keep the left list lane the same size across tabs (tower / common / plate). */
+#towerPopup .towerPopupBody,
+#towerPopup[data-active-tab="common"] .towerPopupBody,
+#towerPopup[data-active-tab="plate"] .towerPopupBody{
+  grid-template-columns:104px minmax(0,1fr) !important;
+  gap:12px !important;
+}
+#towerPopup .towerPopupList,
+#towerPopup .towerPopupList.commonList{
+  width:104px !important;
+  min-width:104px !important;
+  max-width:104px !important;
+  flex:0 0 104px !important;
+  padding:10px 8px !important;
+  gap:10px !important;
+  align-items:center !important;
+}
+#towerPopup .towerPopupItem,
+#towerPopup .commonResearchItem,
+#towerPopup .plateInfoItem{
+  width:80px !important;
+  min-width:80px !important;
+  max-width:80px !important;
+  height:88px !important;
+  min-height:88px !important;
+  margin:0 auto !important;
+}
+#towerPopup .towerPopupThumb,
+#towerPopup .towerPopupThumb img{
+  width:54px !important;
+  height:54px !important;
+}
+#towerPopup .commonResearchImg{width:42px !important; height:42px !important;}
+#towerPopup .v164PlateTile{width:66px !important; height:66px !important;}
+#towerPopup .v164PlateCode{font-size:13px !important;}
+#towerPopup .v164PlateLabel{font-size:9px !important; margin-top:9px !important;}
+
+/* mobile */
+@media (max-width:640px){
+  #towerPopup .towerPopupBody,
+  #towerPopup[data-active-tab="common"] .towerPopupBody,
+  #towerPopup[data-active-tab="plate"] .towerPopupBody{
+    grid-template-columns:84px minmax(0,1fr) !important;
+    gap:8px !important;
+  }
+  #towerPopup .towerPopupList,
+  #towerPopup .towerPopupList.commonList{
+    width:84px !important;
+    min-width:84px !important;
+    max-width:84px !important;
+    flex-basis:84px !important;
+    padding:8px 4px !important;
+    gap:8px !important;
+  }
+  #towerPopup .towerPopupItem,
+  #towerPopup .commonResearchItem,
+  #towerPopup .plateInfoItem{
+    width:68px !important;
+    min-width:68px !important;
+    max-width:68px !important;
+    height:74px !important;
+    min-height:74px !important;
+  }
+  #towerPopup .towerPopupThumb,
+  #towerPopup .towerPopupThumb img{width:42px !important; height:42px !important;}
+  #towerPopup .commonResearchImg{width:32px !important; height:32px !important;}
+  #towerPopup .v164PlateTile{width:56px !important; height:56px !important;}
+  #towerPopup .v164PlateCode{font-size:11px !important;}
+  #towerPopup .v164PlateLabel{font-size:8px !important; margin-top:8px !important;}
+}
+</style>
+
+
+<style id="v173-left-list-square-remove-circle">
+/* Make the left list buttons true square tiles across tabs. */
+#towerPopup .towerPopupItem,
+#towerPopup .commonResearchItem,
+#towerPopup .plateInfoItem{
+  width:88px !important;
+  height:88px !important;
+  min-width:88px !important;
+  min-height:88px !important;
+  max-width:88px !important;
+  max-height:88px !important;
+  border-radius:0 !important;
+  clip-path:none !important;
+  padding:0 !important;
+}
+/* Remove the circular background art inside tower/common list items. */
+#towerPopup .towerPopupItem::before,
+#towerPopup .commonResearchItem::before{
+  display:none !important;
+  content:none !important;
+  background:none !important;
+  border:0 !important;
+}
+/* Keep a clean square frame look. */
+#towerPopup .towerPopupItem,
+#towerPopup .commonResearchItem{
+  background:linear-gradient(180deg, rgba(5,18,38,.92), rgba(2,9,21,.98)) !important;
+  border:1px solid rgba(80,214,255,.22) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.03) !important;
+}
+#towerPopup .towerPopupItem.active,
+#towerPopup .commonResearchItem.active,
+#towerPopup .plateInfoItem.active{
+  border-color:rgba(97,239,255,.82) !important;
+  box-shadow:0 0 0 1px rgba(97,239,255,.38) inset, 0 0 18px rgba(67,219,255,.16) !important;
+}
+/* Remove clipped/rounded look from the active side accent too. */
+#towerPopup .towerPopupItem.active::after,
+#towerPopup .commonResearchItem.active::after{
+  border-radius:0 !important;
+}
+/* Hide blurred locked preview art so no round ghost icon remains. */
+#towerPopup .towerPopupItem.locked img,
+#towerPopup .commonResearchItem.locked img{
+  opacity:0 !important;
+  filter:none !important;
+}
+/* Center icon area on a square canvas. */
+#towerPopup .towerPopupThumb{
+  width:62px !important;
+  height:62px !important;
+  border-radius:0 !important;
+}
+#towerPopup .towerPopupThumb img{
+  width:62px !important;
+  height:62px !important;
+  object-fit:contain !important;
+}
+#towerPopup .commonResearchItem img.commonResearchImg,
+#towerPopup .commonResearchImg{
+  width:50px !important;
+  height:50px !important;
+}
+/* Mobile: same shape rule, slightly smaller but still square. */
+@media (max-width:640px){
+  #towerPopup .towerPopupItem,
+  #towerPopup .commonResearchItem,
+  #towerPopup .plateInfoItem{
+    width:66px !important;
+    height:66px !important;
+    min-width:66px !important;
+    min-height:66px !important;
+    max-width:66px !important;
+    max-height:66px !important;
+  }
+  #towerPopup .towerPopupThumb{
+    width:44px !important;
+    height:44px !important;
+  }
+  #towerPopup .towerPopupThumb img{
+    width:44px !important;
+    height:44px !important;
+  }
+  #towerPopup .commonResearchItem img.commonResearchImg,
+  #towerPopup .commonResearchImg{
+    width:34px !important;
+    height:34px !important;
+  }
+}
+</style>
+
+
+<style id="v174-restore-locked-blurred-icons">
+/* Restore blurred preview icons for locked/inactive items. */
+#towerPopup .towerPopupItem.locked img,
+#towerPopup .commonResearchItem.locked img{
+  opacity:.46 !important;
+  filter:grayscale(1) brightness(.32) blur(1.2px) !important;
+}
+#towerPopup .towerPopupItem.locked .towerPopupThumb img,
+#towerPopup .commonResearchItem.locked img.commonResearchImg,
+#towerPopup .commonResearchItem.locked .commonResearchImg{
+  opacity:.46 !important;
+  filter:grayscale(1) brightness(.32) blur(1.2px) !important;
+}
+</style>
+
+
+<style id="v175-keep-lock-on-active-locked-items">
+/* Keep the lock icon visible even when a locked item is selected/active. */
+#towerPopup .towerPopupItem.locked.active::after,
+#towerPopup .commonResearchItem.locked.active::after{
+  content:"🔒" !important;
+  display:grid !important;
+  place-items:center !important;
+  position:absolute !important;
+  right:8px !important;
+  bottom:6px !important;
+  left:auto !important;
+  top:auto !important;
+  width:auto !important;
+  height:auto !important;
+  z-index:12 !important;
+  background:none !important;
+  border:none !important;
+  border-radius:0 !important;
+  font-size:21px !important;
+  line-height:1 !important;
+  color:#f8d783 !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  filter:drop-shadow(0 0 8px rgba(248,215,131,.18)) !important;
+}
+/* Prevent active highlight layers from visually swallowing the lock area. */
+#towerPopup .towerPopupItem.locked.active,
+#towerPopup .commonResearchItem.locked.active{
+  overflow:visible !important;
+}
+</style>
+
+
+<style id="v176-lock-badge-consistent-active-inactive">
+/* Keep the lock badge exactly the same in inactive and active locked states. */
+#towerPopup .towerPopupItem.locked::after,
+#towerPopup .towerPopupItem.locked.active::after,
+#towerPopup .commonResearchItem.locked::after,
+#towerPopup .commonResearchItem.locked.active::after{
+  content:"🔒" !important;
+  position:absolute !important;
+  right:8px !important;
+  bottom:6px !important;
+  left:auto !important;
+  top:auto !important;
+  width:22px !important;
+  height:22px !important;
+  display:grid !important;
+  place-items:center !important;
+  margin:0 !important;
+  padding:0 !important;
+  transform:none !important;
+  z-index:12 !important;
+  background:none !important;
+  border:none !important;
+  border-radius:0 !important;
+  font-size:18px !important;
+  line-height:1 !important;
+  color:#f8d783 !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  box-shadow:none !important;
+  filter:drop-shadow(0 0 8px rgba(248,215,131,.18)) !important;
+}
+/* Active locked item keeps the same lock badge, only the tile border/highlight changes. */
+#towerPopup .towerPopupItem.locked.active,
+#towerPopup .commonResearchItem.locked.active{
+  border-color:rgba(97,239,255,.82) !important;
+  box-shadow:0 0 18px rgba(67,219,255,.12), 0 0 0 1px rgba(255,255,255,.04) inset !important;
+}
+</style>
+
+
+<style id="v177-armory-close-button-polish">
+/* Premium redesign for the Tower Armory close button. */
+#towerPopup .towerPopupClose{
+  position:absolute !important;
+  left:0 !important;
+  top:180px !important;
+  width:78px !important;
+  height:78px !important;
+  min-height:78px !important;
+  padding:0 !important;
+  margin:0 !important;
+  display:block !important;
+  overflow:hidden !important;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(190,245,255,.24), transparent 34%),
+    linear-gradient(180deg, rgba(10,37,62,.98), rgba(3,12,28,.99)) !important;
+  border:1px solid rgba(101,225,255,.42) !important;
+  clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 18px,100% calc(100% - 18px),calc(100% - 18px) 100%,18px 100%,0 calc(100% - 18px),0 18px) !important;
+  border-radius:0 !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.05),
+    inset 0 -12px 24px rgba(0,0,0,.22),
+    0 0 18px rgba(60,220,255,.12) !important;
+  color:transparent !important;
+  font-size:0 !important;
+}
+#towerPopup .towerPopupClose::before,
+#towerPopup .towerPopupClose::after{
+  content:"" !important;
+  position:absolute !important;
+  left:50% !important;
+  top:50% !important;
+  width:30px !important;
+  height:6px !important;
+  margin-left:-15px !important;
+  margin-top:-3px !important;
+  border-radius:999px !important;
+  background:linear-gradient(90deg, rgba(255,255,255,.96), rgba(232,247,255,.98), rgba(255,255,255,.96)) !important;
+  box-shadow:
+    0 0 12px rgba(255,255,255,.10),
+    0 0 18px rgba(95,234,255,.18) !important;
+}
+#towerPopup .towerPopupClose::before{
+  transform:rotate(45deg) !important;
+}
+#towerPopup .towerPopupClose::after{
+  transform:rotate(-45deg) !important;
+}
+#towerPopup .towerPopupClose:hover{
+  border-color:rgba(118,235,255,.68) !important;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(210,248,255,.28), transparent 36%),
+    linear-gradient(180deg, rgba(12,47,77,.99), rgba(3,15,34,1)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.06),
+    inset 0 -12px 24px rgba(0,0,0,.22),
+    0 0 24px rgba(66,226,255,.18) !important;
+}
+#towerPopup .towerPopupClose:active{
+  transform:translateY(1px) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.04),
+    inset 0 6px 18px rgba(0,0,0,.22),
+    0 0 14px rgba(66,226,255,.12) !important;
+}
+/* subtle inner frame to make the button feel less plain */
+#towerPopup .towerPopupClose span,
+#towerPopup .towerPopupClose i{display:none !important;}
+#towerPopup .towerPopupClose > *{pointer-events:none !important;}
+#towerPopup .towerPopupClose{
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)),
+    linear-gradient(90deg, rgba(102,232,255,.18) 0 2px, transparent 2px calc(100% - 2px), rgba(102,232,255,.18) calc(100% - 2px) 100%),
+    linear-gradient(180deg, rgba(102,232,255,.18) 0 2px, transparent 2px calc(100% - 2px), rgba(102,232,255,.18) calc(100% - 2px) 100%),
+    radial-gradient(circle at 50% 38%, rgba(190,245,255,.22), transparent 34%),
+    linear-gradient(180deg, rgba(10,37,62,.98), rgba(3,12,28,.99)) !important;
+  background-size:100% 100%, calc(100% - 22px) calc(100% - 22px), calc(100% - 22px) calc(100% - 22px), 100% 100%, 100% 100% !important;
+  background-position:center center, center center, center center, center center, center center !important;
+  background-repeat:no-repeat !important;
+}
+@media (max-width:640px){
+  #towerPopup .towerPopupClose{
+    width:66px !important;
+    height:66px !important;
+    min-height:66px !important;
+    clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px) !important;
+  }
+  #towerPopup .towerPopupClose::before,
+  #towerPopup .towerPopupClose::after{
+    width:25px !important;
+    height:5px !important;
+    margin-left:-12.5px !important;
+    margin-top:-2.5px !important;
+  }
+}
+</style>
+
+
+<style id="v178-armory-wallet-header-overlap-fix">
+/* Fix armory shard wallet jumping upward and covering the title. */
+#towerPopup .towerPopupHeader{
+  min-height:132px !important;
+  row-gap:14px !important;
+  align-items:start !important;
+}
+#towerPopup .towerPopupHeader > div:first-child{
+  align-self:start !important;
+}
+#towerPopup .towerPopupKicker{
+  margin-bottom:8px !important;
+}
+#towerPopup .towerPopupTitle{
+  line-height:1.02 !important;
+}
+#towerPopup .towerPopupWallet{
+  grid-column:1 / 3 !important;
+  grid-row:2 / 3 !important;
+  justify-self:start !important;
+  align-self:start !important;
+  margin-top:8px !important;
+  position:relative !important;
+  top:auto !important;
+  right:auto !important;
+  left:auto !important;
+  bottom:auto !important;
+  z-index:2 !important;
+}
+#towerPopup .towerWalletItem{
+  margin:0 !important;
+}
+@media (max-width: 720px){
+  #towerPopup .towerPopupHeader{
+    min-height:120px !important;
+    row-gap:10px !important;
+  }
+  #towerPopup .towerPopupWallet{
+    margin-top:4px !important;
+  }
+}
+</style>
+
+
+<style id="v179-armory-close-button-position-fix">
+/* Re-anchor the close button to the top-right so it doesn't sag downward. */
+#towerPopup .towerPopupClose{
+  position:absolute !important;
+  top:8px !important;
+  right:6px !important;
+  left:auto !important;
+  bottom:auto !important;
+  margin:0 !important;
+  z-index:6 !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerPopupClose{
+    top:4px !important;
+    right:2px !important;
+  }
+}
+</style>
+
+
+<style id="v180-armory-header-wallet-no-overlap-final">
+/* Final header layout lock: keep title and shard wallet on separate rows with reserved close-button space. */
+#towerPopup .towerPopupHeader{
+  position:relative !important;
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  grid-template-rows:auto auto !important;
+  align-items:start !important;
+  column-gap:12px !important;
+  row-gap:10px !important;
+  left:16px !important;
+  right:16px !important;
+  top:16px !important;
+  height:auto !important;
+  min-height:148px !important;
+  padding:18px 92px 14px 16px !important;
+  box-sizing:border-box !important;
+}
+#towerPopup .towerPopupHeader > div:first-child{
+  grid-column:1 / 2 !important;
+  grid-row:1 / 2 !important;
+  align-self:start !important;
+  min-width:0 !important;
+}
+#towerPopup .towerPopupKicker{
+  margin:0 0 6px 0 !important;
+}
+#towerPopup .towerPopupTitle{
+  position:relative !important;
+  top:auto !important;
+  left:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  margin:0 !important;
+  font-size:24px !important;
+  line-height:1.04 !important;
+  max-width:100% !important;
+  white-space:normal !important;
+}
+#towerPopup .towerPopupWallet{
+  position:relative !important;
+  top:auto !important;
+  right:auto !important;
+  left:auto !important;
+  bottom:auto !important;
+  grid-column:1 / 2 !important;
+  grid-row:2 / 3 !important;
+  justify-self:start !important;
+  align-self:start !important;
+  margin:0 !important;
+  gap:6px !important;
+  max-width:calc(100% - 6px) !important;
+  z-index:2 !important;
+}
+#towerPopup .towerWalletItem,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+  width:136px !important;
+  min-width:136px !important;
+  max-width:136px !important;
+  height:38px !important;
+  grid-template-columns:18px minmax(38px,1fr) auto !important;
+  gap:6px !important;
+  padding:0 8px !important;
+}
+#towerPopup .towerWalletItem::before,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+  width:18px !important;
+  height:18px !important;
+  min-width:18px !important;
+}
+#towerPopup .towerWalletItem span,
+#towerPopup .towerPopupWallet > span{
+  font-size:9px !important;
+}
+#towerPopup .towerWalletItem b,
+#towerPopup .towerPopupWallet > b{
+  font-size:14px !important;
+  min-width:18px !important;
+}
+@media (min-width: 721px){
+  #towerPopup .towerPopupHeader{
+    left:34px !important;
+    right:34px !important;
+    top:28px !important;
+    min-height:164px !important;
+    padding:20px 108px 16px 0 !important;
+  }
+  #towerPopup .towerPopupTitle{
+    font-size:38px !important;
+  }
+  #towerPopup .towerPopupWallet{
+    margin-top:4px !important;
+  }
+  #towerPopup .towerWalletItem,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+    width:184px !important;
+    min-width:184px !important;
+    max-width:184px !important;
+    height:48px !important;
+    grid-template-columns:24px minmax(54px,1fr) auto !important;
+    gap:8px !important;
+    padding:0 12px !important;
+  }
+  #towerPopup .towerWalletItem::before,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+    width:24px !important;
+    height:24px !important;
+    min-width:24px !important;
+  }
+  #towerPopup .towerWalletItem span,
+  #towerPopup .towerPopupWallet > span{font-size:11px !important;}
+  #towerPopup .towerWalletItem b,
+  #towerPopup .towerPopupWallet > b{font-size:19px !important;}
+}
+</style>
+
+
+<style id="v181-armory-top-alignment-clean">
+/* Clean, stable top alignment for armory header. */
+#towerPopup .towerPopupHeader{
+  position:relative !important;
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  grid-template-rows:auto auto !important;
+  align-items:start !important;
+  justify-items:start !important;
+  left:0 !important;
+  right:0 !important;
+  top:0 !important;
+  height:auto !important;
+  min-height:132px !important;
+  padding:28px 124px 14px 34px !important;
+  margin:0 !important;
+  row-gap:10px !important;
+  box-sizing:border-box !important;
+  overflow:visible !important;
+}
+#towerPopup .towerPopupHeader::after{
+  left:34px !important;
+  right:34px !important;
+}
+#towerPopup .towerPopupHeader > div:first-child{
+  display:block !important;
+  width:100% !important;
+  min-width:0 !important;
+  align-self:start !important;
+}
+#towerPopup .towerPopupKicker{
+  margin:0 0 8px 0 !important;
+  font-size:12px !important;
+  line-height:1 !important;
+}
+#towerPopup .towerPopupTitle{
+  position:relative !important;
+  top:auto !important;
+  left:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  display:block !important;
+  margin:0 !important;
+  font-size:34px !important;
+  line-height:1.02 !important;
+  letter-spacing:-0.05em !important;
+  white-space:nowrap !important;
+  max-width:100% !important;
+}
+#towerPopup .towerPopupWallet{
+  position:relative !important;
+  top:auto !important;
+  right:auto !important;
+  left:auto !important;
+  bottom:auto !important;
+  grid-column:1 / 2 !important;
+  grid-row:2 / 3 !important;
+  justify-self:start !important;
+  align-self:start !important;
+  display:flex !important;
+  margin:0 !important;
+  padding:0 !important;
+  gap:8px !important;
+  width:auto !important;
+  max-width:calc(100% - 12px) !important;
+}
+#towerPopup .towerWalletItem,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+  width:168px !important;
+  min-width:168px !important;
+  max-width:168px !important;
+  height:42px !important;
+  grid-template-columns:20px minmax(54px,1fr) auto !important;
+  gap:8px !important;
+  padding:0 10px !important;
+}
+#towerPopup .towerWalletItem::before,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+  width:20px !important;
+  height:20px !important;
+  min-width:20px !important;
+}
+#towerPopup .towerWalletItem span,
+#towerPopup .towerPopupWallet > span{
+  font-size:10px !important;
+}
+#towerPopup .towerWalletItem b,
+#towerPopup .towerPopupWallet > b{
+  font-size:16px !important;
+  min-width:18px !important;
+}
+#towerPopup .towerPopupClose{
+  position:absolute !important;
+  top:24px !important;
+  right:34px !important;
+  left:auto !important;
+  bottom:auto !important;
+  margin:0 !important;
+  z-index:8 !important;
+}
+#towerPopup .towerPopupTabs{
+  margin-top:0 !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerPopupHeader{
+    min-height:120px !important;
+    padding:18px 84px 10px 16px !important;
+    row-gap:8px !important;
+  }
+  #towerPopup .towerPopupHeader::after{
+    left:16px !important;
+    right:16px !important;
+  }
+  #towerPopup .towerPopupKicker{
+    margin-bottom:6px !important;
+    font-size:9px !important;
+  }
+  #towerPopup .towerPopupTitle{
+    font-size:25px !important;
+    white-space:normal !important;
+    max-width:calc(100% - 6px) !important;
+  }
+  #towerPopup .towerPopupWallet{
+    max-width:calc(100% - 6px) !important;
+  }
+  #towerPopup .towerWalletItem,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+    width:136px !important;
+    min-width:136px !important;
+    max-width:136px !important;
+    height:38px !important;
+    grid-template-columns:18px minmax(40px,1fr) auto !important;
+    gap:6px !important;
+    padding:0 8px !important;
+  }
+  #towerPopup .towerWalletItem::before,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+    width:18px !important;
+    height:18px !important;
+    min-width:18px !important;
+  }
+  #towerPopup .towerWalletItem span,
+  #towerPopup .towerPopupWallet > span{font-size:9px !important;}
+  #towerPopup .towerWalletItem b,
+  #towerPopup .towerPopupWallet > b{font-size:14px !important;}
+  #towerPopup .towerPopupClose{
+    top:14px !important;
+    right:16px !important;
+  }
+}
+</style>
+
 </body> 내부로 정리 -->
 <style id="v101-single-stage-tower-button-safe">
 #stageMap #stageMapBack,
@@ -27062,8 +28530,8 @@ window.addEventListener('DOMContentLoaded', () => {
     if(towerBtn){
       towerBtn.addEventListener('click', function(){
         setTimeout(function(){
-          const towerTab = document.querySelector('[data-tower-popup-tab="tower"]');
-          if(towerTab) towerTab.click();
+          const commonTab = document.querySelector('[data-tower-popup-tab="common"]');
+          if(commonTab) commonTab.click();
         }, 0);
       }, true);
     }
@@ -27724,7 +29192,7 @@ window.addEventListener('DOMContentLoaded', () => {
   function esc(v){return String(v ?? '').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];});}
   function fmt(v){var n=Number(v);return Number.isFinite(n)?String(Math.round(n)):String(v??'-');}
   function els(){return {popup:$('towerPopup'),list:$('towerPopupList'),detail:$('towerPopupDetail'),close:$('towerPopupClose'),tabs:Array.prototype.slice.call(document.querySelectorAll('#towerPopup [data-tower-popup-tab]'))};}
-  var activeTab='tower';
+  var activeTab='common';
   var selectedTowerType=0;
   var selectedCommonKey='global_damage';
   var selectedPlateKey='amp';
@@ -27745,7 +29213,7 @@ window.addEventListener('DOMContentLoaded', () => {
   function towerImg(t){var src=t&&t.thumb?t.thumb:'assets/images/thumbs/'+esc((t&&t.id)||'solar')+'_lv1.webp?v=align2';return '<img src="'+esc(src)+'" alt="" aria-hidden="true" draggable="false">';}
   function kindText(kind){var m={splash:'광역 폭발형',slow:'감속 제어형',chain:'연쇄 공격형',poison:'지속 피해형',gravity:'군중 제어형',beam:'관통 저격형',crystal:'축전 공명형',mecha:'실드 해체형',crit:'치명 폭발형'};return m[kind]||kind||'전투형';}
   function setWallet(){var w=$('towerPopupWallet');if(!w)return;var api=window.TowerDefenseGrowth;var shards=Math.max(0,Number(api&&api.getShards?api.getShards():0)||0);w.innerHTML='<div class="towerWalletItem shard"><span>성흔 조각</span><b>'+esc(shards.toLocaleString('ko-KR'))+'</b></div>';}
-  function ensureTabs(){var wrap=document.querySelector('#towerPopup .towerPopupTabs');if(!wrap)return;var common=wrap.querySelector('[data-tower-popup-tab="common"]');if(!wrap.querySelector('[data-tower-popup-tab="plate"]')){var b=document.createElement('button');b.className='towerPopupTab';b.type='button';b.setAttribute('role','tab');b.setAttribute('aria-selected','false');b.dataset.towerPopupTab='plate';b.textContent='장판';wrap.appendChild(b);} }
+  function ensureTabs(){var wrap=document.querySelector('#towerPopup .towerPopupTabs');if(!wrap)return;var common=wrap.querySelector('[data-tower-popup-tab="common"]');var tower=wrap.querySelector('[data-tower-popup-tab="tower"]');var plate=wrap.querySelector('[data-tower-popup-tab="plate"]');if(!plate){plate=document.createElement('button');plate.className='towerPopupTab';plate.type='button';plate.setAttribute('role','tab');plate.setAttribute('aria-selected','false');plate.dataset.towerPopupTab='plate';plate.textContent='장판';} if(common)wrap.appendChild(common);if(tower)wrap.appendChild(tower);if(plate)wrap.appendChild(plate); }
   function setActive(tab){var e=els();activeTab=(tab==='common'||tab==='plate')?tab:'tower';if(e.popup)e.popup.dataset.activeTab=activeTab;document.querySelectorAll('#towerPopup [data-tower-popup-tab]').forEach(function(b){var on=b.dataset.towerPopupTab===activeTab;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');});}
   function getTowers(){var api=window.TowerDefenseCatalog;return api&&typeof api.getTowers==='function'?api.getTowers():[];}
   function getSkills(type){var api=window.TowerDefenseCatalog;return api&&typeof api.getTowerSkills==='function'?api.getTowerSkills(type):[];}
@@ -27756,14 +29224,15 @@ window.addEventListener('DOMContentLoaded', () => {
   function renderCommonDetail(key){var e=els();var api=window.TowerDefenseGrowth;var ups=api&&api.getUpgrades?api.getUpgrades():[];var u=ups.find(function(x){return x.key===key;})||ups[0];if(!u){e.detail.innerHTML='<div class="towerPopupEmpty">공통 연구 데이터가 없습니다.</div>';return;}selectedCommonKey=u.key;e.list.querySelectorAll('[data-v164-common]').forEach(function(b){b.classList.toggle('active',b.dataset.v164Common===selectedCommonKey);});if(!u.unlocked){var stage=Math.max(1,Number(u.unlockStage||1));var unlock=stage<=1?'기본 연구':(stage-1)+'성역 클리어 후';e.detail.innerHTML='<div class="lockedResearchPolish" style="--skill-color:'+esc(u.color)+'"><div class="lockedResearchHero"><div class="lockedResearchIconWrap">'+iconImg(u.icon,'hero')+'<span class="lockedResearchLock">🔒</span></div><div class="lockedResearchCopy"><div class="lockedResearchKicker">LOCKED COMMON RESEARCH</div><h2 class="lockedResearchTitle">'+esc(commonTitle(u))+'</h2><p class="lockedResearchDesc">'+esc(unlock)+' 연구 정보와 업그레이드가 열립니다.</p><div class="armoryTags">'+tagsHtml(commonTags[u.key]||['공용'])+'</div></div></div></div>';return;}var shards=Number(api&&api.getShards?api.getShards():0)||0;var cost=Number(u.cost||0)||0;var canBuy=u.unlocked&&!u.maxed&&shards>=cost;var costText=u.maxed?'MAX':cost.toLocaleString('ko-KR')+' 조각';e.detail.innerHTML='<div class="armoryCommonHero v82Hero" style="--skill-color:'+esc(u.color)+'"><div class="armoryCommonIcon">'+iconImg(u.icon,'hero')+'</div><div><h2 class="armoryCommonTitle">'+esc(commonTitle(u))+'</h2><div class="armoryCommonSubtitle">'+esc(commonSubtitle(u))+'</div><div class="armoryTags">'+tagsHtml(commonTags[u.key]||['공용'])+'</div></div></div><div class="armoryUpgradeDock" style="--skill-color:'+esc(u.color)+'"><div><small>NEXT UPGRADE</small><b>'+(u.maxed?'최대 연구 완료':esc(u.nextEffect))+'</b><span>'+(u.maxed?'해당 연구의 모든 보너스가 적용 중입니다.':'비용 '+esc(costText)+' · 보유 '+esc(shards.toLocaleString('ko-KR'))+' 조각')+'</span></div><button class="commonResearchBuy" type="button" data-v164-buy="'+esc(u.key)+'" '+(canBuy?'':'disabled')+'>'+(u.maxed?'MAX':(canBuy?'업그레이드':'조각 부족'))+'</button></div><div class="armoryQuickGrid v164InfoGrid"><div class="armoryQuickCard highlight"><small>현재 레벨</small><b>Lv.'+esc(u.level)+'</b></div><div class="armoryQuickCard"><small>현재 효과</small><b>'+esc(u.level>0?u.effect:'아직 연구 없음')+'</b></div><div class="armoryQuickCard"><small>다음 효과</small><b>'+esc(u.maxed?'최대 연구 완료':u.nextEffect)+'</b></div><div class="armoryQuickCard"><small>업그레이드 비용</small><b>'+esc(costText)+'</b></div></div><div class="v164Section"><h3>스킬 정보</h3><p>'+esc(u.desc||'')+'</p></div>';}
   function renderCommonList(){var e=els();e.list.classList.add('commonList');var api=window.TowerDefenseGrowth;var ups=api&&api.getUpgrades?api.getUpgrades():[];if(!ups.length){e.list.innerHTML='';e.detail.innerHTML='<div class="towerPopupEmpty">공통 연구 데이터가 없습니다.</div>';return;}if(!ups.some(function(u){return u.key===selectedCommonKey;}))selectedCommonKey=ups[0].key;e.list.innerHTML=ups.map(function(u){return '<button class="commonResearchItem '+(u.key===selectedCommonKey?'active ':'')+(u.unlocked?'':'locked')+(u.maxed?' maxed':'')+'" style="--skill-color:'+esc(u.color)+'" type="button" data-v164-common="'+esc(u.key)+'" aria-label="'+esc(commonTitle(u))+'" title="'+esc(commonTitle(u))+'">'+iconImg(u.icon)+'</button>';}).join('');renderCommonDetail(selectedCommonKey);}
   function plateTile(p){return '<span class="v164PlateTile plate-'+esc(p.key)+'"><span class="v164PlateCode">'+esc(p.symbol)+'</span><span class="v164PlateLabel">'+esc(p.label)+'</span></span>';}
-  function renderPlateDetail(key){var e=els();var p=plates[key]||plates.amp;selectedPlateKey=p.key;e.list.querySelectorAll('[data-v164-plate]').forEach(function(b){b.classList.toggle('active',b.dataset.v164Plate===selectedPlateKey);});e.detail.innerHTML='<div class="v164PlateHero"><div class="v164PlateHeroVisual">'+plateTile(p)+'</div><div><h2 class="armoryCommonTitle">'+esc(p.name)+'</h2><div class="armoryCommonSubtitle">'+esc(p.subtitle)+'</div><div class="armoryTags">'+tagsHtml(p.tags)+'</div></div></div><div class="armoryQuickGrid v164InfoGrid"><div class="armoryQuickCard highlight"><small>핵심 효과</small><b>'+esc(p.effect)+'</b></div><div class="armoryQuickCard"><small>추천 배치</small><b>'+esc(p.best)+'</b></div><div class="armoryQuickCard"><small>공명 보너스</small><b>같은 계열 배치 시 피해 +30% · 공속 +8%</b></div><div class="armoryQuickCard"><small>주의 사항</small><b>'+esc(p.caution)+'</b></div></div><div class="v164Section"><h3>장판 설명</h3><p>'+esc(p.summary)+'</p></div><div class="v164Section"><h3>추천 운용</h3><p>'+esc(p.tips)+'</p></div><div class="v164Section"><h3>공명 규칙</h3><p>장판 중앙 약어와 보조 이름은 현재 공명 계열을 의미합니다. 같은 계열 행성을 그 장판 위에 배치하면 추가 공명 보너스가 적용됩니다.</p></div>';}
+  function renderPlateDetail(key){var e=els();var p=plates[key]||plates.amp;selectedPlateKey=p.key;e.list.querySelectorAll('[data-v164-plate]').forEach(function(b){b.classList.toggle('active',b.dataset.v164Plate===selectedPlateKey);});e.detail.innerHTML='<div class="v164PlateHero"><div class="v164PlateHeroVisual">'+plateTile(p)+'</div><div><h2 class="armoryCommonTitle">'+esc(p.name)+'</h2><div class="armoryCommonSubtitle">'+esc(p.subtitle)+'</div><div class="armoryTags">'+tagsHtml(p.tags)+'</div></div></div><div class="armoryQuickGrid v164InfoGrid"><div class="armoryQuickCard highlight"><small>핵심 효과</small><b>'+esc(p.effect)+'</b></div><div class="armoryQuickCard"><small>추천 배치</small><b>'+esc(p.best)+'</b></div><div class="armoryQuickCard"><small>공명 보너스</small><b>같은 색상/계열 배치 시 피해 +30% · 공속 +8%</b></div><div class="armoryQuickCard"><small>주의 사항</small><b>'+esc(p.caution)+'</b></div></div><div class="v164Section"><h3>장판 설명</h3><p>'+esc(p.summary)+'</p></div><div class="v164Section"><h3>추천 운용</h3><p>'+esc(p.tips)+'</p></div><div class="v164Section"><h3>색상 매칭</h3><p>장판 색상은 타워 색상과 맞춰서 보면 됩니다. 금색 계열 장판은 금색 계열 타워와, 보라색 계열 장판은 보라색 계열 타워와 맞춰 배치하는 방식으로 이해하면 쉽습니다.</p></div><div class="v164Section"><h3>공명 규칙</h3><p>장판 중앙 약어와 보조 이름은 현재 공명 계열을 의미합니다. 같은 계열 행성을 그 장판 위에 배치하면 추가 공명 보너스가 적용됩니다.</p></div>';}
   function renderPlateList(){var e=els();e.list.classList.add('commonList');e.list.innerHTML=plateKeys.map(function(k){var p=plates[k];return '<button class="commonResearchItem plateInfoItem '+(k===selectedPlateKey?'active':'')+'" type="button" data-v164-plate="'+esc(k)+'" aria-label="'+esc(p.name)+'" title="'+esc(p.name)+'">'+plateTile(p)+'</button>';}).join('');renderPlateDetail(selectedPlateKey);}
   function render(tab){ensureTabs();setWallet();setActive(tab||activeTab);var e=els();if(!e.popup||!e.list||!e.detail)return;if(activeTab==='common')renderCommonList();else if(activeTab==='plate')renderPlateList();else renderTowerList();e.detail.scrollTop=0;}
-  function open(tab){var e=els();if(!e.popup)return;ensureTabs();e.popup.classList.add('open');e.popup.setAttribute('aria-hidden','false');render(tab||'tower');}
+  function resetCommonSelectionToFirst(){var api=window.TowerDefenseGrowth;var ups=api&&api.getUpgrades?api.getUpgrades():[];if(ups&&ups.length)selectedCommonKey=ups[0].key;}
+  function open(tab){var e=els();if(!e.popup)return;ensureTabs();var firstTab=(tab==='tower'||tab==='plate'||tab==='common')?tab:'common';if(firstTab==='common')resetCommonSelectionToFirst();e.popup.classList.add('open');e.popup.setAttribute('aria-hidden','false');render(firstTab);}
   function close(){var e=els();if(!e.popup)return;e.popup.classList.remove('open');e.popup.setAttribute('aria-hidden','true');}
   window.openTowerArmoryPopup=open;window.setTowerArmoryTab=function(tab){render(tab);};window.closeTowerArmoryPopup=close;
   document.addEventListener('click',function(ev){var t=ev.target;if(!t||!t.closest)return;var tab=t.closest('#towerPopup [data-tower-popup-tab]');var closeBtn=t.closest('#towerPopupClose,#towerPopup .towerPopupClose,[data-tower-popup-close]');var towerOpen=t.closest('#towerMenuBtn,#stageTowerManageBtn');var towerItem=t.closest('#towerPopup [data-v164-tower]');var commonItem=t.closest('#towerPopup [data-v164-common]');var plateItem=t.closest('#towerPopup [data-v164-plate]');var buy=t.closest('#towerPopup [data-v164-buy]');if(tab||closeBtn||towerOpen||towerItem||commonItem||plateItem||buy){ev.preventDefault();ev.stopPropagation();if(ev.stopImmediatePropagation)ev.stopImmediatePropagation();}
-    if(closeBtn){close();return;} if(towerOpen){open('tower');return;} if(tab){render(tab.dataset.towerPopupTab||'tower');return;} if(towerItem){renderTowerDetail(towerItem.dataset.v164Tower);return;} if(commonItem){renderCommonDetail(commonItem.dataset.v164Common);return;} if(plateItem){renderPlateDetail(plateItem.dataset.v164Plate);return;} if(buy){var api=window.TowerDefenseGrowth;if(api&&typeof api.buy==='function')api.buy(buy.dataset.v164Buy);if(api&&typeof api.refresh==='function')api.refresh();setWallet();selectedCommonKey=buy.dataset.v164Buy;renderCommonList();return;} },true);
+    if(closeBtn){close();return;} if(towerOpen){open('common');return;} if(tab){render(tab.dataset.towerPopupTab||'common');return;} if(towerItem){renderTowerDetail(towerItem.dataset.v164Tower);return;} if(commonItem){renderCommonDetail(commonItem.dataset.v164Common);return;} if(plateItem){renderPlateDetail(plateItem.dataset.v164Plate);return;} if(buy){var api=window.TowerDefenseGrowth;if(api&&typeof api.buy==='function')api.buy(buy.dataset.v164Buy);if(api&&typeof api.refresh==='function')api.refresh();setWallet();selectedCommonKey=buy.dataset.v164Buy;renderCommonList();return;} },true);
   document.addEventListener('keydown',function(e){if(e.key==='Escape')close();},true);
 })();
 </script>
@@ -27772,6 +29241,1247 @@ window.addEventListener('DOMContentLoaded', () => {
 <script id="v167-armory-refresh-guard-marker">
 (function(){ window.__armoryControllerRebuildV164 = true; })();
 </script>
+
+<style id="v168-plate-tile-first-image-style">
+/* Match the in-game plate tile look for both the left list and the right detail hero. */
+#towerPopup .v164PlateTile{
+  position:relative !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:74px !important;
+  height:74px !important;
+  padding:0 !important;
+  border-radius:12px !important;
+  clip-path:polygon(14% 0,86% 0,100% 14%,100% 86%,86% 100%,14% 100%,0 86%,0 14%) !important;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(9,20,42,.28) 32%, rgba(3,10,25,.72) 100%) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.03), 0 0 18px rgba(130,216,255,.08) !important;
+  overflow:hidden !important;
+}
+#towerPopup .v164PlateTile::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:6px !important;
+  border-radius:9px !important;
+  clip-path:polygon(14% 0,86% 0,100% 14%,100% 86%,86% 100%,14% 100%,0 86%,0 14%) !important;
+  border:1.5px solid rgba(255,255,255,.18) !important;
+  opacity:.9 !important;
+}
+#towerPopup .v164PlateTile::after{
+  content:"" !important;
+  position:absolute !important;
+  left:18% !important;
+  right:18% !important;
+  top:55% !important;
+  height:1.5px !important;
+  transform:rotate(-39deg) !important;
+  background:linear-gradient(90deg, transparent, rgba(245,248,255,.45), transparent) !important;
+  box-shadow:0 0 8px rgba(245,248,255,.16) !important;
+}
+#towerPopup .v164PlateCode{
+  position:relative !important;
+  z-index:2 !important;
+  font-family:'Orbitron', Pretendard, 'Noto Sans KR', sans-serif !important;
+  font-size:15px !important;
+  font-weight:900 !important;
+  letter-spacing:.06em !important;
+  line-height:1 !important;
+  color:#f5f7fb !important;
+  text-shadow:0 0 10px rgba(255,255,255,.14) !important;
+}
+#towerPopup .v164PlateLabel{
+  position:relative !important;
+  z-index:2 !important;
+  margin-top:12px !important;
+  font-size:10px !important;
+  font-weight:900 !important;
+  letter-spacing:-.03em !important;
+  line-height:1 !important;
+  color:#f3f5fa !important;
+  text-shadow:0 0 8px rgba(255,255,255,.10) !important;
+}
+/* Gold family */
+#towerPopup .v164PlateTile.plate-amp,
+#towerPopup .v164PlateTile.plate-lens,
+#towerPopup .v164PlateTile.plate-mine{
+  border:1.5px solid rgba(241, 198, 79, .68) !important;
+  background:linear-gradient(180deg, rgba(255,233,150,.07), rgba(63,51,10,.12) 28%, rgba(24,20,6,.32) 44%, rgba(11,16,30,.78) 100%) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,237,167,.04), 0 0 18px rgba(236,196,84,.12) !important;
+}
+#towerPopup .v164PlateTile.plate-amp::before,
+#towerPopup .v164PlateTile.plate-lens::before,
+#towerPopup .v164PlateTile.plate-mine::before{
+  border-color:rgba(255, 223, 135, .44) !important;
+}
+#towerPopup .v164PlateTile.plate-amp .v164PlateCode,
+#towerPopup .v164PlateTile.plate-lens .v164PlateCode,
+#towerPopup .v164PlateTile.plate-mine .v164PlateCode,
+#towerPopup .v164PlateTile.plate-amp .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-lens .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-mine .v164PlateLabel{
+  color:#f6d96f !important;
+  text-shadow:0 0 12px rgba(246,217,111,.18) !important;
+}
+/* Violet family */
+#towerPopup .v164PlateTile.plate-coil,
+#towerPopup .v164PlateTile.plate-rift{
+  border:1.5px solid rgba(171, 136, 255, .62) !important;
+  background:linear-gradient(180deg, rgba(219,202,255,.08), rgba(63,40,92,.12) 28%, rgba(24,14,42,.30) 44%, rgba(11,16,30,.78) 100%) !important;
+  box-shadow:inset 0 0 0 1px rgba(229,220,255,.04), 0 0 18px rgba(171,136,255,.11) !important;
+}
+#towerPopup .v164PlateTile.plate-coil::before,
+#towerPopup .v164PlateTile.plate-rift::before{
+  border-color:rgba(208, 190, 255, .40) !important;
+}
+#towerPopup .v164PlateTile.plate-coil .v164PlateCode,
+#towerPopup .v164PlateTile.plate-rift .v164PlateCode,
+#towerPopup .v164PlateTile.plate-coil .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-rift .v164PlateLabel{
+  color:#d7c4ff !important;
+  text-shadow:0 0 12px rgba(215,196,255,.16) !important;
+}
+#towerPopup .plateInfoItem{
+  min-height:90px !important;
+  padding:10px 8px !important;
+}
+#towerPopup .plateInfoItem.active .v164PlateTile{
+  border-color:rgba(92, 240, 255, .90) !important;
+  box-shadow:inset 0 0 0 1px rgba(92, 240, 255, .22), 0 0 18px rgba(92,240,255,.18) !important;
+}
+#towerPopup .v164PlateHero{grid-template-columns:120px minmax(0,1fr) !important; gap:18px !important;}
+#towerPopup .v164PlateHero .v164PlateTile{
+  width:96px !important;
+  height:96px !important;
+}
+#towerPopup .v164PlateHero .v164PlateTile::before{inset:8px !important;}
+#towerPopup .v164PlateHero .v164PlateCode{font-size:24px !important;}
+#towerPopup .v164PlateHero .v164PlateLabel{margin-top:16px !important; font-size:14px !important;}
+@media (max-width:900px){
+  #towerPopup .v164PlateTile{width:66px !important;height:66px !important;}
+  #towerPopup .v164PlateCode{font-size:13px !important;}
+  #towerPopup .v164PlateLabel{font-size:9px !important;}
+  #towerPopup .v164PlateHero .v164PlateTile{width:84px !important;height:84px !important;}
+  #towerPopup .v164PlateHero .v164PlateCode{font-size:20px !important;}
+  #towerPopup .v164PlateHero .v164PlateLabel{font-size:12px !important;}
+}
+@media (max-width:640px){
+  #towerPopup .plateInfoItem{min-height:76px !important; padding:8px 6px !important;}
+  #towerPopup .v164PlateTile{width:52px !important;height:52px !important; border-radius:10px !important;}
+  #towerPopup .v164PlateTile::before{inset:4px !important; border-radius:7px !important;}
+  #towerPopup .v164PlateCode{font-size:11px !important;}
+  #towerPopup .v164PlateLabel{margin-top:8px !important;font-size:8px !important;}
+  #towerPopup .v164PlateHero{grid-template-columns:1fr !important; gap:10px !important;}
+  #towerPopup .v164PlateHero .v164PlateTile{width:76px !important;height:76px !important;}
+  #towerPopup .v164PlateHero .v164PlateCode{font-size:17px !important;}
+  #towerPopup .v164PlateHero .v164PlateLabel{font-size:11px !important;}
+}
+</style>
+
+
+<style id="v170-plate-unified-color-width-fix">
+/* Left list width: keep a fixed lane so icons never look clipped, especially on mobile. */
+#towerPopup .towerPopupBody{
+  grid-template-columns:112px minmax(0,1fr) !important;
+}
+#towerPopup .towerPopupList,
+#towerPopup .towerPopupList.commonList{
+  width:112px !important;
+  min-width:112px !important;
+  max-width:112px !important;
+  flex:0 0 112px !important;
+  align-items:center !important;
+  padding:12px 8px !important;
+  overflow-x:hidden !important;
+}
+#towerPopup .plateInfoItem{
+  width:92px !important;
+  min-width:92px !important;
+  max-width:92px !important;
+  height:92px !important;
+  min-height:92px !important;
+  padding:8px 6px !important;
+  margin:0 auto !important;
+}
+
+/* Unify the plate tile color/style to one clean gold scheme. */
+#towerPopup .v164PlateTile,
+#towerPopup .v164PlateTile.plate-amp,
+#towerPopup .v164PlateTile.plate-coil,
+#towerPopup .v164PlateTile.plate-lens,
+#towerPopup .v164PlateTile.plate-mine,
+#towerPopup .v164PlateTile.plate-rift{
+  position:relative !important;
+  z-index:2 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:76px !important;
+  height:76px !important;
+  border-radius:12px !important;
+  clip-path:polygon(14% 0,86% 0,100% 14%,100% 86%,86% 100%,14% 100%,0 86%,0 14%) !important;
+  border:1.5px solid rgba(241,198,79,.72) !important;
+  background:linear-gradient(180deg, rgba(255,233,150,.07), rgba(63,51,10,.10) 26%, rgba(24,20,6,.26) 42%, rgba(9,16,33,.92) 100%) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,237,167,.04), 0 0 18px rgba(236,196,84,.10) !important;
+  overflow:hidden !important;
+}
+#towerPopup .v164PlateTile::before,
+#towerPopup .v164PlateTile.plate-amp::before,
+#towerPopup .v164PlateTile.plate-coil::before,
+#towerPopup .v164PlateTile.plate-lens::before,
+#towerPopup .v164PlateTile.plate-mine::before,
+#towerPopup .v164PlateTile.plate-rift::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:6px !important;
+  border-radius:9px !important;
+  clip-path:polygon(14% 0,86% 0,100% 14%,100% 86%,86% 100%,14% 100%,0 86%,0 14%) !important;
+  border:1.5px solid rgba(255,223,135,.44) !important;
+  opacity:.96 !important;
+  background:transparent !important;
+}
+#towerPopup .v164PlateTile::after,
+#towerPopup .v164PlateTile.plate-amp::after,
+#towerPopup .v164PlateTile.plate-coil::after,
+#towerPopup .v164PlateTile.plate-lens::after,
+#towerPopup .v164PlateTile.plate-mine::after,
+#towerPopup .v164PlateTile.plate-rift::after{
+  content:"" !important;
+  position:absolute !important;
+  left:18% !important;
+  right:18% !important;
+  top:57% !important;
+  height:1.5px !important;
+  transform:rotate(-39deg) !important;
+  background:linear-gradient(90deg, transparent, rgba(255,235,170,.40), transparent) !important;
+  box-shadow:0 0 8px rgba(255,235,170,.12) !important;
+}
+#towerPopup .v164PlateCode,
+#towerPopup .v164PlateTile.plate-amp .v164PlateCode,
+#towerPopup .v164PlateTile.plate-coil .v164PlateCode,
+#towerPopup .v164PlateTile.plate-lens .v164PlateCode,
+#towerPopup .v164PlateTile.plate-mine .v164PlateCode,
+#towerPopup .v164PlateTile.plate-rift .v164PlateCode,
+#towerPopup .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-amp .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-coil .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-lens .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-mine .v164PlateLabel,
+#towerPopup .v164PlateTile.plate-rift .v164PlateLabel{
+  position:relative !important;
+  z-index:3 !important;
+  color:#f6d96f !important;
+  text-shadow:0 0 10px rgba(246,217,111,.14) !important;
+}
+#towerPopup .v164PlateCode{
+  font-size:15px !important;
+  font-weight:900 !important;
+  letter-spacing:.05em !important;
+  line-height:1 !important;
+}
+#towerPopup .v164PlateLabel{
+  margin-top:11px !important;
+  font-size:10px !important;
+  font-weight:900 !important;
+  letter-spacing:-.03em !important;
+  line-height:1 !important;
+}
+/* Remove the distorted ellipse feeling; use a clean centered circle accent. */
+#towerPopup .v164PlateTile > .v164PlateCode::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:46px;
+  height:46px;
+  transform:translate(-50%,-38%);
+  border-radius:50%;
+  border:1px solid rgba(255,226,145,.24);
+  opacity:.55;
+  z-index:-1;
+}
+
+#towerPopup .plateInfoItem.active .v164PlateTile{
+  border-color:rgba(92,240,255,.90) !important;
+  box-shadow:inset 0 0 0 1px rgba(92,240,255,.22), 0 0 18px rgba(92,240,255,.18) !important;
+}
+
+#towerPopup .v164PlateHero .v164PlateTile{
+  width:96px !important;
+  height:96px !important;
+}
+#towerPopup .v164PlateHero .v164PlateTile::before{inset:8px !important;}
+#towerPopup .v164PlateHero .v164PlateCode{font-size:24px !important;}
+#towerPopup .v164PlateHero .v164PlateLabel{margin-top:15px !important; font-size:14px !important;}
+#towerPopup .v164PlateHero .v164PlateTile > .v164PlateCode::before{
+  width:58px; height:58px; transform:translate(-50%,-36%);
+}
+
+@media (max-width:900px){
+  #towerPopup .towerPopupBody{grid-template-columns:96px minmax(0,1fr) !important;}
+  #towerPopup .towerPopupList,#towerPopup .towerPopupList.commonList{width:96px !important; min-width:96px !important; max-width:96px !important; flex-basis:96px !important; padding:10px 6px !important;}
+  #towerPopup .plateInfoItem{width:80px !important; min-width:80px !important; max-width:80px !important; height:80px !important; min-height:80px !important;}
+  #towerPopup .v164PlateTile{width:66px !important; height:66px !important;}
+  #towerPopup .v164PlateCode{font-size:13px !important;}
+  #towerPopup .v164PlateLabel{font-size:9px !important;}
+  #towerPopup .v164PlateTile > .v164PlateCode::before{width:40px;height:40px;}
+}
+@media (max-width:640px){
+  #towerPopup .towerPopupBody{grid-template-columns:86px minmax(0,1fr) !important;}
+  #towerPopup .towerPopupList,#towerPopup .towerPopupList.commonList{width:86px !important; min-width:86px !important; max-width:86px !important; flex-basis:86px !important; padding:8px 4px !important;}
+  #towerPopup .plateInfoItem{width:74px !important; min-width:74px !important; max-width:74px !important; height:74px !important; min-height:74px !important; padding:6px 4px !important;}
+  #towerPopup .v164PlateTile{width:60px !important;height:60px !important;border-radius:10px !important;}
+  #towerPopup .v164PlateTile::before{inset:5px !important;border-radius:7px !important;}
+  #towerPopup .v164PlateCode{font-size:12px !important;}
+  #towerPopup .v164PlateLabel{margin-top:9px !important;font-size:8px !important;}
+  #towerPopup .v164PlateTile > .v164PlateCode::before{width:36px;height:36px;}
+  #towerPopup .v164PlateHero{grid-template-columns:1fr !important; gap:10px !important;}
+  #towerPopup .v164PlateHero .v164PlateTile{width:76px !important;height:76px !important;}
+  #towerPopup .v164PlateHero .v164PlateCode{font-size:18px !important;}
+  #towerPopup .v164PlateHero .v164PlateLabel{font-size:11px !important;}
+}
+</style>
+
+
+<style id="v171-plate-active-ring-remove">
+/* Remove only the circular accent from the selected plate tile in the left list. */
+#towerPopup .plateInfoItem.active .v164PlateTile > .v164PlateCode::before{
+  display:none !important;
+  content:none !important;
+}
+</style>
+
+
+<style id="v172-plate-ring-remove-list-size-unify">
+/* 1) Remove the circular ring/accent from the LEFT plate list tiles completely. */
+#towerPopup .towerPopupList .v164PlateTile > .v164PlateCode::before,
+#towerPopup .towerPopupList .v164PlateTile::selection {
+  display:none !important;
+  content:none !important;
+}
+
+/* 2) Keep the left list lane the same size across tabs (tower / common / plate). */
+#towerPopup .towerPopupBody,
+#towerPopup[data-active-tab="common"] .towerPopupBody,
+#towerPopup[data-active-tab="plate"] .towerPopupBody{
+  grid-template-columns:104px minmax(0,1fr) !important;
+  gap:12px !important;
+}
+#towerPopup .towerPopupList,
+#towerPopup .towerPopupList.commonList{
+  width:104px !important;
+  min-width:104px !important;
+  max-width:104px !important;
+  flex:0 0 104px !important;
+  padding:10px 8px !important;
+  gap:10px !important;
+  align-items:center !important;
+}
+#towerPopup .towerPopupItem,
+#towerPopup .commonResearchItem,
+#towerPopup .plateInfoItem{
+  width:80px !important;
+  min-width:80px !important;
+  max-width:80px !important;
+  height:88px !important;
+  min-height:88px !important;
+  margin:0 auto !important;
+}
+#towerPopup .towerPopupThumb,
+#towerPopup .towerPopupThumb img{
+  width:54px !important;
+  height:54px !important;
+}
+#towerPopup .commonResearchImg{width:42px !important; height:42px !important;}
+#towerPopup .v164PlateTile{width:66px !important; height:66px !important;}
+#towerPopup .v164PlateCode{font-size:13px !important;}
+#towerPopup .v164PlateLabel{font-size:9px !important; margin-top:9px !important;}
+
+/* mobile */
+@media (max-width:640px){
+  #towerPopup .towerPopupBody,
+  #towerPopup[data-active-tab="common"] .towerPopupBody,
+  #towerPopup[data-active-tab="plate"] .towerPopupBody{
+    grid-template-columns:84px minmax(0,1fr) !important;
+    gap:8px !important;
+  }
+  #towerPopup .towerPopupList,
+  #towerPopup .towerPopupList.commonList{
+    width:84px !important;
+    min-width:84px !important;
+    max-width:84px !important;
+    flex-basis:84px !important;
+    padding:8px 4px !important;
+    gap:8px !important;
+  }
+  #towerPopup .towerPopupItem,
+  #towerPopup .commonResearchItem,
+  #towerPopup .plateInfoItem{
+    width:68px !important;
+    min-width:68px !important;
+    max-width:68px !important;
+    height:74px !important;
+    min-height:74px !important;
+  }
+  #towerPopup .towerPopupThumb,
+  #towerPopup .towerPopupThumb img{width:42px !important; height:42px !important;}
+  #towerPopup .commonResearchImg{width:32px !important; height:32px !important;}
+  #towerPopup .v164PlateTile{width:56px !important; height:56px !important;}
+  #towerPopup .v164PlateCode{font-size:11px !important;}
+  #towerPopup .v164PlateLabel{font-size:8px !important; margin-top:8px !important;}
+}
+</style>
+
+
+<style id="v173-left-list-square-remove-circle">
+/* Make the left list buttons true square tiles across tabs. */
+#towerPopup .towerPopupItem,
+#towerPopup .commonResearchItem,
+#towerPopup .plateInfoItem{
+  width:88px !important;
+  height:88px !important;
+  min-width:88px !important;
+  min-height:88px !important;
+  max-width:88px !important;
+  max-height:88px !important;
+  border-radius:0 !important;
+  clip-path:none !important;
+  padding:0 !important;
+}
+/* Remove the circular background art inside tower/common list items. */
+#towerPopup .towerPopupItem::before,
+#towerPopup .commonResearchItem::before{
+  display:none !important;
+  content:none !important;
+  background:none !important;
+  border:0 !important;
+}
+/* Keep a clean square frame look. */
+#towerPopup .towerPopupItem,
+#towerPopup .commonResearchItem{
+  background:linear-gradient(180deg, rgba(5,18,38,.92), rgba(2,9,21,.98)) !important;
+  border:1px solid rgba(80,214,255,.22) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.03) !important;
+}
+#towerPopup .towerPopupItem.active,
+#towerPopup .commonResearchItem.active,
+#towerPopup .plateInfoItem.active{
+  border-color:rgba(97,239,255,.82) !important;
+  box-shadow:0 0 0 1px rgba(97,239,255,.38) inset, 0 0 18px rgba(67,219,255,.16) !important;
+}
+/* Remove clipped/rounded look from the active side accent too. */
+#towerPopup .towerPopupItem.active::after,
+#towerPopup .commonResearchItem.active::after{
+  border-radius:0 !important;
+}
+/* Hide blurred locked preview art so no round ghost icon remains. */
+#towerPopup .towerPopupItem.locked img,
+#towerPopup .commonResearchItem.locked img{
+  opacity:0 !important;
+  filter:none !important;
+}
+/* Center icon area on a square canvas. */
+#towerPopup .towerPopupThumb{
+  width:62px !important;
+  height:62px !important;
+  border-radius:0 !important;
+}
+#towerPopup .towerPopupThumb img{
+  width:62px !important;
+  height:62px !important;
+  object-fit:contain !important;
+}
+#towerPopup .commonResearchItem img.commonResearchImg,
+#towerPopup .commonResearchImg{
+  width:50px !important;
+  height:50px !important;
+}
+/* Mobile: same shape rule, slightly smaller but still square. */
+@media (max-width:640px){
+  #towerPopup .towerPopupItem,
+  #towerPopup .commonResearchItem,
+  #towerPopup .plateInfoItem{
+    width:66px !important;
+    height:66px !important;
+    min-width:66px !important;
+    min-height:66px !important;
+    max-width:66px !important;
+    max-height:66px !important;
+  }
+  #towerPopup .towerPopupThumb{
+    width:44px !important;
+    height:44px !important;
+  }
+  #towerPopup .towerPopupThumb img{
+    width:44px !important;
+    height:44px !important;
+  }
+  #towerPopup .commonResearchItem img.commonResearchImg,
+  #towerPopup .commonResearchImg{
+    width:34px !important;
+    height:34px !important;
+  }
+}
+</style>
+
+
+<style id="v174-restore-locked-blurred-icons">
+/* Restore blurred preview icons for locked/inactive items. */
+#towerPopup .towerPopupItem.locked img,
+#towerPopup .commonResearchItem.locked img{
+  opacity:.46 !important;
+  filter:grayscale(1) brightness(.32) blur(1.2px) !important;
+}
+#towerPopup .towerPopupItem.locked .towerPopupThumb img,
+#towerPopup .commonResearchItem.locked img.commonResearchImg,
+#towerPopup .commonResearchItem.locked .commonResearchImg{
+  opacity:.46 !important;
+  filter:grayscale(1) brightness(.32) blur(1.2px) !important;
+}
+</style>
+
+
+<style id="v175-keep-lock-on-active-locked-items">
+/* Keep the lock icon visible even when a locked item is selected/active. */
+#towerPopup .towerPopupItem.locked.active::after,
+#towerPopup .commonResearchItem.locked.active::after{
+  content:"🔒" !important;
+  display:grid !important;
+  place-items:center !important;
+  position:absolute !important;
+  right:8px !important;
+  bottom:6px !important;
+  left:auto !important;
+  top:auto !important;
+  width:auto !important;
+  height:auto !important;
+  z-index:12 !important;
+  background:none !important;
+  border:none !important;
+  border-radius:0 !important;
+  font-size:21px !important;
+  line-height:1 !important;
+  color:#f8d783 !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  filter:drop-shadow(0 0 8px rgba(248,215,131,.18)) !important;
+}
+/* Prevent active highlight layers from visually swallowing the lock area. */
+#towerPopup .towerPopupItem.locked.active,
+#towerPopup .commonResearchItem.locked.active{
+  overflow:visible !important;
+}
+</style>
+
+
+<style id="v176-lock-badge-consistent-active-inactive">
+/* Keep the lock badge exactly the same in inactive and active locked states. */
+#towerPopup .towerPopupItem.locked::after,
+#towerPopup .towerPopupItem.locked.active::after,
+#towerPopup .commonResearchItem.locked::after,
+#towerPopup .commonResearchItem.locked.active::after{
+  content:"🔒" !important;
+  position:absolute !important;
+  right:8px !important;
+  bottom:6px !important;
+  left:auto !important;
+  top:auto !important;
+  width:22px !important;
+  height:22px !important;
+  display:grid !important;
+  place-items:center !important;
+  margin:0 !important;
+  padding:0 !important;
+  transform:none !important;
+  z-index:12 !important;
+  background:none !important;
+  border:none !important;
+  border-radius:0 !important;
+  font-size:18px !important;
+  line-height:1 !important;
+  color:#f8d783 !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  box-shadow:none !important;
+  filter:drop-shadow(0 0 8px rgba(248,215,131,.18)) !important;
+}
+/* Active locked item keeps the same lock badge, only the tile border/highlight changes. */
+#towerPopup .towerPopupItem.locked.active,
+#towerPopup .commonResearchItem.locked.active{
+  border-color:rgba(97,239,255,.82) !important;
+  box-shadow:0 0 18px rgba(67,219,255,.12), 0 0 0 1px rgba(255,255,255,.04) inset !important;
+}
+</style>
+
+
+<style id="v177-armory-close-button-polish">
+/* Premium redesign for the Tower Armory close button. */
+#towerPopup .towerPopupClose{
+  position:absolute !important;
+  left:0 !important;
+  top:180px !important;
+  width:78px !important;
+  height:78px !important;
+  min-height:78px !important;
+  padding:0 !important;
+  margin:0 !important;
+  display:block !important;
+  overflow:hidden !important;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(190,245,255,.24), transparent 34%),
+    linear-gradient(180deg, rgba(10,37,62,.98), rgba(3,12,28,.99)) !important;
+  border:1px solid rgba(101,225,255,.42) !important;
+  clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 18px,100% calc(100% - 18px),calc(100% - 18px) 100%,18px 100%,0 calc(100% - 18px),0 18px) !important;
+  border-radius:0 !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.05),
+    inset 0 -12px 24px rgba(0,0,0,.22),
+    0 0 18px rgba(60,220,255,.12) !important;
+  color:transparent !important;
+  font-size:0 !important;
+}
+#towerPopup .towerPopupClose::before,
+#towerPopup .towerPopupClose::after{
+  content:"" !important;
+  position:absolute !important;
+  left:50% !important;
+  top:50% !important;
+  width:30px !important;
+  height:6px !important;
+  margin-left:-15px !important;
+  margin-top:-3px !important;
+  border-radius:999px !important;
+  background:linear-gradient(90deg, rgba(255,255,255,.96), rgba(232,247,255,.98), rgba(255,255,255,.96)) !important;
+  box-shadow:
+    0 0 12px rgba(255,255,255,.10),
+    0 0 18px rgba(95,234,255,.18) !important;
+}
+#towerPopup .towerPopupClose::before{
+  transform:rotate(45deg) !important;
+}
+#towerPopup .towerPopupClose::after{
+  transform:rotate(-45deg) !important;
+}
+#towerPopup .towerPopupClose:hover{
+  border-color:rgba(118,235,255,.68) !important;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(210,248,255,.28), transparent 36%),
+    linear-gradient(180deg, rgba(12,47,77,.99), rgba(3,15,34,1)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.06),
+    inset 0 -12px 24px rgba(0,0,0,.22),
+    0 0 24px rgba(66,226,255,.18) !important;
+}
+#towerPopup .towerPopupClose:active{
+  transform:translateY(1px) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.04),
+    inset 0 6px 18px rgba(0,0,0,.22),
+    0 0 14px rgba(66,226,255,.12) !important;
+}
+/* subtle inner frame to make the button feel less plain */
+#towerPopup .towerPopupClose span,
+#towerPopup .towerPopupClose i{display:none !important;}
+#towerPopup .towerPopupClose > *{pointer-events:none !important;}
+#towerPopup .towerPopupClose{
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)),
+    linear-gradient(90deg, rgba(102,232,255,.18) 0 2px, transparent 2px calc(100% - 2px), rgba(102,232,255,.18) calc(100% - 2px) 100%),
+    linear-gradient(180deg, rgba(102,232,255,.18) 0 2px, transparent 2px calc(100% - 2px), rgba(102,232,255,.18) calc(100% - 2px) 100%),
+    radial-gradient(circle at 50% 38%, rgba(190,245,255,.22), transparent 34%),
+    linear-gradient(180deg, rgba(10,37,62,.98), rgba(3,12,28,.99)) !important;
+  background-size:100% 100%, calc(100% - 22px) calc(100% - 22px), calc(100% - 22px) calc(100% - 22px), 100% 100%, 100% 100% !important;
+  background-position:center center, center center, center center, center center, center center !important;
+  background-repeat:no-repeat !important;
+}
+@media (max-width:640px){
+  #towerPopup .towerPopupClose{
+    width:66px !important;
+    height:66px !important;
+    min-height:66px !important;
+    clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px) !important;
+  }
+  #towerPopup .towerPopupClose::before,
+  #towerPopup .towerPopupClose::after{
+    width:25px !important;
+    height:5px !important;
+    margin-left:-12.5px !important;
+    margin-top:-2.5px !important;
+  }
+}
+</style>
+
+
+<style id="v178-armory-wallet-header-overlap-fix">
+/* Fix armory shard wallet jumping upward and covering the title. */
+#towerPopup .towerPopupHeader{
+  min-height:132px !important;
+  row-gap:14px !important;
+  align-items:start !important;
+}
+#towerPopup .towerPopupHeader > div:first-child{
+  align-self:start !important;
+}
+#towerPopup .towerPopupKicker{
+  margin-bottom:8px !important;
+}
+#towerPopup .towerPopupTitle{
+  line-height:1.02 !important;
+}
+#towerPopup .towerPopupWallet{
+  grid-column:1 / 3 !important;
+  grid-row:2 / 3 !important;
+  justify-self:start !important;
+  align-self:start !important;
+  margin-top:8px !important;
+  position:relative !important;
+  top:auto !important;
+  right:auto !important;
+  left:auto !important;
+  bottom:auto !important;
+  z-index:2 !important;
+}
+#towerPopup .towerWalletItem{
+  margin:0 !important;
+}
+@media (max-width: 720px){
+  #towerPopup .towerPopupHeader{
+    min-height:120px !important;
+    row-gap:10px !important;
+  }
+  #towerPopup .towerPopupWallet{
+    margin-top:4px !important;
+  }
+}
+</style>
+
+
+<style id="v179-armory-close-button-position-fix">
+/* Re-anchor the close button to the top-right so it doesn't sag downward. */
+#towerPopup .towerPopupClose{
+  position:absolute !important;
+  top:8px !important;
+  right:6px !important;
+  left:auto !important;
+  bottom:auto !important;
+  margin:0 !important;
+  z-index:6 !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerPopupClose{
+    top:4px !important;
+    right:2px !important;
+  }
+}
+</style>
+
+
+<style id="v180-armory-header-wallet-no-overlap-final">
+/* Final header layout lock: keep title and shard wallet on separate rows with reserved close-button space. */
+#towerPopup .towerPopupHeader{
+  position:relative !important;
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) auto !important;
+  grid-template-rows:auto auto !important;
+  align-items:start !important;
+  column-gap:12px !important;
+  row-gap:10px !important;
+  left:16px !important;
+  right:16px !important;
+  top:16px !important;
+  height:auto !important;
+  min-height:148px !important;
+  padding:18px 92px 14px 16px !important;
+  box-sizing:border-box !important;
+}
+#towerPopup .towerPopupHeader > div:first-child{
+  grid-column:1 / 2 !important;
+  grid-row:1 / 2 !important;
+  align-self:start !important;
+  min-width:0 !important;
+}
+#towerPopup .towerPopupKicker{
+  margin:0 0 6px 0 !important;
+}
+#towerPopup .towerPopupTitle{
+  position:relative !important;
+  top:auto !important;
+  left:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  margin:0 !important;
+  font-size:24px !important;
+  line-height:1.04 !important;
+  max-width:100% !important;
+  white-space:normal !important;
+}
+#towerPopup .towerPopupWallet{
+  position:relative !important;
+  top:auto !important;
+  right:auto !important;
+  left:auto !important;
+  bottom:auto !important;
+  grid-column:1 / 2 !important;
+  grid-row:2 / 3 !important;
+  justify-self:start !important;
+  align-self:start !important;
+  margin:0 !important;
+  gap:6px !important;
+  max-width:calc(100% - 6px) !important;
+  z-index:2 !important;
+}
+#towerPopup .towerWalletItem,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+  width:136px !important;
+  min-width:136px !important;
+  max-width:136px !important;
+  height:38px !important;
+  grid-template-columns:18px minmax(38px,1fr) auto !important;
+  gap:6px !important;
+  padding:0 8px !important;
+}
+#towerPopup .towerWalletItem::before,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+  width:18px !important;
+  height:18px !important;
+  min-width:18px !important;
+}
+#towerPopup .towerWalletItem span,
+#towerPopup .towerPopupWallet > span{
+  font-size:9px !important;
+}
+#towerPopup .towerWalletItem b,
+#towerPopup .towerPopupWallet > b{
+  font-size:14px !important;
+  min-width:18px !important;
+}
+@media (min-width: 721px){
+  #towerPopup .towerPopupHeader{
+    left:34px !important;
+    right:34px !important;
+    top:28px !important;
+    min-height:164px !important;
+    padding:20px 108px 16px 0 !important;
+  }
+  #towerPopup .towerPopupTitle{
+    font-size:38px !important;
+  }
+  #towerPopup .towerPopupWallet{
+    margin-top:4px !important;
+  }
+  #towerPopup .towerWalletItem,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+    width:184px !important;
+    min-width:184px !important;
+    max-width:184px !important;
+    height:48px !important;
+    grid-template-columns:24px minmax(54px,1fr) auto !important;
+    gap:8px !important;
+    padding:0 12px !important;
+  }
+  #towerPopup .towerWalletItem::before,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+    width:24px !important;
+    height:24px !important;
+    min-width:24px !important;
+  }
+  #towerPopup .towerWalletItem span,
+  #towerPopup .towerPopupWallet > span{font-size:11px !important;}
+  #towerPopup .towerWalletItem b,
+  #towerPopup .towerPopupWallet > b{font-size:19px !important;}
+}
+</style>
+
+
+<style id="v181-armory-top-alignment-clean">
+/* Clean, stable top alignment for armory header. */
+#towerPopup .towerPopupHeader{
+  position:relative !important;
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  grid-template-rows:auto auto !important;
+  align-items:start !important;
+  justify-items:start !important;
+  left:0 !important;
+  right:0 !important;
+  top:0 !important;
+  height:auto !important;
+  min-height:132px !important;
+  padding:28px 124px 14px 34px !important;
+  margin:0 !important;
+  row-gap:10px !important;
+  box-sizing:border-box !important;
+  overflow:visible !important;
+}
+#towerPopup .towerPopupHeader::after{
+  left:34px !important;
+  right:34px !important;
+}
+#towerPopup .towerPopupHeader > div:first-child{
+  display:block !important;
+  width:100% !important;
+  min-width:0 !important;
+  align-self:start !important;
+}
+#towerPopup .towerPopupKicker{
+  margin:0 0 8px 0 !important;
+  font-size:12px !important;
+  line-height:1 !important;
+}
+#towerPopup .towerPopupTitle{
+  position:relative !important;
+  top:auto !important;
+  left:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  display:block !important;
+  margin:0 !important;
+  font-size:34px !important;
+  line-height:1.02 !important;
+  letter-spacing:-0.05em !important;
+  white-space:nowrap !important;
+  max-width:100% !important;
+}
+#towerPopup .towerPopupWallet{
+  position:relative !important;
+  top:auto !important;
+  right:auto !important;
+  left:auto !important;
+  bottom:auto !important;
+  grid-column:1 / 2 !important;
+  grid-row:2 / 3 !important;
+  justify-self:start !important;
+  align-self:start !important;
+  display:flex !important;
+  margin:0 !important;
+  padding:0 !important;
+  gap:8px !important;
+  width:auto !important;
+  max-width:calc(100% - 12px) !important;
+}
+#towerPopup .towerWalletItem,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+  width:168px !important;
+  min-width:168px !important;
+  max-width:168px !important;
+  height:42px !important;
+  grid-template-columns:20px minmax(54px,1fr) auto !important;
+  gap:8px !important;
+  padding:0 10px !important;
+}
+#towerPopup .towerWalletItem::before,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+  width:20px !important;
+  height:20px !important;
+  min-width:20px !important;
+}
+#towerPopup .towerWalletItem span,
+#towerPopup .towerPopupWallet > span{
+  font-size:10px !important;
+}
+#towerPopup .towerWalletItem b,
+#towerPopup .towerPopupWallet > b{
+  font-size:16px !important;
+  min-width:18px !important;
+}
+#towerPopup .towerPopupClose{
+  position:absolute !important;
+  top:24px !important;
+  right:34px !important;
+  left:auto !important;
+  bottom:auto !important;
+  margin:0 !important;
+  z-index:8 !important;
+}
+#towerPopup .towerPopupTabs{
+  margin-top:0 !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerPopupHeader{
+    min-height:120px !important;
+    padding:18px 84px 10px 16px !important;
+    row-gap:8px !important;
+  }
+  #towerPopup .towerPopupHeader::after{
+    left:16px !important;
+    right:16px !important;
+  }
+  #towerPopup .towerPopupKicker{
+    margin-bottom:6px !important;
+    font-size:9px !important;
+  }
+  #towerPopup .towerPopupTitle{
+    font-size:25px !important;
+    white-space:normal !important;
+    max-width:calc(100% - 6px) !important;
+  }
+  #towerPopup .towerPopupWallet{
+    max-width:calc(100% - 6px) !important;
+  }
+  #towerPopup .towerWalletItem,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+    width:136px !important;
+    min-width:136px !important;
+    max-width:136px !important;
+    height:38px !important;
+    grid-template-columns:18px minmax(40px,1fr) auto !important;
+    gap:6px !important;
+    padding:0 8px !important;
+  }
+  #towerPopup .towerWalletItem::before,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+    width:18px !important;
+    height:18px !important;
+    min-width:18px !important;
+  }
+  #towerPopup .towerWalletItem span,
+  #towerPopup .towerPopupWallet > span{font-size:9px !important;}
+  #towerPopup .towerWalletItem b,
+  #towerPopup .towerPopupWallet > b{font-size:14px !important;}
+  #towerPopup .towerPopupClose{
+    top:14px !important;
+    right:16px !important;
+  }
+}
+</style>
+
+
+<style id="v184-stage-map-bg-fill-balance-8-10">
+/* Apply the stage-map background fill fix directly on v184 for stages 8 (gravity) and 10 (time). */
+#stageMap .stageBg.gravity{
+  left:-8% !important;
+  right:auto !important;
+  bottom:-10% !important;
+  width:104% !important;
+  height:78% !important;
+  background-position:center center !important;
+  background-size:cover !important;
+}
+#stageMap .stageBg.time{
+  left:-6% !important;
+  right:auto !important;
+  top:-8% !important;
+  width:110% !important;
+  height:74% !important;
+  background-position:center center !important;
+  background-size:cover !important;
+}
+#stageMap[data-selected="8"] .stageBg.gravity,
+#stageMap[data-selected="10"] .stageBg.time{
+  opacity:.82 !important;
+}
+@media (max-width: 900px), (max-aspect-ratio: 0.78){
+  #stageMap .stageBg.gravity{
+    left:-12% !important;
+    bottom:-6% !important;
+    width:112% !important;
+    height:76% !important;
+  }
+  #stageMap .stageBg.time{
+    left:-10% !important;
+    top:-4% !important;
+    width:116% !important;
+    height:74% !important;
+  }
+}
+</style>
+
+<script id="v184-custom-bgm-entry-autoplay">
+(function(){
+  'use strict';
+  function safe(fn){ try{return fn();}catch(e){ console.warn('[custom bgm]', e); } }
+  function visible(id){
+    var el=document.getElementById(id);
+    if(!el) return false;
+    var cs=getComputedStyle(el);
+    return cs.display!=='none' && cs.visibility!=='hidden' && Number(cs.opacity||1)!==0;
+  }
+  function initAndEnable(){
+    safe(function(){ if(typeof initAudio==='function' && (typeof audio==='undefined' || !audio)) initAudio(); });
+    safe(function(){ if(typeof audio!=='undefined' && audio){ audio.on=true; audio.unlocked=true; } });
+    safe(function(){ if(typeof META!=='undefined' && META && META.settings){ META.settings.bgm=true; } });
+    safe(function(){ if(typeof updateAudioButton==='function') updateAudioButton(); });
+  }
+  function play(kind){
+    initAndEnable();
+    safe(function(){
+      if(kind==='battle'){
+        if(typeof playStageBgm==='function') playStageBgm();
+      }else{
+        if(typeof playMapBgm==='function') playMapBgm();
+      }
+    });
+  }
+  function bind(){
+    document.addEventListener('click', function(e){
+      var t=e.target;
+      if(!t || !t.closest) return;
+      if(t.closest('#stageEnterBtn, [data-stage-enter], .stageEnterBtn')){
+        play('battle');
+        setTimeout(function(){ play('battle'); }, 90);
+        setTimeout(function(){ play('battle'); }, 420);
+      }else if(t.closest('#stageMapBack, #stageMap, #galaxyMap, [data-stage], [data-constellation-jump]')){
+        setTimeout(function(){ play('map'); }, 0);
+      }
+    }, true);
+    setTimeout(function(){
+      if(visible('stageMap') || visible('galaxyMap')) play('map');
+    }, 350);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind, {once:true});
+  else bind();
+})();
+</script>
+
+
+<script id="v191-boss-bgm-return-and-autostart">
+(function(){
+  'use strict';
+  function safe(fn){ try{return fn();}catch(e){ console.warn('[v191 bgm]', e); } }
+  function visible(id){
+    var el=document.getElementById(id);
+    if(!el) return false;
+    var cs=getComputedStyle(el);
+    return cs.display!=='none' && cs.visibility!=='hidden' && Number(cs.opacity||1)!==0;
+  }
+  function srcIsBoss(src){
+    src=String(src||'').toLowerCase();
+    return src.indexOf('boss')>=0 || src.indexOf('beneath_the_iron')>=0;
+  }
+  function ensureAudioOn(){
+    safe(function(){ if(typeof initAudio==='function' && (typeof audio==='undefined' || !audio)) initAudio(); });
+    safe(function(){ if(typeof audio!=='undefined' && audio){ audio.on=true; audio.unlocked=true; } });
+    safe(function(){ if(typeof META!=='undefined' && META && META.settings){ META.settings.bgm=true; } });
+    safe(function(){ if(typeof updateAudioButton==='function') updateAudioButton(); });
+  }
+  function currentSrc(){ try{return audio && audio.bgmSrc || '';}catch(e){return '';} }
+  function stageBaseSrc(){
+    try{
+      var bgm=AUDIO_URLS && AUDIO_URLS.bgm;
+      var arr=(bgm && bgm.stages) || [];
+      var theme=0;
+      if(typeof S!=='undefined' && S && Number.isFinite(Number(S.theme))) theme=Number(S.theme);
+      return arr.length ? arr[theme % arr.length] : (bgm.map || bgm.main || 'audio/bgm_battle_sentinels_of_the_ember.ogg');
+    }catch(e){ return 'audio/bgm_battle_sentinels_of_the_ember.ogg'; }
+  }
+  function playBattleNormal(){
+    ensureAudioOn();
+    safe(function(){ if(typeof playBgmSrc==='function') playBgmSrc(stageBaseSrc(), .34); });
+  }
+  function playMapNormal(){
+    ensureAudioOn();
+    safe(function(){
+      if(typeof playMapBgm==='function') playMapBgm();
+      else if(typeof playBgmSrc==='function' && typeof AUDIO_URLS!=='undefined') playBgmSrc(AUDIO_URLS.bgm && (AUDIO_URLS.bgm.map || AUDIO_URLS.bgm.main), .30);
+    });
+  }
+  function enemyAlive(e){
+    if(!e) return false;
+    if(e.dead || e.removed || e.gone || e.done || e._dead) return false;
+    if(Number.isFinite(Number(e.hp)) && Number(e.hp)<=0) return false;
+    if(Number.isFinite(Number(e.health)) && Number(e.health)<=0) return false;
+    return true;
+  }
+  function enemyIsBoss(e){
+    if(!e) return false;
+    if(e.isBoss || e.boss || e.bossType || e.bossInfo || e.finalBoss || e.midBoss) return true;
+    var s=[e.type,e.kind,e.role,e.tier,e.name,e.id,e.key,e.label,e.className].join(' ').toLowerCase();
+    return /boss|overmind|warden|lord|보스|군주|심핵|왕좌/.test(s);
+  }
+  function enemyLists(){
+    var out=[];
+    safe(function(){ if(typeof enemies!=='undefined' && Array.isArray(enemies)) out.push(enemies); });
+    safe(function(){ ['enemies','enemyList','mobs'].forEach(function(k){ if(Array.isArray(window[k])) out.push(window[k]); }); });
+    safe(function(){ if(typeof S!=='undefined' && S){ ['enemies','enemyList','mobs'].forEach(function(k){ if(Array.isArray(S[k])) out.push(S[k]); }); } });
+    return out;
+  }
+  function hasAliveBoss(){
+    var lists=enemyLists();
+    for(var i=0;i<lists.length;i++){
+      for(var j=0;j<lists[i].length;j++){
+        if(enemyAlive(lists[i][j]) && enemyIsBoss(lists[i][j])) return true;
+      }
+    }
+    return false;
+  }
+  function recover(){
+    ensureAudioOn();
+    var src=currentSrc();
+    if(visible('game') || visible('field')){
+      if(srcIsBoss(src) && !hasAliveBoss()) playBattleNormal();
+      else if(!src) playBattleNormal();
+    }else if(visible('stageMap') || visible('galaxyMap') || visible('menu')){
+      if(!src || srcIsBoss(src)) playMapNormal();
+    }
+  }
+  function autoStart(){
+    ensureAudioOn();
+    if(visible('game') || visible('field')) playBattleNormal();
+    else playMapNormal();
+    setTimeout(recover, 160);
+  }
+  function wrap(name){
+    safe(function(){
+      var fn=window[name];
+      if(typeof fn!=='function' || fn.__v191BgmWrapped) return;
+      var w=function(){
+        var r=fn.apply(this, arguments);
+        setTimeout(recover, 0);
+        setTimeout(recover, 260);
+        setTimeout(recover, 900);
+        return r;
+      };
+      w.__v191BgmWrapped=true;
+      window[name]=w;
+    });
+  }
+  function bind(){
+    ['completeStageFromBattle','showStageClear','showGameOver','showStageMap','showGalaxyMapClean','enterMilkyRiftClean','returnMainFromGalaxyClean','nextWave','endWave','finishWave','clearWave'].forEach(wrap);
+    ['pointerdown','click','touchstart','keydown'].forEach(function(ev){
+      document.addEventListener(ev, autoStart, {once:true, capture:true});
+    });
+    document.addEventListener('visibilitychange', function(){ if(!document.hidden) setTimeout(autoStart,120); });
+    setTimeout(autoStart, 120);
+    setTimeout(autoStart, 700);
+    setTimeout(recover, 1600);
+    setInterval(recover, 500);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind, {once:true});
+  else bind();
+})();
+</script>
+
+
+<style id="v193-topright-icons-final-override">
+/* v193: keep quick-button footprint, enlarge only the rendered icon asset noticeably */
+#field .fieldTopControls #towerMenuBtn,
+#field .fieldTopControls #audioBtn{
+  overflow: visible !important;
+}
+#field .fieldTopControls #towerMenuBtn img,
+#field .fieldTopControls #audioBtn img{
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  transform: scale(1.26) !important;
+  transform-origin: center center !important;
+}
+@media (max-width: 768px){
+  #field .fieldTopControls #towerMenuBtn img,
+  #field .fieldTopControls #audioBtn img{
+    transform: scale(1.30) !important;
+  }
+}
+@media (max-width: 430px){
+  #field .fieldTopControls #towerMenuBtn img,
+  #field .fieldTopControls #audioBtn img{
+    transform: scale(1.34) !important;
+  }
+}
+</style>
 </body>
 </html>
 
@@ -28720,7 +31430,7 @@ window.addEventListener('DOMContentLoaded', () => {
    Keep the old square stageTowerManageBtn removed; use a separate circular stack instead. */
 #stageMap .stageQuickControls{
   position:absolute !important;
-  top:8px !important;
+  top:26px !important;
   right:8px !important;
   left:auto !important;
   bottom:auto !important;
@@ -28756,8 +31466,8 @@ window.addEventListener('DOMContentLoaded', () => {
   transform:none !important;
 }
 #stageMap .stageQuickBtn img{
-  width:15px !important;
-  height:15px !important;
+  width:20px !important;
+  height:20px !important;
   object-fit:contain !important;
   filter:drop-shadow(0 0 7px rgba(77,236,255,.30)) !important;
   pointer-events:none !important;
@@ -28774,7 +31484,7 @@ window.addEventListener('DOMContentLoaded', () => {
 }
 @media (max-width:760px){
   #stageMap .stageQuickControls{
-    top:6px !important;
+    top:22px !important;
     right:6px !important;
     gap:4px !important;
   }
@@ -28787,8 +31497,8 @@ window.addEventListener('DOMContentLoaded', () => {
     max-height:34px !important;
   }
   #stageMap .stageQuickBtn img{
-    width:13px !important;
-    height:13px !important;
+    width:18px !important;
+    height:18px !important;
   }
 }
 </style>
@@ -28832,6 +31542,10 @@ window.addEventListener('DOMContentLoaded', () => {
         var fieldTower = document.getElementById('towerMenuBtn');
         if(fieldTower){
           fieldTower.click();
+          setTimeout(function(){
+            var commonTab = document.querySelector('[data-tower-popup-tab="common"]');
+            if(commonTab) commonTab.click();
+          }, 0);
         }
       });
     }
@@ -29436,3 +32150,286 @@ window.addEventListener('DOMContentLoaded', () => {
 }
 </style>
 
+
+
+<style id="v182-armory-wallet-lower-clear-title">
+/* Lower the shard wallet so it never covers the title, and reserve vertical space. */
+#towerPopup .towerPopupHeader{
+  min-height:156px !important;
+  padding-top:26px !important;
+  padding-bottom:18px !important;
+  row-gap:14px !important;
+}
+#towerPopup .towerPopupHeader > div:first-child{
+  padding-bottom:8px !important;
+}
+#towerPopup .towerPopupTitle{
+  margin:0 0 8px 0 !important;
+  line-height:1.08 !important;
+}
+#towerPopup .towerPopupWallet{
+  margin-top:18px !important;
+  transform:none !important;
+}
+#towerPopup .towerPopupTabs{
+  margin-top:8px !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerPopupHeader{
+    min-height:134px !important;
+    padding-top:18px !important;
+    padding-bottom:14px !important;
+    row-gap:10px !important;
+  }
+  #towerPopup .towerPopupHeader > div:first-child{
+    padding-bottom:6px !important;
+  }
+  #towerPopup .towerPopupTitle{
+    margin:0 0 6px 0 !important;
+    line-height:1.06 !important;
+  }
+  #towerPopup .towerPopupWallet{
+    margin-top:12px !important;
+  }
+  #towerPopup .towerPopupTabs{
+    margin-top:6px !important;
+  }
+}
+</style>
+
+
+<style id="v183-armory-wallet-plain-text">
+/* Remove the boxed shard wallet UI and show plain text under the title. */
+#towerPopup .towerPopupHeader{
+  min-height:150px !important;
+  padding-top:24px !important;
+  padding-bottom:14px !important;
+  row-gap:10px !important;
+}
+#towerPopup .towerPopupTitle{
+  margin-bottom:6px !important;
+}
+#towerPopup .towerPopupWallet{
+  display:block !important;
+  width:auto !important;
+  max-width:calc(100% - 24px) !important;
+  margin:8px 0 0 0 !important;
+  padding:0 !important;
+  background:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  clip-path:none !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+  display:flex !important;
+  align-items:baseline !important;
+  gap:10px !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  height:auto !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  clip-path:none !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem::before,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+  display:none !important;
+  content:none !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem span,
+#towerPopup .towerPopupWallet > span{
+  font-size:17px !important;
+  line-height:1.1 !important;
+  font-weight:800 !important;
+  color:#e8f6ff !important;
+  letter-spacing:-0.03em !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem b,
+#towerPopup .towerPopupWallet > b{
+  font-family:'Orbitron',Pretendard,sans-serif !important;
+  font-size:32px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  color:#ffffff !important;
+  letter-spacing:-0.03em !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerPopupHeader{
+    min-height:128px !important;
+    padding-top:18px !important;
+    padding-bottom:10px !important;
+    row-gap:8px !important;
+  }
+  #towerPopup .towerPopupWallet{
+    margin-top:6px !important;
+    max-width:calc(100% - 8px) !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem span,
+  #towerPopup .towerPopupWallet > span{
+    font-size:13px !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem b,
+  #towerPopup .towerPopupWallet > b{
+    font-size:23px !important;
+  }
+}
+</style>
+
+
+<style id="v184-common-frame-match">
+/* Make the Common Research detail frame match the Tower / Plate visual shell more closely. */
+#towerPopup[data-active-tab="common"] .armoryCommonHero{
+  display:grid !important;
+  grid-template-columns:120px minmax(0,1fr) !important;
+  gap:18px !important;
+  align-items:center !important;
+  margin:0 0 14px !important;
+  padding:0 0 14px !important;
+  border:0 !important;
+  border-bottom:1px solid rgba(80,210,255,.13) !important;
+  border-radius:0 !important;
+  background:none !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .armoryCommonIcon{
+  width:96px !important;
+  height:96px !important;
+  border-radius:0 !important;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px) !important;
+  background:radial-gradient(circle at 28% 24%, rgba(255,255,255,.07), transparent 34%), linear-gradient(180deg, rgba(12,22,44,.82), rgba(3,10,24,.96)) !important;
+  border:1px solid rgba(148,211,255,.18) !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .armoryCommonIcon::before{
+  inset:8px !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  border-radius:0 !important;
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px) !important;
+  opacity:.9 !important;
+}
+#towerPopup[data-active-tab="common"] .armoryCommonIcon img{
+  width:58px !important;
+  height:58px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) 140px !important;
+  gap:14px !important;
+  align-items:center !important;
+  min-height:108px !important;
+  margin:0 0 14px !important;
+  padding:16px 18px !important;
+  border:1px solid rgba(80,210,255,.18) !important;
+  border-radius:0 !important;
+  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px) !important;
+  background:linear-gradient(180deg, rgba(7,19,40,.84), rgba(2,9,23,.96)) !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock small{
+  color:#67e8f9 !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock b{
+  font-size:17px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock span{
+  color:#a8bbce !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchBuy{
+  min-height:46px !important;
+  border-radius:0 !important;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px) !important;
+  background:linear-gradient(180deg, rgba(77,128,168,.98), rgba(76,121,159,.98)) !important;
+  border:1px solid rgba(148,211,255,.34) !important;
+  color:#f8fcff !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchBuy:disabled{
+  background:linear-gradient(180deg, rgba(48,58,75,.96), rgba(40,48,63,.96)) !important;
+  border-color:rgba(148,163,184,.20) !important;
+  color:#99a7b7 !important;
+  opacity:1 !important;
+}
+#towerPopup[data-active-tab="common"] .armoryQuickGrid.v164InfoGrid{
+  margin:0 0 14px !important;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchPolish{
+  padding:0 !important;
+  border:0 !important;
+  background:none !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchHero{
+  display:grid !important;
+  grid-template-columns:120px minmax(0,1fr) !important;
+  gap:18px !important;
+  align-items:center !important;
+  margin:0 !important;
+  padding:0 0 14px !important;
+  border:0 !important;
+  border-bottom:1px solid rgba(80,210,255,.13) !important;
+  background:none !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchIconWrap{
+  width:96px !important;
+  height:96px !important;
+  border-radius:0 !important;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px) !important;
+  border:1px solid rgba(148,211,255,.18) !important;
+  background:linear-gradient(180deg, rgba(12,22,44,.82), rgba(3,10,24,.96)) !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchIconWrap::before{
+  inset:8px !important;
+  border-radius:0 !important;
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px) !important;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchLock{
+  right:7px !important;
+  bottom:7px !important;
+}
+@media (max-width:900px){
+  #towerPopup[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup[data-active-tab="common"] .lockedResearchHero{
+    grid-template-columns:102px minmax(0,1fr) !important;
+    gap:14px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap{
+    width:84px !important;
+    height:84px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon img{
+    width:50px !important;
+    height:50px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+    grid-template-columns:1fr !important;
+    min-height:auto !important;
+  }
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup[data-active-tab="common"] .lockedResearchHero{
+    grid-template-columns:1fr !important;
+    gap:10px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap{
+    width:76px !important;
+    height:76px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon img{
+    width:44px !important;
+    height:44px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+    padding:14px !important;
+  }
+}
+</style>

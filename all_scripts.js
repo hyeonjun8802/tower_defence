@@ -1367,18 +1367,24 @@ function drawImageContainCentered(img, cx, cy, maxW, maxH){
 
 const AUDIO_URLS = {
   bgm: {
-    map:'audio/bgm_map_starmap.ogg',
-    boss:'audio/bgm_boss_incursion.ogg',
+    main:'audio/bgm_general_glass_horizon.ogg',
+    map:'audio/bgm_general_glass_horizon.ogg',
+    boss:'audio/bgm_boss_beneath_the_iron_crust.ogg',
     clear:'audio/bgm_result_sanctuary_restored.ogg',
     gameover:'audio/bgm_result_core_collapse.ogg',
     stages:[
-      'audio/bgm_stage_01_cosmic_void.ogg',
-      'audio/bgm_stage_02_frost_expanse.ogg',
-      'audio/bgm_stage_03_lava_nebula.ogg',
-      'audio/bgm_stage_04_jungle_core.ogg',
-      'audio/bgm_stage_05_smog_wasteland.ogg',
-      'audio/bgm_stage_06_crystal_nebula.ogg',
-      'audio/bgm_stage_07_machine_core.ogg'
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg',
+      'audio/bgm_battle_sentinels_of_the_ember.ogg'
     ]
   },
   sfx: {
@@ -6792,7 +6798,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if(activeTab === 'common') buildCommonResearch();
     else buildTowerList();
   }
-  function openPopup(tab='tower'){
+  function openPopup(tab='common'){
     renderWallet();
     popup.classList.add('open');
     requestAnimationFrame(refreshScreenStarfields);
@@ -6804,7 +6810,7 @@ window.addEventListener('DOMContentLoaded', () => {
     popup.setAttribute('aria-hidden','true');
   }
 
-  fieldBtn?.addEventListener('click', () => openPopup('tower'));
+  fieldBtn?.addEventListener('click', () => openPopup('common'));
   stageBtn?.addEventListener('click', () => openPopup('common'));
   tabs.forEach(btn => btn.addEventListener('click', () => setActiveTab(btn.dataset.towerPopupTab)));
   closeBtn?.addEventListener('click', closePopup);
