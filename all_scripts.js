@@ -6845,6 +6845,9 @@ window.addEventListener('DOMContentLoaded', () => {
   let refreshTimer = null;
   const scheduleRefresh = () => {
     if(!popup.classList.contains('open')) return;
+    // v167: when the rebuilt armory controller is active, the legacy refresh
+    // must not overwrite the user's current tab/content during gameplay ticks.
+    if(window.__armoryControllerRebuildV164) return;
     clearTimeout(refreshTimer);
     refreshTimer = setTimeout(() => activeTab === 'common' ? buildCommonResearch() : buildTowerList(), 120);
   };
