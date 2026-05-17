@@ -337,18 +337,31 @@ const LATE_STAGE_BOSS_BALANCE = {
   }
 };
 
+const BOSS_GLOBAL_EASE_V210 = {
+  /* v210: user feedback — boss difficulty is still too high.
+     Apply a broad boss-only reduction after the existing stage table.
+     Normal enemies, tower stats, income, and wave rules are untouched. */
+  mid:   { hp:.72, armor:-.055, speed:.94, interval:1.28, core:-1 },
+  final: { hp:.58, armor:-.115, speed:.90, interval:1.48, core:-2 }
+};
+
 function applyLateStageBossBalance(stageNo, tier, boss){
   const stage = Number(stageNo) || 1;
   const key = tier === 'final' ? 'final' : 'mid';
-  const tune = LATE_STAGE_BOSS_BALANCE[stage]?.[key];
-  if(!tune) return boss;
+  const tune = LATE_STAGE_BOSS_BALANCE[stage]?.[key] || {hp:1, armor:0, speed:1, interval:1, core:0};
+  const global = BOSS_GLOBAL_EASE_V210[key] || BOSS_GLOBAL_EASE_V210.mid;
+  const hpFactor = tune.hp * global.hp;
+  const speedFactor = tune.speed * global.speed;
+  const intervalFactor = tune.interval * global.interval;
+  const armorDelta = tune.armor + global.armor;
+  const coreDelta = tune.core + global.core;
   return {
     ...boss,
-    hpMul: Math.max(1, Number((boss.hpMul * tune.hp).toFixed(3))),
-    speedMul: Number((boss.speedMul * tune.speed).toFixed(3)),
-    armor: Math.max(0, Number(((boss.armor || 0) + tune.armor).toFixed(3))),
-    interval: Math.round((boss.interval || 140) * tune.interval),
-    coreDamage: Math.max(1, Math.round((boss.coreDamage || 1) + tune.core))
+    hpMul: Math.max(.72, Number((boss.hpMul * hpFactor).toFixed(3))),
+    speedMul: Number((boss.speedMul * speedFactor).toFixed(3)),
+    armor: Math.max(0, Number(((boss.armor || 0) + armorDelta).toFixed(3))),
+    interval: Math.round((boss.interval || 140) * intervalFactor),
+    coreDamage: Math.max(1, Math.round((boss.coreDamage || 1) + coreDelta))
   };
 }
 
@@ -3445,7 +3458,8 @@ class Enemy{
     Object.assign(this,m);
     this.x=route[0].x;this.y=route[0].y;this.seg=0;this.progress=0;
     const hpScale = this.hpScale || 1;
-    this.maxHp=Math.floor(295*m.hp*(1+S.ogge*.30+S.theme*.38) * hpScale);
+    const bossRunEase = this.stageBoss ? (this.bossTier === 'final' ? .72 : .80) : 1;
+    this.maxHp=Math.floor(295*m.hp*(1+S.ogge*.30+S.theme*.38) * hpScale * bossRunEase);
     this.hp=this.maxHp;
     this.dead=false;this.slow=0;this.freeze=0;this.dot=0;this.dotTime=0;this.mark=0;
   }
@@ -3869,7 +3883,7 @@ function triggerBossSkill(enemy){
     case 'voidSurge':
       bossWarning(enemy,'특이점 폭주', labelColor);
       healPct(.09);
-      enemy.armor = Math.min(.72, (enemy.armor || 0) + .03);
+      enemy.armor = Math.min(.46, (enemy.armor || 0) + .012);
       burst(enemy.x, enemy.y, labelColor, 22, 42);
       ring(enemy.x, enemy.y, enemy.size + 34, labelColor);
       anomalies.push({x:enemy.x,y:enemy.y,target:null,kind:'bossSurge',radius:122,visualRadius:28,damage:0,pull:0,color:labelColor,life:18,maxLife:18,tick:999});
@@ -3893,14 +3907,14 @@ function triggerBossSkill(enemy){
     }
     case 'magmaShell':
       bossWarning(enemy,'용암 장갑', labelColor);
-      enemy.armor = Math.min(.72, (enemy.armor || 0) + .05);
+      enemy.armor = Math.min(.46, (enemy.armor || 0) + .018);
       enemy.spd *= 1.05;
       burst(enemy.x, enemy.y, '#fb923c', 18, 26); spawnImpactSparks(enemy.x, enemy.y, '#fdba74', 12, 1.15);
       impactLabel(enemy.x, enemy.y - enemy.size - 18, '용암 장갑', '#fdba74', 16, 76);
       break;
     case 'cataclysmBurst':
       bossWarning(enemy,'대폭발', labelColor);
-      enemy.armor = Math.min(.75, (enemy.armor || 0) + .06);
+      enemy.armor = Math.min(.48, (enemy.armor || 0) + .020);
       enemy.spd *= 1.08;
       ring(enemy.x, enemy.y, enemy.size + 42, '#fb923c');
       burst(enemy.x, enemy.y, '#fb923c', 24, 36);
@@ -3911,7 +3925,7 @@ function triggerBossSkill(enemy){
       bossWarning(enemy,'포자 증식', labelColor);
       for(const e of enemies){
         if(!e.dead && e !== enemy && dist(e.x,e.y,enemy.x,enemy.y) < 120){
-          e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .18));
+          e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .08));
           e.slow = Math.max(0, e.slow - 24);
         }
       }
@@ -3923,17 +3937,17 @@ function triggerBossSkill(enemy){
       bossWarning(enemy,'과성장', labelColor);
       for(const e of enemies){
         if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 150){
-          e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .22));
+          e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .10));
         }
       }
       healPct(.08);
-      enemy.armor = Math.min(.74, (enemy.armor || 0) + .04);
+      enemy.armor = Math.min(.47, (enemy.armor || 0) + .016);
       burst(enemy.x, enemy.y, '#4ade80', 22, 34); spawnImpactMist(enemy.x, enemy.y, 'rgba(34,197,94,.26)', 9);
       impactLabel(enemy.x, enemy.y - enemy.size - 18, '과성장', '#86efac', 16, 80);
       break;
     case 'sootScreen':
       bossWarning(enemy,'매연 차폐', labelColor);
-      enemy.armor = Math.min(.70, (enemy.armor || 0) + .04);
+      enemy.armor = Math.min(.46, (enemy.armor || 0) + .016);
       enemy.slow = Math.max(0, (enemy.slow || 0) - 18);
       ring(enemy.x, enemy.y, enemy.size + 38, '#a3a86a');
       spawnImpactMist(enemy.x, enemy.y, 'rgba(156,171,98,.26)', 9);
@@ -3942,10 +3956,10 @@ function triggerBossSkill(enemy){
     case 'industrialVeil':
       bossWarning(enemy,'산업 장막', labelColor);
       healPct(.06);
-      enemy.armor = Math.min(.78, (enemy.armor || 0) + .05);
+      enemy.armor = Math.min(.48, (enemy.armor || 0) + .018);
       for(const e of enemies){
         if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 170){
-          e.armor = Math.min(.65, (e.armor || 0) + .025);
+          e.armor = Math.min(.42, (e.armor || 0) + .010);
           e.slow = Math.max(0, (e.slow || 0) - 14);
         }
       }
@@ -3955,7 +3969,7 @@ function triggerBossSkill(enemy){
       break;
     case 'refractionVeil':
       bossWarning(enemy,'굴절 장막', labelColor);
-      enemy.armor = Math.min(.78, (enemy.armor || 0) + .045);
+      enemy.armor = Math.min(.48, (enemy.armor || 0) + .016);
       ring(enemy.x, enemy.y, enemy.size + 42, '#c084fc');
       spawnImpactShards(enemy.x, enemy.y, '#e9d5ff', 12);
       impactLabel(enemy.x, enemy.y - enemy.size - 18, '굴절 장막', '#e9d5ff', 16, 76);
@@ -3963,9 +3977,9 @@ function triggerBossSkill(enemy){
     case 'crystalOverload':
       bossWarning(enemy,'수정 과부하', labelColor);
       healPct(.055);
-      enemy.armor = Math.min(.80, (enemy.armor || 0) + .055);
+      enemy.armor = Math.min(.49, (enemy.armor || 0) + .018);
       for(const e of enemies){
-        if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 145) e.armor = Math.min(.70, (e.armor || 0) + .035);
+        if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 145) e.armor = Math.min(.44, (e.armor || 0) + .012);
       }
       ring(enemy.x, enemy.y, enemy.size + 48, '#a78bfa');
       spawnImpactShards(enemy.x, enemy.y, '#ddd6fe', 16);
@@ -3975,8 +3989,8 @@ function triggerBossSkill(enemy){
       bossWarning(enemy,'전장 수리', labelColor);
       for(const e of enemies){
         if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 132){
-          e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .12));
-          e.armor = Math.min(.68, (e.armor || 0) + .02);
+          e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .055));
+          e.armor = Math.min(.42, (e.armor || 0) + .008);
         }
       }
       ring(enemy.x, enemy.y, enemy.size + 40, '#60a5fa');
@@ -3985,9 +3999,9 @@ function triggerBossSkill(enemy){
     case 'coreReboot':
       bossWarning(enemy,'코어 재부팅', labelColor);
       healPct(.06);
-      enemy.armor = Math.min(.82, (enemy.armor || 0) + .06);
+      enemy.armor = Math.min(.50, (enemy.armor || 0) + .020);
       for(const e of enemies){
-        if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 160) e.armor = Math.min(.72, (e.armor || 0) + .035);
+        if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 160) e.armor = Math.min(.44, (e.armor || 0) + .012);
       }
       burst(enemy.x, enemy.y, '#60a5fa', 24, 38);
       ring(enemy.x, enemy.y, enemy.size + 52, '#ef4444');
