@@ -14590,6 +14590,164 @@ html, body{overflow-x:hidden !important;}
 }
 </style>
 
+<<<<<<< HEAD
+=======
+
+<style id="v186-armory-common-balance-fix">
+/* v186: final balance pass for Common Research / Plate detail layout.
+   Fixes the visibly stretched right detail column seen after opening the armory,
+   especially the single-column info cards and over-tall upgrade dock. */
+#towerPopup[data-active-tab="common"] .towerPopupBody,
+#towerPopup[data-active-tab="plate"] .towerPopupBody{
+  grid-template-columns:104px minmax(0,1fr) !important;
+  gap:12px !important;
+}
+#towerPopup[data-active-tab="common"] .towerPopupList,
+#towerPopup[data-active-tab="plate"] .towerPopupList,
+#towerPopup[data-active-tab="common"] .towerPopupList.commonList,
+#towerPopup[data-active-tab="plate"] .towerPopupList.commonList{
+  width:104px !important;
+  min-width:104px !important;
+  max-width:104px !important;
+  flex:0 0 104px !important;
+  align-items:center !important;
+  gap:10px !important;
+  padding:10px 8px !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchItem,
+#towerPopup[data-active-tab="plate"] .plateInfoItem{
+  width:88px !important;
+  height:88px !important;
+  min-width:88px !important;
+  min-height:88px !important;
+  max-width:88px !important;
+  max-height:88px !important;
+  margin:0 auto !important;
+}
+#towerPopup[data-active-tab="common"] .towerPopupDetail,
+#towerPopup[data-active-tab="plate"] .towerPopupDetail{
+  padding:18px 18px 16px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryCommonHero,
+#towerPopup[data-active-tab="plate"] .v164PlateHero{
+  margin:0 0 12px !important;
+  padding:0 0 12px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+  grid-template-columns:minmax(0,1fr) 132px !important;
+  gap:12px !important;
+  min-height:96px !important;
+  margin:0 0 12px !important;
+  padding:14px 16px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock b{
+  font-size:16px !important;
+  line-height:1.28 !important;
+  word-break:keep-all !important;
+  overflow-wrap:anywhere !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock span{
+  font-size:12px !important;
+  line-height:1.48 !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchBuy{
+  min-height:44px !important;
+  height:auto !important;
+  align-self:stretch !important;
+  font-size:14px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryQuickGrid.v164InfoGrid,
+#towerPopup[data-active-tab="plate"] .armoryQuickGrid.v164InfoGrid{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:10px !important;
+  margin:12px 0 12px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryQuickGrid.v164InfoGrid .armoryQuickCard,
+#towerPopup[data-active-tab="plate"] .armoryQuickGrid.v164InfoGrid .armoryQuickCard{
+  min-width:0 !important;
+  min-height:84px !important;
+  padding:12px 14px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryQuickGrid.v164InfoGrid .armoryQuickCard small,
+#towerPopup[data-active-tab="plate"] .armoryQuickGrid.v164InfoGrid .armoryQuickCard small{
+  font-size:10px !important;
+  line-height:1.1 !important;
+  margin-bottom:6px !important;
+  white-space:nowrap !important;
+}
+#towerPopup[data-active-tab="common"] .armoryQuickGrid.v164InfoGrid .armoryQuickCard b,
+#towerPopup[data-active-tab="plate"] .armoryQuickGrid.v164InfoGrid .armoryQuickCard b{
+  font-size:14px !important;
+  line-height:1.28 !important;
+  letter-spacing:-.02em !important;
+  word-break:keep-all !important;
+  overflow-wrap:anywhere !important;
+}
+#towerPopup[data-active-tab="common"] .v164Section,
+#towerPopup[data-active-tab="plate"] .v164Section{
+  margin:0 0 10px !important;
+  padding:12px 14px !important;
+}
+@media (max-width:760px){
+  #towerPopup[data-active-tab="common"] .towerPopupBody,
+  #towerPopup[data-active-tab="plate"] .towerPopupBody{
+    grid-template-columns:84px minmax(0,1fr) !important;
+    gap:8px !important;
+  }
+  #towerPopup[data-active-tab="common"] .towerPopupList,
+  #towerPopup[data-active-tab="plate"] .towerPopupList,
+  #towerPopup[data-active-tab="common"] .towerPopupList.commonList,
+  #towerPopup[data-active-tab="plate"] .towerPopupList.commonList{
+    width:84px !important;
+    min-width:84px !important;
+    max-width:84px !important;
+    flex-basis:84px !important;
+    padding:8px 4px !important;
+    gap:8px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonResearchItem,
+  #towerPopup[data-active-tab="plate"] .plateInfoItem{
+    width:68px !important;
+    height:74px !important;
+    min-width:68px !important;
+    min-height:74px !important;
+    max-width:68px !important;
+    max-height:74px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+    grid-template-columns:1fr !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryQuickGrid.v164InfoGrid,
+  #towerPopup[data-active-tab="plate"] .armoryQuickGrid.v164InfoGrid{
+    grid-template-columns:1fr !important;
+    gap:8px !important;
+  }
+}
+</style>
+
+
+<style id="v187-wallet-text-lower-fix">
+/* v187: move only the shard label/number slightly downward in the armory header. */
+#towerPopup .towerWalletItem span,
+#towerPopup .towerWalletItem b,
+#towerPopup #towerPopupWallet > span,
+#towerPopup #towerPopupWallet > b{
+  position:relative !important;
+  top:4px !important;
+}
+@media (max-width:760px){
+  #towerPopup .towerWalletItem span,
+  #towerPopup .towerWalletItem b,
+  #towerPopup #towerPopupWallet > span,
+  #towerPopup #towerPopupWallet > b{
+    top:3px !important;
+  }
+}
+</style>
+
+<!-- v189-cleanup-summary: exact duplicate style/script blocks removed; final patch order preserved. -->
+>>>>>>> d2809d9 (1차완성)
 </head>
 <body>
 <div id="bg"></div>
@@ -25123,6 +25281,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <!-- v101: 성좌 지도 우측 버튼 정리 - 모든 추가 코드를 
 <!-- v104: 팝업 레이아웃 복구 + 별 배경 실표시 + 닫기 버튼 정렬 -->
+<<<<<<< HEAD
 <style id="v104-armory-layout-star-recovery">
 /* 기존 누적 패치의 absolute 좌표를 무효화하고, 팝업을 다시 정상 grid 레이아웃으로 복구 */
 #towerPopup,
@@ -26025,11 +26184,30 @@ window.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', function(){ setTimeout(bind,0); }, true);
 })();
 </script>
+=======
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- v117: restore visible Galaxy Map back button on the planet stage map. -->
+
+
+>>>>>>> d2809d9 (1차완성)
 
 
 
 <!-- v122: remove duplicate top-right quick buttons from map screens.
      Tower/BGM controls stay available in the actual battle HUD only. -->
+<<<<<<< HEAD
 <style id="v122-map-duplicate-buttons-remove">
   /* Stage map already has the full armory access flow elsewhere, so remove the duplicated top-right tower shortcut. */
   #stageMap #stageTowerManageBtn,
@@ -26077,10 +26255,15 @@ window.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('load', apply, {once:true});
 })();
 </script>
+=======
+
+
+>>>>>>> d2809d9 (1차완성)
 
 
 
 <!-- v128: canonical manifest unlock finalizer. This runs last and hard-wires TEST MODE and clear-based progression to STAGE_UNLOCK_MANIFEST. -->
+<<<<<<< HEAD
 <script id="v128-canonical-manifest-unlock-finalizer">
 (function(){
   'use strict';
@@ -27245,6 +27428,57 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 }
 </style>
+=======
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> d2809d9 (1차완성)
 
 
 
@@ -27344,6 +27578,50 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 }
 </style>
+<<<<<<< HEAD
+=======
+
+<style id="v206-battle-stat-font-balance">
+/* v206: reduce HUD stat typography so EXP no longer clips on smaller/mobile widths. */
+#side.battleMinimal .battleStatLine .stat .value,
+#side.battleMinimal .battleStatLine .value{
+  font-size:21px !important;
+}
+#side.battleMinimal .battleStatLine .stat #exp,
+#side.battleMinimal .battleStatLine #exp{
+  font-size:19px !important;
+  letter-spacing:-.03em !important;
+}
+@media (max-width:920px){
+  #side.battleMinimal .battleStatLine .stat .value,
+  #side.battleMinimal .battleStatLine .value{
+    font-size:18px !important;
+  }
+  #side.battleMinimal .battleStatLine .stat #exp,
+  #side.battleMinimal .battleStatLine #exp{
+    font-size:16px !important;
+  }
+}
+@media (max-width:640px){
+  #side.battleMinimal .battleStatLine .stat .label,
+  #side.battleMinimal .battleStatLine .label{
+    font-size:9px !important;
+  }
+  #side.battleMinimal .battleStatLine .stat .value,
+  #side.battleMinimal .battleStatLine .value{
+    font-size:15px !important;
+  }
+  #side.battleMinimal .battleStatLine .stat #exp,
+  #side.battleMinimal .battleStatLine #exp{
+    font-size:13px !important;
+  }
+  #side.battleMinimal .battleStatLine .miniBar{
+    margin-top:6px !important;
+  }
+}
+</style>
+
+>>>>>>> d2809d9 (1차완성)
 </body> 내부로 정리 -->
 <style id="v101-single-stage-tower-button-safe">
 #stageMap #stageMapBack,
@@ -30640,6 +30918,7 @@ window.addEventListener('DOMContentLoaded', () => {
 }
 </style>
 
+<<<<<<< HEAD
 </body>
 </html>
 
@@ -32591,3 +32870,2357 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 }
 </style>
+=======
+
+<!-- v189-cleanup: previously appended style/script blocks moved inside <body> to keep the document structurally valid. -->
+
+
+<!-- v119: match the planet stage back button to the Galaxy Map MAIN button sizing and switch label to English. -->
+<style id="v119-stage-back-english-main-size">
+  #stageMap #stageMapBack.stageBackBtn,
+  #stageMap #stageMapBack,
+  #stageMap .stageBackBtn{
+    display:inline-flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    position:absolute !important;
+    left:30px !important;
+    top:30px !important;
+    right:auto !important;
+    bottom:auto !important;
+    z-index:1200 !important;
+    width:auto !important;
+    min-width:0 !important;
+    height:auto !important;
+    min-height:0 !important;
+    padding:10px 16px !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:0 !important;
+    border-radius:999px !important;
+    clip-path:none !important;
+    background:rgba(2,6,23,.58) !important;
+    border:1px solid rgba(148,163,184,.20) !important;
+    color:#dbeafe !important;
+    font-family:'Orbitron',Pretendard,'Noto Sans KR',sans-serif !important;
+    font-size:11px !important;
+    font-weight:900 !important;
+    letter-spacing:.08em !important;
+    line-height:1 !important;
+    text-align:center !important;
+    white-space:nowrap !important;
+    text-shadow:none !important;
+    box-shadow:inset 0 0 0 1px rgba(119,245,255,.03), 0 0 18px rgba(6,182,255,.07) !important;
+    transform:none !important;
+    filter:none !important;
+  }
+  #stageMap #stageMapBack.stageBackBtn::before,
+  #stageMap #stageMapBack.stageBackBtn::after,
+  #stageMap .stageBackBtn::before,
+  #stageMap .stageBackBtn::after{
+    content:none !important;
+    display:none !important;
+  }
+  #stageMap #stageMapBack:hover,
+  #stageMap .stageBackBtn:hover{
+    transform:translateY(-1px) !important;
+    border-color:rgba(104,229,255,.44) !important;
+    box-shadow:inset 0 0 0 1px rgba(119,245,255,.05), 0 0 24px rgba(6,182,255,.12) !important;
+  }
+  #stageMap #stageMapBack:active,
+  #stageMap .stageBackBtn:active{
+    transform:translateY(1px) scale(.99) !important;
+  }
+  @media (max-width:900px), (max-aspect-ratio:0.78){
+    #stageMap #stageMapBack.stageBackBtn,
+    #stageMap #stageMapBack,
+    #stageMap .stageBackBtn{
+      left:18px !important;
+      top:32px !important;
+      padding:7px 10px !important;
+      font-size:8px !important;
+      letter-spacing:.08em !important;
+    }
+  }
+  @media (max-width:430px){
+    #stageMap #stageMapBack.stageBackBtn,
+    #stageMap #stageMapBack,
+    #stageMap .stageBackBtn{
+      left:18px !important;
+      top:32px !important;
+      padding:7px 10px !important;
+      font-size:8px !important;
+    }
+  }
+</style>
+<script id="v119-stage-back-english-main-size-script">
+(function(){
+  'use strict';
+  function apply(){
+    var back=document.getElementById('stageMapBack');
+    if(!back) return;
+    back.textContent='← GALAXY MAP';
+    back.classList.add('stageBackBtn');
+    back.setAttribute('type','button');
+    back.setAttribute('aria-label','Back to Galaxy Map');
+    back.style.display='inline-flex';
+    back.style.visibility='visible';
+    back.style.opacity='1';
+    back.style.pointerEvents='auto';
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', apply, {once:true}); else apply();
+  window.addEventListener('load', apply, {once:true});
+  document.addEventListener('click', function(){ setTimeout(apply,0); }, true);
+  document.addEventListener('keyup', function(){ setTimeout(apply,0); }, true);
+})();
+</script>
+
+<!-- v120: normalize top control margins and tighten shared map/info spacing. -->
+<style id="v120-map-control-spacing-normalize">
+  :root{ --map-control-top:34px; --map-control-side:34px; --map-panel-gap:28px; }
+
+  /* 1) Keep the primary top controls at the same visual anchor on every screen. */
+  #galaxyMap #galaxyMapBack.galaxyBackBtn,
+  #galaxyMap .galaxyBackBtn{
+    position:absolute !important;
+    top:var(--map-control-top) !important;
+    left:var(--map-control-side) !important;
+    right:auto !important;
+    bottom:auto !important;
+    z-index:1200 !important;
+  }
+  #stageMap #stageMapBack.stageBackBtn,
+  #stageMap .stageBackBtn{
+    position:absolute !important;
+    top:var(--map-control-top) !important;
+    left:var(--map-control-side) !important;
+    right:auto !important;
+    bottom:auto !important;
+    z-index:1200 !important;
+  }
+  #stageMap #stageTowerManageBtn.stageManageBtn,
+  #stageMap .stageManageBtn{
+    position:absolute !important;
+    top:var(--map-control-top) !important;
+    right:var(--map-control-side) !important;
+    left:auto !important;
+    bottom:auto !important;
+    z-index:1200 !important;
+  }
+  #field .fieldTopControls{
+    position:absolute !important;
+    top:var(--map-control-top) !important;
+    right:var(--map-control-side) !important;
+    left:auto !important;
+    bottom:auto !important;
+    z-index:1200 !important;
+  }
+
+  /* 2) Make the Stage Map content-to-description gap consistent and stop the map/info panel from feeling randomly attached. */
+  #stageMap .stageMapInner{
+    left:54px !important;
+    right:54px !important;
+    top:206px !important;
+    bottom:412px !important;
+  }
+  #stageMap #stageInfoPanel.stageInfoPanel,
+  #stageMap .stageInfoPanel{
+    left:34px !important;
+    right:34px !important;
+    bottom:126px !important;
+    width:auto !important;
+    max-height:248px !important;
+    overflow:hidden !important;
+  }
+  #stageMap .stageActionRow{
+    bottom:28px !important;
+    width:min(860px, calc(100% - 68px)) !important;
+  }
+
+  /* 3) Make Galaxy Map spacing use the same rhythm: scene -> panel -> enter button. */
+  #galaxyMap .galaxySceneWrap{
+    left:50% !important;
+    top:132px !important;
+    bottom:292px !important;
+    width:min(1180px, calc(100vw - 68px)) !important;
+    transform:translateX(-50%) !important;
+  }
+  #galaxyMap #galaxyInfoPanel.galaxyInfoPanel,
+  #galaxyMap .galaxyInfoPanel{
+    left:50% !important;
+    right:auto !important;
+    bottom:94px !important;
+    width:min(1180px, calc(100vw - 68px)) !important;
+    max-height:172px !important;
+    overflow:hidden !important;
+    transform:translateX(-50%) !important;
+  }
+  #galaxyMap #galaxyEnterBtn.galaxyEnterBtn,
+  #galaxyMap .galaxyEnterBtn{
+    left:50% !important;
+    bottom:24px !important;
+    width:min(1180px, calc(100vw - 68px)) !important;
+    transform:translateX(-50%) !important;
+  }
+
+  @media (max-width:900px), (max-aspect-ratio:0.78){
+    :root{ --map-control-top:28px; --map-control-side:24px; --map-panel-gap:22px; }
+    #stageMap .stageMapInner{
+      left:24px !important;
+      right:24px !important;
+      top:150px !important;
+      bottom:392px !important;
+    }
+    #stageMap #stageInfoPanel.stageInfoPanel,
+    #stageMap .stageInfoPanel{
+      left:18px !important;
+      right:18px !important;
+      bottom:136px !important;
+      max-height:238px !important;
+    }
+    #stageMap .stageActionRow{
+      bottom:24px !important;
+      width:calc(100% - 36px) !important;
+    }
+    #galaxyMap .galaxySceneWrap{
+      top:118px !important;
+      bottom:300px !important;
+      width:calc(100vw - 36px) !important;
+    }
+    #galaxyMap #galaxyInfoPanel.galaxyInfoPanel,
+    #galaxyMap .galaxyInfoPanel{
+      bottom:82px !important;
+      width:calc(100vw - 36px) !important;
+      max-height:168px !important;
+    }
+    #galaxyMap #galaxyEnterBtn.galaxyEnterBtn,
+    #galaxyMap .galaxyEnterBtn{
+      bottom:18px !important;
+      width:calc(100vw - 36px) !important;
+    }
+  }
+
+  @media (max-width:430px){
+    :root{ --map-control-top:22px; --map-control-side:18px; }
+    #stageMap .stageMapInner{
+      left:14px !important;
+      right:14px !important;
+      top:136px !important;
+      bottom:372px !important;
+    }
+    #stageMap #stageInfoPanel.stageInfoPanel,
+    #stageMap .stageInfoPanel{
+      left:12px !important;
+      right:12px !important;
+      bottom:132px !important;
+      max-height:222px !important;
+    }
+    #galaxyMap .galaxySceneWrap{
+      top:112px !important;
+      bottom:286px !important;
+      width:calc(100vw - 24px) !important;
+    }
+    #galaxyMap #galaxyInfoPanel.galaxyInfoPanel,
+    #galaxyMap .galaxyInfoPanel{
+      bottom:76px !important;
+      width:calc(100vw - 24px) !important;
+      max-height:160px !important;
+    }
+    #galaxyMap #galaxyEnterBtn.galaxyEnterBtn,
+    #galaxyMap .galaxyEnterBtn{
+      bottom:14px !important;
+      width:calc(100vw - 24px) !important;
+    }
+  }
+</style>
+<script id="v120-map-control-spacing-normalize-script">
+(function(){
+  function apply(){
+    var back=document.getElementById('stageMapBack');
+    if(back){
+      back.textContent='← GALAXY MAP';
+      back.setAttribute('aria-label','Back to Galaxy Map');
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', apply, {once:true}); else apply();
+  window.addEventListener('load', apply, {once:true});
+})();
+</script>
+
+<!-- v121: mobile-first vertical rhythm for map screens; center stage progress under title; prevent lower panels from clipping. -->
+<style id="v121-mobile-map-vertical-rhythm-fix">
+  :root{
+    --v121-top-control:34px;
+    --v121-side-pad:34px;
+    --v121-bottom-action-h:64px;
+    --v121-action-bottom:24px;
+  }
+
+  #galaxyMap,
+  #stageMap{
+    min-height:100svh !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+  }
+  #galaxyMap *,
+  #stageMap *{box-sizing:border-box !important;}
+
+  /* Keep all top controls on one predictable horizontal line. */
+  #galaxyMap #galaxyMapBack.galaxyBackBtn,
+  #galaxyMap .galaxyBackBtn,
+  #stageMap #stageMapBack.stageBackBtn,
+  #stageMap .stageBackBtn,
+  #stageMap #stageTowerManageBtn.stageManageBtn,
+  #stageMap .stageManageBtn,
+  #field .fieldTopControls{
+    top:var(--v121-top-control) !important;
+    z-index:1500 !important;
+  }
+  #galaxyMap #galaxyMapBack.galaxyBackBtn,
+  #galaxyMap .galaxyBackBtn,
+  #stageMap #stageMapBack.stageBackBtn,
+  #stageMap .stageBackBtn{left:var(--v121-side-pad) !important;}
+  #stageMap #stageTowerManageBtn.stageManageBtn,
+  #stageMap .stageManageBtn,
+  #field .fieldTopControls{right:var(--v121-side-pad) !important;}
+
+  /* Stage title + status: status is now centered under the title instead of floating into it. */
+  #stageMap .stageTopTitle{
+    top:44px !important;
+    left:50% !important;
+    right:auto !important;
+    width:min(560px, calc(100vw - 360px)) !important;
+    min-width:320px !important;
+    transform:translateX(-50%) !important;
+    text-align:center !important;
+    z-index:900 !important;
+    pointer-events:none !important;
+  }
+  #stageMap .stageStatus{
+    top:96px !important;
+    left:50% !important;
+    right:auto !important;
+    width:min(360px, calc(100vw - 430px)) !important;
+    min-width:280px !important;
+    transform:translateX(-50%) !important;
+    text-align:center !important;
+    justify-content:center !important;
+    padding:9px 16px !important;
+    border-radius:16px !important;
+    background:rgba(3,10,24,.64) !important;
+    border:1px solid rgba(67,214,255,.18) !important;
+    box-shadow:0 12px 34px rgba(0,0,0,.22), inset 0 0 0 1px rgba(255,255,255,.025) !important;
+    z-index:880 !important;
+  }
+  #stageMap .stageStatus span,
+  #stageMap .stageStatus small{
+    display:block !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  /* Stage map: reserve a responsive lower area. On phone/short heights the lower panel becomes taller, not clipped. */
+  #stageMap .stageMapInner{
+    left:50px !important;
+    right:50px !important;
+    top:178px !important;
+    bottom:clamp(338px, 34svh, 430px) !important;
+    min-height:290px !important;
+  }
+  #stageMap #stageInfoPanel.stageInfoPanel,
+  #stageMap .stageInfoPanel{
+    left:34px !important;
+    right:34px !important;
+    width:auto !important;
+    bottom:calc(var(--v121-action-bottom) + var(--v121-bottom-action-h) + 22px) !important;
+    min-height:clamp(176px, 24svh, 260px) !important;
+    max-height:clamp(190px, 28svh, 300px) !important;
+    padding:18px 22px !important;
+    overflow:hidden !important;
+    transform:none !important;
+  }
+  #stageMap .stageActionRow{
+    left:50% !important;
+    right:auto !important;
+    bottom:var(--v121-action-bottom) !important;
+    width:min(1040px, calc(100vw - 68px)) !important;
+    min-height:var(--v121-bottom-action-h) !important;
+    transform:translateX(-50%) !important;
+    z-index:1300 !important;
+  }
+  #stageMap .stageActionRow .stageEnter{
+    min-height:var(--v121-bottom-action-h) !important;
+  }
+
+  /* Galaxy map: preserve the same scene -> panel -> action rhythm with a responsive lower section. */
+  #galaxyMap .galaxySceneWrap{
+    top:132px !important;
+    bottom:clamp(284px, 32svh, 372px) !important;
+  }
+  #galaxyMap #galaxyInfoPanel.galaxyInfoPanel,
+  #galaxyMap .galaxyInfoPanel{
+    bottom:calc(var(--v121-action-bottom) + var(--v121-bottom-action-h) + 20px) !important;
+    max-height:clamp(160px, 23svh, 238px) !important;
+  }
+  #galaxyMap #galaxyEnterBtn.galaxyEnterBtn,
+  #galaxyMap .galaxyEnterBtn{
+    bottom:var(--v121-action-bottom) !important;
+    min-height:var(--v121-bottom-action-h) !important;
+  }
+
+  @media (max-width:900px), (max-aspect-ratio:0.78){
+    :root{
+      --v121-top-control:26px;
+      --v121-side-pad:22px;
+      --v121-bottom-action-h:60px;
+      --v121-action-bottom:18px;
+    }
+    #stageMap .stageTopTitle{
+      top:28px !important;
+      width:min(520px, calc(100vw - 250px)) !important;
+      min-width:260px !important;
+      font-size:20px !important;
+      letter-spacing:.28em !important;
+    }
+    #stageMap .stageStatus{
+      top:82px !important;
+      width:min(360px, calc(100vw - 250px)) !important;
+      min-width:260px !important;
+      padding:8px 13px !important;
+    }
+    #stageMap .stageMapInner{
+      left:22px !important;
+      right:22px !important;
+      top:154px !important;
+      bottom:clamp(326px, 38svh, 420px) !important;
+      min-height:330px !important;
+    }
+    #stageMap #stageInfoPanel.stageInfoPanel,
+    #stageMap .stageInfoPanel{
+      left:18px !important;
+      right:18px !important;
+      bottom:calc(var(--v121-action-bottom) + var(--v121-bottom-action-h) + 18px) !important;
+      min-height:clamp(188px, 27svh, 270px) !important;
+      max-height:clamp(210px, 31svh, 310px) !important;
+      padding:16px 18px !important;
+    }
+    #stageMap .stageInfoMood{
+      white-space:normal !important;
+      display:-webkit-box !important;
+      -webkit-line-clamp:3 !important;
+      -webkit-box-orient:vertical !important;
+      overflow:hidden !important;
+    }
+    #stageMap .stageActionRow{
+      width:calc(100vw - 36px) !important;
+    }
+    #galaxyMap .galaxySceneWrap{
+      top:118px !important;
+      bottom:clamp(270px, 34svh, 356px) !important;
+      width:calc(100vw - 36px) !important;
+    }
+    #galaxyMap #galaxyInfoPanel.galaxyInfoPanel,
+    #galaxyMap .galaxyInfoPanel{
+      width:calc(100vw - 36px) !important;
+      bottom:calc(var(--v121-action-bottom) + var(--v121-bottom-action-h) + 18px) !important;
+      max-height:clamp(164px, 24svh, 238px) !important;
+    }
+    #galaxyMap #galaxyEnterBtn.galaxyEnterBtn,
+    #galaxyMap .galaxyEnterBtn{
+      width:calc(100vw - 36px) !important;
+    }
+  }
+
+  @media (max-width:520px){
+    :root{
+      --v121-top-control:22px;
+      --v121-side-pad:16px;
+      --v121-bottom-action-h:58px;
+      --v121-action-bottom:14px;
+    }
+    #stageMap .stageTopTitle{
+      top:72px !important;
+      width:calc(100vw - 32px) !important;
+      min-width:0 !important;
+      font-size:16px !important;
+      letter-spacing:.22em !important;
+      padding-left:16px !important;
+      padding-right:16px !important;
+    }
+    #stageMap .stageStatus{
+      top:118px !important;
+      width:calc(100vw - 48px) !important;
+      min-width:0 !important;
+      font-size:8px !important;
+      padding:7px 10px !important;
+    }
+    #stageMap .stageStatus small{display:none !important;}
+    #stageMap .stageMapInner{
+      left:12px !important;
+      right:12px !important;
+      top:162px !important;
+      bottom:clamp(318px, 40svh, 390px) !important;
+      min-height:300px !important;
+    }
+    #stageMap #stageInfoPanel.stageInfoPanel,
+    #stageMap .stageInfoPanel{
+      left:12px !important;
+      right:12px !important;
+      min-height:clamp(190px, 30svh, 270px) !important;
+      max-height:clamp(210px, 34svh, 300px) !important;
+      padding:14px 14px !important;
+    }
+    #stageMap .stageBossRow{grid-template-columns:1fr !important;}
+    #stageMap .stageBossCard:nth-child(2){display:none !important;}
+  }
+</style>
+
+<!-- v127: integrated test/progress unlock hardening. Uses the game's lexical globals directly, not window.*, so it works with const/let declarations. -->
+<script id="v127-test-and-progress-unlock-hardening">
+(function(){
+  'use strict';
+  function safe(fn, fallback){ try{ return fn(); }catch(err){ console.warn('[v127 unlock hardening]', err); return fallback; } }
+  function maxStage(){ return safe(function(){ return Array.isArray(STAGE_MAP_DEFS) ? STAGE_MAP_DEFS.length : 12; }, 12); }
+  function clampStage(n){
+    var max = maxStage();
+    n = Number(n || 1);
+    if(!Number.isFinite(n)) n = 1;
+    return Math.max(1, Math.min(max, Math.floor(n)));
+  }
+  function isTestModeActive(){
+    return safe(function(){ return !!(TEST_MODE_CONFIG && TEST_MODE_CONFIG.enabled) || !!(META && META.flags && META.flags.testMode); }, false);
+  }
+  function forceTestModeUnlock(){
+    if(!isTestModeActive()) return false;
+    return safe(function(){
+      var max = maxStage();
+      if(TEST_MODE_CONFIG) TEST_MODE_CONFIG.enabled = true;
+      if(document.body) document.body.classList.add('test-mode-active');
+      StageMapState.unlocked = max;
+      StageMapState.selected = clampStage(StageMapState.selected || 1);
+      StageMapState.current = StageMapState.selected;
+      if(!META) META = defaultOfflineMeta();
+      if(!META.flags || typeof META.flags !== 'object') META.flags = {};
+      META.flags.testMode = true;
+      META.unlockedTowers = Array.isArray(TEST_MODE_CONFIG.allTowers) ? TEST_MODE_CONFIG.allTowers.slice() : [0,1,2,3,4,5,6,7,8];
+      var map = document.getElementById('stageMap');
+      if(map){ map.dataset.unlocked = String(max); map.dataset.selected = String(StageMapState.selected); }
+      return true;
+    }, false);
+  }
+  function syncNormalProgressFromClears(){
+    if(isTestModeActive()) return forceTestModeUnlock();
+    return safe(function(){
+      if(!StageMapState || !META) return false;
+      var max = maxStage();
+      var beforeStage = clampStage(StageMapState.unlocked || 1);
+      var next = beforeStage;
+      var towerChanged = false;
+      var towerSet = new Set(normalizeUnlockedTowers(META.unlockedTowers, META.clears || {}));
+      for(var i=1; i<=max; i++){
+        if(Number((META.clears || {})[String(i)] || (META.clears || {})[i] || 0) > 0){
+          next = Math.max(next, Math.min(max, i + 1));
+          var reward = typeof stageTowerReward === 'function' ? stageTowerReward(i) : null;
+          if(reward && !towerSet.has(Number(reward.type))){ towerSet.add(Number(reward.type)); towerChanged = true; }
+        }
+      }
+      StageMapState.unlocked = clampStage(next);
+      StageMapState.selected = clampStage(StageMapState.selected || StageMapState.unlocked);
+      if(StageMapState.selected > StageMapState.unlocked) StageMapState.selected = StageMapState.unlocked;
+      StageMapState.current = clampStage(StageMapState.current || StageMapState.selected);
+      META.unlockedTowers = Array.from(towerSet).filter(function(v){ return Number.isInteger(Number(v)); }).map(Number).sort(function(a,b){return a-b;});
+      if(StageMapState.unlocked !== beforeStage || towerChanged){
+        if(typeof saveStageMapProgress === 'function') saveStageMapProgress();
+        if(towerChanged && typeof saveOfflineMeta === 'function') saveOfflineMeta();
+      }
+      return StageMapState.unlocked !== beforeStage || towerChanged;
+    }, false);
+  }
+  function refreshStageUiLabels(){
+    safe(function(){
+      var max = maxStage();
+      var unlocked = isTestModeActive() ? max : clampStage(StageMapState.unlocked || 1);
+      var selected = clampStage(StageMapState.selected || 1);
+      var map = document.getElementById('stageMap');
+      if(map){ map.dataset.unlocked = String(unlocked); map.dataset.selected = String(selected); }
+      document.querySelectorAll('#stageMap .stageNode').forEach(function(node){
+        var stage = clampStage(node.dataset.stage || 1);
+        var open = stage <= unlocked;
+        node.classList.toggle('locked', !open);
+        node.classList.toggle('unlocked', open);
+        var lock = node.querySelector('.nodeLock');
+        if(lock) lock.style.display = open ? 'none' : 'block';
+      });
+      var label = document.getElementById('stageProgressLabel');
+      if(label){
+        var arc = typeof getConstellationArcByStage === 'function' ? getConstellationArcByStage(selected) : {name:'ORION CONSTELLATION'};
+        label.textContent = (isTestModeActive() ? 'TEST MODE · ' : '') + arc.name + ' · OPEN ' + unlocked + ' / ' + max;
+      }
+      var galaxyLabel = document.getElementById('galaxyProgressLabel');
+      if(galaxyLabel && isTestModeActive()) galaxyLabel.textContent = 'TEST MODE · MILKY RIFT · 1 / 4 GALAXIES';
+      if(typeof renderHangar === 'function') renderHangar();
+    });
+  }
+  function beforeMapWork(){ if(isTestModeActive()) forceTestModeUnlock(); else syncNormalProgressFromClears(); }
+
+  var _setTestModeEnabled = typeof setTestModeEnabled === 'function' ? setTestModeEnabled : null;
+  if(_setTestModeEnabled){
+    setTestModeEnabled = function(flag){
+      var ret = _setTestModeEnabled.apply(this, arguments);
+      if(flag) forceTestModeUnlock();
+      else syncNormalProgressFromClears();
+      refreshStageUiLabels();
+      return ret;
+    };
+  }
+  var _applyTestModeOverrides = typeof applyTestModeOverrides === 'function' ? applyTestModeOverrides : null;
+  if(_applyTestModeOverrides){
+    applyTestModeOverrides = function(){
+      var ret = _applyTestModeOverrides.apply(this, arguments);
+      forceTestModeUnlock();
+      refreshStageUiLabels();
+      return ret;
+    };
+  }
+  var _loadStageMapProgress = typeof loadStageMapProgress === 'function' ? loadStageMapProgress : null;
+  if(_loadStageMapProgress){
+    loadStageMapProgress = function(){
+      var ret = _loadStageMapProgress.apply(this, arguments);
+      beforeMapWork();
+      refreshStageUiLabels();
+      return ret;
+    };
+  }
+  var _loadOfflineMeta = typeof loadOfflineMeta === 'function' ? loadOfflineMeta : null;
+  if(_loadOfflineMeta){
+    loadOfflineMeta = function(){
+      var ret = _loadOfflineMeta.apply(this, arguments);
+      beforeMapWork();
+      return ret;
+    };
+  }
+  var _syncStageUnlockFromClears = typeof syncStageUnlockFromClears === 'function' ? syncStageUnlockFromClears : null;
+  if(_syncStageUnlockFromClears){
+    syncStageUnlockFromClears = function(){
+      if(isTestModeActive()){ forceTestModeUnlock(); refreshStageUiLabels(); return true; }
+      var ret = _syncStageUnlockFromClears.apply(this, arguments);
+      syncNormalProgressFromClears();
+      refreshStageUiLabels();
+      return ret;
+    };
+  }
+  var _renderStageMap = typeof renderStageMap === 'function' ? renderStageMap : null;
+  if(_renderStageMap){
+    renderStageMap = function(){
+      beforeMapWork();
+      var ret = _renderStageMap.apply(this, arguments);
+      beforeMapWork();
+      refreshStageUiLabels();
+      return ret;
+    };
+  }
+  var _syncStageMapSelectionAndInfo = typeof syncStageMapSelectionAndInfo === 'function' ? syncStageMapSelectionAndInfo : null;
+  if(_syncStageMapSelectionAndInfo){
+    syncStageMapSelectionAndInfo = function(stageNo, opts){
+      beforeMapWork();
+      var ret = _syncStageMapSelectionAndInfo.apply(this, arguments);
+      beforeMapWork();
+      refreshStageUiLabels();
+      return ret;
+    };
+  }
+  var _startSelectedStageFromMap = typeof startSelectedStageFromMap === 'function' ? startSelectedStageFromMap : null;
+  if(_startSelectedStageFromMap){
+    startSelectedStageFromMap = function(){
+      beforeMapWork();
+      refreshStageUiLabels();
+      return _startSelectedStageFromMap.apply(this, arguments);
+    };
+  }
+  var _completeStageFromBattle = typeof completeStageFromBattle === 'function' ? completeStageFromBattle : null;
+  if(_completeStageFromBattle){
+    completeStageFromBattle = function(){
+      var ret = _completeStageFromBattle.apply(this, arguments);
+      setTimeout(function(){ syncNormalProgressFromClears(); refreshStageUiLabels(); }, 0);
+      setTimeout(function(){ syncNormalProgressFromClears(); refreshStageUiLabels(); }, 120);
+      return ret;
+    };
+  }
+
+  document.addEventListener('click', function(e){
+    var testBtn = e.target && e.target.closest && e.target.closest('#testModeBtn');
+    if(testBtn){
+      safe(function(){ applyTestModeOverrides(); });
+      setTimeout(function(){ forceTestModeUnlock(); refreshStageUiLabels(); }, 0);
+      setTimeout(function(){ forceTestModeUnlock(); refreshStageUiLabels(); if(typeof renderStageMap === 'function') renderStageMap(); }, 80);
+    }
+  }, true);
+
+  window.PRD_UNLOCK_HARDENING_V127 = {
+    forceTestModeUnlock: forceTestModeUnlock,
+    syncNormalProgressFromClears: syncNormalProgressFromClears,
+    refreshStageUiLabels: refreshStageUiLabels
+  };
+  setTimeout(function(){ beforeMapWork(); refreshStageUiLabels(); }, 0);
+})();
+</script>
+
+<!-- v130: constellation compact planet + slim info panel patch -->
+<style id="v130-constellation-compact-planets-panel">
+  /* Constellation nodes: uniformly reduce planet artwork and orbit rings so adjacent stages do not visually collide. */
+  #stageMap .stageNode{
+    width:140px !important;
+    height:140px !important;
+  }
+  #stageMap .stageNode .nodePlanet,
+  #stageMap .stageNode[data-stage] .nodePlanet,
+  #stageMap .stageNode[data-stage="5"] .nodePlanet,
+  #stageMap .stageNode[data-stage="6"] .nodePlanet,
+  #stageMap .stageNode[data-stage="7"] .nodePlanet{
+    width:74px !important;
+    height:74px !important;
+    min-width:74px !important;
+    min-height:74px !important;
+    max-width:74px !important;
+    max-height:74px !important;
+  }
+  #stageMap .stageNode .nodePlanet::before{inset:-11px !important;}
+  #stageMap .stageNode .nodePlanet::after{inset:-17px !important; opacity:.24 !important;}
+  #stageMap .stageNode .nodeNo{font-size:30px !important;}
+  #stageMap .stageNode[data-stage="10"] .nodeNo,
+  #stageMap .stageNode[data-stage="11"] .nodeNo,
+  #stageMap .stageNode[data-stage="12"] .nodeNo{font-size:24px !important;}
+  #stageMap .stageNode .nodeLabel{top:100px !important;}
+  #stageMap .nodeStarRow{top:86px !important;}
+
+  /* Lower stage frame: remove boss preview cards and make the description frame slimmer. */
+  #stageMap .stageBossRow,
+  #stageMap .stageSyncBossBrief,
+  #stageMap .stageFocusedBoss{
+    display:none !important;
+    visibility:hidden !important;
+    height:0 !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+  }
+  #stageMap #stageInfoPanel.stageInfoPanel,
+  #stageMap .stageInfoPanel{
+    min-height:0 !important;
+    height:auto !important;
+    max-height:156px !important;
+    bottom:calc(var(--v121-action-bottom, 24px) + var(--v121-bottom-action-h, 64px) + 12px) !important;
+    padding:13px 18px 12px !important;
+    overflow:hidden !important;
+  }
+  #stageMap .stageInfoHead{
+    padding-bottom:8px !important;
+    margin-bottom:8px !important;
+  }
+  #stageMap .stageInfoMood{
+    -webkit-line-clamp:2 !important;
+    line-height:1.38 !important;
+    margin-top:6px !important;
+  }
+  #stageMap .stageTagRow{
+    margin-top:8px !important;
+  }
+
+  @media (max-width:900px), (max-aspect-ratio:0.78){
+    #stageMap .stageNode{
+      width:104px !important;
+      height:104px !important;
+    }
+    #stageMap .stageNode .nodePlanet,
+    #stageMap .stageNode[data-stage] .nodePlanet,
+    #stageMap .stageNode[data-stage="5"] .nodePlanet,
+    #stageMap .stageNode[data-stage="6"] .nodePlanet,
+    #stageMap .stageNode[data-stage="7"] .nodePlanet{
+      width:56px !important;
+      height:56px !important;
+      min-width:56px !important;
+      min-height:56px !important;
+      max-width:56px !important;
+      max-height:56px !important;
+    }
+    #stageMap .stageNode .nodePlanet::before{inset:-9px !important;}
+    #stageMap .stageNode .nodePlanet::after{inset:-15px !important; opacity:.22 !important;}
+    #stageMap .stageNode .nodeNo{font-size:22px !important;}
+    #stageMap .stageNode[data-stage="10"] .nodeNo,
+    #stageMap .stageNode[data-stage="11"] .nodeNo,
+    #stageMap .stageNode[data-stage="12"] .nodeNo{font-size:18px !important;}
+    #stageMap .stageNode .nodeLabel{
+      top:78px !important;
+      max-width:92px !important;
+      font-size:5.8px !important;
+    }
+    #stageMap .nodeStarRow{
+      top:68px !important;
+      max-width:78px !important;
+      font-size:6.3px !important;
+    }
+    #stageMap #stageInfoPanel.stageInfoPanel,
+    #stageMap .stageInfoPanel{
+      bottom:calc(var(--v121-action-bottom, 18px) + var(--v121-bottom-action-h, 60px) + 10px) !important;
+      max-height:142px !important;
+      padding:10px 12px !important;
+    }
+    #stageMap .stageInfoHead{
+      padding-bottom:6px !important;
+      margin-bottom:6px !important;
+    }
+    #stageMap .stageInfoMood{
+      font-size:8.8px !important;
+      line-height:1.34 !important;
+      -webkit-line-clamp:2 !important;
+    }
+    #stageMap .stageTagRow{
+      margin-top:7px !important;
+    }
+    #stageMap #offlineStagePanel{
+      display:none !important;
+    }
+  }
+
+  @media (max-width:520px){
+    #stageMap .stageMapInner{
+      bottom:calc(var(--v121-action-bottom, 14px) + var(--v121-bottom-action-h, 58px) + 170px) !important;
+    }
+    #stageMap .stageNode{
+      width:98px !important;
+      height:98px !important;
+    }
+    #stageMap .stageNode .nodePlanet,
+    #stageMap .stageNode[data-stage] .nodePlanet,
+    #stageMap .stageNode[data-stage="5"] .nodePlanet,
+    #stageMap .stageNode[data-stage="6"] .nodePlanet,
+    #stageMap .stageNode[data-stage="7"] .nodePlanet{
+      width:52px !important;
+      height:52px !important;
+      min-width:52px !important;
+      min-height:52px !important;
+      max-width:52px !important;
+      max-height:52px !important;
+    }
+    #stageMap .stageNode .nodeNo{font-size:20px !important;}
+    #stageMap .stageNode[data-stage="10"] .nodeNo,
+    #stageMap .stageNode[data-stage="11"] .nodeNo,
+    #stageMap .stageNode[data-stage="12"] .nodeNo{font-size:16px !important;}
+    #stageMap .stageNode .nodeLabel{
+      top:73px !important;
+      max-width:84px !important;
+      font-size:5.2px !important;
+    }
+    #stageMap .nodeStarRow{
+      top:63px !important;
+      max-width:72px !important;
+      font-size:5.8px !important;
+    }
+    #stageMap #stageInfoPanel.stageInfoPanel,
+    #stageMap .stageInfoPanel{
+      left:12px !important;
+      right:12px !important;
+      bottom:calc(var(--v121-action-bottom, 14px) + var(--v121-bottom-action-h, 58px) + 8px) !important;
+      max-height:132px !important;
+      padding:9px 11px !important;
+    }
+    #stageMap .stageInfoTitle{font-size:11px !important;}
+    #stageMap .stageInfoRisk{font-size:7.5px !important;}
+    #stageMap .stageInfoRisk b{font-size:7.5px !important; padding:4px 8px !important;}
+    #stageMap .stageInfoMood{font-size:8.3px !important; line-height:1.32 !important;}
+    #stageMap .stageTagRow > *{font-size:6.2px !important; padding:3px 7px !important;}
+  }
+</style>
+
+
+<style id="v143-battle-topright-controls-compact">
+/* v143: make in-battle top-right tower/BGM buttons smaller and tuck them closer to the top-right corner so they do not overlap the board blocks. */
+#field .fieldTopControls{
+  top:10px !important;
+  right:10px !important;
+  left:auto !important;
+  bottom:auto !important;
+  gap:6px !important;
+  align-items:flex-end !important;
+  z-index:40 !important;
+}
+#field .fieldTopControls .fieldIconBtn,
+#field .fieldTopControls #towerMenuBtn,
+#field .fieldTopControls #audioBtn{
+  width:44px !important;
+  height:44px !important;
+  min-width:44px !important;
+  min-height:44px !important;
+  max-width:44px !important;
+  max-height:44px !important;
+  padding:0 !important;
+}
+#field .fieldTopControls .fieldIconBtn img,
+#field .fieldTopControls #towerMenuBtn img,
+#field .fieldTopControls #audioBtn img{
+  width:18px !important;
+  height:18px !important;
+}
+@media (max-width:920px){
+  #field .fieldTopControls{
+    top:8px !important;
+    right:8px !important;
+    gap:5px !important;
+  }
+  #field .fieldTopControls .fieldIconBtn,
+  #field .fieldTopControls #towerMenuBtn,
+  #field .fieldTopControls #audioBtn{
+    width:40px !important;
+    height:40px !important;
+    min-width:40px !important;
+    min-height:40px !important;
+    max-width:40px !important;
+    max-height:40px !important;
+  }
+  #field .fieldTopControls .fieldIconBtn img,
+  #field .fieldTopControls #towerMenuBtn img,
+  #field .fieldTopControls #audioBtn img{
+    width:16px !important;
+    height:16px !important;
+  }
+}
+@media (max-width:640px){
+  #field .fieldTopControls{
+    top:6px !important;
+    right:6px !important;
+    gap:4px !important;
+  }
+  #field .fieldTopControls .fieldIconBtn,
+  #field .fieldTopControls #towerMenuBtn,
+  #field .fieldTopControls #audioBtn{
+    width:36px !important;
+    height:36px !important;
+    min-width:36px !important;
+    min-height:36px !important;
+    max-width:36px !important;
+    max-height:36px !important;
+    border-width:1px !important;
+  }
+  #field .fieldTopControls .fieldIconBtn img,
+  #field .fieldTopControls #towerMenuBtn img,
+  #field .fieldTopControls #audioBtn img{
+    width:14px !important;
+    height:14px !important;
+  }
+}
+</style>
+
+
+
+<style id="v144-stage-map-topright-two-buttons-restore">
+/* v144: show the two compact circular controls on the stage planet map.
+   Keep the old square stageTowerManageBtn removed; use a separate circular stack instead. */
+#stageMap .stageQuickControls{
+  position:absolute !important;
+  top:26px !important;
+  right:8px !important;
+  left:auto !important;
+  bottom:auto !important;
+  z-index:1400 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:5px !important;
+  pointer-events:auto !important;
+}
+#stageMap .stageQuickBtn{
+  width:38px !important;
+  height:38px !important;
+  min-width:38px !important;
+  min-height:38px !important;
+  max-width:38px !important;
+  max-height:38px !important;
+  display:grid !important;
+  place-items:center !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  border:1px solid rgba(43,224,255,.30) !important;
+  background:radial-gradient(circle at 50% 42%,rgba(9,35,66,.96),rgba(1,8,21,.96) 72%) !important;
+  box-shadow:
+    0 0 0 2px rgba(0,0,0,.18),
+    inset 0 0 0 1px rgba(255,255,255,.035),
+    0 0 13px rgba(54,221,255,.11) !important;
+  opacity:.94 !important;
+  cursor:pointer !important;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  transform:none !important;
+}
+#stageMap .stageQuickBtn img{
+  width:20px !important;
+  height:20px !important;
+  object-fit:contain !important;
+  filter:drop-shadow(0 0 7px rgba(77,236,255,.30)) !important;
+  pointer-events:none !important;
+}
+#stageMap .stageQuickBtn:hover,
+#stageMap .stageQuickBtn:focus-visible{
+  opacity:1 !important;
+  filter:brightness(1.07) !important;
+  outline:none !important;
+}
+#stageMap .stageQuickBtn.is-off{
+  opacity:.55 !important;
+  filter:saturate(.65) brightness(.86) !important;
+}
+@media (max-width:760px){
+  #stageMap .stageQuickControls{
+    top:22px !important;
+    right:6px !important;
+    gap:4px !important;
+  }
+  #stageMap .stageQuickBtn{
+    width:34px !important;
+    height:34px !important;
+    min-width:34px !important;
+    min-height:34px !important;
+    max-width:34px !important;
+    max-height:34px !important;
+  }
+  #stageMap .stageQuickBtn img{
+    width:18px !important;
+    height:18px !important;
+  }
+}
+</style>
+<script id="v144-stage-map-topright-two-buttons-restore-js">
+(function(){
+  function syncStageAudioButton(){
+    var stageAudio = document.getElementById('stageAudioQuickBtn');
+    var battleAudio = document.getElementById('audioBtn');
+    if(!stageAudio) return;
+    var isOff = battleAudio ? battleAudio.classList.contains('is-off') : false;
+    stageAudio.classList.toggle('is-off', isOff);
+    stageAudio.setAttribute('aria-label', isOff ? 'BGM 켜기' : 'BGM 끄기');
+    stageAudio.setAttribute('title', isOff ? 'BGM OFF' : 'BGM ON');
+  }
+  function ensureStageQuickControls(){
+    var stageMap = document.getElementById('stageMap');
+    if(!stageMap) return;
+    var oldSquare = document.getElementById('stageTowerManageBtn');
+    if(oldSquare && oldSquare.parentNode) oldSquare.parentNode.removeChild(oldSquare);
+
+    var wrap = document.getElementById('stageQuickControls');
+    if(!wrap){
+      wrap = document.createElement('div');
+      wrap.id = 'stageQuickControls';
+      wrap.className = 'stageQuickControls';
+      wrap.setAttribute('aria-label', '스테이지 맵 빠른 조작');
+      wrap.innerHTML =
+        '<button id="stageTowerQuickBtn" class="stageQuickBtn stageQuickBtn--tower" type="button" aria-label="강화 관리" title="강화 관리"><img src="assets/images/ui/icons/ui_icon_tower.png" alt="" aria-hidden="true"></button>' +
+        '<button id="stageAudioQuickBtn" class="stageQuickBtn stageQuickBtn--bgm" type="button" aria-label="BGM 끄기" title="BGM ON"><img src="assets/images/ui/icons/ui_icon_bgm.png" alt="" aria-hidden="true"></button>';
+      stageMap.appendChild(wrap);
+    }
+
+    var tower = document.getElementById('stageTowerQuickBtn');
+    var audio = document.getElementById('stageAudioQuickBtn');
+
+    if(tower && tower.dataset.v144Bound !== '1'){
+      tower.dataset.v144Bound = '1';
+      tower.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var fieldTower = document.getElementById('towerMenuBtn');
+        if(fieldTower){
+          fieldTower.click();
+          setTimeout(function(){
+            var commonTab = document.querySelector('[data-tower-popup-tab="common"]');
+            if(commonTab) commonTab.click();
+          }, 0);
+        }
+      });
+    }
+    if(audio && audio.dataset.v144Bound !== '1'){
+      audio.dataset.v144Bound = '1';
+      audio.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var fieldAudio = document.getElementById('audioBtn');
+        if(fieldAudio){
+          fieldAudio.click();
+          setTimeout(syncStageAudioButton, 0);
+        }
+      });
+    }
+    syncStageAudioButton();
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', ensureStageQuickControls, {once:true});
+  }else{
+    ensureStageQuickControls();
+  }
+  window.addEventListener('load', ensureStageQuickControls, {once:true});
+  document.addEventListener('click', function(){
+    setTimeout(syncStageAudioButton, 0);
+  }, true);
+})();
+</script>
+
+
+
+<style id="v147-common-research-icon-and-title-fix">
+/* v147: after moving images into assets/images, fix common research icon paths and reduce the oversized common research title. */
+#towerPopup[data-active-tab="common"] .armoryCommonTitle,
+#towerPopup[data-active-tab="common"] .commonResearchTitle{
+  font-size:22px !important;
+  line-height:1.12 !important;
+  letter-spacing:-0.035em !important;
+  max-width:320px !important;
+  word-break:keep-all !important;
+  overflow-wrap:anywhere !important;
+  margin:0 0 8px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryCommonSubtitle,
+#towerPopup[data-active-tab="common"] .commonResearchSubtitle{
+  font-size:11px !important;
+  line-height:1.45 !important;
+}
+#towerPopup .commonResearchImg{
+  object-fit:contain !important;
+}
+@media (max-width:900px){
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup[data-active-tab="common"] .commonResearchTitle{
+    font-size:19px !important;
+    max-width:260px !important;
+  }
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup[data-active-tab="common"] .commonResearchTitle{
+    font-size:17px !important;
+    line-height:1.16 !important;
+    max-width:100% !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonSubtitle,
+  #towerPopup[data-active-tab="common"] .commonResearchSubtitle{
+    font-size:10px !important;
+  }
+}
+</style>
+
+
+
+<style id="v148-armory-general-icon-enlarge">
+/* v148: enlarge the two common-research icons shown at the bottom of tower detail. */
+#towerPopup .armorySection.compact .armoryGeneralCard{
+  grid-template-columns:68px minmax(0,1fr) !important;
+  gap:14px !important;
+  min-height:92px !important;
+  padding:14px 16px !important;
+}
+#towerPopup .armorySection.compact .armoryGeneralIcon{
+  width:60px !important;
+  height:60px !important;
+  min-width:60px !important;
+  min-height:60px !important;
+  font-size:31px !important;
+  border-width:1px !important;
+  filter:drop-shadow(0 0 12px rgba(70,205,255,.18)) !important;
+}
+#towerPopup .armorySection.compact .armoryGeneralCard b{
+  font-size:18px !important;
+}
+#towerPopup .armorySection.compact .armoryGeneralCard span{
+  font-size:13px !important;
+}
+@media (max-width:900px){
+  #towerPopup .armorySection.compact .armoryGeneralCard{
+    grid-template-columns:60px minmax(0,1fr) !important;
+    min-height:84px !important;
+  }
+  #towerPopup .armorySection.compact .armoryGeneralIcon{
+    width:52px !important;
+    height:52px !important;
+    min-width:52px !important;
+    min-height:52px !important;
+    font-size:27px !important;
+  }
+}
+@media (max-width:640px){
+  #towerPopup .armorySection.compact .armoryGeneralCard{
+    grid-template-columns:52px minmax(0,1fr) !important;
+    min-height:72px !important;
+    padding:11px 12px !important;
+  }
+  #towerPopup .armorySection.compact .armoryGeneralIcon{
+    width:44px !important;
+    height:44px !important;
+    min-width:44px !important;
+    min-height:44px !important;
+    font-size:23px !important;
+  }
+  #towerPopup .armorySection.compact .armoryGeneralCard b{font-size:15px !important;}
+  #towerPopup .armorySection.compact .armoryGeneralCard span{font-size:11px !important;}
+}
+</style>
+
+
+
+<style id="v149-remove-tower-detail-common-hint-cards">
+/* v149: the bottom 'applicable common research' hint cards were removed from tower detail.
+   The actual common research system, including global_plate gameplay effects, remains active. */
+#towerPopup .armorySection.compact .armoryGeneralGrid:empty{display:none!important;}
+</style>
+
+
+
+<style id="v150-common-research-layout-cleanup">
+/* v150: remove the unused crystal wallet from armory, simplify common-research info into one panel, and tone down oversized typography. */
+#towerPopup .towerPopupWallet{gap:0 !important;}
+#towerPopup .towerPopupWallet .towerWalletItem{max-width:170px !important;}
+#towerPopup .towerPopupWallet .towerWalletItem.gold{display:none !important;}
+
+#towerPopup[data-active-tab="common"] .armoryCommonTitle,
+#towerPopup[data-active-tab="common"] .commonResearchTitle{
+  font-size:18px !important;
+  line-height:1.14 !important;
+  letter-spacing:-0.03em !important;
+  margin:0 0 6px !important;
+  max-width:320px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryCommonSubtitle,
+#towerPopup[data-active-tab="common"] .commonResearchSubtitle{
+  font-size:10px !important;
+  line-height:1.45 !important;
+}
+#towerPopup[data-active-tab="common"] .armoryTags .tag{
+  font-size:10px !important;
+  min-height:24px !important;
+  padding:0 8px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+  min-height:auto !important;
+  grid-template-columns:minmax(0,1fr) 132px !important;
+  gap:12px !important;
+  padding:14px 16px !important;
+  margin:0 0 14px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock small{
+  font-size:10px !important;
+  margin-bottom:6px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock b{
+  font-size:18px !important;
+  line-height:1.24 !important;
+  letter-spacing:-0.035em !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock span{
+  font-size:11px !important;
+  line-height:1.42 !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchBuy{
+  min-height:42px !important;
+  font-size:13px !important;
+}
+#towerPopup[data-active-tab="common"] .commonInfoPanel{
+  margin:0 0 14px !important;
+  padding:14px 16px !important;
+  border:1px solid rgba(80,210,255,.18) !important;
+  background:linear-gradient(180deg,rgba(7,19,40,.82),rgba(2,9,23,.96)) !important;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px) !important;
+}
+#towerPopup[data-active-tab="common"] .commonInfoGrid{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:10px 14px !important;
+}
+#towerPopup[data-active-tab="common"] .commonInfoItem{
+  min-width:0 !important;
+}
+#towerPopup[data-active-tab="common"] .commonInfoItem small{
+  display:block !important;
+  margin:0 0 5px !important;
+  color:#94aac0 !important;
+  font-size:11px !important;
+  font-weight:820 !important;
+  line-height:1.1 !important;
+}
+#towerPopup[data-active-tab="common"] .commonInfoItem b{
+  display:block !important;
+  color:#f7fbff !important;
+  font-size:15px !important;
+  font-weight:920 !important;
+  line-height:1.32 !important;
+  letter-spacing:-0.03em !important;
+  word-break:keep-all !important;
+}
+#towerPopup[data-active-tab="common"] .commonInfoItem.highlight b{
+  color:#81e6ff !important;
+}
+#towerPopup[data-active-tab="common"] .armorySection h3,
+#towerPopup[data-active-tab="common"] .commonTimelineTitle{
+  font-size:16px !important;
+}
+#towerPopup[data-active-tab="common"] .armorySection p{
+  font-size:12px !important;
+  line-height:1.56 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow b{font-size:11px !important;}
+#towerPopup[data-active-tab="common"] .commonTimelineRow span{font-size:11px !important;line-height:1.35 !important;}
+#towerPopup[data-active-tab="common"] .commonTimelineRow em{font-size:9px !important;}
+@media (max-width:900px){
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+    grid-template-columns:1fr !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonInfoGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px 10px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock b{font-size:16px !important;}
+  #towerPopup[data-active-tab="common"] .commonInfoItem b{font-size:14px !important;}
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup[data-active-tab="common"] .commonResearchTitle{font-size:16px !important;max-width:100% !important;}
+  #towerPopup[data-active-tab="common"] .commonInfoGrid{grid-template-columns:1fr !important;}
+  #towerPopup[data-active-tab="common"] .commonInfoPanel{padding:12px !important;}
+  #towerPopup[data-active-tab="common"] .commonInfoItem small{font-size:10px !important;}
+  #towerPopup[data-active-tab="common"] .commonInfoItem b{font-size:13px !important;}
+}
+</style>
+
+
+<style id="v151-locked-common-research-polish">
+/* v151: make locked common-research detail look complete instead of a blurred unfinished page. */
+#towerPopup[data-active-tab="common"] .lockedResearchPolish{
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:18px;
+  padding:34px 36px;
+  border:1px solid rgba(80,210,255,.18);
+  background:
+    radial-gradient(circle at 18% 22%, color-mix(in srgb,var(--skill-color,#67e8f9) 16%,transparent), transparent 34%),
+    linear-gradient(180deg,rgba(5,16,35,.86),rgba(1,7,18,.98));
+  clip-path:polygon(22px 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%,0 22px);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),0 0 26px rgba(0,0,0,.20);
+}
+#towerPopup[data-active-tab="common"] .lockedResearchHero{
+  display:grid;
+  grid-template-columns:128px minmax(0,1fr);
+  align-items:center;
+  gap:24px;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchIconWrap{
+  position:relative;
+  width:116px;
+  height:116px;
+  display:grid;
+  place-items:center;
+  border:1px solid color-mix(in srgb,var(--skill-color,#67e8f9) 28%,rgba(255,255,255,.08));
+  background:radial-gradient(circle at 50% 45%, color-mix(in srgb,var(--skill-color,#67e8f9) 12%,transparent), rgba(2,8,22,.82) 68%);
+  clip-path:polygon(20px 0,100% 0,100% calc(100% - 20px),calc(100% - 20px) 100%,0 100%,0 20px);
+}
+#towerPopup[data-active-tab="common"] .lockedResearchIconWrap .commonResearchImg{
+  width:58px !important;
+  height:58px !important;
+  opacity:.52 !important;
+  filter:grayscale(.45) brightness(.82) drop-shadow(0 0 12px var(--skill-color,#67e8f9)) !important;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchLock{
+  position:absolute;
+  right:9px;
+  bottom:9px;
+  width:32px;
+  height:32px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  font-size:16px;
+  background:rgba(2,8,22,.92);
+  border:1px solid rgba(255,230,155,.35);
+}
+#towerPopup[data-active-tab="common"] .lockedResearchKicker{
+  font-family:'Orbitron','Pretendard',sans-serif;
+  font-size:10px;
+  letter-spacing:.18em;
+  color:var(--skill-color,#67e8f9);
+  font-weight:900;
+  margin-bottom:8px;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchTitle{
+  margin:0 0 10px;
+  font-size:24px;
+  line-height:1.15;
+  letter-spacing:-.035em;
+  color:#f8fbff;
+  font-weight:950;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchDesc{
+  margin:0;
+  max-width:520px;
+  font-size:14px;
+  line-height:1.55;
+  color:#b7c7d8;
+  font-weight:760;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchTags{
+  margin-top:14px;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchInfoGrid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchInfoGrid>div{
+  min-height:76px;
+  padding:12px 14px;
+  border:1px solid rgba(80,210,255,.14);
+  background:rgba(3,13,30,.58);
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
+}
+#towerPopup[data-active-tab="common"] .lockedResearchInfoGrid small{
+  display:block;
+  margin-bottom:6px;
+  font-size:10px;
+  color:#8ea4bc;
+  font-weight:820;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchInfoGrid b{
+  display:block;
+  font-size:14px;
+  line-height:1.35;
+  color:#eef7ff;
+  font-weight:900;
+  word-break:keep-all;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchNotice{
+  padding:13px 15px;
+  border-left:3px solid var(--skill-color,#67e8f9);
+  background:rgba(80,210,255,.055);
+  color:#aebed0;
+  font-size:12px;
+  line-height:1.45;
+  font-weight:760;
+}
+@media(max-width:900px){
+  #towerPopup[data-active-tab="common"] .lockedResearchPolish{padding:24px 22px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchHero{grid-template-columns:96px minmax(0,1fr);gap:16px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap{width:88px;height:88px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap .commonResearchImg{width:46px !important;height:46px !important;}
+  #towerPopup[data-active-tab="common"] .lockedResearchTitle{font-size:20px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchDesc{font-size:12px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchInfoGrid{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  #towerPopup[data-active-tab="common"] .lockedResearchPolish{padding:18px 16px;justify-content:flex-start;}
+  #towerPopup[data-active-tab="common"] .lockedResearchHero{grid-template-columns:1fr;}
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap{width:78px;height:78px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchTitle{font-size:18px;}
+  #towerPopup[data-active-tab="common"] .lockedResearchInfoGrid>div{min-height:58px;}
+}
+</style>
+
+
+<style id="v152-common-timeline-row-compact-fix">
+/* v152: make common research timeline rows feel denser and vertically centered. */
+#towerPopup[data-active-tab="common"] .commonTimelineList{
+  gap:8px !important;
+  padding-left:32px !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineList::before{
+  left:12px !important;
+  top:8px !important;
+  bottom:8px !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow{
+  grid-template-columns:66px minmax(0,1fr) 72px !important;
+  align-items:center !important;
+  min-height:48px !important;
+  padding:8px 12px !important;
+  margin:0 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow::before{
+  left:-24px !important;
+  width:14px !important;
+  height:14px !important;
+  border-width:3px !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow b,
+#towerPopup[data-active-tab="common"] .commonTimelineRow span,
+#towerPopup[data-active-tab="common"] .commonTimelineRow em{
+  align-self:center !important;
+  margin:0 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow b{
+  font-size:14px !important;
+  line-height:1 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow span{
+  display:flex !important;
+  align-items:center !important;
+  min-height:100% !important;
+  font-size:12px !important;
+  line-height:1.28 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow em{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-height:28px !important;
+  padding:0 8px !important;
+  font-size:11px !important;
+  justify-self:end !important;
+  text-align:center !important;
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="common"] .commonTimelineList{
+    padding-left:22px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineList::before{
+    left:8px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineRow{
+    grid-template-columns:46px minmax(0,1fr) 52px !important;
+    min-height:42px !important;
+    padding:7px 9px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineRow::before{
+    left:-18px !important;
+    width:12px !important;
+    height:12px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineRow b{font-size:12px !important;}
+  #towerPopup[data-active-tab="common"] .commonTimelineRow span{font-size:10px !important;line-height:1.25 !important;}
+  #towerPopup[data-active-tab="common"] .commonTimelineRow em{min-height:24px !important;font-size:9px !important;padding:0 6px !important;}
+}
+</style>
+
+
+
+<style id="v153-common-timeline-more-compact-center-fix">
+/* v153: further reduce research timeline row height and hard-center text vertically. */
+#towerPopup[data-active-tab="common"] .commonTimelineList{
+  gap:6px !important;
+  padding-left:30px !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineList::before{
+  left:11px !important;
+  top:7px !important;
+  bottom:7px !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow{
+  grid-template-columns:64px minmax(0,1fr) 70px !important;
+  align-items:center !important;
+  min-height:40px !important;
+  height:auto !important;
+  padding:6px 12px !important;
+  margin:0 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow::before{
+  left:-23px !important;
+  width:12px !important;
+  height:12px !important;
+  border-width:3px !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow > b,
+#towerPopup[data-active-tab="common"] .commonTimelineRow > span,
+#towerPopup[data-active-tab="common"] .commonTimelineRow > em{
+  display:flex !important;
+  align-items:center !important;
+  align-self:center !important;
+  min-height:100% !important;
+  margin:0 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow > b{
+  font-size:13px !important;
+  line-height:1 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow > span{
+  font-size:11px !important;
+  line-height:1.2 !important;
+  justify-content:flex-start !important;
+  padding:0 !important;
+}
+#towerPopup[data-active-tab="common"] .commonTimelineRow > em{
+  justify-content:center !important;
+  justify-self:end !important;
+  min-height:22px !important;
+  padding:0 7px !important;
+  font-size:10px !important;
+  line-height:1 !important;
+  text-align:center !important;
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="common"] .commonTimelineList{
+    gap:5px !important;
+    padding-left:20px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineList::before{
+    left:7px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineRow{
+    grid-template-columns:42px minmax(0,1fr) 48px !important;
+    min-height:36px !important;
+    padding:5px 8px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineRow::before{
+    left:-16px !important;
+    width:10px !important;
+    height:10px !important;
+    border-width:2px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonTimelineRow > b{font-size:11px !important;}
+  #towerPopup[data-active-tab="common"] .commonTimelineRow > span{font-size:10px !important;line-height:1.15 !important;}
+  #towerPopup[data-active-tab="common"] .commonTimelineRow > em{min-height:20px !important;font-size:9px !important;padding:0 6px !important;}
+}
+</style>
+
+
+
+<style id="v154-tower-skill-row-compact-match-fix">
+/* v154: make tower unique-skill rows denser like the common research rows and vertically center content. */
+#towerPopup .armorySkillList{
+  gap:8px !important;
+}
+#towerPopup .armorySkillRow{
+  grid-template-columns:64px 42px minmax(0,1fr) !important;
+  align-items:center !important;
+  min-height:48px !important;
+  height:auto !important;
+  padding:8px 12px !important;
+  margin:0 !important;
+}
+#towerPopup .armorySkillRow > b,
+#towerPopup .armorySkillRow > .skillIcon,
+#towerPopup .armorySkillRow > div{
+  align-self:center !important;
+}
+#towerPopup .armorySkillRow > b{
+  display:flex !important;
+  align-items:center !important;
+  min-height:100% !important;
+  font-size:14px !important;
+  line-height:1 !important;
+}
+#towerPopup .armorySkillRow .skillIcon{
+  width:34px !important;
+  height:34px !important;
+  font-size:20px !important;
+}
+#towerPopup .armorySkillRow > div{
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  min-height:100% !important;
+}
+#towerPopup .armorySkillRow strong{
+  margin:0 0 2px !important;
+  font-size:14px !important;
+  line-height:1.18 !important;
+}
+#towerPopup .armorySkillRow span{
+  margin-top:0 !important;
+  font-size:11px !important;
+  line-height:1.24 !important;
+}
+@media (max-width:640px){
+  #towerPopup .armorySkillList{gap:6px !important;}
+  #towerPopup .armorySkillRow{
+    grid-template-columns:44px minmax(0,1fr) !important;
+    min-height:42px !important;
+    padding:7px 9px !important;
+  }
+  #towerPopup .armorySkillRow .skillIcon{display:none !important;}
+  #towerPopup .armorySkillRow > b{font-size:12px !important;}
+  #towerPopup .armorySkillRow strong{font-size:12px !important;line-height:1.16 !important;}
+  #towerPopup .armorySkillRow span{font-size:10px !important;line-height:1.18 !important;}
+}
+</style>
+
+
+
+<style id="v182-armory-wallet-lower-clear-title">
+/* Lower the shard wallet so it never covers the title, and reserve vertical space. */
+#towerPopup .towerPopupHeader{
+  min-height:156px !important;
+  padding-top:26px !important;
+  padding-bottom:18px !important;
+  row-gap:14px !important;
+}
+#towerPopup .towerPopupHeader > div:first-child{
+  padding-bottom:8px !important;
+}
+#towerPopup .towerPopupTitle{
+  margin:0 0 8px 0 !important;
+  line-height:1.08 !important;
+}
+#towerPopup .towerPopupWallet{
+  margin-top:18px !important;
+  transform:none !important;
+}
+#towerPopup .towerPopupTabs{
+  margin-top:8px !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerPopupHeader{
+    min-height:134px !important;
+    padding-top:18px !important;
+    padding-bottom:14px !important;
+    row-gap:10px !important;
+  }
+  #towerPopup .towerPopupHeader > div:first-child{
+    padding-bottom:6px !important;
+  }
+  #towerPopup .towerPopupTitle{
+    margin:0 0 6px 0 !important;
+    line-height:1.06 !important;
+  }
+  #towerPopup .towerPopupWallet{
+    margin-top:12px !important;
+  }
+  #towerPopup .towerPopupTabs{
+    margin-top:6px !important;
+  }
+}
+</style>
+
+
+<style id="v183-armory-wallet-plain-text">
+/* Remove the boxed shard wallet UI and show plain text under the title. */
+#towerPopup .towerPopupHeader{
+  min-height:150px !important;
+  padding-top:24px !important;
+  padding-bottom:14px !important;
+  row-gap:10px !important;
+}
+#towerPopup .towerPopupTitle{
+  margin-bottom:6px !important;
+}
+#towerPopup .towerPopupWallet{
+  display:block !important;
+  width:auto !important;
+  max-width:calc(100% - 24px) !important;
+  margin:8px 0 0 0 !important;
+  padding:0 !important;
+  background:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  clip-path:none !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+  display:flex !important;
+  align-items:baseline !important;
+  gap:10px !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  height:auto !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  clip-path:none !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem::before,
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+  display:none !important;
+  content:none !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem span,
+#towerPopup .towerPopupWallet > span{
+  font-size:17px !important;
+  line-height:1.1 !important;
+  font-weight:800 !important;
+  color:#e8f6ff !important;
+  letter-spacing:-0.03em !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem b,
+#towerPopup .towerPopupWallet > b{
+  font-family:'Orbitron',Pretendard,sans-serif !important;
+  font-size:32px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  color:#ffffff !important;
+  letter-spacing:-0.03em !important;
+}
+@media (max-width:720px){
+  #towerPopup .towerPopupHeader{
+    min-height:128px !important;
+    padding-top:18px !important;
+    padding-bottom:10px !important;
+    row-gap:8px !important;
+  }
+  #towerPopup .towerPopupWallet{
+    margin-top:6px !important;
+    max-width:calc(100% - 8px) !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem span,
+  #towerPopup .towerPopupWallet > span{
+    font-size:13px !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem b,
+  #towerPopup .towerPopupWallet > b{
+    font-size:23px !important;
+  }
+}
+</style>
+
+
+<style id="v184-common-frame-match">
+/* Make the Common Research detail frame match the Tower / Plate visual shell more closely. */
+#towerPopup[data-active-tab="common"] .armoryCommonHero{
+  display:grid !important;
+  grid-template-columns:120px minmax(0,1fr) !important;
+  gap:18px !important;
+  align-items:center !important;
+  margin:0 0 14px !important;
+  padding:0 0 14px !important;
+  border:0 !important;
+  border-bottom:1px solid rgba(80,210,255,.13) !important;
+  border-radius:0 !important;
+  background:none !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .armoryCommonIcon{
+  width:96px !important;
+  height:96px !important;
+  border-radius:0 !important;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px) !important;
+  background:radial-gradient(circle at 28% 24%, rgba(255,255,255,.07), transparent 34%), linear-gradient(180deg, rgba(12,22,44,.82), rgba(3,10,24,.96)) !important;
+  border:1px solid rgba(148,211,255,.18) !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .armoryCommonIcon::before{
+  inset:8px !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  border-radius:0 !important;
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px) !important;
+  opacity:.9 !important;
+}
+#towerPopup[data-active-tab="common"] .armoryCommonIcon img{
+  width:58px !important;
+  height:58px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) 140px !important;
+  gap:14px !important;
+  align-items:center !important;
+  min-height:108px !important;
+  margin:0 0 14px !important;
+  padding:16px 18px !important;
+  border:1px solid rgba(80,210,255,.18) !important;
+  border-radius:0 !important;
+  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px) !important;
+  background:linear-gradient(180deg, rgba(7,19,40,.84), rgba(2,9,23,.96)) !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock small{
+  color:#67e8f9 !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock b{
+  font-size:17px !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock span{
+  color:#a8bbce !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchBuy{
+  min-height:46px !important;
+  border-radius:0 !important;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px) !important;
+  background:linear-gradient(180deg, rgba(77,128,168,.98), rgba(76,121,159,.98)) !important;
+  border:1px solid rgba(148,211,255,.34) !important;
+  color:#f8fcff !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchBuy:disabled{
+  background:linear-gradient(180deg, rgba(48,58,75,.96), rgba(40,48,63,.96)) !important;
+  border-color:rgba(148,163,184,.20) !important;
+  color:#99a7b7 !important;
+  opacity:1 !important;
+}
+#towerPopup[data-active-tab="common"] .armoryQuickGrid.v164InfoGrid{
+  margin:0 0 14px !important;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchPolish{
+  padding:0 !important;
+  border:0 !important;
+  background:none !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchHero{
+  display:grid !important;
+  grid-template-columns:120px minmax(0,1fr) !important;
+  gap:18px !important;
+  align-items:center !important;
+  margin:0 !important;
+  padding:0 0 14px !important;
+  border:0 !important;
+  border-bottom:1px solid rgba(80,210,255,.13) !important;
+  background:none !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchIconWrap{
+  width:96px !important;
+  height:96px !important;
+  border-radius:0 !important;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px) !important;
+  border:1px solid rgba(148,211,255,.18) !important;
+  background:linear-gradient(180deg, rgba(12,22,44,.82), rgba(3,10,24,.96)) !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchIconWrap::before{
+  inset:8px !important;
+  border-radius:0 !important;
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px) !important;
+}
+#towerPopup[data-active-tab="common"] .lockedResearchLock{
+  right:7px !important;
+  bottom:7px !important;
+}
+@media (max-width:900px){
+  #towerPopup[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup[data-active-tab="common"] .lockedResearchHero{
+    grid-template-columns:102px minmax(0,1fr) !important;
+    gap:14px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap{
+    width:84px !important;
+    height:84px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon img{
+    width:50px !important;
+    height:50px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+    grid-template-columns:1fr !important;
+    min-height:auto !important;
+  }
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup[data-active-tab="common"] .lockedResearchHero{
+    grid-template-columns:1fr !important;
+    gap:10px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap{
+    width:76px !important;
+    height:76px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon img{
+    width:44px !important;
+    height:44px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+    padding:14px !important;
+  }
+}
+</style>
+
+<style id="v185-tower-tab-alignment-final">
+/* v185: final alignment pass for the Armory popup opened from the tower button.
+   The earlier patches left the Tower tab using different hero/list/card geometry
+   from Common Research and Plate tabs. This locks the Tower tab to the same
+   frame rhythm without changing gameplay logic. */
+#towerPopup[data-active-tab="tower"] .towerPopupBody{
+  grid-template-columns:104px minmax(0,1fr) !important;
+  gap:12px !important;
+}
+#towerPopup[data-active-tab="tower"] .towerPopupList{
+  width:104px !important;
+  min-width:104px !important;
+  max-width:104px !important;
+  flex:0 0 104px !important;
+  align-items:center !important;
+  gap:10px !important;
+  padding:10px 8px !important;
+  overflow-x:hidden !important;
+}
+#towerPopup[data-active-tab="tower"] .towerPopupItem{
+  position:relative !important;
+  width:88px !important;
+  height:88px !important;
+  min-width:88px !important;
+  min-height:88px !important;
+  max-width:88px !important;
+  max-height:88px !important;
+  display:grid !important;
+  place-items:center !important;
+  grid-template-columns:1fr !important;
+  padding:0 !important;
+  margin:0 auto !important;
+  border-radius:0 !important;
+  clip-path:none !important;
+}
+#towerPopup[data-active-tab="tower"] .towerPopupThumb{
+  width:66px !important;
+  height:66px !important;
+  min-width:66px !important;
+  min-height:66px !important;
+  display:grid !important;
+  place-items:center !important;
+  margin:0 !important;
+  padding:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+}
+#towerPopup[data-active-tab="tower"] .towerPopupThumb img{
+  width:62px !important;
+  height:62px !important;
+  min-width:62px !important;
+  min-height:62px !important;
+  object-fit:contain !important;
+  display:block !important;
+}
+#towerPopup[data-active-tab="tower"] .towerPopupItem.active{
+  border-color:rgba(97,239,255,.82) !important;
+  box-shadow:0 0 0 1px rgba(97,239,255,.34) inset, 0 0 18px rgba(67,219,255,.16) !important;
+}
+
+#towerPopup[data-active-tab="tower"] .armoryTowerHero{
+  display:grid !important;
+  grid-template-columns:120px minmax(0,1fr) !important;
+  gap:18px !important;
+  align-items:center !important;
+  min-height:auto !important;
+  margin:0 0 14px !important;
+  padding:0 0 14px !important;
+  border:0 !important;
+  border-bottom:1px solid rgba(80,210,255,.13) !important;
+  background:none !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="tower"] .armoryTowerThumb{
+  position:relative !important;
+  width:96px !important;
+  height:96px !important;
+  min-width:96px !important;
+  min-height:96px !important;
+  display:grid !important;
+  place-items:center !important;
+  border-radius:0 !important;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px) !important;
+  background:radial-gradient(circle at 28% 24%, rgba(255,255,255,.07), transparent 34%), linear-gradient(180deg, rgba(12,22,44,.82), rgba(3,10,24,.96)) !important;
+  border:1px solid rgba(148,211,255,.18) !important;
+  box-shadow:none !important;
+  overflow:hidden !important;
+}
+#towerPopup[data-active-tab="tower"] .armoryTowerThumb::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:8px !important;
+  width:auto !important;
+  height:auto !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  border-radius:0 !important;
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px) !important;
+  opacity:.9 !important;
+  transform:none !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+#towerPopup[data-active-tab="tower"] .armoryTowerThumb::after{
+  display:none !important;
+  content:none !important;
+}
+#towerPopup[data-active-tab="tower"] .armoryTowerThumb img{
+  position:relative !important;
+  z-index:2 !important;
+  width:78px !important;
+  height:78px !important;
+  object-fit:contain !important;
+  display:block !important;
+}
+#towerPopup[data-active-tab="tower"] .armoryTowerTitle{
+  margin:0 0 7px !important;
+  font-size:22px !important;
+  line-height:1.12 !important;
+  letter-spacing:-0.035em !important;
+  max-width:360px !important;
+  white-space:normal !important;
+  word-break:keep-all !important;
+  overflow-wrap:anywhere !important;
+}
+#towerPopup[data-active-tab="tower"] .armoryTowerRole{
+  font-size:11px !important;
+  line-height:1.45 !important;
+  color:#b8c8da !important;
+  word-break:keep-all !important;
+}
+#towerPopup[data-active-tab="tower"] .armoryTags{
+  gap:7px !important;
+  margin-top:10px !important;
+}
+#towerPopup[data-active-tab="tower"] .armoryTags .tag{
+  min-height:24px !important;
+  height:24px !important;
+  padding:0 8px !important;
+  font-size:10px !important;
+  line-height:1 !important;
+}
+
+#towerPopup[data-active-tab="tower"] .towerQuickGrid{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:10px !important;
+  margin:0 0 14px !important;
+}
+#towerPopup[data-active-tab="tower"] .towerQuickGrid .armoryQuickCard{
+  min-width:0 !important;
+  min-height:64px !important;
+  padding:10px 12px !important;
+  display:grid !important;
+  align-content:center !important;
+  border:1px solid rgba(80,210,255,.16) !important;
+  background:linear-gradient(180deg,rgba(7,19,40,.82),rgba(2,9,23,.96)) !important;
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px) !important;
+}
+#towerPopup[data-active-tab="tower"] .towerQuickGrid .armoryQuickCard small{
+  display:block !important;
+  margin:0 0 5px !important;
+  font-size:10px !important;
+  line-height:1.1 !important;
+  white-space:nowrap !important;
+  color:#94aac0 !important;
+}
+#towerPopup[data-active-tab="tower"] .towerQuickGrid .armoryQuickCard b{
+  display:block !important;
+  font-size:14px !important;
+  line-height:1.26 !important;
+  letter-spacing:-0.03em !important;
+  word-break:keep-all !important;
+  overflow-wrap:anywhere !important;
+}
+#towerPopup[data-active-tab="tower"] .towerQuickGrid .armoryQuickCard.highlight b{
+  color:#81e6ff !important;
+}
+
+#towerPopup[data-active-tab="tower"] .v164Section{
+  margin:0 0 12px !important;
+  padding:14px 16px !important;
+  border:1px solid rgba(80,210,255,.14) !important;
+  border-top:1px solid rgba(80,210,255,.14) !important;
+  background:linear-gradient(180deg,rgba(7,19,40,.72),rgba(2,9,23,.92)) !important;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px) !important;
+}
+#towerPopup[data-active-tab="tower"] .v164Section h3{
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  margin:0 0 9px !important;
+  font-size:15px !important;
+  line-height:1.2 !important;
+  color:#f5fbff !important;
+}
+#towerPopup[data-active-tab="tower"] .v164Section h3::before{
+  content:"" !important;
+  width:8px !important;
+  height:8px !important;
+  min-width:8px !important;
+  border-radius:2px !important;
+  background:#27e3ff !important;
+  box-shadow:0 0 12px rgba(39,227,255,.42) !important;
+}
+#towerPopup[data-active-tab="tower"] .v164Section p{
+  font-size:12px !important;
+  line-height:1.56 !important;
+  color:#c4d2e0 !important;
+}
+#towerPopup[data-active-tab="tower"] .armorySkillList{
+  display:grid !important;
+  gap:7px !important;
+}
+#towerPopup[data-active-tab="tower"] .armorySkillRow{
+  grid-template-columns:56px 34px minmax(0,1fr) !important;
+  min-height:46px !important;
+  align-items:center !important;
+  padding:8px 10px !important;
+}
+#towerPopup[data-active-tab="tower"] .armorySkillRow > b{
+  font-size:13px !important;
+}
+#towerPopup[data-active-tab="tower"] .armorySkillRow .skillIcon{
+  width:28px !important;
+  height:28px !important;
+  font-size:18px !important;
+}
+#towerPopup[data-active-tab="tower"] .armorySkillRow strong{
+  font-size:13px !important;
+  line-height:1.18 !important;
+}
+#towerPopup[data-active-tab="tower"] .armorySkillRow span{
+  font-size:10.5px !important;
+  line-height:1.24 !important;
+}
+
+/* Locked tower detail uses a stable centered panel instead of a floating overlay box. */
+#towerPopup[data-active-tab="tower"] .armoryLockedShell{
+  min-height:100% !important;
+  display:grid !important;
+  place-items:center !important;
+  position:relative !important;
+}
+#towerPopup[data-active-tab="tower"] .armoryLockedShell .armoryLockOverlay{
+  position:relative !important;
+  inset:auto !important;
+  width:100% !important;
+  min-height:260px !important;
+  display:grid !important;
+  place-items:center !important;
+  background:linear-gradient(180deg,rgba(5,16,35,.86),rgba(1,7,18,.98)) !important;
+  border:1px solid rgba(80,210,255,.16) !important;
+  clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px) !important;
+  backdrop-filter:none !important;
+}
+#towerPopup[data-active-tab="tower"] .armoryLockBox{
+  min-width:0 !important;
+  width:min(420px,86%) !important;
+  max-width:86% !important;
+}
+
+@media (max-width:900px){
+  #towerPopup[data-active-tab="tower"] .towerPopupBody{grid-template-columns:96px minmax(0,1fr) !important;gap:10px !important;}
+  #towerPopup[data-active-tab="tower"] .towerPopupList{width:96px !important;min-width:96px !important;max-width:96px !important;flex-basis:96px !important;padding:10px 6px !important;}
+  #towerPopup[data-active-tab="tower"] .towerPopupItem{width:78px !important;height:78px !important;min-width:78px !important;min-height:78px !important;max-width:78px !important;max-height:78px !important;}
+  #towerPopup[data-active-tab="tower"] .towerPopupThumb{width:58px !important;height:58px !important;min-width:58px !important;min-height:58px !important;}
+  #towerPopup[data-active-tab="tower"] .towerPopupThumb img{width:54px !important;height:54px !important;min-width:54px !important;min-height:54px !important;}
+  #towerPopup[data-active-tab="tower"] .armoryTowerHero{grid-template-columns:102px minmax(0,1fr) !important;gap:14px !important;}
+  #towerPopup[data-active-tab="tower"] .armoryTowerThumb{width:84px !important;height:84px !important;min-width:84px !important;min-height:84px !important;}
+  #towerPopup[data-active-tab="tower"] .armoryTowerThumb img{width:68px !important;height:68px !important;}
+  #towerPopup[data-active-tab="tower"] .armoryTowerTitle{font-size:19px !important;max-width:270px !important;}
+  #towerPopup[data-active-tab="tower"] .towerQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="tower"] .towerPopupBody{grid-template-columns:84px minmax(0,1fr) !important;gap:8px !important;}
+  #towerPopup[data-active-tab="tower"] .towerPopupList{width:84px !important;min-width:84px !important;max-width:84px !important;flex-basis:84px !important;padding:8px 4px !important;gap:8px !important;}
+  #towerPopup[data-active-tab="tower"] .towerPopupItem{width:66px !important;height:66px !important;min-width:66px !important;min-height:66px !important;max-width:66px !important;max-height:66px !important;}
+  #towerPopup[data-active-tab="tower"] .towerPopupThumb{width:46px !important;height:46px !important;min-width:46px !important;min-height:46px !important;}
+  #towerPopup[data-active-tab="tower"] .towerPopupThumb img{width:42px !important;height:42px !important;min-width:42px !important;min-height:42px !important;}
+  #towerPopup[data-active-tab="tower"] .armoryTowerHero{grid-template-columns:76px minmax(0,1fr) !important;gap:10px !important;}
+  #towerPopup[data-active-tab="tower"] .armoryTowerThumb{width:70px !important;height:70px !important;min-width:70px !important;min-height:70px !important;}
+  #towerPopup[data-active-tab="tower"] .armoryTowerThumb::before{inset:6px !important;}
+  #towerPopup[data-active-tab="tower"] .armoryTowerThumb img{width:56px !important;height:56px !important;}
+  #towerPopup[data-active-tab="tower"] .armoryTowerTitle{font-size:17px !important;line-height:1.16 !important;max-width:100% !important;margin-bottom:5px !important;}
+  #towerPopup[data-active-tab="tower"] .armoryTowerRole{font-size:10px !important;line-height:1.38 !important;}
+  #towerPopup[data-active-tab="tower"] .armoryTags{gap:5px !important;margin-top:7px !important;}
+  #towerPopup[data-active-tab="tower"] .armoryTags .tag{height:21px !important;min-height:21px !important;font-size:9px !important;padding:0 6px !important;}
+  #towerPopup[data-active-tab="tower"] .towerQuickGrid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:7px !important;margin-bottom:10px !important;}
+  #towerPopup[data-active-tab="tower"] .towerQuickGrid .armoryQuickCard{min-height:50px !important;padding:8px 9px !important;}
+  #towerPopup[data-active-tab="tower"] .towerQuickGrid .armoryQuickCard small{font-size:9px !important;margin-bottom:3px !important;}
+  #towerPopup[data-active-tab="tower"] .towerQuickGrid .armoryQuickCard b{font-size:11.5px !important;line-height:1.18 !important;}
+  #towerPopup[data-active-tab="tower"] .v164Section{padding:11px 12px !important;margin-bottom:9px !important;}
+  #towerPopup[data-active-tab="tower"] .v164Section h3{font-size:13px !important;margin-bottom:7px !important;}
+  #towerPopup[data-active-tab="tower"] .v164Section p{font-size:10.5px !important;line-height:1.46 !important;}
+  #towerPopup[data-active-tab="tower"] .armorySkillRow{grid-template-columns:42px minmax(0,1fr) !important;min-height:40px !important;padding:7px 8px !important;}
+  #towerPopup[data-active-tab="tower"] .armorySkillRow .skillIcon{display:none !important;}
+  #towerPopup[data-active-tab="tower"] .armorySkillRow > b{font-size:11px !important;}
+  #towerPopup[data-active-tab="tower"] .armorySkillRow strong{font-size:11.5px !important;}
+  #towerPopup[data-active-tab="tower"] .armorySkillRow span{font-size:9.5px !important;line-height:1.18 !important;}
+}
+</style>
+
+<style id="v188-wallet-text-force-lower">
+/* v188: force the shard label and amount lower in the header.
+   Appended at EOF so it wins over all earlier wallet style patches. */
+#towerPopup .towerWalletItem span,
+#towerPopup .towerWalletItem b,
+#towerPopup #towerPopupWallet > span,
+#towerPopup #towerPopupWallet > b{
+  display:block !important;
+  transform:translateY(10px) !important;
+}
+@media (max-width:760px){
+  #towerPopup .towerWalletItem span,
+  #towerPopup .towerWalletItem b,
+  #towerPopup #towerPopupWallet > span,
+  #towerPopup #towerPopupWallet > b{
+    transform:translateY(8px) !important;
+  }
+}
+</style>
+
+
+<style id="v206-wallet-orb-responsive-y-align-fix">
+/* v206: the shard text/number are lowered with transform in the final header patch.
+   On responsive/mobile widths the shard orb is a normal grid pseudo-element, so top:calc()+translateY(-50%) moves it upward.
+   Keep it as a grid item and move only the orb down to the same visual baseline as the label. */
+#towerPopup .towerWalletItem.shard::before{
+  position:relative !important;
+  top:10px !important;
+  left:auto !important;
+  transform:none !important;
+  align-self:center !important;
+  justify-self:center !important;
+}
+/* fallback for the pre-render wallet structure */
+#towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before,
+#towerPopup .towerPopupWallet > span::before,
+#towerPopup .towerWalletItem.shard span::before{
+  position:relative !important;
+  top:10px !important;
+  transform:none !important;
+}
+@media (max-width:760px){
+  #towerPopup .towerWalletItem.shard::before,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before,
+  #towerPopup .towerPopupWallet > span::before,
+  #towerPopup .towerWalletItem.shard span::before{
+    top:8px !important;
+    transform:none !important;
+  }
+}
+</style>
+
+<style id="v206-battle-stat-font-balance">
+/* v206: reduce HUD stat typography so EXP no longer clips on smaller/mobile widths. */
+#side.battleMinimal .battleStatLine .stat .value,
+#side.battleMinimal .battleStatLine .value{
+  font-size:21px !important;
+}
+#side.battleMinimal .battleStatLine .stat #exp,
+#side.battleMinimal .battleStatLine #exp{
+  font-size:19px !important;
+  letter-spacing:-.03em !important;
+}
+@media (max-width:920px){
+  #side.battleMinimal .battleStatLine .stat .value,
+  #side.battleMinimal .battleStatLine .value{
+    font-size:18px !important;
+  }
+  #side.battleMinimal .battleStatLine .stat #exp,
+  #side.battleMinimal .battleStatLine #exp{
+    font-size:16px !important;
+  }
+}
+@media (max-width:640px){
+  #side.battleMinimal .battleStatLine .stat .label,
+  #side.battleMinimal .battleStatLine .label{
+    font-size:9px !important;
+  }
+  #side.battleMinimal .battleStatLine .stat .value,
+  #side.battleMinimal .battleStatLine .value{
+    font-size:15px !important;
+  }
+  #side.battleMinimal .battleStatLine .stat #exp,
+  #side.battleMinimal .battleStatLine #exp{
+    font-size:13px !important;
+  }
+  #side.battleMinimal .battleStatLine .miniBar{
+    margin-top:6px !important;
+  }
+}
+</style>
+
+</body>
+</html>
+>>>>>>> d2809d9 (1차완성)
