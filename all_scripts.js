@@ -1333,8 +1333,8 @@ const STAGE_FX_IMAGES = ['assets/images/effects/fx_cosmic.webp?v=6','assets/imag
 
 const PLANET_ICON_COLS = 4;
 const PLANET_ICON_ROWS = 2;
-const PLANET_BASE_SIZE = 40;
-const PLANET_RENDER_SCALE = 0.82;
+const PLANET_BASE_SIZE = 34; // v39: tower visual size reduced
+const PLANET_RENDER_SCALE = 0.76; // v39: icon sheet render scale reduced
 const BASE_PLANET_COUNT = 9;
 const HIDDEN_PLANET_TYPE = 9;
 const TECH_BONUS_PER_POINT = 0.08;
@@ -1901,11 +1901,18 @@ const rawCell = BOARD_IS_LANDSCAPE
 const CELL = Math.floor(clamp(rawCell, minCell, maxCell));
 const coreGapX = BOARD_IS_LANDSCAPE ? Math.max(24, Math.min(38, CELL * .46)) : Math.max(16, Math.min(28, CELL * .36));
 const totalWWithCore = GRID_COLS * CELL + coreGapX + Math.max(26, CELL * .56);
+const boardShiftX = BOARD_IS_LANDSCAPE
+  ? Math.max(42, Math.min(56, W * .040))
+  : Math.max(20, Math.min(30, W * .026));
 let GX = BOARD_IS_LANDSCAPE
-  ? Math.round(outerPadX)
-  : Math.round(Math.max(outerPadX, (W - totalWWithCore) / 2));
-if(BOARD_IS_LANDSCAPE && GX + totalWWithCore > W - rightCommandReserve){
-  GX = Math.round(Math.max(outerPadX, W - rightCommandReserve - totalWWithCore));
+  ? Math.round(outerPadX + boardShiftX)
+  : Math.round(Math.max(outerPadX, (W - totalWWithCore) / 2) + boardShiftX);
+if(BOARD_IS_LANDSCAPE){
+  const maxLandscapeGX = Math.max(outerPadX, W - rightCommandReserve - totalWWithCore - Math.max(8, CELL * .10));
+  GX = Math.round(Math.min(GX, maxLandscapeGX));
+}else{
+  const maxPortraitGX = Math.max(outerPadX, W - totalWWithCore - outerPadX);
+  GX = Math.round(Math.min(GX, maxPortraitGX));
 }
 const boardH = GRID_ROWS * CELL;
 // v22: align the board with the visible tactical lane instead of centering it
@@ -3070,9 +3077,9 @@ function drawPlanetOrbitAsteroids(type, x, y, level, phase){
   const d = PLANETS[type];
   const t = performance.now() * 0.001;
   const count = type === HIDDEN_PLANET_TYPE ? 3 : 2;
-  const baseR = type === HIDDEN_PLANET_TYPE ? 30 : 24;
-  const major = baseR + level * .9;
-  const minor = (type === HIDDEN_PLANET_TYPE ? 11 : 8) + level * .22;
+  const baseR = type === HIDDEN_PLANET_TYPE ? 26 : 20;
+  const major = baseR + level * .68;
+  const minor = (type === HIDDEN_PLANET_TYPE ? 9.5 : 7) + level * .16;
   ctx.save();
   ctx.strokeStyle = type === HIDDEN_PLANET_TYPE ? 'rgba(255,248,220,.48)' : 'rgba(255,255,255,.30)';
   ctx.lineWidth = type === HIDDEN_PLANET_TYPE ? 1.4 : 1.0;
@@ -3408,7 +3415,7 @@ class Planet{
     const p=this.pos,d=this.def;
     const frameIndex = currentPlanetFrameIndex();
     const tier = planetEvolutionTier(this.level);
-    const baseSize = (IS_MOBILE_BOARD ? PLANET_BASE_SIZE + 5 : PLANET_BASE_SIZE) + this.level * 2.8 + tier * 2.3;
+    const baseSize = (IS_MOBILE_BOARD ? PLANET_BASE_SIZE + 2 : PLANET_BASE_SIZE) + this.level * 2.05 + tier * 1.45;
     const bobY = Math.sin(performance.now()/420 + this.phase * 1.7 + this.level * .42) * (1.6 + Math.min(3.2, this.level * .12));
     const bobX = Math.cos(performance.now()/620 + this.phase * .9) * .9;
     const rx = p.x + bobX, ry = p.y + bobY;
@@ -3422,10 +3429,10 @@ class Planet{
     coreGlow.addColorStop(.55, d.color);
     coreGlow.addColorStop(1, 'rgba(2,6,23,.92)');
     ctx.fillStyle = coreGlow;
-    ctx.beginPath(); ctx.arc(rx, ry, Math.max(16, baseSize * .33), 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(rx, ry, Math.max(13, baseSize * .30), 0, TAU); ctx.fill();
     ctx.globalAlpha = .34;
     ctx.fillStyle = 'rgba(2,6,23,.52)';
-    ctx.beginPath(); ctx.ellipse(rx, ry + 19 + tier * .6, 17 + this.level*.34, 5.6 + tier*.25, 0, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(rx, ry + 16 + tier * .45, 14 + this.level*.24, 4.8 + tier*.18, 0, 0, TAU); ctx.fill();
     if(tier >= 1){
       ctx.globalAlpha = .28 + tier * .06;
       const halo = ctx.createRadialGradient(rx, ry, 10, rx, ry, 34 + tier * 8 + this.level * .6);
@@ -3451,7 +3458,7 @@ class Planet{
     ctx.shadowBlur = 0; ctx.globalAlpha = 1;
     ctx.strokeStyle='rgba(255,255,255,.55)';
     ctx.lineWidth=1.2;
-    ctx.beginPath();ctx.ellipse(rx,ry,26+this.level*.6+tier,7.5+tier*.2,0.18,0,TAU);ctx.stroke();
+    ctx.beginPath();ctx.ellipse(rx,ry,21+this.level*.42+tier*.7,6.2+tier*.16,0.18,0,TAU);ctx.stroke();
     if(st.dustPenalty > 0.02){
       ctx.globalAlpha = .22 + st.dustPenalty * .8;
       const mist = ctx.createRadialGradient(rx - 5, ry - 7, 1, rx, ry, 26 + tier * 4);
@@ -3486,12 +3493,12 @@ class Planet{
       ctx.globalAlpha = 1;
     }
     ctx.fillStyle='#fff';ctx.font='900 10px Orbitron';ctx.textAlign='center';
-    ctx.fillText('Lv.'+this.level,rx,ry+31);
+    ctx.fillText('Lv.'+this.level,rx,ry+26);
     if(tier >= 2){
       ctx.globalAlpha = 1;
       ctx.fillStyle = 'rgba(255,255,255,.9)';
       ctx.font = '900 8px Orbitron';
-      ctx.fillText(planetEvolutionName(this.level), rx, ry - 27 - tier * 3);
+      ctx.fillText(planetEvolutionName(this.level), rx, ry - 23 - tier * 2.2);
       ctx.globalAlpha = 1;
     }
     if(selected===this.idx){
@@ -4807,11 +4814,15 @@ function drawRoute(){
 
 function drawTerrain(){
   ctx.save();
+  const dragType = dragging ? (Number.isFinite(dragging.dragPreviewType) ? dragging.dragPreviewType : dragging.type) : null;
+  const dragLevel = dragging ? Math.max(1, Number(dragging.dragPreviewLevel ?? dragging.level ?? 1)) : 1;
+  const dragActive = !!dragging;
   for(let i=0;i<terrain.length;i++){
     const c=center(i), key=terrain[i], t=TERRAIN[key];
     const plateColor = getPlateColor(i, key);
+    const x = c.x-CELL/2+3, y = c.y-CELL/2+3, w = CELL-6, h = CELL-6;
     ctx.fillStyle=plateColor;
-    ctx.fillRect(c.x-CELL/2+3,c.y-CELL/2+3,CELL-6,CELL-6);
+    ctx.fillRect(x,y,w,h);
     if(terrain[i]==='path'){
       const grad = ctx.createLinearGradient(c.x-CELL/2+3, c.y, c.x+CELL/2-3, c.y);
       grad.addColorStop(0, 'rgba(255,255,255,.01)');
@@ -4820,7 +4831,37 @@ function drawTerrain(){
       ctx.fillStyle = grad;
       ctx.fillRect(c.x-CELL/2+6,c.y-CELL/2+6,CELL-12,CELL-12);
     }
-    ctx.strokeStyle='rgba(255,255,255,.04)';ctx.strokeRect(c.x-CELL/2+3,c.y-CELL/2+3,CELL-6,CELL-6);
+    ctx.strokeStyle='rgba(255,255,255,.04)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x,y,w,h);
+
+    if(dragActive){
+      const occupied = !!grid[i];
+      const buildable = canBuild(i) && !occupied;
+      const mergeable = !!(occupied && grid[i] && grid[i].type === dragType && grid[i].level === dragLevel && grid[i].level < 12);
+      let overlayFill = 'rgba(125,211,252,.05)';
+      let overlayStroke = 'rgba(125,211,252,.20)';
+      let overlayWidth = 1.15;
+      if(mergeable){
+        overlayFill = 'rgba(250,204,21,.12)';
+        overlayStroke = 'rgba(250,204,21,.42)';
+        overlayWidth = 1.5;
+      }else if(!buildable){
+        overlayFill = 'rgba(248,113,113,.12)';
+        overlayStroke = 'rgba(248,113,113,.28)';
+      }else{
+        overlayFill = 'rgba(56,189,248,.09)';
+        overlayStroke = 'rgba(103,232,249,.30)';
+      }
+      ctx.save();
+      ctx.fillStyle = overlayFill;
+      ctx.fillRect(x+1, y+1, w-2, h-2);
+      ctx.strokeStyle = overlayStroke;
+      ctx.lineWidth = overlayWidth;
+      ctx.strokeRect(x+1.5, y+1.5, w-3, h-3);
+      ctx.restore();
+    }
+
     if(key!=='empty'&&key!=='path'){
       ctx.fillStyle=key==='blocked'?'#475569':(getPlateAffinity(i)?.color || theme().color);
       ctx.font='900 22px Orbitron';ctx.textAlign='center';ctx.textBaseline='middle';
@@ -4834,11 +4875,33 @@ function drawTerrain(){
       }
     }
   }
-  const idx = hoverIdx;
+  const idx = dragActive ? idxAt(mouse.x, mouse.y) : hoverIdx;
   if(idx>=0){
     const c=center(idx);
-    ctx.strokeStyle=canBuild(idx)?'rgba(56,189,248,.78)':'rgba(251,113,133,.78)';
-    ctx.lineWidth=2;ctx.strokeRect(c.x-CELL/2+2,c.y-CELL/2+2,CELL-4,CELL-4);
+    const tower = grid[idx];
+    const buildable = canBuild(idx) && !tower;
+    const mergeable = !!(dragActive && tower && tower.type === dragType && tower.level === dragLevel && tower.level < 12);
+    let stroke = buildable ? 'rgba(56,189,248,.92)' : 'rgba(251,113,133,.90)';
+    let fill = buildable ? 'rgba(34,211,238,.16)' : 'rgba(248,113,113,.18)';
+    if(mergeable){
+      stroke = 'rgba(250,204,21,.96)';
+      fill = 'rgba(250,204,21,.18)';
+    }
+    ctx.save();
+    ctx.fillStyle = fill;
+    ctx.fillRect(c.x-CELL/2+2, c.y-CELL/2+2, CELL-4, CELL-4);
+    ctx.strokeStyle=stroke;
+    ctx.shadowColor=stroke;
+    ctx.shadowBlur=dragActive ? 14 : 8;
+    ctx.lineWidth=dragActive ? 2.6 : 2;
+    ctx.strokeRect(c.x-CELL/2+2,c.y-CELL/2+2,CELL-4,CELL-4);
+    if(dragActive){
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([6,4]);
+      ctx.strokeRect(c.x-CELL/2+6,c.y-CELL/2+6,CELL-12,CELL-12);
+      ctx.setLineDash([]);
+    }
+    ctx.restore();
   }
   ctx.restore();
 }
@@ -4964,7 +5027,7 @@ function drawDragging(){
   ctx.globalAlpha=.84;
   const previewLevel = Math.max(1, Number(dragging.dragPreviewLevel ?? dragging.level ?? 1));
   const previewType = Number.isFinite(dragging.dragPreviewType) ? dragging.dragPreviewType : dragging.type;
-  const ok = drawPlanetSprite(previewType, mouse.x, mouse.y, (IS_MOBILE_BOARD ? 54 : 46) + previewLevel*2.1, currentPlanetFrameIndex(), previewLevel);
+  const ok = drawPlanetSprite(previewType, mouse.x, mouse.y, (IS_MOBILE_BOARD ? 46 : 39) + previewLevel*1.65, currentPlanetFrameIndex(), previewLevel);
   if(!ok) drawProceduralPlanetBody({...dragging, type:previewType, level:previewLevel}, mouse.x, mouse.y);
   ctx.strokeStyle='rgba(255,255,255,.5)';ctx.beginPath();ctx.ellipse(mouse.x,mouse.y,36,11,0,0,TAU);ctx.stroke();
   ctx.restore();
