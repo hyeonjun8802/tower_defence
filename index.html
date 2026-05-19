@@ -15275,14 +15275,14 @@ function configureBattleCanvasBackingStore(){
   const fallbackW = landscape ? 1120 : 748;
   const fallbackH = landscape ? 640 : 1060;
 
-  // v31: keep the landscape backing store close to the *visible* field size.
-  // The old shared min-height(708) was good for portrait, but in landscape it
-  // made the logical canvas taller than the rendered field. Because the canvas
-  // is displayed with object-fit:fill, that vertical squeeze made square cells
-  // look gathered around the middle. Portrait keeps the old safe minimum.
-  const minBackingH = landscape ? 420 : 708;
-  const w = Math.max(748, Math.round(rect.width || fallbackW));
-  const h = Math.max(minBackingH, Math.round(rect.height || fallbackH));
+  // v219: keep the canvas backing-store ratio identical to the rendered field.
+  // The previous mobile minimum width/height could make object-fit:fill scale X/Y
+  // differently, so square tactical blocks looked squeezed.  Only use fallbacks
+  // while the field is still hidden and has no measurable size.
+  const measuredW = Math.round(rect.width || 0);
+  const measuredH = Math.round(rect.height || 0);
+  const w = Math.max(320, measuredW || fallbackW);
+  const h = Math.max(320, measuredH || fallbackH);
   canvas.width = w;
   canvas.height = h;
 }
