@@ -1072,8 +1072,8 @@ function saveStageMapProgress(){
 }
 
 function resetBattleUnitsForStageMap(){
-  grid = Array(GRID*GRID).fill(null);
-  terrain = Array(GRID*GRID).fill('empty');
+  grid = Array(GRID_COLS*GRID_ROWS).fill(null);
+  terrain = Array(GRID_COLS*GRID_ROWS).fill('empty');
   enemies = [];
   bullets = [];
   particles = [];
@@ -1161,7 +1161,12 @@ function startSelectedStageFromMap(){
 
   const map = $('stageMap');
   if(map) map.style.display = 'none';
-  $('game').style.display='flex';
+  const gameEl = $('game');
+  if(gameEl){
+    gameEl.style.display='flex';
+    // v22: force the game layout to settle before reset/render begins.
+    void gameEl.offsetHeight;
+  }
 
   reset();
   S.stageNo = stageNo;
@@ -1463,8 +1468,8 @@ function buildDustClouds(){
   const colors = ['rgba(244,208,118,.18)','rgba(186,230,253,.15)','rgba(203,213,225,.13)'];
   for(let i=0;i<count;i++){
     clouds.push({
-      x: rand(GX + 90, Math.min(CORE.x - 120, GX + GRID*CELL - 80)),
-      y: rand(GY + 80, Math.min(H - 165, GY + GRID*CELL - 80)),
+      x: rand(GX + 90, Math.min(CORE.x - 120, GX + GRID_COLS*CELL - 80)),
+      y: rand(GY + 80, Math.min(H - 165, GY + GRID_ROWS*CELL - 80)),
       r: rand(52, 74),
       vx: rand(-.20, .20),
       vy: rand(-.12, .12),
@@ -1486,8 +1491,8 @@ function updateDustClouds(dt){
     c.phase += dt * .018;
     c.x += c.vx * dt + Math.sin(c.phase) * .035;
     c.y += c.vy * dt + Math.cos(c.phase * .9) * .025;
-    const minX = GX + 50, maxX = GX + GRID*CELL - 50;
-    const minY = GY + 50, maxY = GY + GRID*CELL - 50;
+    const minX = GX + 50, maxX = GX + GRID_COLS*CELL - 50;
+    const minY = GY + 50, maxY = GY + GRID_ROWS*CELL - 50;
     if(c.x < minX || c.x > maxX) c.vx *= -1;
     if(c.y < minY || c.y > maxY) c.vy *= -1;
     c.x = clamp(c.x, minX, maxX);
@@ -1847,6 +1852,7 @@ let raf = 0, last = performance.now(), spawnTimer = 0, shake = 0, flash = 0;
 let hangarFrame = -1;
 let nextPlanetUid = 1;
 let mouse = {x:0,y:0};
+let hoverIdx = -1;
 let audio = null;
 let audioCtx = null;
 const towerSfxLimiter = {};
@@ -1858,22 +1864,75 @@ function isLowPowerAudioMode(){
   return window.matchMedia?.('(max-width: 768px)').matches || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
 }
 
-const GRID = 8;
-
-// Mobile board position tuning.
-// CSS scaling alone cannot move the actual map because the game is rendered inside a fixed-size canvas.
-// Move the internal canvas coordinates on mobile/tablet layouts.
+// Orientation-aware rectangular battle board.
+// The visible board can expand horizontally in landscape and vertically in portrait.
+const BOARD_IS_LANDSCAPE = (window.innerWidth || 0) >= (window.innerHeight || 0) * 1.04;
 const IS_MOBILE_BOARD = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
-
-// Mobile playability patch: larger cells make planets easier to see and tap.
-const CELL = IS_MOBILE_BOARD ? 78 : 70;
-const GX = Math.round((W - GRID*CELL)/2);
-const GY = IS_MOBILE_BOARD ? 54 : 86;
+const GRID_COLS = BOARD_IS_LANDSCAPE ? 12 : 8;
+const GRID_ROWS = BOARD_IS_LANDSCAPE ? 8 : 12;
+const GRID = Math.max(GRID_COLS, GRID_ROWS); // legacy fallback only
+const maxCell = BOARD_IS_LANDSCAPE
+  ? (IS_MOBILE_BOARD ? 72 : 86)
+  : (IS_MOBILE_BOARD ? 56 : 74);
+const minCell = BOARD_IS_LANDSCAPE
+  ? (IS_MOBILE_BOARD ? 34 : 42)
+  : (IS_MOBILE_BOARD ? 30 : 42);
+const outerPadX = BOARD_IS_LANDSCAPE
+  ? Math.max(14, Math.min(24, W * .018))
+  : Math.max(12, Math.min(18, W * .02));
+const rightCommandReserve = BOARD_IS_LANDSCAPE
+  ? Math.max(168, Math.min(222, W * .165))
+  : 0;
+const availableBoardW = BOARD_IS_LANDSCAPE
+  ? Math.max(260, W - outerPadX * 2 - rightCommandReserve)
+  : Math.max(220, W - outerPadX * 2);
+const topBottomReserve = BOARD_IS_LANDSCAPE
+  ? Math.max(74, Math.min(104, H * .135))
+  : Math.max(148, Math.min(210, H * .19));
+const fitByExpandedW = Math.max(24, availableBoardW / GRID_COLS);
+const fitByExpandedH = Math.max(24, (H - topBottomReserve) / GRID_ROWS);
+const fixedAxisCell = BOARD_IS_LANDSCAPE ? fitByExpandedH : fitByExpandedW;
+const landscapeWidthSafetyCell = BOARD_IS_LANDSCAPE
+  ? Math.max(24, availableBoardW / (GRID_COLS + 1.05))
+  : fitByExpandedW;
+const rawCell = BOARD_IS_LANDSCAPE
+  ? Math.min(maxCell, fixedAxisCell, landscapeWidthSafetyCell)
+  : Math.min(maxCell, fixedAxisCell, fitByExpandedW, fitByExpandedH);
+const CELL = Math.floor(clamp(rawCell, minCell, maxCell));
+const coreGapX = BOARD_IS_LANDSCAPE ? Math.max(24, Math.min(38, CELL * .46)) : Math.max(16, Math.min(28, CELL * .36));
+const totalWWithCore = GRID_COLS * CELL + coreGapX + Math.max(26, CELL * .56);
+let GX = BOARD_IS_LANDSCAPE
+  ? Math.round(outerPadX)
+  : Math.round(Math.max(outerPadX, (W - totalWWithCore) / 2));
+if(BOARD_IS_LANDSCAPE && GX + totalWWithCore > W - rightCommandReserve){
+  GX = Math.round(Math.max(outerPadX, W - rightCommandReserve - totalWWithCore));
+}
+const boardH = GRID_ROWS * CELL;
+// v22: align the board with the visible tactical lane instead of centering it
+// too low in portrait.  Cells remain square; only the top anchor changes.
+const hudReserveY = BOARD_IS_LANDSCAPE
+  ? Math.max(58, Math.min(86, H * .10))
+  : Math.max(70, Math.min(96, H * .075));
+const commandReserveY = BOARD_IS_LANDSCAPE
+  ? Math.max(28, Math.min(46, H * .055))
+  : Math.max(118, Math.min(166, H * .135));
+const playableH = Math.max(boardH, H - hudReserveY - commandReserveY);
+const naturalTop = hudReserveY + (playableH - boardH) * .5;
+const upwardBias = BOARD_IS_LANDSCAPE
+  ? Math.max(6, Math.min(14, CELL * .18))
+  : Math.max(34, Math.min(64, CELL * .92));
+const minTop = BOARD_IS_LANDSCAPE
+  ? Math.max(48, Math.min(76, H * .08))
+  : Math.max(62, Math.min(88, H * .06));
+const maxTop = Math.max(minTop, H - commandReserveY - boardH - Math.max(10, CELL * .18));
+const GY = Math.round(clamp(naturalTop - upwardBias, minTop, maxTop));
+const coreMaxX = BOARD_IS_LANDSCAPE
+  ? W - rightCommandReserve - Math.max(18, CELL * .18)
+  : W - 42;
 const CORE = {
-  x: IS_MOBILE_BOARD ? W - 58 : W - 74,
-  y: IS_MOBILE_BOARD ? H - 82 : H - 95
+  x: clamp(GX + GRID_COLS * CELL + coreGapX, 48, coreMaxX),
+  y: clamp(GY + GRID_ROWS * CELL - CELL * .5, 48, H - Math.max(58, commandReserveY * .42))
 };
-
 
 function currentPlanetFrameIndex(){
   return 0;
@@ -2450,8 +2509,8 @@ function reset(){
     runEnded:false,
     offline:{summonCost:100,cooldownScale:1}
   };
-  grid = Array(GRID*GRID).fill(null);
-  terrain = Array(GRID*GRID).fill('empty');
+  grid = Array(GRID_COLS*GRID_ROWS).fill(null);
+  terrain = Array(GRID_COLS*GRID_ROWS).fill('empty');
   enemies = [];
   bullets = [];
   particles = [];
@@ -2466,15 +2525,16 @@ function reset(){
 }
 
 function theme(){return THEMES[S.theme]}
-function center(i){return {x:GX+(i%GRID)*CELL+CELL/2,y:GY+Math.floor(i/GRID)*CELL+CELL/2}}
+function center(i){return {x:GX+(i%GRID_COLS)*CELL+CELL/2,y:GY+Math.floor(i/GRID_COLS)*CELL+CELL/2}}
 function gridPoint(col,row){return {x:GX+col*CELL+CELL/2,y:GY+row*CELL+CELL/2}}
 function idxAt(x,y){
-  const pad = IS_MOBILE_BOARD ? 8 : 0;
-  if(x < GX - pad || y < GY - pad || x > GX + GRID*CELL + pad || y > GY + GRID*CELL + pad) return -1;
-  const gx=Math.floor((clamp(x, GX, GX + GRID*CELL - 1)-GX)/CELL);
-  const gy=Math.floor((clamp(y, GY, GY + GRID*CELL - 1)-GY)/CELL);
-  if(gx<0||gx>=GRID||gy<0||gy>=GRID)return -1;
-  return gy*GRID+gx;
+  // v22: exact grid hit-test.  Padded/clamped hit-testing made focus snap
+  // to a neighboring cell near the board edge and looked one cell off.
+  if(x < GX || y < GY || x >= GX + GRID_COLS * CELL || y >= GY + GRID_ROWS * CELL) return -1;
+  const gx = Math.floor((x - GX) / CELL);
+  const gy = Math.floor((y - GY) / CELL);
+  if(gx < 0 || gx >= GRID_COLS || gy < 0 || gy >= GRID_ROWS) return -1;
+  return gy * GRID_COLS + gx;
 }
 function dist(a,b,c,d){return Math.hypot(a-c,b-d)}
 function canBuild(i){return i>=0 && terrain[i]!=='path' && terrain[i]!=='blocked'}
@@ -2547,57 +2607,84 @@ function applyRouteChamfers(points){
 }
 
 function makeRoute(){
-  const p = {
-    a: gridPoint(0,1),
-    b: gridPoint(1,1),
-    c: gridPoint(2,1),
-    d: gridPoint(2,3),
-    e: gridPoint(2,5),
-    f: gridPoint(4,5),
-    g: gridPoint(5,5),
-    h: gridPoint(5,3),
-    i: gridPoint(6,3),
-    j: gridPoint(6,1),
-    k: gridPoint(1,6),
-    l: gridPoint(3,6),
-    m: gridPoint(4,2),
-    n: gridPoint(6,6)
-  };
+  // v18: more tower-defense-like route catalog.
+  // Each stage now has a distinct map path, and the early / mid / late wave bands
+  // rotate through different lane shapes instead of reusing only four route groups.
+  const maxC = Math.max(1, GRID_COLS - 1);
+  const maxR = Math.max(1, GRID_ROWS - 1);
+  const bound = (v,min,max)=>Math.max(min, Math.min(max, v));
+  const col = pct => bound(Math.round(maxC * pct), 0, maxC);
+  const row = pct => bound(Math.round(maxR * pct), 0, maxR);
+  const gp = (colPct,rowPct)=>gridPoint(col(colPct), row(rowPct));
+  const stageNo = bound(Number(S?.stageNo || StageMapState?.current || 1) || 1, 1, 12);
+  const wave = Number(S?.ogge || 1) || 1;
+  const waveBand = wave < 4 ? 0 : (wave < 8 ? 1 : 2);
 
-  let baseRoute;
-  if(S.ogge < 4){
-    baseRoute = [
-      {x:-50,y:p.a.y},
-      {x:p.c.x,y:p.a.y},
-      {x:p.c.x,y:p.d.y},
-      {x:p.g.x,y:p.d.y},
-      {x:p.g.x,y:CORE.y},
-      {x:CORE.x,y:CORE.y}
-    ];
-  }else if(S.ogge < 8){
-    baseRoute = [
-      {x:-50,y:p.a.y},
-      {x:p.b.x,y:p.a.y},
-      {x:p.b.x,y:p.k.y},
-      {x:p.f.x,y:p.k.y},
-      {x:p.f.x,y:p.m.y},
-      {x:CORE.x,y:p.m.y},
-      {x:CORE.x,y:CORE.y}
-    ];
-  }else{
-    baseRoute = [
-      {x:-50,y:p.e.y},
-      {x:p.d.x,y:p.e.y},
-      {x:p.d.x,y:p.b.y},
-      {x:p.j.x,y:p.b.y},
-      {x:p.j.x,y:p.n.y},
-      {x:p.l.x,y:p.n.y},
-      {x:p.l.x,y:CORE.y},
-      {x:CORE.x,y:CORE.y}
-    ];
+  // Normalized orthogonal waypoint templates. Consecutive points intentionally share
+  // either X or Y so the road reads like a real TD lane, not a stretched polyline.
+  const routeTemplates = [
+    [[.08,.24],[.30,.24],[.30,.46],[.62,.46],[.62,.70],[.86,.70]],
+    [[.08,.18],[.44,.18],[.44,.34],[.18,.34],[.18,.62],[.70,.62],[.70,.84],[.92,.84]],
+    [[.10,.70],[.32,.70],[.32,.28],[.58,.28],[.58,.56],[.86,.56]],
+    [[.08,.40],[.38,.40],[.38,.18],[.72,.18],[.72,.48],[.28,.48],[.28,.78],[.82,.78]],
+    [[.10,.22],[.56,.22],[.56,.42],[.26,.42],[.26,.64],[.76,.64],[.76,.84]],
+    [[.12,.50],[.26,.50],[.26,.24],[.74,.24],[.74,.70],[.42,.70],[.42,.86],[.90,.86]],
+    [[.08,.12],[.32,.12],[.32,.36],[.56,.36],[.56,.20],[.84,.20],[.84,.58],[.64,.58],[.64,.82],[.90,.82]],
+    [[.08,.82],[.34,.82],[.34,.60],[.18,.60],[.18,.34],[.58,.34],[.58,.72],[.88,.72]],
+    [[.08,.32],[.22,.32],[.22,.16],[.48,.16],[.48,.48],[.72,.48],[.72,.28],[.92,.28]],
+    [[.12,.18],[.12,.78],[.36,.78],[.36,.26],[.62,.26],[.62,.86],[.88,.86]],
+    [[.10,.58],[.30,.58],[.30,.22],[.54,.22],[.54,.46],[.22,.46],[.22,.76],[.80,.76]],
+    [[.08,.26],[.36,.26],[.36,.14],[.74,.14],[.74,.42],[.48,.42],[.48,.70],[.88,.70],[.88,.86]]
+  ];
+
+  // Stable but varied: every stage gets its own base path, and mid/late waves
+  // rotate into other templates so repeated play does not feel identical.
+  const templateIndex = ((stageNo - 1) + waveBand * 4) % routeTemplates.length;
+  const plan = routeTemplates[templateIndex];
+  // v26: spawn from the top-left entrance of the board.
+  // Monsters now always enter from just outside the left side of the first
+  // top-row block, then move through the top-left block before following
+  // the stage/wave-specific route template. This keeps the start point
+  // consistent without flattening the existing route variety.
+  const entryRow = plan[0]?.[1] ?? 0;
+  const startX = GX - Math.max(42, CELL * .88);
+  const topLeftEntry = gridPoint(0, 0);
+  const leftLaneEntry = gridPoint(0, row(entryRow));
+  const baseRoute = [{x:startX, y:topLeftEntry.y}, topLeftEntry];
+
+  if(Math.abs(leftLaneEntry.y - topLeftEntry.y) > 2){
+    baseRoute.push(leftLaneEntry);
   }
 
-  route = applyRouteChamfers(baseRoute);
+  for(const [c,r] of plan){
+    baseRoute.push(gp(c,r));
+  }
+
+  // Exit through a short service lane just outside the board before entering CORE.
+  // This makes the final bend readable in both portrait and landscape layouts.
+  const last = baseRoute[baseRoute.length - 1];
+  const boardRight = GX + GRID_COLS * CELL;
+  const exitX = bound(
+    Math.max(last.x + CELL * .42, boardRight + CELL * .18),
+    last.x,
+    Math.max(last.x, CORE.x - Math.max(12, CELL * .18))
+  );
+  if(Math.abs(exitX - last.x) > 2){
+    baseRoute.push({x:exitX, y:last.y});
+  }
+  if(Math.abs(last.y - CORE.y) > 2){
+    baseRoute.push({x:exitX, y:CORE.y});
+  }
+  baseRoute.push({x:CORE.x, y:CORE.y});
+
+  // Guard against accidental duplicate points after rounding on compact screens.
+  const deduped = baseRoute.filter((pt, idx, arr)=>{
+    if(idx === 0) return true;
+    const prev = arr[idx-1];
+    return Math.abs(pt.x - prev.x) > 1 || Math.abs(pt.y - prev.y) > 1;
+  });
+
+  route = applyRouteChamfers(deduped);
 }
 
 function makeTerrain(){
@@ -4747,7 +4834,7 @@ function drawTerrain(){
       }
     }
   }
-  const idx=idxAt(mouse.x,mouse.y);
+  const idx = hoverIdx;
   if(idx>=0){
     const c=center(idx);
     ctx.strokeStyle=canBuild(idx)?'rgba(56,189,248,.78)':'rgba(251,113,133,.78)';
@@ -5154,13 +5241,13 @@ function pos(e){
   const p = e.touches ? e.touches[0] : e;
 
   // Pointer calibration for the battle canvas.
-  // Some CSS patches used aspect-ratio/object-fit on the canvas, which can create
-  // a visual content box that is smaller than getBoundingClientRect(). Mapping
-  // against the full rect makes Y drift farther from the center. We map against
-  // the actual rendered content box, preserving the canvas' internal aspect.
-  const cw = Number(canvas.width) || 748;
-  const ch = Number(canvas.height) || 708;
-  const canvasAspect = cw / ch;
+  // In the current battle UI the canvas is rendered with object-fit:fill, so
+  // client coordinates must map directly to the full canvas rect.  Preserve
+  // aspect only when CSS explicitly uses contain/scale-down; otherwise the
+  // hover focus drifts farther away from center on the vertical axis.
+  const cw = Number(canvas.width) || W || 748;
+  const ch = Number(canvas.height) || H || 708;
+  const canvasAspect = cw / Math.max(1, ch);
   const rectAspect = r.width / Math.max(1, r.height);
 
   let contentLeft = r.left;
@@ -5169,7 +5256,7 @@ function pos(e){
   let contentHeight = r.height;
 
   const objectFit = getComputedStyle(canvas).objectFit;
-  const shouldPreserveAspect = objectFit === 'contain' || objectFit === 'scale-down' || Math.abs(rectAspect - canvasAspect) > 0.002;
+  const shouldPreserveAspect = objectFit === 'contain' || objectFit === 'scale-down';
 
   if (shouldPreserveAspect) {
     if (rectAspect > canvasAspect) {
@@ -5188,10 +5275,22 @@ function pos(e){
     y: clamp((p.clientY - contentTop) * ch / Math.max(1, contentHeight), 0, ch)
   };
 }
+function isCanvasClientPoint(e){
+  const r = canvas.getBoundingClientRect();
+  const p = e.touches ? e.touches[0] : e;
+  if(!p || !r) return false;
+  return p.clientX >= r.left && p.clientX <= r.right && p.clientY >= r.top && p.clientY <= r.bottom;
+}
+function syncHoverFromPointer(e){
+  if(!isCanvasClientPoint(e)){ hoverIdx = -1; return -1; }
+  mouse = pos(e);
+  hoverIdx = idxAt(mouse.x, mouse.y);
+  return hoverIdx;
+}
+function clearHover(){ hoverIdx = -1; }
 function onDown(e){
   e.preventDefault();
-  mouse=pos(e);
-  const idx=idxAt(mouse.x,mouse.y);
+  const idx=syncHoverFromPointer(e);
   if(idx>=0&&grid[idx]){
     dragging=grid[idx];
     dragging.original=idx;
@@ -5204,7 +5303,7 @@ function onDown(e){
 }
 function onMove(e){
   if(e.cancelable)e.preventDefault();
-  mouse=pos(e);
+  syncHoverFromPointer(e);
 }
 function onUp(e){
   if(!dragging)return;
@@ -5229,10 +5328,21 @@ function onUp(e){
 }
 canvas.addEventListener('mousedown',onDown);
 canvas.addEventListener('mousemove',onMove);
+canvas.addEventListener('mouseleave',clearHover);
+canvas.addEventListener('pointerleave',clearHover);
+window.addEventListener('blur',clearHover);
 window.addEventListener('mouseup',onUp);
 canvas.addEventListener('touchstart',onDown,{passive:false});
 canvas.addEventListener('touchmove',onMove,{passive:false});
+canvas.addEventListener('touchcancel',clearHover,{passive:true});
 window.addEventListener('touchend',onUp,{passive:false});
+['combatHudTopLine','combatHudCommands','combatHudOverlay'].forEach(id=>{
+  const el = $(id);
+  if(el){
+    el.addEventListener('mouseenter', clearHover, true);
+    el.addEventListener('pointerenter', clearHover, true);
+  }
+});
 
 function initAudio(){
   if(audio)return;
@@ -7413,4 +7523,702 @@ window.addEventListener('DOMContentLoaded', () => {
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', apply, {once:true}); else apply();
   window.addEventListener('load', apply, {once:true});
+})();
+
+
+
+
+/* v21: safe combat-only controls. Keep stage/map navigation untouched. */
+(function(){
+  'use strict';
+  function byId(id){ return document.getElementById(id); }
+  function ensureStyle(){
+    if(document.getElementById('v21-safe-combat-only-controls')) return;
+    var style=document.createElement('style');
+    style.id='v21-safe-combat-only-controls';
+    style.textContent="body:not(.prd-combat-ui-active) #combatHudOverlay,body:not(.prd-combat-ui-active) #combatHudTopLine,body:not(.prd-combat-ui-active) #combatHudCommands,body:not(.prd-combat-ui-active) #battleHud,body:not(.prd-combat-ui-active) #side > .battleActions,body:not(.prd-combat-ui-active) #field > .fieldTopControls,body:not(.prd-combat-ui-active) #pauseDecisionOverlay,body.prd-map-ui-active #combatHudOverlay,body.prd-map-ui-active #combatHudTopLine,body.prd-map-ui-active #combatHudCommands,body.prd-map-ui-active #battleHud,body.prd-map-ui-active #side > .battleActions,body.prd-map-ui-active #field > .fieldTopControls,body.prd-map-ui-active #pauseDecisionOverlay{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;}body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine,body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay,body.prd-combat-ui-active:not(.prd-map-ui-active) #field > .fieldTopControls{visibility:visible!important;opacity:1!important;pointer-events:auto!important;}";
+    document.head.appendChild(style);
+  }
+  function visible(el){
+    if(!el) return false;
+    var cs = window.getComputedStyle ? getComputedStyle(el) : null;
+    if(cs && (cs.display === 'none' || cs.visibility === 'hidden')) return false;
+    var r = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+    return !!(r && r.width > 4 && r.height > 4);
+  }
+  function setCombatUi(active){
+    ensureStyle();
+    var menuVisible = visible(byId('menu')) || visible(byId('galaxyMap')) || visible(byId('stageMap')) || visible(byId('stageClearOverlay'));
+    var finalActive = !!active && !menuVisible;
+    document.body.classList.toggle('prd-combat-ui-active', finalActive);
+    document.body.classList.toggle('prd-map-ui-active', !finalActive);
+    document.body.classList.toggle('prd-battle-active', finalActive);
+    document.body.classList.toggle('prd-combat-screen-active', finalActive);
+    document.body.classList.remove('prd-non-combat-screen');
+    var game=byId('game');
+    if(game){
+      game.classList.toggle('prd-combat-ui-active', finalActive);
+      game.classList.toggle('prd-battle-active', finalActive);
+      game.classList.toggle('prd-combat-screen-active', finalActive);
+      game.dataset.combatScreenActive = finalActive ? '1' : '0';
+    }
+    var field=byId('field'); if(field) field.dataset.battleActive = finalActive ? '1':'0';
+    var pause=byId('pauseDecisionOverlay');
+    if(pause && !finalActive){ pause.hidden=true; pause.setAttribute('aria-hidden','true'); pause.classList.remove('open'); }
+  }
+  function computeCombatActive(){
+    return visible(byId('game')) && !(visible(byId('menu')) || visible(byId('galaxyMap')) || visible(byId('stageMap')) || visible(byId('stageClearOverlay')));
+  }
+  function sync(){ setCombatUi(computeCombatActive()); }
+  function deferSync(){ sync(); if(window.requestAnimationFrame) requestAnimationFrame(sync); setTimeout(sync,60); setTimeout(sync,180); }
+  function wrapFunction(name, mode){
+    var fn=window[name];
+    if(typeof fn !== 'function' || fn.__prdCombatUiWrapped) return;
+    var wrapped=function(){
+      if(mode === 'beforeOff') setCombatUi(false);
+      var ret=fn.apply(this, arguments);
+      if(mode === 'battleOn'){ setTimeout(function(){ setCombatUi(true); },0); setTimeout(sync,80); setTimeout(sync,220); }
+      else { setTimeout(function(){ setCombatUi(false); },0); setTimeout(sync,80); }
+      return ret;
+    };
+    wrapped.__prdCombatUiWrapped=true;
+    window[name]=wrapped;
+    try{ eval(name + ' = window[name]'); }catch(_){ }
+  }
+  function install(){
+    ensureStyle();
+    wrapFunction('startSelectedStageFromMap','battleOn');
+    wrapFunction('showStageMap','beforeOff');
+    wrapFunction('showGalaxyMapClean','beforeOff');
+    wrapFunction('returnMainFromGalaxyClean','beforeOff');
+    wrapFunction('enterMilkyRiftClean','beforeOff');
+    wrapFunction('completeStageFromBattle','beforeOff');
+    if(window.PauseDecisionMenu && typeof window.PauseDecisionMenu.quit === 'function' && !window.PauseDecisionMenu.quit.__prdCombatUiWrapped){
+      var quit=window.PauseDecisionMenu.quit;
+      window.PauseDecisionMenu.quit=function(){ var ret=quit.apply(this,arguments); setTimeout(function(){ setCombatUi(false); },0); setTimeout(sync,80); return ret; };
+      window.PauseDecisionMenu.quit.__prdCombatUiWrapped=true;
+    }
+    deferSync();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', install, {once:true}); else install();
+  window.addEventListener('load', install, {once:true});
+  window.addEventListener('resize', deferSync, {passive:true});
+  window.addEventListener('orientationchange', deferSync, {passive:true});
+  document.addEventListener('click', function(){ setTimeout(deferSync,0); }, true);
+  document.addEventListener('keyup', function(){ setTimeout(deferSync,0); }, true);
+  window.PRD_SET_COMBAT_UI_ACTIVE=setCombatUi;
+  window.PRD_SYNC_BATTLE_HUD_VISIBILITY=sync;
+  window.PRD_SYNC_STRICT_COMBAT_UI=sync;
+})();
+
+// v24: restore canvas pointer hit-test while keeping combat HUD/buttons visible.
+(function(){
+  if(document.getElementById('v24-canvas-pointer-through-combat-hud')) return;
+  var style=document.createElement('style');
+  style.id='v24-canvas-pointer-through-combat-hud';
+  style.textContent="body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{visibility:visible!important;opacity:1!important;pointer-events:none!important;}body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine{visibility:visible!important;opacity:1!important;pointer-events:none!important;}body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands *,body.prd-combat-ui-active:not(.prd-map-ui-active) #field > .fieldTopControls,body.prd-combat-ui-active:not(.prd-map-ui-active) #field > .fieldTopControls *,body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls,body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls *,body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine #combatHudButtons,body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine #combatHudButtons *{pointer-events:auto!important;}#canvas,canvas#canvas{pointer-events:auto!important;touch-action:none!important;}";
+  document.head.appendChild(style);
+})();
+
+
+// v227: final pause decision menu. Battle-only, does not touch map/stage navigation buttons.
+(function(){
+  if(!document.getElementById('v227-pause-decision-menu-final')){
+    var st=document.createElement('style');
+    st.id='v227-pause-decision-menu-final';
+    st.textContent="\nbody.prd-v27-pause-installed #pauseDecisionOverlay{display:none!important;visibility:hidden!important;pointer-events:none!important;}\n#pauseDecisionOverlayV27{\n  position:fixed!important;\n  inset:0!important;\n  z-index:2147483000!important;\n  display:flex!important;\n  align-items:center!important;\n  justify-content:center!important;\n  padding:18px!important;\n  background:radial-gradient(circle at 50% 38%, rgba(103,232,249,.16), transparent 36%), rgba(2,6,23,.72)!important;\n  backdrop-filter:blur(10px)!important;\n  pointer-events:auto!important;\n}\n#pauseDecisionOverlayV27[hidden]{display:none!important;}\n#pauseDecisionOverlayV27 .pauseV27Card{\n  width:min(440px, calc(100vw - 36px))!important;\n  padding:24px 24px 22px!important;\n  border-radius:24px!important;\n  border:1px solid rgba(103,232,249,.3)!important;\n  background:linear-gradient(180deg, rgba(8,18,38,.98), rgba(3,7,21,.94))!important;\n  box-shadow:0 28px 90px rgba(0,0,0,.62), inset 0 0 26px rgba(56,189,248,.08)!important;\n  color:#f8fafc!important;\n  text-align:center!important;\n  font-family:Pretendard,system-ui,sans-serif!important;\n}\n#pauseDecisionOverlayV27 .pauseV27Kicker{\n  margin-bottom:8px!important;\n  color:#67e8f9!important;\n  font-family:'Orbitron',Pretendard,system-ui,sans-serif!important;\n  font-size:11px!important;\n  letter-spacing:.2em!important;\n}\n#pauseDecisionOverlayV27 h2{\n  margin:0!important;\n  font-family:'Orbitron',Pretendard,system-ui,sans-serif!important;\n  font-size:clamp(24px, 4vw, 36px)!important;\n  letter-spacing:.06em!important;\n  color:#fff!important;\n  text-shadow:0 0 18px rgba(103,232,249,.34)!important;\n}\n#pauseDecisionOverlayV27 p{\n  margin:12px auto 0!important;\n  max-width:360px!important;\n  color:#cbd5e1!important;\n  font-size:13px!important;\n  line-height:1.62!important;\n  word-break:keep-all!important;\n}\n#pauseDecisionOverlayV27 .pauseV27Actions{\n  display:grid!important;\n  grid-template-columns:1fr 1fr!important;\n  gap:10px!important;\n  margin-top:22px!important;\n}\n#pauseDecisionOverlayV27 button{\n  min-height:48px!important;\n  border-radius:16px!important;\n  border:1px solid rgba(103,232,249,.26)!important;\n  font-family:'Orbitron',Pretendard,system-ui,sans-serif!important;\n  font-size:12px!important;\n  font-weight:900!important;\n  cursor:pointer!important;\n  color:#f8fafc!important;\n  background:linear-gradient(180deg,rgba(15,23,42,.96),rgba(2,6,23,.86))!important;\n  box-shadow:inset 0 0 14px rgba(56,189,248,.07), 0 8px 24px rgba(0,0,0,.28)!important;\n}\n#pauseDecisionOverlayV27 #pauseQuitBtnV27{\n  border-color:rgba(248,113,113,.36)!important;\n  background:linear-gradient(180deg,rgba(127,29,29,.40),rgba(30,7,12,.90))!important;\n}\n#pauseDecisionOverlayV27 #pauseResumeBtnV27{\n  border-color:rgba(34,197,94,.42)!important;\n  background:linear-gradient(180deg,rgba(16,185,129,.30),rgba(5,46,22,.90))!important;\n}\n#pauseDecisionOverlayV27 button:hover{transform:translateY(-1px)!important;filter:brightness(1.08)!important;}\n@media (orientation:portrait){\n  #pauseDecisionOverlayV27 .pauseV27Card{width:min(360px, calc(100vw - 28px))!important;padding:22px 18px 18px!important;}\n  #pauseDecisionOverlayV27 .pauseV27Actions{grid-template-columns:1fr!important;gap:8px!important;}\n  #pauseDecisionOverlayV27 button{min-height:44px!important;}\n}\n";
+    document.head.appendChild(st);
+  }
+})();
+
+(function(){
+  'use strict';
+  function byId(id){ return document.getElementById(id); }
+  function safe(fn){ try{ return fn && fn(); }catch(err){ console.warn('[v227 pause]', err); return null; } }
+  function isVisible(el){
+    if(!el) return false;
+    var st = window.getComputedStyle ? getComputedStyle(el) : null;
+    if(st && (st.display === 'none' || st.visibility === 'hidden' || Number(st.opacity) === 0)) return false;
+    var rect = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+    return !rect || (rect.width > 2 && rect.height > 2);
+  }
+  function isBattleVisible(){
+    var game = byId('game');
+    if(!isVisible(game)) return false;
+    if(isVisible(byId('stageMap')) || isVisible(byId('galaxyMap')) || isVisible(byId('menu')) || isVisible(byId('stageClearOverlay'))) return false;
+    return true;
+  }
+  function hideLegacyPauseOverlay(){
+    var legacy = byId('pauseDecisionOverlay');
+    if(legacy){ legacy.setAttribute('hidden',''); legacy.classList.remove('open'); }
+  }
+  function ensureOverlay(){
+    document.body.classList.add('prd-v27-pause-installed');
+    hideLegacyPauseOverlay();
+    var overlay = byId('pauseDecisionOverlayV27');
+    if(overlay) return overlay;
+    overlay = document.createElement('div');
+    overlay.id = 'pauseDecisionOverlayV27';
+    overlay.setAttribute('hidden','');
+    overlay.innerHTML = '<div class="pauseV27Card" role="dialog" aria-modal="true" aria-labelledby="pauseDecisionTitleV27">'
+      + '<div class="pauseV27Kicker">BATTLE PAUSED</div>'
+      + '<h2 id="pauseDecisionTitleV27">일시정지</h2>'
+      + '<p>전투가 멈춰 있습니다. 현재 전투를 종료하고 이전 스테이지 화면으로 돌아가거나, 그대로 이어서 진행할 수 있습니다.</p>'
+      + '<div class="pauseV27Actions">'
+      + '<button id="pauseQuitBtnV27" type="button">게임 종료하기</button>'
+      + '<button id="pauseResumeBtnV27" type="button">계속 이어서하기</button>'
+      + '</div>'
+      + '</div>';
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function(e){ if(e.target === overlay) e.preventDefault(); }, true);
+    var resume = byId('pauseResumeBtnV27');
+    var quit = byId('pauseQuitBtnV27');
+    if(resume) resume.addEventListener('click', resumeBattle, true);
+    if(quit) quit.addEventListener('click', quitBattle, true);
+    return overlay;
+  }
+  function showPauseMenu(e){
+    if(e){ e.preventDefault(); e.stopImmediatePropagation(); }
+    if(!isBattleVisible() || !window.S || S.gameOver) return;
+    var overlay = ensureOverlay();
+    S.paused = true;
+    overlay.removeAttribute('hidden');
+    document.body.classList.add('prd-pause-menu-open');
+    safe(function(){ if(typeof updateUI === 'function') updateUI(); });
+    var resume = byId('pauseResumeBtnV27');
+    if(resume) setTimeout(function(){ safe(function(){ resume.focus({preventScroll:true}); }); }, 20);
+  }
+  function hidePauseMenu(){
+    var overlay = byId('pauseDecisionOverlayV27');
+    if(overlay) overlay.setAttribute('hidden','');
+    document.body.classList.remove('prd-pause-menu-open');
+    hideLegacyPauseOverlay();
+  }
+  function resumeBattle(e){
+    if(e){ e.preventDefault(); e.stopImmediatePropagation(); }
+    hidePauseMenu();
+    if(window.S && !S.gameOver){
+      S.paused = false;
+      safe(function(){ if(typeof updateUI === 'function') updateUI(); });
+      safe(function(){ if(typeof toast === 'function') toast('전투 재개'); });
+    }
+  }
+  function cleanupBattleState(){
+    safe(function(){ if(typeof cancelAnimationFrame === 'function' && typeof raf !== 'undefined') cancelAnimationFrame(raf); });
+    safe(function(){ if(typeof removeGameOverOverlay === 'function') removeGameOverOverlay(); });
+    safe(function(){ if(typeof stopAllGameAudio === 'function') stopAllGameAudio(); else if(typeof stopStageBgm === 'function') stopStageBgm(); });
+    if(window.S){
+      S.paused = true;
+      S.active = false;
+      S.skillModalOpen = false;
+      S.gameOver = true;
+      S.runEnded = true;
+    }
+    safe(function(){ if(typeof resetBattleUnitsForStageMap === 'function') resetBattleUnitsForStageMap(); });
+    safe(function(){ selected = -1; dragging = null; });
+  }
+  function showPreviousStagePage(){
+    document.body.classList.remove('prd-combat-ui-active','prd-battle-active','prd-pause-menu-open');
+    document.body.classList.add('prd-map-ui-active');
+    if(window.PRD_NAV && typeof PRD_NAV.showStage === 'function'){
+      PRD_NAV.showStage();
+      return;
+    }
+    var game = byId('game');
+    var menu = byId('menu');
+    var galaxy = byId('galaxyMap');
+    var stage = byId('stageMap');
+    if(game) game.style.display = 'none';
+    if(menu) menu.style.display = 'none';
+    if(galaxy) galaxy.style.display = 'none';
+    if(stage){ stage.style.display = 'block'; stage.classList.add('premiumStage'); }
+    safe(function(){ if(typeof renderStageMap === 'function') renderStageMap(); });
+    safe(function(){ if(typeof playMapBgm === 'function' && window.audio && audio.on) playMapBgm(); });
+  }
+  function quitBattle(e){
+    if(e){ e.preventDefault(); e.stopImmediatePropagation(); }
+    hidePauseMenu();
+    cleanupBattleState();
+    showPreviousStagePage();
+    safe(function(){ if(typeof toast === 'function') toast('전투 종료 — 스테이지 화면으로 이동'); });
+  }
+  function bindPauseButton(){
+    var pauseBtn = byId('pauseBtn');
+    if(!pauseBtn || pauseBtn.dataset.pauseDecisionFinal === '1') return;
+    pauseBtn.dataset.pauseDecisionFinal = '1';
+    pauseBtn.addEventListener('click', showPauseMenu, true);
+    pauseBtn.onclick = function(ev){ showPauseMenu(ev); };
+  }
+  function bind(){
+    ensureOverlay();
+    bindPauseButton();
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind, {once:true});
+  else bind();
+  window.addEventListener('load', bind, {once:true});
+  setTimeout(bind, 300);
+  setTimeout(bind, 1200);
+  document.addEventListener('click', function(){ setTimeout(bind, 0); }, true);
+  document.addEventListener('keydown', function(e){
+    if(e.repeat || e.code !== 'Space' || !isBattleVisible() || !window.S || S.gameOver) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    showPauseMenu(e);
+  }, true);
+  window.PauseDecisionMenuV27 = {show:showPauseMenu, hide:hidePauseMenu, resume:resumeBattle, quit:quitBattle};
+})();
+
+
+
+// v32 landscape short command labels
+
+(function(){
+  if(window.PRD_V32_LANDSCAPE_SHORT_COMMAND_LABELS) return;
+  window.PRD_V32_LANDSCAPE_SHORT_COMMAND_LABELS = true;
+
+  function injectStyle(){
+    if(document.getElementById('v32-landscape-short-command-label-css')) return;
+    var style=document.createElement('style');
+    style.id='v32-landscape-short-command-label-css';
+    style.textContent = `
+@media (orientation: landscape){
+  #combatHudCommandsLandscapeDock .hudProxyBtn{
+    font-size:9px !important;
+    letter-spacing:-.035em !important;
+    padding-left:8px !important;
+    padding-right:8px !important;
+    white-space:nowrap !important;
+    text-overflow:ellipsis !important;
+  }
+  #combatHudCommandsLandscapeDock #hudProxy_landscape_summon{
+    font-size:8.5px !important;
+  }
+}`;
+    (document.head || document.documentElement).appendChild(style);
+  }
+
+  function textOf(id){
+    var el=document.getElementById(id);
+    return el ? (el.textContent || '').replace(/\s+/g,' ').trim() : '';
+  }
+  function setProxy(action, shortText, fullText){
+    var btn=document.getElementById('hudProxy_landscape_' + action);
+    if(!btn || !shortText) return;
+    if(btn.textContent !== shortText) btn.textContent = shortText;
+    if(fullText){
+      btn.title = fullText;
+      btn.setAttribute('aria-label', fullText);
+    }
+  }
+  function summonShort(full){
+    if(!full) return '';
+    var cost = full.replace(/^\s*랜덤\s*소환\s*/,'').trim();
+    return cost ? ('소환 ' + cost) : '소환';
+  }
+  function applyShortLandscapeLabels(){
+    injectStyle();
+    var summonFull=textOf('summonBtn');
+    var mergeFull=textOf('mergeBtn') || '타워 합치기';
+    var speedFull=textOf('speedBtn') || '1x';
+    var pauseFull=textOf('pauseBtn') || '일시정지';
+
+    setProxy('summon', summonShort(summonFull), summonFull || '랜덤 소환');
+    setProxy('merge', '합치기', mergeFull);
+    setProxy('speed', speedFull, speedFull);
+    setProxy('pause', /재개/.test(pauseFull) ? '재개' : '정지', pauseFull);
+  }
+
+  var raf=0;
+  function schedule(){
+    if(raf) cancelAnimationFrame(raf);
+    raf=requestAnimationFrame(function(){ raf=0; applyShortLandscapeLabels(); });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', schedule, {once:true});
+  }else{
+    schedule();
+  }
+  window.addEventListener('load', schedule, {once:true});
+  window.addEventListener('resize', schedule, {passive:true});
+  window.addEventListener('orientationchange', schedule, {passive:true});
+  document.addEventListener('click', function(){ setTimeout(schedule, 0); }, true);
+
+  try{
+    var mo = new MutationObserver(schedule);
+    mo.observe(document.documentElement, {childList:true, subtree:true, characterData:true});
+  }catch(_e){}
+
+  setTimeout(schedule, 100);
+  setTimeout(schedule, 500);
+  setInterval(applyShortLandscapeLabels, 250);
+})();
+
+
+
+// v33 landscape right-edge tighten
+(function(){
+  if(window.PRD_V33_LANDSCAPE_RIGHT_EDGE_TIGHTEN) return;
+  window.PRD_V33_LANDSCAPE_RIGHT_EDGE_TIGHTEN = true;
+  function inject(){
+    if(document.getElementById('v33-landscape-right-edge-tighten-css')) return;
+    var style=document.createElement('style');
+    style.id='v33-landscape-right-edge-tighten-css';
+    style.textContent = `
+@media (orientation: landscape){
+  #combatHudTopLine{
+    right:8px !important;
+    left:12px !important;
+  }
+  #combatHudCommands{
+    right:4px !important;
+    bottom:8px !important;
+  }
+}`;
+    (document.head || document.documentElement).appendChild(style);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inject, {once:true});
+  else inject();
+  window.addEventListener('load', inject, {once:true});
+  setTimeout(inject, 200);
+})();
+
+
+// v34 compact top HUD and no selection block
+(function(){
+  if(window.PRD_V34_COMPACT_TOP_HUD_NO_SELECTION_BLOCK) return;
+  window.PRD_V34_COMPACT_TOP_HUD_NO_SELECTION_BLOCK = true;
+  function inject(){
+    if(document.getElementById('v34-compact-top-hud-no-selection-block')) return;
+    var style=document.createElement('style');
+    style.id='v34-compact-top-hud-no-selection-block';
+    style.textContent = `/* v34: shrink battle top HUD so grid/tower selection remains visible and clickable. */
+#combatHudTopLine,
+#combatHudTopLine #combatHudLeft,
+#combatHudTopLine #combatHudRight,
+#combatHudTopLine #combatHudMeta,
+#combatHudTopLine #combatHudStatsWrap,
+#combatHudTopLine .battleStageLine,
+#combatHudTopLine .battleStatLine,
+#combatHudTopLine .battleStatLine .stat,
+#combatHudTopLine .compactWave,
+#combatHudTopLine .bar.compactWave{
+  pointer-events:none !important;
+}
+#combatHudTopLine #combatHudButtons,
+#combatHudTopLine .fieldTopControls,
+#combatHudTopLine .fieldTopControls *,
+#combatHudTopLine #combatHudButtons *{
+  pointer-events:auto !important;
+}
+@media (orientation: landscape){
+  #field{
+    --hud-edge-y:5px !important;
+    --hud-edge-x:8px !important;
+    --hud-top-gap:clamp(4px,.7vw,8px) !important;
+    --hud-item-gap:clamp(3px,.5vw,6px) !important;
+  }
+  #combatHudTopLine{
+    top:5px !important;
+    left:8px !important;
+    right:6px !important;
+    gap:clamp(4px,.7vw,8px) !important;
+    align-items:flex-start !important;
+    max-height:26px !important;
+  }
+  #combatHudTopLine #combatHudLeft{
+    flex:0 0 clamp(104px, 12vw, 152px) !important;
+    max-width:clamp(104px, 12vw, 152px) !important;
+    gap:3px !important;
+  }
+  #combatHudTopLine .battleStageLine{
+    height:22px !important;
+    min-height:22px !important;
+    max-height:22px !important;
+    padding:0 8px !important;
+    border-radius:999px !important;
+  }
+  #combatHudTopLine .battleStageLine .value{
+    font-size:clamp(10px,1.05vw,14px) !important;
+    letter-spacing:-.055em !important;
+  }
+  #combatHudTopLine .compactWave,
+  #combatHudTopLine .bar.compactWave{
+    height:2px !important;
+    min-height:2px !important;
+    margin-top:2px !important;
+    border-width:0 !important;
+    opacity:.78 !important;
+  }
+  #combatHudTopLine .battleStatLine.statGrid{
+    gap:clamp(3px,.45vw,6px) !important;
+  }
+  #combatHudTopLine .battleStatLine .stat{
+    height:22px !important;
+    min-height:22px !important;
+    max-height:22px !important;
+    min-width:clamp(30px,3.8vw,50px) !important;
+    max-width:clamp(38px,5.4vw,68px) !important;
+    padding:0 6px !important;
+    gap:2px !important;
+  }
+  #combatHudTopLine .battleStatLine .value,
+  #combatHudTopLine .battleStatLine #exp{
+    font-size:clamp(9px,1vw,12px) !important;
+    letter-spacing:-.055em !important;
+  }
+  #combatHudTopLine .battleStatLine .miniBar{
+    flex-basis:16px !important;
+    width:16px !important;
+    height:2px !important;
+  }
+  #combatHudTopLine .fieldTopControls .fieldIconBtn,
+  #combatHudTopLine .fieldTopControls #towerMenuBtn,
+  #combatHudTopLine .fieldTopControls #audioBtn{
+    width:26px !important;
+    height:26px !important;
+    min-width:26px !important;
+    min-height:26px !important;
+    max-width:26px !important;
+    max-height:26px !important;
+    flex:0 0 26px !important;
+  }
+  #combatHudTopLine .fieldTopControls .fieldIconBtn img,
+  #combatHudTopLine .fieldTopControls #towerMenuBtn img,
+  #combatHudTopLine .fieldTopControls #audioBtn img{
+    width:13px !important;
+    height:13px !important;
+  }
+}
+@media (orientation: portrait){
+  #combatHudTopLine{
+    top:8px !important;
+  }
+  #combatHudTopLine .battleStageLine{
+    height:28px !important;
+    min-height:28px !important;
+    max-height:28px !important;
+  }
+  #combatHudTopLine .battleStatLine .stat{
+    height:28px !important;
+    min-height:28px !important;
+    max-height:28px !important;
+  }
+  #combatHudTopLine .fieldTopControls .fieldIconBtn,
+  #combatHudTopLine .fieldTopControls #towerMenuBtn,
+  #combatHudTopLine .fieldTopControls #audioBtn{
+    width:34px !important;
+    height:34px !important;
+    min-width:34px !important;
+    min-height:34px !important;
+    max-width:34px !important;
+    max-height:34px !important;
+    flex-basis:34px !important;
+  }
+}`;
+    (document.head || document.documentElement).appendChild(style);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inject, {once:true});
+  else inject();
+  window.addEventListener('load', inject, {once:true});
+  setTimeout(inject, 200);
+  setTimeout(inject, 1000);
+})();
+
+
+/* v35: field pointer bridge + hit-test guard for bundled script builds. */
+(function(){
+  'use strict';
+  if(window.__PRD_V35_FIELD_POINTER_BRIDGE__) return;
+  window.__PRD_V35_FIELD_POINTER_BRIDGE__ = true;
+  var bridging = false;
+  var fieldActive = false;
+  function byId(id){ return document.getElementById(id); }
+  function visible(el){
+    if(!el) return false;
+    var cs = window.getComputedStyle ? getComputedStyle(el) : null;
+    if(cs && (cs.display === 'none' || cs.visibility === 'hidden' || Number(cs.opacity) === 0)) return false;
+    var r = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+    return !!(r && r.width > 4 && r.height > 4);
+  }
+  function isCombatScreen(){
+    var body = document.body;
+    if(body && body.classList && body.classList.contains('prd-map-ui-active')) return false;
+    if(body && body.classList && body.classList.contains('prd-combat-ui-active')) return true;
+    return visible(byId('game')) && visible(byId('field')) && !visible(byId('menu')) && !visible(byId('galaxyMap')) && !visible(byId('stageMap'));
+  }
+  function pointFromEvent(e){
+    if(!e) return null;
+    var t = e.touches && e.touches.length ? e.touches[0] : (e.changedTouches && e.changedTouches.length ? e.changedTouches[0] : e);
+    if(typeof t.clientX !== 'number' || typeof t.clientY !== 'number') return null;
+    return {x:t.clientX, y:t.clientY};
+  }
+  function insideField(p){
+    var field = byId('field');
+    if(!field || !p) return false;
+    var r = field.getBoundingClientRect();
+    return p.x >= r.left && p.x <= r.right && p.y >= r.top && p.y <= r.bottom;
+  }
+  function isRealControlTarget(target){
+    if(!target || !target.closest) return false;
+    return !!target.closest('#combatHudCommands,#combatHudButtons,.fieldTopControls,#towerPopup,#pauseDecisionOverlay,#pauseDecisionOverlayV27,#pauseDecisionOverlayV29,#gameOverOverlay,button,a,input,select,textarea,[role="button"]');
+  }
+  function dispatchCanvasMouse(type, source){
+    var canvas = byId('canvas');
+    var p = pointFromEvent(source);
+    if(!canvas || !p) return false;
+    var ev = new MouseEvent(type, {bubbles:true,cancelable:true,view:window,clientX:p.x,clientY:p.y,screenX:source.screenX||p.x,screenY:source.screenY||p.y,button:source.button||0,buttons:type==='mouseup'?0:(source.buttons||1),ctrlKey:!!source.ctrlKey,shiftKey:!!source.shiftKey,altKey:!!source.altKey,metaKey:!!source.metaKey});
+    try{ Object.defineProperty(ev, '__prdFieldBridgeSynthetic', {value:true}); }catch(_){ ev.__prdFieldBridgeSynthetic = true; }
+    bridging = true;
+    try{ canvas.dispatchEvent(ev); } finally{ bridging = false; }
+    return true;
+  }
+  function shouldBridge(e){
+    if(bridging || e.__prdFieldBridgeSynthetic) return false;
+    if(!isCombatScreen()) return false;
+    var canvas = byId('canvas');
+    if(!canvas) return false;
+    var p = pointFromEvent(e);
+    if(!insideField(p)) return false;
+    if(e.target === canvas) return false;
+    if(isRealControlTarget(e.target)) return false;
+    return true;
+  }
+  function begin(e){
+    if(!isCombatScreen()) return;
+    var p = pointFromEvent(e);
+    if(!insideField(p)) return;
+    fieldActive = true;
+    if(shouldBridge(e)){
+      dispatchCanvasMouse('mousedown', e);
+      if(e.cancelable) e.preventDefault();
+      e.stopPropagation();
+      if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+    }
+  }
+  function move(e){
+    if(!fieldActive || !isCombatScreen()) return;
+    var p = pointFromEvent(e);
+    if(!insideField(p)) return;
+    if(e.target && e.target.id === 'canvas') return;
+    if(isRealControlTarget(e.target)) return;
+    dispatchCanvasMouse('mousemove', e);
+    if(e.cancelable) e.preventDefault();
+  }
+  function end(e){
+    if(!fieldActive) return;
+    fieldActive = false;
+    if(!isCombatScreen()) return;
+    var p = pointFromEvent(e);
+    if(insideField(p) && !isRealControlTarget(e.target)) dispatchCanvasMouse('mousemove', e);
+  }
+  document.addEventListener('mousedown', begin, true);
+  document.addEventListener('mousemove', move, true);
+  window.addEventListener('mouseup', end, true);
+  document.addEventListener('touchstart', begin, {capture:true, passive:false});
+  document.addEventListener('touchmove', move, {capture:true, passive:false});
+  window.addEventListener('touchend', end, {capture:true, passive:false});
+  window.addEventListener('blur', function(){ fieldActive = false; }, true);
+})();
+
+
+// v37: shield battlefield from stale invisible original command buttons.
+(function(){
+  'use strict';
+  if(window.PRD_V37_ORIGINAL_COMMAND_HITBOX_FIX) return;
+  window.PRD_V37_ORIGINAL_COMMAND_HITBOX_FIX = true;
+
+  function byId(id){ return document.getElementById(id); }
+  function injectCss(){
+    if(document.getElementById('v37-fix-original-command-hitbox-runtime')) return;
+    var st=document.createElement('style');
+    st.id='v37-fix-original-command-hitbox-runtime';
+    st.textContent = `
+#combatHudCommands,#combatHudCommands .battleActions,#combatHudCommands .battleActions .row,#combatHudCommands .battleActions .row3{position:fixed!important;left:-10000px!important;top:-10000px!important;right:auto!important;bottom:auto!important;width:1px!important;height:1px!important;min-width:1px!important;min-height:1px!important;max-width:1px!important;max-height:1px!important;margin:0!important;padding:0!important;overflow:hidden!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;z-index:-1!important;transform:none!important;clip-path:inset(50%)!important;}
+#combatHudCommands *,#combatHudCommands #summonBtn,#combatHudCommands #mergeBtn,#combatHudCommands #speedBtn,#combatHudCommands #pauseBtn{opacity:0!important;visibility:hidden!important;pointer-events:none!important;}
+#combatHudCommandsLandscapeDock,#combatHudCommandsPortraitDock,#combatHudCommandsLandscapeDock *,#combatHudCommandsPortraitDock *{opacity:1!important;visibility:visible!important;pointer-events:auto!important;clip-path:none!important;}
+@media (orientation:landscape){#combatHudCommandsLandscapeDock{display:block!important;right:4px!important;bottom:8px!important;z-index:80!important;}#combatHudCommandsPortraitDock{display:none!important;}}
+@media (orientation:portrait){#combatHudCommandsPortraitDock{display:block!important;z-index:80!important;}#combatHudCommandsLandscapeDock{display:none!important;}}`;
+    (document.head||document.documentElement).appendChild(st);
+  }
+  function visible(el){
+    if(!el) return false;
+    var cs=getComputedStyle(el);
+    if(cs.display==='none' || cs.visibility==='hidden' || Number(cs.opacity)===0) return false;
+    var r=el.getBoundingClientRect();
+    return r.width>3 && r.height>3;
+  }
+  function fieldActive(){
+    var b=document.body;
+    if(!b || !b.classList || b.classList.contains('prd-map-ui-active')) return false;
+    return b.classList.contains('prd-combat-ui-active') || (visible(byId('game')) && visible(byId('field')) && visible(byId('canvas')));
+  }
+  function point(e){
+    var t=e && e.touches && e.touches.length ? e.touches[0] : (e && e.changedTouches && e.changedTouches.length ? e.changedTouches[0] : e);
+    if(!t || typeof t.clientX!=='number') return null;
+    return {x:t.clientX,y:t.clientY,screenX:t.screenX||t.clientX,screenY:t.screenY||t.clientY};
+  }
+  function inside(el,p){
+    if(!el || !p) return false;
+    var r=el.getBoundingClientRect();
+    return p.x>=r.left && p.x<=r.right && p.y>=r.top && p.y<=r.bottom;
+  }
+  function isProxyOrRealVisibleControl(target){
+    if(!target || !target.closest) return false;
+    return !!target.closest('#combatHudCommandsLandscapeDock,#combatHudCommandsPortraitDock,#combatHudButtons,.fieldTopControls,#towerPopup,#pauseDecisionOverlay,#pauseDecisionOverlayV27,#pauseDecisionOverlayV29,#gameOverOverlay,button:not(#summonBtn):not(#mergeBtn):not(#speedBtn):not(#pauseBtn),a,input,select,textarea,[role="button"]');
+  }
+  function isStaleOriginalCommand(target){
+    return !!(target && target.closest && target.closest('#combatHudCommands'));
+  }
+  function dispatchToCanvas(type,e){
+    var c=byId('canvas'), p=point(e);
+    if(!c || !p) return false;
+    var ev=new MouseEvent(type,{bubbles:true,cancelable:true,view:window,clientX:p.x,clientY:p.y,screenX:p.screenX,screenY:p.screenY,button:e.button||0,buttons:type==='mouseup'?0:(e.buttons||1),ctrlKey:!!e.ctrlKey,shiftKey:!!e.shiftKey,altKey:!!e.altKey,metaKey:!!e.metaKey});
+    try{Object.defineProperty(ev,'__prdV37Synthetic',{value:true});}catch(_){ev.__prdV37Synthetic=true;}
+    c.dispatchEvent(ev);
+    return true;
+  }
+  function bridgeIfStale(e,type){
+    if(!fieldActive() || e.__prdV37Synthetic) return false;
+    var p=point(e), field=byId('field');
+    if(!inside(field,p)) return false;
+    var top=document.elementFromPoint(p.x,p.y);
+    var stale=isStaleOriginalCommand(e.target) || isStaleOriginalCommand(top);
+    if(!stale) return false;
+    // When the visible proxy dock is really clicked, keep button behavior.
+    if((e.target && e.target.closest && e.target.closest('#combatHudCommandsLandscapeDock,#combatHudCommandsPortraitDock')) ||
+       (top && top.closest && top.closest('#combatHudCommandsLandscapeDock,#combatHudCommandsPortraitDock'))) return false;
+    dispatchToCanvas(type,e);
+    if(type==='mousedown' || type==='mousemove'){
+      if(e.cancelable) e.preventDefault();
+      e.stopPropagation();
+      if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+    }
+    return true;
+  }
+  function onDown(e){ bridgeIfStale(e,'mousedown'); }
+  function onMove(e){ bridgeIfStale(e,'mousemove'); }
+  function onUp(e){ if(bridgeIfStale(e,'mousemove')){} }
+  function onClick(e){
+    if(!fieldActive()) return;
+    var p=point(e), field=byId('field');
+    if(!inside(field,p)) return;
+    var top=document.elementFromPoint(p.x,p.y);
+    if(isStaleOriginalCommand(e.target) || isStaleOriginalCommand(top)){
+      if(e.cancelable) e.preventDefault();
+      e.stopPropagation();
+      if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+    }
+  }
+  function install(){ injectCss(); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true}); else install();
+  window.addEventListener('load',install,{once:true});
+  setTimeout(install,200); setTimeout(install,1000);
+  document.addEventListener('mousedown',onDown,true);
+  document.addEventListener('mousemove',onMove,true);
+  window.addEventListener('mouseup',onUp,true);
+  document.addEventListener('touchstart',function(e){bridgeIfStale(e,'mousedown');},{capture:true,passive:false});
+  document.addEventListener('touchmove',function(e){bridgeIfStale(e,'mousemove');},{capture:true,passive:false});
+  window.addEventListener('touchend',function(e){bridgeIfStale(e,'mousemove');},{capture:true,passive:false});
+  document.addEventListener('click',onClick,true);
 })();
