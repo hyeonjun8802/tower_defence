@@ -1901,26 +1901,16 @@ const rawCell = BOARD_IS_LANDSCAPE
 const CELL = Math.floor(clamp(rawCell, minCell, maxCell));
 const coreGapX = BOARD_IS_LANDSCAPE ? Math.max(24, Math.min(38, CELL * .46)) : Math.max(16, Math.min(28, CELL * .36));
 const totalWWithCore = GRID_COLS * CELL + coreGapX + Math.max(26, CELL * .56);
-<<<<<<< HEAD
-const boardShiftX = BOARD_IS_LANDSCAPE
-  ? Math.max(42, Math.min(56, W * .040))
-  : Math.max(20, Math.min(30, W * .026));
-=======
 const boardShiftX = (BOARD_IS_LANDSCAPE
   ? Math.max(78, Math.min(104, W * .070))
   : Math.max(38, Math.min(56, W * .045))) + CELL * .5; // v44: pull the tactical board left by half a block from v43
->>>>>>> 5988c15 (v004)
 let GX = BOARD_IS_LANDSCAPE
   ? Math.round(outerPadX + boardShiftX)
   : Math.round(Math.max(outerPadX, (W - totalWWithCore) / 2) + boardShiftX);
 if(BOARD_IS_LANDSCAPE){
-<<<<<<< HEAD
-  const maxLandscapeGX = Math.max(outerPadX, W - rightCommandReserve - totalWWithCore - Math.max(8, CELL * .10));
-=======
   // v43: allow exactly one block worth of movement into the previously reserved right lane.
   const relaxedRightReserve = Math.max(0, rightCommandReserve - CELL);
   const maxLandscapeGX = Math.max(outerPadX, W - relaxedRightReserve - totalWWithCore - Math.max(4, CELL * .05));
->>>>>>> 5988c15 (v004)
   GX = Math.round(Math.min(GX, maxLandscapeGX));
 }else{
   const maxPortraitGX = Math.max(outerPadX, W - totalWWithCore - outerPadX);
@@ -2666,11 +2656,7 @@ function makeRoute(){
   // the stage/wave-specific route template. This keeps the start point
   // consistent without flattening the existing route variety.
   const entryRow = plan[0]?.[1] ?? 0;
-<<<<<<< HEAD
-  const startX = GX - Math.max(42, CELL * .88);
-=======
   const startX = BOARD_IS_LANDSCAPE ? -Math.max(28, CELL * .72) : GX - Math.max(42, CELL * .88);
->>>>>>> 5988c15 (v004)
   const topLeftEntry = gridPoint(0, 0);
   const leftLaneEntry = gridPoint(0, row(entryRow));
   const baseRoute = [{x:startX, y:topLeftEntry.y}, topLeftEntry];
@@ -7890,28 +7876,12 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
   function summonShort(full){
-<<<<<<< HEAD
-    if(!full) return '';
-    var cost = full.replace(/^\s*랜덤\s*소환\s*/,'').trim();
-    return cost ? ('소환 ' + cost) : '소환';
-=======
     // v46: button label is fixed to a single word. Prevent "소환 소환" when source text is already "소환".
     return '소환';
->>>>>>> 5988c15 (v004)
   }
   function applyShortLandscapeLabels(){
     injectStyle();
     var summonFull=textOf('summonBtn');
-<<<<<<< HEAD
-    var mergeFull=textOf('mergeBtn') || '타워 합치기';
-    var speedFull=textOf('speedBtn') || '1x';
-    var pauseFull=textOf('pauseBtn') || '일시정지';
-
-    setProxy('summon', summonShort(summonFull), summonFull || '랜덤 소환');
-    setProxy('merge', '합치기', mergeFull);
-    setProxy('speed', speedFull, speedFull);
-    setProxy('pause', /재개/.test(pauseFull) ? '재개' : '정지', pauseFull);
-=======
     var mergeFull=textOf('mergeBtn') || '합치기';
     var speedFull=textOf('speedBtn') || '1x';
     var pauseFull=textOf('pauseBtn') || '정지';
@@ -7920,7 +7890,6 @@ window.addEventListener('DOMContentLoaded', () => {
     setProxy('merge', '합치기', mergeFull || '합치기');
     setProxy('speed', speedFull, speedFull);
     setProxy('pause', '정지', pauseFull || '정지');
->>>>>>> 5988c15 (v004)
   }
 
   var raf=0;
