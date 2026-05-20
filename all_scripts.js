@@ -1872,7 +1872,7 @@ const GRID_COLS = BOARD_IS_LANDSCAPE ? 12 : 8;
 const GRID_ROWS = BOARD_IS_LANDSCAPE ? 8 : 12;
 const GRID = Math.max(GRID_COLS, GRID_ROWS); // legacy fallback only
 const maxCell = BOARD_IS_LANDSCAPE
-  ? (IS_MOBILE_BOARD ? 72 : 86)
+  ? (IS_MOBILE_BOARD ? 82 : 96)
   : (IS_MOBILE_BOARD ? 56 : 74);
 const minCell = BOARD_IS_LANDSCAPE
   ? (IS_MOBILE_BOARD ? 34 : 42)
@@ -1881,13 +1881,13 @@ const outerPadX = BOARD_IS_LANDSCAPE
   ? Math.max(14, Math.min(24, W * .018))
   : Math.max(12, Math.min(18, W * .02));
 const rightCommandReserve = BOARD_IS_LANDSCAPE
-  ? Math.max(168, Math.min(222, W * .165))
+  ? Math.max(124, Math.min(170, W * .132))
   : 0;
 const availableBoardW = BOARD_IS_LANDSCAPE
   ? Math.max(260, W - outerPadX * 2 - rightCommandReserve)
   : Math.max(220, W - outerPadX * 2);
 const topBottomReserve = BOARD_IS_LANDSCAPE
-  ? Math.max(74, Math.min(104, H * .135))
+  ? Math.max(48, Math.min(72, H * .092))
   : Math.max(148, Math.min(210, H * .19));
 const fitByExpandedW = Math.max(24, availableBoardW / GRID_COLS);
 const fitByExpandedH = Math.max(24, (H - topBottomReserve) / GRID_ROWS);
