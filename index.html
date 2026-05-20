@@ -42562,5 +42562,179 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #mjTopMiniHud .mjResourceStrip
 }
 </style>
 
+
+<style id="v271-armory-plate-rail-wallet-align-final">
+@media (orientation: landscape){
+  /* v271: plate left rail must be true square; shard icon aligns upward with text */
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] #towerPopupList,
+  #towerPopup[data-active-tab="plate"] #towerPopupList{
+    --plate-rail-size:clamp(40px, 4.8dvh, 52px);
+    width:calc(var(--plate-rail-size) + 12px) !important;
+    min-width:calc(var(--plate-rail-size) + 12px) !important;
+    max-width:calc(var(--plate-rail-size) + 12px) !important;
+    padding:6px !important;
+    gap:6px !important;
+    align-items:center !important;
+    overflow-x:hidden !important;
+    box-sizing:border-box !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] #towerPopupList > .plateInfoItem,
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] #towerPopupList > .commonResearchItem.plateInfoItem,
+  #towerPopup[data-active-tab="plate"] #towerPopupList > .plateInfoItem,
+  #towerPopup[data-active-tab="plate"] #towerPopupList > .commonResearchItem.plateInfoItem{
+    inline-size:var(--plate-rail-size) !important;
+    block-size:var(--plate-rail-size) !important;
+    width:var(--plate-rail-size) !important;
+    min-width:var(--plate-rail-size) !important;
+    max-width:var(--plate-rail-size) !important;
+    height:var(--plate-rail-size) !important;
+    min-height:var(--plate-rail-size) !important;
+    max-height:var(--plate-rail-size) !important;
+    flex:0 0 var(--plate-rail-size) !important;
+    aspect-ratio:1 / 1 !important;
+    display:grid !important;
+    place-items:center !important;
+    padding:0 !important;
+    margin:0 !important;
+    overflow:hidden !important;
+    border-radius:12px !important;
+    box-sizing:border-box !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] #towerPopupList > .plateInfoItem > .v164PlateTile,
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] #towerPopupList > .commonResearchItem.plateInfoItem > .v164PlateTile,
+  #towerPopup[data-active-tab="plate"] #towerPopupList > .plateInfoItem > .v164PlateTile,
+  #towerPopup[data-active-tab="plate"] #towerPopupList > .commonResearchItem.plateInfoItem > .v164PlateTile{
+    inline-size:calc(var(--plate-rail-size) * .72) !important;
+    block-size:calc(var(--plate-rail-size) * .72) !important;
+    width:calc(var(--plate-rail-size) * .72) !important;
+    min-width:calc(var(--plate-rail-size) * .72) !important;
+    max-width:calc(var(--plate-rail-size) * .72) !important;
+    height:calc(var(--plate-rail-size) * .72) !important;
+    min-height:calc(var(--plate-rail-size) * .72) !important;
+    max-height:calc(var(--plate-rail-size) * .72) !important;
+    aspect-ratio:1 / 1 !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    margin:0 !important;
+    padding:0 !important;
+    transform:none !important;
+    box-sizing:border-box !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] #towerPopupList .v164PlateTile::before,
+  #towerPopup[data-active-tab="plate"] #towerPopupList .v164PlateTile::before{
+    inset:4px !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] #towerPopupList .v164PlateTile::after,
+  #towerPopup[data-active-tab="plate"] #towerPopupList .v164PlateTile::after{
+    display:none !important;
+    content:none !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] #towerPopupList .v164PlateCode,
+  #towerPopup[data-active-tab="plate"] #towerPopupList .v164PlateCode{
+    display:block !important;
+    font-size:clamp(8px, .72vw, 11px) !important;
+    line-height:1 !important;
+    letter-spacing:-.04em !important;
+    white-space:nowrap !important;
+    max-width:100% !important;
+    overflow:hidden !important;
+    text-align:center !important;
+    transform:none !important;
+    margin:0 !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] #towerPopupList .v164PlateLabel,
+  #towerPopup[data-active-tab="plate"] #towerPopupList .v164PlateLabel{
+    display:none !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    inline-size:0 !important;
+    block-size:0 !important;
+    width:0 !important;
+    height:0 !important;
+    max-width:0 !important;
+    max-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    font-size:0 !important;
+    line-height:0 !important;
+    overflow:hidden !important;
+  }
+
+  /* shard icon was slightly lower than text; lift only the orb icon */
+  #towerPopup .towerPopupWallet .towerWalletItem.shard::before,
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard::before,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard::before{
+    transform:translateY(-1.5px) !important;
+    align-self:center !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup .towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard b{
+    transform:translateY(0) !important;
+  }
+}
+</style>
+
+
+<style id="v272-stage-enter-width-fix">
+/* v272: align the stage enter button width to the stage content frame.
+   Previous patches left the action row using mixed width/min() rules, so on some landscape widths
+   the bottom CTA became visually wider than the stage content above. */
+#stageMap .stageActionRow,
+#stageMap #stageActionRow{
+  position:absolute !important;
+  left:32px !important;
+  right:32px !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  bottom:24px !important;
+  transform:none !important;
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:12px !important;
+  z-index:1300 !important;
+}
+#stageMap .stageActionRow .stageEnter,
+#stageMap .stageActionRow #stageEnterBtn,
+#stageMap #stageEnterBtn.stageEnter{
+  position:static !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+  margin:0 !important;
+  left:auto !important;
+  right:auto !important;
+  transform:none !important;
+}
+@media (max-width:900px), (max-aspect-ratio:0.78){
+  #stageMap .stageActionRow,
+  #stageMap #stageActionRow{
+    left:18px !important;
+    right:18px !important;
+    bottom:18px !important;
+    gap:10px !important;
+  }
+}
+@media (max-width:520px){
+  #stageMap .stageActionRow,
+  #stageMap #stageActionRow{
+    left:12px !important;
+    right:12px !important;
+    bottom:14px !important;
+  }
+}
+</style>
+
 </body>
 </html>

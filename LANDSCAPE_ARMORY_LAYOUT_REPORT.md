@@ -1,14 +1,14 @@
-# Landscape Armory Layout Report (v70)
+# Landscape Armory Layout Report (v71)
 
-Applied a compact landscape polish pass.
+Final focused patch for the user's latest screenshot.
 
 ## Changes
-- Adjusted shard wallet vertical alignment: shard icon is lowered slightly and text/number are raised slightly.
-- Reduced landscape detail UI size across Common / Tower / Plate tabs.
-- Removed unnecessary horizontal scrollbar from detail panel when content can fit.
-- Tightened panel padding, card gaps, title sizes, stat block sizes, and row spacing.
-- Kept left rail icons square and reduced them slightly so the rail feels cleaner.
-- Hid small plate labels in the left rail to avoid broken/clipped text.
+- Plate tab left rail items are forced to true square dimensions.
+- Plate rail icons are centered and constrained with matching width/height/inline-size/block-size.
+- Plate rail labels are hidden in the left rail to prevent vertical stretching and text clipping.
+- Plate rail symbol text uses a smaller non-scaled font for cleaner square rendering.
+- Shard wallet orb icon is moved slightly upward to align with the label and numeric value.
+- Shard wallet text/value vertical offset is reset.
 
 ## Scope
 - Landscape armory popup only.
