@@ -1,0 +1,14 @@
+{
+  "id": "planet-rift-runtime",
+  "version": "v76",
+  "mode": "production",
+  "enableTestHarness": false,
+  "enableProgressMocks": false,
+  "stageProgressKey": "planetRiftStageProgressV3",
+  "offlineMetaKey": "planetRiftOfflineMetaV2",
+  "progression": {
+    "stageClearRule": "clearing stage N unlocks stage N+1",
+    "maxStage": 12,
+    "sourceOfTruth": "planetRiftOfflineMetaV2.clears"
+  }
+}

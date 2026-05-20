@@ -43332,5 +43332,262 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #mjTopMiniHud .mjResourceStrip
 }
 </style>
 
+
+
+<!-- v76: production progress manifest + deterministic stage unlock fix.
+     Test/debug unlock code is gated behind explicit test mode and normal stage progression is derived
+     from saved clear records every time the map renders or a run ends. -->
+<script id="v76-stage-unlock-manifest-fix">
+(function(){
+  'use strict';
+  var PROD_MANIFEST = {
+    id:'planet-rift-runtime',
+    version:'v76',
+    mode:'production',
+    enableTestHarness:false,
+    enableProgressMocks:false,
+    stageProgressKey:'planetRiftStageProgressV3',
+    offlineMetaKey:'planetRiftOfflineMetaV2',
+    maxStage:12
+  };
+  var TEST_MANIFEST = {
+    id:'planet-rift-test-runtime',
+    version:'v76',
+    mode:'test',
+    enableTestHarness:true,
+    enableProgressMocks:true
+  };
+  function queryHas(name){
+    try{ return new URLSearchParams(location.search).has(name); }catch(_){ return false; }
+  }
+  function explicitTestMode(){
+    try{
+      return queryHas('test') || queryHas('qa') || queryHas('debug') || localStorage.getItem('PLANET_RIFT_TEST_MODE') === '1';
+    }catch(_){ return false; }
+  }
+  var TEST_ALLOWED = explicitTestMode();
+  window.PLANET_RIFT_RUNTIME_MANIFEST = TEST_ALLOWED ? Object.assign({}, PROD_MANIFEST, TEST_MANIFEST) : Object.assign({}, PROD_MANIFEST);
+
+  function safe(fn, fallback){ try{ return fn(); }catch(err){ console.warn('[v76 stage unlock]', err); return fallback; } }
+  function maxStage(){ return safe(function(){ return Array.isArray(STAGE_MAP_DEFS) ? STAGE_MAP_DEFS.length : PROD_MANIFEST.maxStage; }, PROD_MANIFEST.maxStage); }
+  function clampStage(n){
+    var max=maxStage();
+    n = Math.floor(Number(n || 1));
+    if(!Number.isFinite(n)) n = 1;
+    return Math.max(1, Math.min(max, n));
+  }
+  function readJson(key, fallback){
+    return safe(function(){
+      var raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }, fallback);
+  }
+  function writeJson(key, value){ safe(function(){ localStorage.setItem(key, JSON.stringify(value)); }); }
+  function ensureMeta(){
+    if(!window.META && typeof META !== 'undefined') window.META = META;
+    if(typeof META === 'undefined' || !META){
+      if(typeof defaultOfflineMeta === 'function') META = defaultOfflineMeta();
+      else META = {saveVersion:2, shards:0, totalClears:0, totalDefeats:0, bestWave:{}, clears:{}, story:{}, upgrades:{}, mastery:{}, flags:{}, settings:{}, unlockedTowers:[2,5]};
+    }
+    if(!META.clears || typeof META.clears !== 'object') META.clears = {};
+    if(!META.flags || typeof META.flags !== 'object') META.flags = {};
+    if(!Array.isArray(META.unlockedTowers)) META.unlockedTowers = [2,5];
+    if(!TEST_ALLOWED){
+      // Persisted test flags from an old build must not affect production progression.
+      META.flags.testMode = false;
+      if(typeof TEST_MODE_CONFIG !== 'undefined' && TEST_MODE_CONFIG) TEST_MODE_CONFIG.enabled = false;
+      if(document.body) document.body.classList.remove('test-mode-active');
+    }
+    return META;
+  }
+  function testModeActive(){
+    if(!TEST_ALLOWED) return false;
+    return safe(function(){ return !!(TEST_MODE_CONFIG && TEST_MODE_CONFIG.enabled) || !!(META && META.flags && META.flags.testMode); }, false);
+  }
+  function normalizeClearRecords(){
+    var meta=ensureMeta();
+    var out={};
+    Object.keys(meta.clears || {}).forEach(function(k){
+      var st=clampStage(k), count=Math.max(0, Math.floor(Number(meta.clears[k] || 0)));
+      if(count>0) out[String(st)] = Math.max(Number(out[String(st)] || 0), count);
+    });
+    meta.clears = out;
+    return out;
+  }
+  function unlockTowersFromClears(){
+    var meta=ensureMeta();
+    var set;
+    try{ set = new Set(normalizeUnlockedTowers(meta.unlockedTowers, meta.clears)); }
+    catch(_){ set = new Set(Array.isArray(meta.unlockedTowers) ? meta.unlockedTowers.map(Number) : [2,5]); }
+    Object.keys(meta.clears || {}).forEach(function(k){
+      if(Number(meta.clears[k] || 0) <= 0) return;
+      var reward = typeof stageTowerReward === 'function' ? stageTowerReward(Number(k)) : null;
+      if(reward && Number.isFinite(Number(reward.type))) set.add(Number(reward.type));
+    });
+    meta.unlockedTowers = Array.from(set).filter(function(v){return Number.isInteger(Number(v));}).map(Number).sort(function(a,b){return a-b;});
+  }
+  function deriveUnlockedFromClears(){
+    if(testModeActive()) return maxStage();
+    var clears=normalizeClearRecords();
+    var unlocked=1;
+    Object.keys(clears).forEach(function(k){
+      if(Number(clears[k] || 0) > 0) unlocked = Math.max(unlocked, Math.min(maxStage(), Number(k) + 1));
+    });
+    var saved=readJson(PROD_MANIFEST.stageProgressKey, null);
+    if(saved && Number(saved.unlocked)) unlocked=Math.max(unlocked, clampStage(saved.unlocked));
+    return clampStage(unlocked);
+  }
+  function persistProgress(opts){
+    opts = opts || {};
+    var meta=ensureMeta();
+    unlockTowersFromClears();
+    var unlocked=deriveUnlockedFromClears();
+    if(typeof StageMapState !== 'undefined' && StageMapState){
+      StageMapState.unlocked = unlocked;
+      if(opts.selectStage) StageMapState.selected = clampStage(opts.selectStage);
+      else StageMapState.selected = clampStage(StageMapState.selected || unlocked);
+      if(StageMapState.selected > unlocked && !opts.allowLockedPreview) StageMapState.selected = unlocked;
+      StageMapState.current = clampStage(opts.currentStage || StageMapState.current || StageMapState.selected || unlocked);
+      writeJson(PROD_MANIFEST.stageProgressKey, {saveVersion:2, unlocked:StageMapState.unlocked, selected:StageMapState.selected, current:StageMapState.current});
+    }
+    safe(function(){ localStorage.setItem(PROD_MANIFEST.offlineMetaKey, JSON.stringify(meta)); });
+    return unlocked;
+  }
+  function applyStageDomState(){
+    safe(function(){
+      var unlocked = testModeActive() ? maxStage() : deriveUnlockedFromClears();
+      if(typeof StageMapState !== 'undefined' && StageMapState) StageMapState.unlocked = unlocked;
+      var selected = typeof StageMapState !== 'undefined' && StageMapState ? clampStage(StageMapState.selected || unlocked) : unlocked;
+      var map=document.getElementById('stageMap');
+      if(map){ map.dataset.unlocked=String(unlocked); map.dataset.selected=String(selected); }
+      document.querySelectorAll('#stageMap .stageNode').forEach(function(node){
+        var stage=clampStage(node.dataset.stage || 1);
+        var open=stage<=unlocked;
+        node.classList.toggle('locked', !open);
+        node.classList.toggle('unlocked', open);
+        node.setAttribute('aria-disabled', open ? 'false' : 'true');
+        var lock=node.querySelector('.nodeLock');
+        if(lock) lock.style.display=open?'none':'block';
+      });
+      var label=document.getElementById('stageProgressLabel');
+      if(label){
+        var arc = typeof getConstellationArcByStage === 'function' ? getConstellationArcByStage(selected) : {name:'ORION CONSTELLATION'};
+        label.textContent = (testModeActive() ? 'TEST MODE · ' : '') + arc.name + ' · OPEN ' + unlocked + ' / ' + maxStage();
+      }
+    });
+  }
+  function ensureStageClear(stageNo, options){
+    options = options || {};
+    if(testModeActive()) return maxStage();
+    var meta=ensureMeta();
+    var st=clampStage(stageNo);
+    var before=Number(meta.clears[String(st)] || 0);
+    if(options.recordClear !== false && before <= 0){
+      meta.clears[String(st)] = 1;
+      meta.totalClears = Math.max(Number(meta.totalClears || 0), 0) + 1;
+      if(!meta.story || typeof meta.story !== 'object') meta.story = {};
+      meta.story[st + '_clear'] = true;
+    }else if(options.recordClear !== false){
+      meta.clears[String(st)] = before;
+    }
+    var next=Math.min(maxStage(), st+1);
+    if(typeof StageMapState !== 'undefined' && StageMapState){
+      StageMapState.unlocked=Math.max(clampStage(StageMapState.unlocked || 1), next);
+      if(Number(StageMapState.selected || 1) <= st) StageMapState.selected=next;
+      StageMapState.current=StageMapState.selected;
+    }
+    persistProgress({selectStage:(typeof StageMapState!=='undefined'&&StageMapState)?StageMapState.selected:next, currentStage:(typeof StageMapState!=='undefined'&&StageMapState)?StageMapState.current:next, allowLockedPreview:true});
+    applyStageDomState();
+    safe(function(){ if(typeof renderOfflineMetaPanel === 'function') renderOfflineMetaPanel(); });
+    safe(function(){ if(typeof renderHangar === 'function') renderHangar(); });
+    return next;
+  }
+
+  var _record = typeof recordOfflineRunEnd === 'function' ? recordOfflineRunEnd : null;
+  if(_record && !_record.__v76StageUnlockWrapped){
+    var wrappedRecord=function(cleared, stageNoOverride){
+      var st=clampStage(stageNoOverride || (typeof S !== 'undefined' && S ? S.stageNo : null) || (typeof StageMapState !== 'undefined' && StageMapState ? StageMapState.current : 1));
+      var before=safe(function(){ return Number((ensureMeta().clears || {})[String(st)] || 0); }, 0);
+      var ret=_record.apply(this, arguments);
+      if(cleared){
+        var after=safe(function(){ return Number((ensureMeta().clears || {})[String(st)] || 0); }, 0);
+        // If an older wrapper returned early because S.runEnded was already true, still record the clear once.
+        ensureStageClear(st, {recordClear: after <= before});
+      }else{
+        persistProgress({allowLockedPreview:true});
+      }
+      return ret;
+    };
+    wrappedRecord.__v76StageUnlockWrapped=true;
+    recordOfflineRunEnd=wrappedRecord;
+    try{ window.recordOfflineRunEnd=wrappedRecord; }catch(_){ }
+  }
+
+  var _complete = typeof completeStageFromBattle === 'function' ? completeStageFromBattle : null;
+  if(_complete && !_complete.__v76StageUnlockWrapped){
+    var wrappedComplete=function(){
+      var st=clampStage((typeof S !== 'undefined' && S ? S.stageNo : null) || (typeof StageMapState !== 'undefined' && StageMapState ? StageMapState.current : 1));
+      var ret=_complete.apply(this, arguments);
+      setTimeout(function(){ ensureStageClear(st, {recordClear:false}); safe(function(){ if(typeof renderStageMap === 'function' && document.getElementById('stageMap')?.style.display !== 'none') renderStageMap(); }); }, 0);
+      setTimeout(function(){ ensureStageClear(st, {recordClear:false}); applyStageDomState(); }, 160);
+      setTimeout(function(){ ensureStageClear(st, {recordClear:false}); applyStageDomState(); }, 500);
+      return ret;
+    };
+    wrappedComplete.__v76StageUnlockWrapped=true;
+    completeStageFromBattle=wrappedComplete;
+    try{ window.completeStageFromBattle=wrappedComplete; }catch(_){ }
+  }
+
+  var _loadProgress = typeof loadStageMapProgress === 'function' ? loadStageMapProgress : null;
+  if(_loadProgress && !_loadProgress.__v76StageUnlockWrapped){
+    var wrappedLoad=function(){
+      var ret=_loadProgress.apply(this, arguments);
+      persistProgress({keepSelected:true, allowLockedPreview:true});
+      applyStageDomState();
+      return ret;
+    };
+    wrappedLoad.__v76StageUnlockWrapped=true;
+    loadStageMapProgress=wrappedLoad;
+    try{ window.loadStageMapProgress=wrappedLoad; }catch(_){ }
+  }
+
+  var _renderMap = typeof renderStageMap === 'function' ? renderStageMap : null;
+  if(_renderMap && !_renderMap.__v76StageUnlockWrapped){
+    var wrappedRender=function(){
+      persistProgress({keepSelected:true, allowLockedPreview:true});
+      var ret=_renderMap.apply(this, arguments);
+      applyStageDomState();
+      return ret;
+    };
+    wrappedRender.__v76StageUnlockWrapped=true;
+    renderStageMap=wrappedRender;
+    try{ window.renderStageMap=wrappedRender; }catch(_){ }
+  }
+
+  document.addEventListener('click', function(e){
+    var node=e.target && e.target.closest && e.target.closest('#stageMap .stageNode[data-stage]');
+    if(!node) return;
+    var st=clampStage(node.dataset.stage || 1);
+    var unlocked=deriveUnlockedFromClears();
+    if(st>unlocked && !testModeActive()){
+      e.preventDefault();
+      e.stopImmediatePropagation && e.stopImmediatePropagation();
+      safe(function(){ if(typeof toast === 'function') toast(st+'성역은 아직 미개방입니다. 이전 성역을 먼저 클리어하세요.'); });
+      applyStageDomState();
+    }
+  }, true);
+
+  function boot(){
+    ensureMeta();
+    persistProgress({keepSelected:true, allowLockedPreview:true});
+    applyStageDomState();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot, {once:true});
+  else boot();
+  window.addEventListener('load', function(){ setTimeout(boot, 0); setTimeout(boot, 180); }, {once:true});
+  window.PRD_STAGE_UNLOCK_V76 = {manifest:window.PLANET_RIFT_RUNTIME_MANIFEST, ensureStageClear:ensureStageClear, persistProgress:persistProgress, applyStageDomState:applyStageDomState};
+})();
+</script>
+
 </body>
 </html>

@@ -1,0 +1,9 @@
+{
+  "id": "planet-rift-test-runtime",
+  "version": "v76",
+  "mode": "test",
+  "enableTestHarness": true,
+  "enableProgressMocks": true,
+  "activation": "Only when URL has ?test, ?qa, ?debug or localStorage.PLANET_RIFT_TEST_MODE is 1",
+  "note": "Do not merge this manifest into production runtime."
+}
