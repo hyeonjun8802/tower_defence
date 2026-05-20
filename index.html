@@ -41481,5 +41481,1086 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #mjTopMiniHud .mjResourceStrip
 }
 </style>
 
+
+<style id="v266-armory-landscape-resolution-adaptive-fix">
+@media (orientation: landscape){
+  /* overall panel / header / tabs adapt to different landscape resolutions */
+  #towerPopup.armory-layout-landscape .towerPopupPanel{
+    width:min(1840px, calc(100vw - 14px)) !important;
+    height:min(1020px, calc(100dvh - 10px)) !important;
+    max-width:calc(100vw - 14px) !important;
+    max-height:calc(100dvh - 10px) !important;
+    padding:12px 14px 12px !important;
+    grid-template-rows:86px 54px minmax(0,1fr) !important;
+    gap:8px !important;
+    box-sizing:border-box !important;
+  }
+  #towerPopup.armory-layout-landscape .towerPopupHeader{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto 54px !important;
+    align-items:center !important;
+    gap:10px !important;
+    padding:0 14px !important;
+    margin:0 !important;
+    border:0 !important;
+  }
+  #towerPopup.armory-layout-landscape .towerPopupHeader::after{display:none !important;content:none !important;}
+  #towerPopup.armory-layout-landscape .towerPopupTitleGroup{align-self:center !important;min-width:0 !important;}
+  #towerPopup.armory-layout-landscape .towerPopupWallet{justify-self:end !important;align-self:center !important;margin:0 !important;transform:none !important;}
+  #towerPopup.armory-layout-landscape .towerPopupTabs{
+    display:grid !important;
+    grid-template-columns:repeat(3, minmax(112px, 1fr)) !important;
+    gap:10px !important;
+    width:min(560px, 100%) !important;
+    margin-left:auto !important;
+    padding:0 14px !important;
+    align-self:center !important;
+    box-sizing:border-box !important;
+  }
+  #towerPopup.armory-layout-landscape .towerPopupBody{
+    grid-template-columns:58px minmax(0,1fr) !important;
+    gap:10px !important;
+    margin:0 14px 8px !important;
+    min-height:0 !important;
+  }
+  #towerPopup.armory-layout-landscape .towerPopupList,
+  #towerPopup.armory-layout-landscape .towerPopupList.commonList{
+    width:58px !important;min-width:58px !important;max-width:58px !important;
+  }
+
+  /* generic detail area should fill available width first, then scroll only if needed */
+  #towerPopup.armory-layout-landscape .towerPopupDetail{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    box-sizing:border-box !important;
+  }
+  #towerPopup.armory-layout-landscape .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape .towerPopupDetail.towerDenseDetail{
+    width:max(100%, 980px) !important;
+  }
+
+  /* common research */
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail.compactCombined{
+    grid-template-columns:minmax(220px, 1.02fr) minmax(360px, 1.4fr) minmax(228px, 1.04fr) !important;
+    grid-template-rows:minmax(108px,auto) minmax(112px,auto) !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryHeroPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryComboPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryStackPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryWidePanel{
+    min-width:0 !important;
+    width:auto !important;
+  }
+
+  /* tower */
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .towerPopupDetail.towerDenseDetail,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .towerPopupDetail.compactCombined{
+    grid-template-columns:minmax(230px, 1.02fr) minmax(360px, 1.24fr) minmax(282px, 1.0fr) !important;
+    grid-template-rows:minmax(110px,auto) minmax(132px,1fr) !important;
+    width:max(100%, 990px) !important;
+    align-items:stretch !important;
+  }
+  #towerPopup.armory-layout-landscape .towerDenseHero,
+  #towerPopup.armory-layout-landscape .towerDenseStats,
+  #towerPopup.armory-layout-landscape .towerDenseRole,
+  #towerPopup.armory-layout-landscape .towerDenseSkills,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .armoryHeroPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .armoryComboPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .armoryStackPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .armorySkillsPanel{
+    min-width:0 !important;
+    width:auto !important;
+  }
+  #towerPopup.armory-layout-landscape .towerDenseHero{padding:12px !important;}
+  #towerPopup.armory-layout-landscape .towerDenseStats{padding:12px !important;}
+  #towerPopup.armory-layout-landscape .towerDenseRole,
+  #towerPopup.armory-layout-landscape .towerDenseSkills{padding:11px 12px !important;}
+  #towerPopup.armory-layout-landscape .towerDenseGrid,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .armoryComboPanel .armoryInlineStatGrid{
+    grid-template-columns:repeat(3, minmax(0,1fr)) !important;
+  }
+
+  /* plate */
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] .towerPopupDetail.compactCombined{
+    grid-template-columns:minmax(230px, 1.02fr) minmax(334px, 1.28fr) minmax(260px, 1.06fr) !important;
+    grid-template-rows:minmax(112px,auto) minmax(124px,auto) !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] .armoryHeroPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] .armoryComboPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] .armoryWidePanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] .armoryStackPanel{
+    min-width:0 !important;
+    width:auto !important;
+  }
+}
+
+@media (min-width: 1500px) and (orientation: landscape){
+  #towerPopup.armory-layout-landscape .towerPopupPanel{padding:14px 18px 14px !important;grid-template-rows:92px 56px minmax(0,1fr) !important;}
+  #towerPopup.armory-layout-landscape .towerPopupHeader{padding:0 18px !important;}
+  #towerPopup.armory-layout-landscape .towerPopupTabs{padding:0 18px !important;width:min(620px,100%) !important;}
+  #towerPopup.armory-layout-landscape .towerPopupBody{margin:0 18px 10px !important;}
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .towerPopupDetail.towerDenseDetail,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .towerPopupDetail.compactCombined{width:max(100%, 1040px) !important;}
+}
+
+@media (max-width: 1180px) and (orientation: landscape){
+  #towerPopup.armory-layout-landscape .towerPopupPanel{grid-template-rows:80px 50px minmax(0,1fr) !important;padding:10px 10px 10px !important;}
+  #towerPopup.armory-layout-landscape .towerPopupHeader{padding:0 10px !important;grid-template-columns:minmax(0,1fr) auto 50px !important;gap:8px !important;}
+  #towerPopup.armory-layout-landscape .towerPopupTabs{padding:0 10px !important;width:min(500px,100%) !important;gap:8px !important;grid-template-columns:repeat(3, minmax(96px, 1fr)) !important;}
+  #towerPopup.armory-layout-landscape .towerPopupBody{grid-template-columns:52px minmax(0,1fr) !important;gap:8px !important;margin:0 10px 8px !important;}
+  #towerPopup.armory-layout-landscape .towerPopupList,
+  #towerPopup.armory-layout-landscape .towerPopupList.commonList{width:52px !important;min-width:52px !important;max-width:52px !important;}
+  #towerPopup.armory-layout-landscape .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape .towerPopupDetail.towerDenseDetail{width:max(100%, 920px) !important;}
+}
+</style>
+<script id="v266-armory-landscape-resolution-adaptive-fix-script">
+(function(){
+  function resetActiveDetailScroll(){
+    var popup=document.getElementById('towerPopup');
+    if(!popup) return;
+    var detail=popup.querySelector('.towerPopupDetail');
+    if(detail) detail.scrollLeft=0;
+  }
+  var resizeTimer=null;
+  function onResize(){
+    if(resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(resetActiveDetailScroll, 90);
+  }
+  window.addEventListener('resize', onResize, {passive:true});
+  window.addEventListener('orientationchange', onResize, {passive:true});
+})();
+</script>
+
+
+<style id="v267-landscape-hard-grid-reset">
+@media (orientation: landscape){
+  /* v267: hard reset old absolute landscape patches so all resolutions use one stable grid */
+  #towerPopup .towerPopupPanel,
+  #towerPopup.armory-layout-landscape .towerPopupPanel{
+    position:relative !important;
+    display:grid !important;
+    grid-template-rows:clamp(64px,10dvh,92px) clamp(38px,6dvh,54px) minmax(0,1fr) !important;
+    grid-template-columns:1fr !important;
+    width:calc(100vw - 14px) !important;
+    height:calc(100dvh - 10px) !important;
+    max-width:calc(100vw - 14px) !important;
+    max-height:calc(100dvh - 10px) !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    padding:clamp(8px,1.4dvh,14px) clamp(10px,1.5vw,22px) clamp(8px,1.4dvh,14px) !important;
+    gap:clamp(5px,1dvh,9px) !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+  }
+  #towerPopup .towerPopupHeader,
+  #towerPopup .towerPopupTabs,
+  #towerPopup .towerPopupBody,
+  #towerPopup.armory-layout-landscape .towerPopupHeader,
+  #towerPopup.armory-layout-landscape .towerPopupTabs,
+  #towerPopup.armory-layout-landscape .towerPopupBody{
+    position:relative !important;
+    inset:auto !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    bottom:auto !important;
+    width:auto !important;
+    height:auto !important;
+    max-width:none !important;
+    max-height:none !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    transform:none !important;
+    translate:none !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
+  }
+  #towerPopup .towerPopupHeader,
+  #towerPopup.armory-layout-landscape .towerPopupHeader{
+    grid-row:1 !important;
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto clamp(32px,4vw,44px) !important;
+    align-items:center !important;
+    gap:clamp(6px,1vw,12px) !important;
+    padding:0 clamp(6px,1vw,14px) !important;
+    background:transparent !important;
+    border:0 !important;
+    overflow:visible !important;
+  }
+  #towerPopup .towerPopupHeader::before,
+  #towerPopup .towerPopupHeader::after,
+  #towerPopup.armory-layout-landscape .towerPopupHeader::before,
+  #towerPopup.armory-layout-landscape .towerPopupHeader::after{display:none !important;content:none !important;}
+  #towerPopup .towerPopupHeader > :first-child,
+  #towerPopup.armory-layout-landscape .towerPopupHeader > :first-child{min-width:0 !important;align-self:center !important;}
+  #towerPopup .towerPopupKicker,
+  #towerPopup.armory-layout-landscape .towerPopupKicker{font-size:clamp(8px,1.2vw,12px) !important;line-height:1 !important;}
+  #towerPopup .towerPopupTitle,
+  #towerPopup.armory-layout-landscape .towerPopupTitle{font-size:clamp(18px,2.2vw,32px) !important;line-height:1.05 !important;margin-top:4px !important;}
+  #towerPopup .towerPopupWallet,
+  #towerPopup.armory-layout-landscape .towerPopupWallet{
+    position:relative !important;inset:auto !important;top:auto !important;left:auto !important;right:auto !important;bottom:auto !important;
+    transform:none !important;justify-self:end !important;align-self:center !important;
+    height:clamp(28px,4.4dvh,38px) !important;min-height:clamp(28px,4.4dvh,38px) !important;
+    min-width:clamp(104px,12vw,150px) !important;max-width:clamp(120px,14vw,180px) !important;
+    padding:0 clamp(7px,1vw,12px) !important;gap:clamp(4px,.7vw,8px) !important;margin:0 !important;
+  }
+  #towerPopup .towerPopupClose,
+  #towerPopup.armory-layout-landscape .towerPopupClose{
+    position:relative !important;inset:auto !important;top:auto !important;left:auto !important;right:auto !important;bottom:auto !important;
+    transform:none !important;justify-self:end !important;align-self:center !important;
+    width:clamp(32px,4vw,42px) !important;height:clamp(32px,4vw,42px) !important;
+    min-width:clamp(32px,4vw,42px) !important;min-height:clamp(32px,4vw,42px) !important;
+    margin:0 !important;padding:0 !important;
+  }
+
+  #towerPopup .towerPopupTabs,
+  #towerPopup.armory-layout-landscape .towerPopupTabs{
+    grid-row:2 !important;
+    justify-self:end !important;
+    align-self:center !important;
+    display:grid !important;
+    grid-template-columns:repeat(3, minmax(clamp(86px,10vw,140px), 1fr)) !important;
+    width:clamp(300px,43vw,610px) !important;
+    gap:clamp(6px,1vw,12px) !important;
+    padding:0 clamp(4px,.7vw,10px) !important;
+    background:transparent !important;
+    border:0 !important;
+    overflow:visible !important;
+  }
+  #towerPopup .towerPopupTab,
+  #towerPopup.armory-layout-landscape .towerPopupTab{
+    height:clamp(30px,4.5dvh,42px) !important;
+    min-height:clamp(30px,4.5dvh,42px) !important;
+    font-size:clamp(11px,1.25vw,17px) !important;
+    padding:0 clamp(8px,1vw,14px) !important;
+  }
+
+  #towerPopup .towerPopupBody,
+  #towerPopup.armory-layout-landscape .towerPopupBody{
+    grid-row:3 !important;
+    display:grid !important;
+    grid-template-columns:clamp(44px,4.6vw,64px) minmax(0,1fr) !important;
+    align-items:stretch !important;
+    gap:clamp(6px,.8vw,12px) !important;
+    padding:0 !important;
+    overflow:hidden !important;
+  }
+  #towerPopup .towerPopupList,
+  #towerPopup .towerPopupList.commonList,
+  #towerPopup.armory-layout-landscape .towerPopupList,
+  #towerPopup.armory-layout-landscape .towerPopupList.commonList{
+    width:auto !important;min-width:0 !important;max-width:none !important;flex-basis:auto !important;
+    height:100% !important;min-height:0 !important;max-height:100% !important;
+    padding:clamp(5px,.8dvh,9px) clamp(3px,.5vw,6px) !important;
+    gap:clamp(5px,.8dvh,8px) !important;
+    overflow-y:auto !important;overflow-x:hidden !important;
+  }
+  #towerPopup .towerPopupItem,
+  #towerPopup .commonResearchItem,
+  #towerPopup .plateInfoItem,
+  #towerPopup.armory-layout-landscape .towerPopupItem,
+  #towerPopup.armory-layout-landscape .commonResearchItem,
+  #towerPopup.armory-layout-landscape .plateInfoItem{
+    width:clamp(34px,3.6vw,48px) !important;min-width:clamp(34px,3.6vw,48px) !important;max-width:clamp(34px,3.6vw,48px) !important;
+    height:clamp(34px,3.6vw,48px) !important;min-height:clamp(34px,3.6vw,48px) !important;max-height:clamp(34px,3.6vw,48px) !important;
+    flex:0 0 clamp(34px,3.6vw,48px) !important;aspect-ratio:1/1 !important;
+  }
+
+  #towerPopup .towerPopupDetail,
+  #towerPopup.armory-layout-landscape .towerPopupDetail{
+    position:relative !important;inset:auto !important;width:100% !important;height:100% !important;min-width:0 !important;max-width:none !important;min-height:0 !important;max-height:100% !important;
+    overflow-x:auto !important;overflow-y:hidden !important;box-sizing:border-box !important;
+    padding:clamp(7px,1dvh,12px) clamp(8px,1vw,14px) clamp(11px,1.5dvh,16px) !important;
+  }
+  #towerPopup .towerPopupDetail.compactCombined,
+  #towerPopup .towerPopupDetail.towerDenseDetail,
+  #towerPopup.armory-layout-landscape .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape .towerPopupDetail.towerDenseDetail{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    display:grid !important;
+    align-content:start !important;
+    gap:clamp(6px,.8vw,10px) !important;
+  }
+
+  /* stable tab-specific grids: fill wide screens, scroll only when narrow */
+  #towerPopup[data-active-tab="common"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail.compactCombined{
+    grid-template-columns:minmax(210px, .85fr) minmax(330px, 1.3fr) minmax(220px, .95fr) !important;
+    grid-template-rows:minmax(96px, auto) minmax(110px, 1fr) !important;
+  }
+  #towerPopup[data-active-tab="tower"] .towerPopupDetail.towerDenseDetail,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .towerPopupDetail.towerDenseDetail,
+  #towerPopup[data-active-tab="tower"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .towerPopupDetail.compactCombined{
+    grid-template-columns:minmax(220px, .85fr) minmax(350px, 1.28fr) minmax(270px, 1fr) !important;
+    grid-template-rows:minmax(100px, auto) minmax(128px, 1fr) !important;
+  }
+  #towerPopup[data-active-tab="plate"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] .towerPopupDetail.compactCombined{
+    grid-template-columns:minmax(220px, .9fr) minmax(320px, 1.2fr) minmax(250px, 1fr) !important;
+    grid-template-rows:minmax(100px, auto) minmax(120px, 1fr) !important;
+  }
+
+  /* remove fixed min-widths from previous patches so fr columns can actually resize */
+  #towerPopup .armoryHeroPanel,#towerPopup .armoryComboPanel,#towerPopup .armoryWidePanel,#towerPopup .armoryStackPanel,#towerPopup .armorySkillsPanel,
+  #towerPopup .towerDenseHero,#towerPopup .towerDenseStats,#towerPopup .towerDenseRole,#towerPopup .towerDenseSkills,
+  #towerPopup.armory-layout-landscape .armoryHeroPanel,#towerPopup.armory-layout-landscape .armoryComboPanel,#towerPopup.armory-layout-landscape .armoryWidePanel,#towerPopup.armory-layout-landscape .armoryStackPanel,#towerPopup.armory-layout-landscape .armorySkillsPanel,
+  #towerPopup.armory-layout-landscape .towerDenseHero,#towerPopup.armory-layout-landscape .towerDenseStats,#towerPopup.armory-layout-landscape .towerDenseRole,#towerPopup.armory-layout-landscape .towerDenseSkills{
+    min-width:0 !important;max-width:none !important;width:auto !important;
+  }
+}
+
+@media (max-width: 1050px) and (orientation: landscape){
+  #towerPopup .towerPopupPanel,#towerPopup.armory-layout-landscape .towerPopupPanel{grid-template-rows:clamp(56px,9dvh,78px) clamp(34px,5.5dvh,46px) minmax(0,1fr) !important;padding:8px 8px 8px !important;}
+  #towerPopup .towerPopupTabs,#towerPopup.armory-layout-landscape .towerPopupTabs{width:clamp(270px,46vw,500px) !important;grid-template-columns:repeat(3,minmax(78px,1fr)) !important;}
+  #towerPopup[data-active-tab="common"] .towerPopupDetail.compactCombined,#towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail.compactCombined{grid-template-columns:205px 310px 210px !important;}
+  #towerPopup[data-active-tab="tower"] .towerPopupDetail.towerDenseDetail,#towerPopup.armory-layout-landscape[data-active-tab="tower"] .towerPopupDetail.towerDenseDetail{grid-template-columns:210px 330px 252px !important;}
+  #towerPopup[data-active-tab="plate"] .towerPopupDetail.compactCombined,#towerPopup.armory-layout-landscape[data-active-tab="plate"] .towerPopupDetail.compactCombined{grid-template-columns:210px 300px 236px !important;}
+}
+</style>
+<script id="v267-landscape-hard-grid-reset-script">
+(function(){
+  'use strict';
+  function applyLandscapeClass(){
+    var popup=document.getElementById('towerPopup');
+    if(!popup) return;
+    var isLandscape=window.innerWidth>window.innerHeight;
+    popup.classList.toggle('armory-layout-landscape', isLandscape);
+    if(isLandscape){
+      var detail=document.getElementById('towerPopupDetail');
+      if(detail) detail.scrollLeft=0;
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',applyLandscapeClass,{once:true}); else applyLandscapeClass();
+  window.addEventListener('resize',function(){requestAnimationFrame(applyLandscapeClass);},{passive:true});
+  window.addEventListener('orientationchange',function(){setTimeout(applyLandscapeClass,80);},{passive:true});
+  document.addEventListener('click',function(e){
+    if(e.target && e.target.closest('#towerPopup [data-tower-popup-tab], #towerPopupList button')){
+      requestAnimationFrame(function(){var d=document.getElementById('towerPopupDetail'); if(d) d.scrollLeft=0;});
+    }
+  },true);
+})();
+</script>
+
+
+<style id="v268-armory-landscape-resolution-final-lock">
+@media (orientation: landscape){
+  /*
+    v268 final: the previous grid fixes still allowed older absolute/width rules
+    to leave the detail panel clumped to the left on 1780x1150-like browser shots.
+    This locks the landscape popup into a single predictable geometry.
+  */
+  #towerPopup,
+  #towerPopup.armory-layout-landscape{
+    overflow:hidden !important;
+  }
+
+  #towerPopup .towerPopupPanel,
+  #towerPopup.armory-layout-landscape .towerPopupPanel{
+    --ar-edge: clamp(34px, 4.8vw, 86px);
+    --ar-inner-edge: clamp(14px, 1.4vw, 24px);
+    --ar-header-top: clamp(12px, 2dvh, 24px);
+    --ar-header-h: clamp(66px, 12dvh, 108px);
+    --ar-tabs-top: clamp(116px, 23dvh, 196px);
+    --ar-tabs-h: clamp(34px, 6dvh, 48px);
+    --ar-body-top: calc(var(--ar-tabs-top) + var(--ar-tabs-h) + clamp(10px, 1.4dvh, 16px));
+    --ar-bottom: clamp(18px, 3dvh, 42px);
+
+    position:relative !important;
+    display:block !important;
+    width:calc(100vw - 14px) !important;
+    height:calc(100dvh - 10px) !important;
+    max-width:calc(100vw - 14px) !important;
+    max-height:calc(100dvh - 10px) !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    padding:0 !important;
+    margin:auto !important;
+    overflow:hidden !important;
+    box-sizing:border-box !important;
+  }
+
+  #towerPopup .towerPopupHeader,
+  #towerPopup.armory-layout-landscape .towerPopupHeader{
+    position:absolute !important;
+    left:var(--ar-edge) !important;
+    right:var(--ar-edge) !important;
+    top:var(--ar-header-top) !important;
+    bottom:auto !important;
+    width:auto !important;
+    height:var(--ar-header-h) !important;
+    min-width:0 !important;
+    max-width:none !important;
+    min-height:0 !important;
+    max-height:var(--ar-header-h) !important;
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto clamp(32px,3.6vw,44px) !important;
+    align-items:start !important;
+    gap:clamp(8px,1vw,14px) !important;
+    padding:0 !important;
+    margin:0 !important;
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    overflow:visible !important;
+    transform:none !important;
+    translate:none !important;
+  }
+  #towerPopup .towerPopupHeader::before,
+  #towerPopup .towerPopupHeader::after,
+  #towerPopup.armory-layout-landscape .towerPopupHeader::before,
+  #towerPopup.armory-layout-landscape .towerPopupHeader::after{
+    display:none !important;
+    content:none !important;
+  }
+  #towerPopup .towerPopupHeader > :first-child,
+  #towerPopup.armory-layout-landscape .towerPopupHeader > :first-child{
+    min-width:0 !important;
+    align-self:start !important;
+  }
+  #towerPopup .towerPopupKicker,
+  #towerPopup.armory-layout-landscape .towerPopupKicker{
+    font-size:clamp(9px,1vw,13px) !important;
+    line-height:1 !important;
+  }
+  #towerPopup .towerPopupTitle,
+  #towerPopup.armory-layout-landscape .towerPopupTitle{
+    font-size:clamp(19px,2vw,30px) !important;
+    line-height:1.05 !important;
+    margin:clamp(6px,.9dvh,10px) 0 0 !important;
+  }
+
+  #towerPopup .towerPopupWallet,
+  #towerPopup.armory-layout-landscape .towerPopupWallet{
+    position:relative !important;
+    inset:auto !important;
+    top:auto !important;
+    left:auto !important;
+    right:auto !important;
+    bottom:auto !important;
+    justify-self:end !important;
+    align-self:center !important;
+    transform:none !important;
+    translate:none !important;
+    margin:0 !important;
+    width:auto !important;
+    height:clamp(28px,4dvh,36px) !important;
+    min-height:clamp(28px,4dvh,36px) !important;
+    min-width:clamp(106px,11vw,148px) !important;
+    max-width:clamp(126px,13vw,176px) !important;
+    padding:0 clamp(7px,.9vw,12px) !important;
+  }
+  #towerPopup .towerPopupClose,
+  #towerPopup.armory-layout-landscape .towerPopupClose{
+    position:relative !important;
+    inset:auto !important;
+    top:auto !important;
+    left:auto !important;
+    right:auto !important;
+    bottom:auto !important;
+    justify-self:end !important;
+    align-self:center !important;
+    transform:none !important;
+    translate:none !important;
+    margin:0 !important;
+    width:clamp(32px,3.4vw,42px) !important;
+    height:clamp(32px,3.4vw,42px) !important;
+    min-width:clamp(32px,3.4vw,42px) !important;
+    min-height:clamp(32px,3.4vw,42px) !important;
+    padding:0 !important;
+  }
+
+  #towerPopup .towerPopupTabs,
+  #towerPopup.armory-layout-landscape .towerPopupTabs{
+    position:absolute !important;
+    left:calc(var(--ar-edge) + clamp(650px, 49vw, 920px)) !important;
+    right:var(--ar-edge) !important;
+    top:var(--ar-tabs-top) !important;
+    bottom:auto !important;
+    width:auto !important;
+    height:var(--ar-tabs-h) !important;
+    min-width:0 !important;
+    max-width:none !important;
+    min-height:0 !important;
+    max-height:var(--ar-tabs-h) !important;
+    display:grid !important;
+    grid-template-columns:repeat(3, minmax(0,1fr)) !important;
+    gap:clamp(8px,1vw,14px) !important;
+    padding:0 !important;
+    margin:0 !important;
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    overflow:visible !important;
+    transform:none !important;
+    translate:none !important;
+    justify-self:auto !important;
+  }
+  #towerPopup .towerPopupTab,
+  #towerPopup.armory-layout-landscape .towerPopupTab{
+    height:100% !important;
+    min-height:0 !important;
+    max-height:none !important;
+    font-size:clamp(12px,1.25vw,18px) !important;
+    padding:0 clamp(8px,1vw,14px) !important;
+  }
+
+  #towerPopup .towerPopupBody,
+  #towerPopup.armory-layout-landscape .towerPopupBody{
+    position:absolute !important;
+    left:var(--ar-edge) !important;
+    right:var(--ar-edge) !important;
+    top:var(--ar-body-top) !important;
+    bottom:var(--ar-bottom) !important;
+    width:auto !important;
+    height:auto !important;
+    max-width:none !important;
+    max-height:none !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    display:grid !important;
+    grid-template-columns:clamp(50px,4.1vw,66px) minmax(0,1fr) !important;
+    align-items:stretch !important;
+    gap:clamp(8px,.9vw,14px) !important;
+    padding:0 !important;
+    margin:0 !important;
+    overflow:hidden !important;
+    transform:none !important;
+    translate:none !important;
+    box-sizing:border-box !important;
+  }
+
+  #towerPopup .towerPopupList,
+  #towerPopup .towerPopupList.commonList,
+  #towerPopup.armory-layout-landscape .towerPopupList,
+  #towerPopup.armory-layout-landscape .towerPopupList.commonList{
+    grid-column:1 !important;
+    position:relative !important;
+    inset:auto !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:100% !important;
+    min-height:0 !important;
+    max-height:100% !important;
+    flex-basis:auto !important;
+    padding:clamp(6px,.9dvh,10px) clamp(4px,.5vw,7px) !important;
+    gap:clamp(6px,.9dvh,9px) !important;
+    align-items:center !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    box-sizing:border-box !important;
+  }
+  #towerPopup .towerPopupItem,
+  #towerPopup .commonResearchItem,
+  #towerPopup .plateInfoItem,
+  #towerPopup.armory-layout-landscape .towerPopupItem,
+  #towerPopup.armory-layout-landscape .commonResearchItem,
+  #towerPopup.armory-layout-landscape .plateInfoItem{
+    width:clamp(38px,3.2vw,50px) !important;
+    min-width:clamp(38px,3.2vw,50px) !important;
+    max-width:clamp(38px,3.2vw,50px) !important;
+    height:clamp(38px,3.2vw,50px) !important;
+    min-height:clamp(38px,3.2vw,50px) !important;
+    max-height:clamp(38px,3.2vw,50px) !important;
+    flex:0 0 clamp(38px,3.2vw,50px) !important;
+    aspect-ratio:1 / 1 !important;
+    box-sizing:border-box !important;
+  }
+
+  #towerPopup .towerPopupDetail,
+  #towerPopup.armory-layout-landscape .towerPopupDetail{
+    grid-column:2 !important;
+    position:relative !important;
+    inset:auto !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    bottom:auto !important;
+    width:100% !important;
+    height:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    min-height:0 !important;
+    max-height:100% !important;
+    padding:clamp(8px,1dvh,13px) clamp(10px,1vw,16px) clamp(12px,1.4dvh,18px) !important;
+    margin:0 !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    box-sizing:border-box !important;
+    transform:none !important;
+    translate:none !important;
+  }
+
+  #towerPopup .towerPopupDetail.compactCombined,
+  #towerPopup .towerPopupDetail.towerDenseDetail,
+  #towerPopup.armory-layout-landscape .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape .towerPopupDetail.towerDenseDetail{
+    display:grid !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:100% !important;
+    align-content:start !important;
+    gap:clamp(8px,.9vw,12px) !important;
+    box-sizing:border-box !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail.compactCombined{
+    grid-template-columns:minmax(260px,.9fr) minmax(420px,1.35fr) minmax(310px,1fr) !important;
+    grid-template-rows:minmax(118px,auto) minmax(138px,1fr) !important;
+  }
+  #towerPopup[data-active-tab="tower"] .towerPopupDetail.towerDenseDetail,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .towerPopupDetail.towerDenseDetail,
+  #towerPopup[data-active-tab="tower"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .towerPopupDetail.compactCombined{
+    grid-template-columns:minmax(280px,.95fr) minmax(480px,1.45fr) minmax(350px,1.05fr) !important;
+    grid-template-rows:minmax(124px,auto) minmax(150px,1fr) !important;
+  }
+  #towerPopup[data-active-tab="plate"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] .towerPopupDetail.compactCombined{
+    grid-template-columns:minmax(260px,.9fr) minmax(420px,1.3fr) minmax(330px,1.05fr) !important;
+    grid-template-rows:minmax(118px,auto) minmax(142px,1fr) !important;
+  }
+
+  #towerPopup .armoryHeroPanel,#towerPopup .armoryComboPanel,#towerPopup .armoryWidePanel,#towerPopup .armoryStackPanel,#towerPopup .armorySkillsPanel,
+  #towerPopup .towerDenseHero,#towerPopup .towerDenseStats,#towerPopup .towerDenseRole,#towerPopup .towerDenseSkills,
+  #towerPopup.armory-layout-landscape .armoryHeroPanel,#towerPopup.armory-layout-landscape .armoryComboPanel,#towerPopup.armory-layout-landscape .armoryWidePanel,#towerPopup.armory-layout-landscape .armoryStackPanel,#towerPopup.armory-layout-landscape .armorySkillsPanel,
+  #towerPopup.armory-layout-landscape .towerDenseHero,#towerPopup.armory-layout-landscape .towerDenseStats,#towerPopup.armory-layout-landscape .towerDenseRole,#towerPopup.armory-layout-landscape .towerDenseSkills{
+    min-width:0 !important;
+    max-width:none !important;
+    width:auto !important;
+    box-sizing:border-box !important;
+  }
+}
+
+@media (max-width: 1280px) and (orientation: landscape){
+  #towerPopup .towerPopupPanel,
+  #towerPopup.armory-layout-landscape .towerPopupPanel{
+    --ar-edge: clamp(20px, 3vw, 40px);
+    --ar-tabs-top: clamp(96px, 20dvh, 152px);
+    --ar-body-top: calc(var(--ar-tabs-top) + var(--ar-tabs-h) + 10px);
+  }
+  #towerPopup .towerPopupTabs,
+  #towerPopup.armory-layout-landscape .towerPopupTabs{
+    left:calc(var(--ar-edge) + clamp(420px, 45vw, 610px)) !important;
+  }
+  #towerPopup[data-active-tab="common"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail.compactCombined{
+    grid-template-columns:240px 370px 270px !important;
+  }
+  #towerPopup[data-active-tab="tower"] .towerPopupDetail.towerDenseDetail,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .towerPopupDetail.towerDenseDetail{
+    grid-template-columns:250px 410px 310px !important;
+  }
+  #towerPopup[data-active-tab="plate"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] .towerPopupDetail.compactCombined{
+    grid-template-columns:240px 370px 290px !important;
+  }
+}
+</style>
+<script id="v268-armory-landscape-resolution-final-lock-script">
+(function(){
+  'use strict';
+  function syncLandscape(){
+    var popup=document.getElementById('towerPopup');
+    if(!popup) return;
+    var landscape=window.innerWidth>window.innerHeight;
+    popup.classList.toggle('armory-layout-landscape', landscape);
+    if(landscape){
+      var detail=document.getElementById('towerPopupDetail');
+      if(detail) detail.scrollLeft=0;
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', syncLandscape, {once:true});
+  else syncLandscape();
+  window.addEventListener('resize', function(){setTimeout(syncLandscape, 60);}, {passive:true});
+  window.addEventListener('orientationchange', function(){setTimeout(syncLandscape, 90);}, {passive:true});
+  document.addEventListener('click', function(e){
+    if(e.target && e.target.closest('#towerPopup [data-tower-popup-tab], #towerPopupList button')){
+      setTimeout(syncLandscape, 30);
+    }
+  }, true);
+})();
+</script>
+
+
+<style id="v269-armory-landscape-wallet-list-polish">
+@media (orientation: landscape){
+  /* Final polish: fix left-side icon rail and shard wallet clipping/distortion */
+  #towerPopup .towerPopupHeader,
+  #towerPopup.armory-layout-landscape .towerPopupHeader{
+    align-items:center !important;
+    grid-template-columns:minmax(0,1fr) auto clamp(34px,3.4vw,42px) !important;
+  }
+
+  #towerPopup .towerPopupWallet,
+  #towerPopup.armory-layout-landscape .towerPopupWallet,
+  #towerPopup #towerPopupWallet{
+    justify-self:end !important;
+    align-self:center !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    min-width:clamp(132px, 13vw, 176px) !important;
+    max-width:clamp(152px, 16vw, 210px) !important;
+    width:auto !important;
+    height:clamp(30px, 4.2dvh, 38px) !important;
+    min-height:clamp(30px, 4.2dvh, 38px) !important;
+    padding:0 clamp(8px, .8vw, 12px) !important;
+    border-radius:999px !important;
+    overflow:visible !important;
+    background:linear-gradient(180deg, rgba(8,30,58,.82), rgba(3,10,25,.82)) !important;
+    border:1px solid rgba(103,232,249,.25) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 0 18px rgba(34,231,255,.10) !important;
+  }
+  #towerPopup .towerPopupWallet::before,
+  #towerPopup .towerPopupWallet::after,
+  #towerPopup.armory-layout-landscape .towerPopupWallet::before,
+  #towerPopup.armory-layout-landscape .towerPopupWallet::after,
+  #towerPopup #towerPopupWallet::before,
+  #towerPopup #towerPopupWallet::after{display:none !important;content:none !important;}
+
+  #towerPopup .towerPopupWallet .towerWalletItem.shard,
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard{
+    display:grid !important;
+    grid-template-columns:clamp(14px,1vw,18px) auto auto !important;
+    align-items:center !important;
+    column-gap:clamp(5px,.5vw,8px) !important;
+    min-width:0 !important;
+    width:auto !important;
+    padding:0 !important;
+    margin:0 !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard::before,
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard::before,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard::before{
+    content:"" !important;
+    display:block !important;
+    width:clamp(14px,1vw,18px) !important;
+    height:clamp(14px,1vw,18px) !important;
+    min-width:clamp(14px,1vw,18px) !important;
+    min-height:clamp(14px,1vw,18px) !important;
+    border-radius:50% !important;
+    background:radial-gradient(circle, #ffffff 0 23%, #88f6ff 24% 58%, #1da7ff 59% 100%) !important;
+    box-shadow:0 0 14px rgba(80,226,255,.45) !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard span{
+    font-size:clamp(10px,.8vw,12px) !important;
+    line-height:1 !important;
+    color:#c5efff !important;
+    font-weight:800 !important;
+    letter-spacing:-.02em !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    max-width:none !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard b{
+    font-family:'Orbitron', Pretendard, sans-serif !important;
+    font-size:clamp(17px,1.4vw,24px) !important;
+    line-height:1 !important;
+    color:#fff0a8 !important;
+    font-weight:900 !important;
+    white-space:nowrap !important;
+    letter-spacing:-.03em !important;
+  }
+
+  #towerPopup .towerPopupList,
+  #towerPopup .towerPopupList.commonList,
+  #towerPopup.armory-layout-landscape .towerPopupList,
+  #towerPopup.armory-layout-landscape .towerPopupList.commonList{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+  }
+
+  #towerPopup .towerPopupItem,
+  #towerPopup .commonResearchItem,
+  #towerPopup .plateInfoItem,
+  #towerPopup.armory-layout-landscape .towerPopupItem,
+  #towerPopup.armory-layout-landscape .commonResearchItem,
+  #towerPopup.armory-layout-landscape .plateInfoItem{
+    display:grid !important;
+    place-items:center !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    border-radius:12px !important;
+  }
+
+  #towerPopup .towerPopupItem img,
+  #towerPopup .commonResearchItem img,
+  #towerPopup.armory-layout-landscape .towerPopupItem img,
+  #towerPopup.armory-layout-landscape .commonResearchItem img{
+    width:72% !important;
+    height:72% !important;
+    object-fit:contain !important;
+    display:block !important;
+    margin:0 auto !important;
+  }
+
+  #towerPopup .plateInfoItem .v164PlateTile,
+  #towerPopup.armory-layout-landscape .plateInfoItem .v164PlateTile{
+    width:82% !important;
+    height:82% !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    margin:0 !important;
+    border-radius:10px !important;
+  }
+  #towerPopup .plateInfoItem .v164PlateTile::before,
+  #towerPopup.armory-layout-landscape .plateInfoItem .v164PlateTile::before{
+    inset:4px !important;
+  }
+  #towerPopup .plateInfoItem .v164PlateCode,
+  #towerPopup.armory-layout-landscape .plateInfoItem .v164PlateCode{
+    font-size:clamp(8px,.85vw,12px) !important;
+    line-height:1 !important;
+    letter-spacing:-.02em !important;
+  }
+  #towerPopup .plateInfoItem .v164PlateLabel,
+  #towerPopup.armory-layout-landscape .plateInfoItem .v164PlateLabel{
+    display:none !important;
+  }
+}
+</style>
+
+
+<style id="v270-armory-landscape-wallet-noscale-scroll">
+@media (orientation: landscape){
+  /* v270: align shard wallet text/icon and remove unnecessary horizontal scroll by compacting landscape armory UI */
+  #towerPopup .towerPopupBody,
+  #towerPopup.armory-layout-landscape .towerPopupBody{
+    grid-template-columns:clamp(44px,3.15vw,54px) minmax(0,1fr) !important;
+    gap:clamp(6px,.7vw,10px) !important;
+  }
+
+  /* Shard wallet vertical alignment */
+  #towerPopup .towerPopupWallet,
+  #towerPopup.armory-layout-landscape .towerPopupWallet,
+  #towerPopup #towerPopupWallet{
+    height:clamp(29px,3.8dvh,36px) !important;
+    min-height:clamp(29px,3.8dvh,36px) !important;
+    padding:0 clamp(9px,.75vw,12px) !important;
+    overflow:visible !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard,
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard{
+    height:100% !important;
+    display:grid !important;
+    grid-template-columns:clamp(14px,.9vw,17px) auto auto !important;
+    column-gap:clamp(5px,.45vw,8px) !important;
+    align-items:center !important;
+    justify-items:start !important;
+    padding:0 !important;
+    margin:0 !important;
+    line-height:1 !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard::before,
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard::before,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard::before{
+    transform:translateY(2px) !important;
+    align-self:center !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard span{
+    transform:translateY(-1.5px) !important;
+    line-height:1 !important;
+    margin:0 !important;
+    padding:0 !important;
+    white-space:nowrap !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard b{
+    transform:translateY(-1.5px) !important;
+    line-height:1 !important;
+    margin:0 !important;
+    padding:0 !important;
+    white-space:nowrap !important;
+  }
+
+  /* Smaller square left rail */
+  #towerPopup .towerPopupList,
+  #towerPopup .towerPopupList.commonList,
+  #towerPopup.armory-layout-landscape .towerPopupList,
+  #towerPopup.armory-layout-landscape .towerPopupList.commonList{
+    padding:clamp(5px,.7dvh,8px) clamp(3px,.35vw,5px) !important;
+    gap:clamp(5px,.65dvh,7px) !important;
+  }
+  #towerPopup .towerPopupItem,
+  #towerPopup .commonResearchItem,
+  #towerPopup .plateInfoItem,
+  #towerPopup.armory-layout-landscape .towerPopupItem,
+  #towerPopup.armory-layout-landscape .commonResearchItem,
+  #towerPopup.armory-layout-landscape .plateInfoItem{
+    width:clamp(34px,2.65vw,43px) !important;
+    min-width:clamp(34px,2.65vw,43px) !important;
+    max-width:clamp(34px,2.65vw,43px) !important;
+    height:clamp(34px,2.65vw,43px) !important;
+    min-height:clamp(34px,2.65vw,43px) !important;
+    max-height:clamp(34px,2.65vw,43px) !important;
+    flex:0 0 clamp(34px,2.65vw,43px) !important;
+    aspect-ratio:1/1 !important;
+  }
+  #towerPopup .towerPopupList .v164PlateTile,
+  #towerPopup.armory-layout-landscape .towerPopupList .v164PlateTile{
+    width:78% !important;
+    height:78% !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    margin:0 !important;
+  }
+  #towerPopup .towerPopupList .v164PlateLabel,
+  #towerPopup.armory-layout-landscape .towerPopupList .v164PlateLabel,
+  #towerPopup .plateInfoItem .v164PlateLabel,
+  #towerPopup.armory-layout-landscape .plateInfoItem .v164PlateLabel{
+    display:none !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    width:0 !important;
+    height:0 !important;
+    max-height:0 !important;
+    font-size:0 !important;
+    line-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+  }
+  #towerPopup .towerPopupList .v164PlateCode,
+  #towerPopup.armory-layout-landscape .towerPopupList .v164PlateCode{
+    font-size:clamp(8px,.68vw,10px) !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    transform:scale(.86) !important;
+    transform-origin:center !important;
+    max-width:100% !important;
+    overflow:hidden !important;
+    text-align:center !important;
+  }
+
+  /* Remove unnecessary horizontal scroll by fitting columns into the available panel */
+  #towerPopup .towerPopupDetail,
+  #towerPopup.armory-layout-landscape .towerPopupDetail,
+  #towerPopup .towerPopupDetail.compactCombined,
+  #towerPopup .towerPopupDetail.towerDenseDetail,
+  #towerPopup.armory-layout-landscape .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape .towerPopupDetail.towerDenseDetail{
+    overflow-x:hidden !important;
+    overflow-y:hidden !important;
+    scrollbar-width:none !important;
+    padding:clamp(6px,.8dvh,10px) clamp(8px,.75vw,12px) clamp(7px,.85dvh,10px) !important;
+    gap:clamp(6px,.65vw,9px) !important;
+  }
+  #towerPopup .towerPopupDetail::-webkit-scrollbar,
+  #towerPopup.armory-layout-landscape .towerPopupDetail::-webkit-scrollbar{
+    display:none !important;
+    width:0 !important;
+    height:0 !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail.compactCombined{
+    grid-template-columns:minmax(0,.88fr) minmax(0,1.22fr) minmax(0,.9fr) !important;
+    grid-template-rows:minmax(92px,auto) minmax(104px,1fr) !important;
+  }
+  #towerPopup[data-active-tab="tower"] .towerPopupDetail.towerDenseDetail,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .towerPopupDetail.towerDenseDetail,
+  #towerPopup[data-active-tab="tower"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .towerPopupDetail.compactCombined{
+    grid-template-columns:minmax(0,.88fr) minmax(0,1.28fr) minmax(0,.92fr) !important;
+    grid-template-rows:minmax(96px,auto) minmax(112px,1fr) !important;
+  }
+  #towerPopup[data-active-tab="plate"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] .towerPopupDetail.compactCombined{
+    grid-template-columns:minmax(0,.88fr) minmax(0,1.18fr) minmax(0,.94fr) !important;
+    grid-template-rows:minmax(94px,auto) minmax(112px,1fr) !important;
+  }
+
+  #towerPopup .armoryHeroPanel,
+  #towerPopup .armoryComboPanel,
+  #towerPopup .armoryWidePanel,
+  #towerPopup .armoryStackPanel,
+  #towerPopup .armorySkillsPanel,
+  #towerPopup .towerDenseHero,
+  #towerPopup .towerDenseStats,
+  #towerPopup .towerDenseRole,
+  #towerPopup .towerDenseSkills,
+  #towerPopup.armory-layout-landscape .armoryHeroPanel,
+  #towerPopup.armory-layout-landscape .armoryComboPanel,
+  #towerPopup.armory-layout-landscape .armoryWidePanel,
+  #towerPopup.armory-layout-landscape .armoryStackPanel,
+  #towerPopup.armory-layout-landscape .armorySkillsPanel,
+  #towerPopup.armory-layout-landscape .towerDenseHero,
+  #towerPopup.armory-layout-landscape .towerDenseStats,
+  #towerPopup.armory-layout-landscape .towerDenseRole,
+  #towerPopup.armory-layout-landscape .towerDenseSkills{
+    min-width:0 !important;
+    width:auto !important;
+    max-width:none !important;
+    padding:clamp(8px,.8vw,11px) !important;
+    border-radius:clamp(11px,.9vw,15px) !important;
+    overflow:hidden !important;
+  }
+
+  #towerPopup .armoryPanelTitle,
+  #towerPopup.armory-layout-landscape .armoryPanelTitle,
+  #towerPopup .towerDenseHero small,
+  #towerPopup .towerDenseStats small,
+  #towerPopup .towerDenseRole small,
+  #towerPopup .towerDenseSkills small{
+    font-size:clamp(7px,.62vw,9px) !important;
+    margin-bottom:clamp(4px,.45dvh,6px) !important;
+  }
+  #towerPopup .armoryCommonTitle,
+  #towerPopup .armoryTowerTitle,
+  #towerPopup.armory-layout-landscape .armoryCommonTitle,
+  #towerPopup.armory-layout-landscape .armoryTowerTitle{
+    font-size:clamp(13px,1.05vw,18px) !important;
+    line-height:1.08 !important;
+  }
+  #towerPopup .armoryCommonSubtitle,
+  #towerPopup .armoryTowerRole,
+  #towerPopup.armory-layout-landscape .armoryCommonSubtitle,
+  #towerPopup.armory-layout-landscape .armoryTowerRole{
+    font-size:clamp(8px,.7vw,11px) !important;
+    line-height:1.25 !important;
+  }
+  #towerPopup .armoryInlineStatGrid,
+  #towerPopup .towerDenseGrid,
+  #towerPopup.armory-layout-landscape .armoryInlineStatGrid,
+  #towerPopup.armory-layout-landscape .towerDenseGrid{
+    gap:clamp(5px,.45vw,7px) !important;
+  }
+  #towerPopup .armoryInlineStat,
+  #towerPopup .towerDenseGrid > div,
+  #towerPopup.armory-layout-landscape .armoryInlineStat,
+  #towerPopup.armory-layout-landscape .towerDenseGrid > div{
+    min-height:clamp(42px,5.4dvh,58px) !important;
+    padding:clamp(6px,.65vw,9px) !important;
+  }
+  #towerPopup .armoryInfoRow,
+  #towerPopup.armory-layout-landscape .armoryInfoRow{
+    grid-template-columns:clamp(58px,5vw,78px) minmax(0,1fr) !important;
+    gap:clamp(5px,.5vw,8px) !important;
+    padding:clamp(4px,.45dvh,6px) 0 !important;
+  }
+}
+</style>
+
 </body>
 </html>
