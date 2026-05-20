@@ -42736,5 +42736,494 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #mjTopMiniHud .mjResourceStrip
 }
 </style>
 
+
+
+
+<!-- v274: landscape map HUD recovery.
+     Fixes: galaxy nodes disappearing, stage planets clipped below the screen,
+     and map dock buttons not firing after the previous DOM-moving dock patch. -->
+<style id="v274-landscape-map-hud-recovery">
+@media (orientation: landscape){
+  /* Keep heavy details out of the landscape map view, but never hide the actual map scene. */
+  #galaxyMap #galaxyInfoPanel.galaxyInfoPanel,
+  #galaxyMap .galaxyInfoPanel,
+  #stageMap #stageInfoPanel.stageInfoPanel,
+  #stageMap .stageInfoPanel{
+    display:none !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+  }
+
+  /* Original bottom buttons stay in the DOM for existing game logic, but the visible buttons are handled by v274. */
+  #galaxyMap > #galaxyEnterBtn.galaxyEnterBtn,
+  #stageMap .stageActionRow{
+    display:none !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+  }
+
+  /* Galaxy map recovery: reclaim the lower space that was previously reserved for the hidden info panel. */
+  #galaxyMap .galaxySceneWrap{
+    display:block !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    position:absolute !important;
+    left:50% !important;
+    right:auto !important;
+    top:118px !important;
+    bottom:86px !important;
+    width:min(1180px, calc(100vw - 64px)) !important;
+    min-height:0 !important;
+    max-height:none !important;
+    transform:translateX(-50%) !important;
+    z-index:1200 !important;
+    overflow:visible !important;
+    pointer-events:auto !important;
+  }
+  #galaxyMap #galaxyNodeLayer,
+  #galaxyMap .galaxyNodeLayer,
+  #galaxyMap .galaxyRouteSvg{
+    display:block !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    pointer-events:none !important;
+  }
+  #galaxyMap .galaxyNode{
+    display:block !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+  }
+
+  /* Stage map recovery: hidden info panel must not keep stealing vertical space. */
+  #stageMap .stageMapInner{
+    display:block !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    position:absolute !important;
+    left:48px !important;
+    right:48px !important;
+    top:150px !important;
+    bottom:86px !important;
+    width:auto !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    transform:none !important;
+    transform-origin:center center !important;
+    z-index:1200 !important;
+    overflow:visible !important;
+    pointer-events:auto !important;
+  }
+  #stageMap .stagePathSvg{
+    inset:2% 3% 2% 3% !important;
+    width:94% !important;
+    height:96% !important;
+    display:block !important;
+    visibility:visible !important;
+    opacity:1 !important;
+  }
+  #stageMap .stageNode{
+    display:flex !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    z-index:1250 !important;
+    pointer-events:auto !important;
+  }
+
+  #galaxyMap #v274GalaxyActionDock,
+  #stageMap #v274StageActionDock{
+    position:absolute !important;
+    left:50% !important;
+    right:auto !important;
+    bottom:clamp(14px, 2.7dvh, 28px) !important;
+    transform:translateX(-50%) !important;
+    width:min(520px, calc(100vw - 56px)) !important;
+    height:50px !important;
+    display:grid !important;
+    grid-template-columns:124px minmax(0, 1fr) !important;
+    gap:12px !important;
+    z-index:2400 !important;
+    pointer-events:auto !important;
+    box-sizing:border-box !important;
+  }
+  #galaxyMap .v274InfoBtn,
+  #stageMap .v274InfoBtn,
+  #galaxyMap .v274EnterBtn,
+  #stageMap .v274EnterBtn{
+    width:100% !important;
+    height:50px !important;
+    min-height:50px !important;
+    margin:0 !important;
+    padding:0 16px !important;
+    border-radius:999px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    box-sizing:border-box !important;
+    font-family:'Orbitron','Noto Sans KR',sans-serif !important;
+    font-size:12px !important;
+    font-weight:900 !important;
+    letter-spacing:.08em !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    cursor:pointer !important;
+    appearance:none !important;
+    -webkit-appearance:none !important;
+    pointer-events:auto !important;
+    user-select:none !important;
+  }
+  #galaxyMap .v274InfoBtn,
+  #stageMap .v274InfoBtn{
+    color:#b9f6ff !important;
+    background:rgba(2, 10, 24, .76) !important;
+    border:1px solid rgba(67, 215, 255, .32) !important;
+    box-shadow:inset 0 0 0 1px rgba(119,245,255,.04), 0 0 18px rgba(6,182,255,.09) !important;
+  }
+  #galaxyMap .v274EnterBtn,
+  #stageMap .v274EnterBtn{
+    color:#f4fbff !important;
+    border:1px solid rgba(157, 241, 255, .38) !important;
+    background:linear-gradient(90deg, rgba(70,220,235,.94), rgba(119,100,245,.94), rgba(186,76,245,.94)) !important;
+    box-shadow:0 14px 34px rgba(29,196,255,.14), inset 0 0 0 1px rgba(255,255,255,.10) !important;
+    text-shadow:0 1px 0 rgba(0,0,0,.26), 0 0 12px rgba(255,255,255,.18) !important;
+  }
+  #galaxyMap .v274InfoBtn:hover,
+  #stageMap .v274InfoBtn:hover,
+  #galaxyMap .v274EnterBtn:hover,
+  #stageMap .v274EnterBtn:hover{
+    transform:translateY(-1px) !important;
+    filter:brightness(1.06) !important;
+  }
+  #galaxyMap .v274InfoBtn:active,
+  #stageMap .v274InfoBtn:active,
+  #galaxyMap .v274EnterBtn:active,
+  #stageMap .v274EnterBtn:active{
+    transform:translateY(1px) scale(.99) !important;
+  }
+}
+
+@media (max-width: 760px) and (orientation: landscape){
+  #galaxyMap .galaxySceneWrap{
+    top:104px !important;
+    bottom:72px !important;
+    width:calc(100vw - 32px) !important;
+  }
+  #stageMap .stageMapInner{
+    left:24px !important;
+    right:24px !important;
+    top:132px !important;
+    bottom:72px !important;
+  }
+  #galaxyMap #v274GalaxyActionDock,
+  #stageMap #v274StageActionDock{
+    width:min(420px, calc(100vw - 32px)) !important;
+    grid-template-columns:96px minmax(0, 1fr) !important;
+    gap:8px !important;
+    height:44px !important;
+    bottom:10px !important;
+  }
+  #galaxyMap .v274InfoBtn,
+  #stageMap .v274InfoBtn,
+  #galaxyMap .v274EnterBtn,
+  #stageMap .v274EnterBtn{
+    height:44px !important;
+    min-height:44px !important;
+    font-size:10px !important;
+    padding:0 12px !important;
+  }
+}
+
+#v274MapInfoOverlay{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:99999 !important;
+  display:none !important;
+  place-items:center !important;
+  padding:24px !important;
+  background:radial-gradient(circle at 50% 42%, rgba(20,85,130,.20), rgba(0,0,0,.58) 62%, rgba(0,0,0,.72)) !important;
+  backdrop-filter:blur(6px) !important;
+  box-sizing:border-box !important;
+}
+#v274MapInfoOverlay.open{display:grid !important;}
+#v274MapInfoOverlay .v274MapInfoPanel{
+  width:min(760px, calc(100vw - 44px)) !important;
+  max-height:min(72dvh, 560px) !important;
+  display:grid !important;
+  grid-template-rows:auto minmax(0,1fr) auto !important;
+  border-radius:24px !important;
+  background:linear-gradient(180deg, rgba(5,18,43,.96), rgba(2,8,24,.98)) !important;
+  border:1px solid rgba(80,224,255,.35) !important;
+  box-shadow:0 28px 90px rgba(0,0,0,.58), inset 0 0 0 1px rgba(255,255,255,.035), 0 0 36px rgba(43,224,255,.10) !important;
+  overflow:hidden !important;
+  color:#edf9ff !important;
+  font-family:'Noto Sans KR', Pretendard, sans-serif !important;
+}
+#v274MapInfoOverlay .v274MapInfoHead{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:14px !important;
+  padding:18px 20px 14px !important;
+  border-bottom:1px solid rgba(84,213,255,.18) !important;
+}
+#v274MapInfoOverlay .v274MapInfoTitle{display:flex !important;flex-direction:column !important;min-width:0 !important;gap:4px !important;}
+#v274MapInfoOverlay .v274MapInfoTitle small{
+  font-family:'Orbitron','Noto Sans KR',sans-serif !important;
+  font-size:10px !important;
+  letter-spacing:.20em !important;
+  color:#67e8f9 !important;
+  text-transform:uppercase !important;
+}
+#v274MapInfoOverlay .v274MapInfoTitle b{
+  font-family:'Orbitron','Noto Sans KR',sans-serif !important;
+  font-size:18px !important;
+  letter-spacing:.06em !important;
+  color:#f4fbff !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+#v274MapInfoOverlay .v274CloseBtn{
+  width:40px !important;height:40px !important;min-width:40px !important;
+  border-radius:14px !important;border:1px solid rgba(128,225,255,.22) !important;
+  background:rgba(4,15,35,.75) !important;color:#e8f8ff !important;
+  font-size:24px !important;line-height:1 !important;cursor:pointer !important;
+}
+#v274MapInfoOverlay #v274MapInfoBody{
+  padding:18px 20px !important;
+  overflow:auto !important;
+  max-height:calc(min(72dvh, 560px) - 142px) !important;
+}
+#v274MapInfoOverlay #v274MapInfoBody .galaxyInfoPanel,
+#v274MapInfoOverlay #v274MapInfoBody .stageInfoPanel{
+  position:static !important;
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  width:100% !important;
+  max-width:none !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  padding:0 !important;
+  margin:0 !important;
+  transform:none !important;
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+  pointer-events:auto !important;
+}
+#v274MapInfoOverlay #v274MapInfoBody .stageBossRow,
+#v274MapInfoOverlay #v274MapInfoBody .galaxyInfoMeta{display:grid !important;}
+#v274MapInfoOverlay .v274MapInfoActions{
+  display:grid !important;grid-template-columns:112px minmax(0,1fr) !important;gap:10px !important;
+  padding:14px 20px 18px !important;border-top:1px solid rgba(84,213,255,.16) !important;
+}
+#v274MapInfoOverlay .v274SecondaryBtn,
+#v274MapInfoOverlay .v274PrimaryBtn{
+  height:46px !important;border-radius:999px !important;font-family:'Orbitron','Noto Sans KR',sans-serif !important;
+  font-size:12px !important;font-weight:900 !important;letter-spacing:.08em !important;cursor:pointer !important;
+  border:1px solid rgba(128,225,255,.24) !important;
+}
+#v274MapInfoOverlay .v274SecondaryBtn{background:rgba(2,10,24,.68) !important;color:#b9f6ff !important;}
+#v274MapInfoOverlay .v274PrimaryBtn{
+  background:linear-gradient(90deg, rgba(70,220,235,.95), rgba(119,100,245,.94), rgba(186,76,245,.94)) !important;
+  color:#fff !important;box-shadow:0 12px 32px rgba(29,196,255,.16), inset 0 0 0 1px rgba(255,255,255,.10) !important;
+}
+@media (max-width: 640px){
+  #v274MapInfoOverlay{padding:14px !important;}
+  #v274MapInfoOverlay .v274MapInfoPanel{width:calc(100vw - 28px) !important;}
+  #v274MapInfoOverlay .v274MapInfoHead{padding:14px 14px 12px !important;}
+  #v274MapInfoOverlay #v274MapInfoBody{padding:14px !important;}
+  #v274MapInfoOverlay .v274MapInfoActions{padding:12px 14px 14px !important;grid-template-columns:92px minmax(0,1fr) !important;}
+  #v274MapInfoOverlay .v274MapInfoTitle b{font-size:14px !important;}
+}
+</style>
+<script id="v274-landscape-map-hud-recovery-script">
+(function(){
+  'use strict';
+  function byId(id){ return document.getElementById(id); }
+  function safe(fn){ try{ return fn && fn(); }catch(err){ console.warn('[v274 map hud]', err); } }
+  function isLandscape(){ return window.matchMedia ? window.matchMedia('(orientation: landscape)').matches : (window.innerWidth >= window.innerHeight); }
+  function visible(el){ return !!(el && getComputedStyle(el).display !== 'none'); }
+  var lastDockActionAt = 0;
+  function makeBtn(id, text, cls){
+    var b=document.createElement('button');
+    b.type='button'; b.id=id; b.className=cls; b.textContent=text;
+    return b;
+  }
+  function showGalaxy(){
+    if(window.PRD_NAV && typeof window.PRD_NAV.showGalaxy === 'function') return window.PRD_NAV.showGalaxy();
+    var menu=byId('menu'), galaxy=byId('galaxyMap'), stage=byId('stageMap'), game=byId('game');
+    if(menu) menu.style.display='none';
+    if(stage) stage.style.display='none';
+    if(game) game.style.display='none';
+    if(galaxy){ galaxy.style.display='block'; galaxy.classList.add('cleanVisible'); }
+    safe(function(){ if(typeof window.refreshScreenStarfields === 'function') window.refreshScreenStarfields(); });
+  }
+  function showStage(){
+    if(window.PRD_NAV && typeof window.PRD_NAV.showStage === 'function'){
+      window.PRD_NAV.showStage();
+    }else{
+      var menu=byId('menu'), galaxy=byId('galaxyMap'), stage=byId('stageMap'), game=byId('game');
+      if(menu) menu.style.display='none';
+      if(galaxy) galaxy.style.display='none';
+      if(game) game.style.display='none';
+      if(stage) stage.style.display='block';
+      safe(function(){ if(typeof window.renderStageMap === 'function') window.renderStageMap(); });
+      safe(function(){ if(typeof window.refreshScreenStarfields === 'function') window.refreshScreenStarfields(); });
+    }
+    setTimeout(ensureDocks, 0);
+    setTimeout(ensureDocks, 120);
+  }
+  function enterStage(){
+    if(window.PRD_NAV && typeof window.PRD_NAV.enterStageOnly === 'function'){
+      window.PRD_NAV.enterStageOnly();
+      return;
+    }
+    if(typeof window.startSelectedStageFromMap === 'function'){
+      window.startSelectedStageFromMap();
+      return;
+    }
+    var stage=byId('stageMap'), game=byId('game');
+    if(stage) stage.style.display='none';
+    if(game) game.style.display='flex';
+  }
+  function ensureOverlay(){
+    var overlay=byId('v274MapInfoOverlay');
+    if(overlay) return overlay;
+    overlay=document.createElement('div');
+    overlay.id='v274MapInfoOverlay';
+    overlay.setAttribute('aria-hidden','true');
+    overlay.innerHTML=''
+      +'<div class="v274MapInfoPanel" role="dialog" aria-modal="true" aria-labelledby="v274MapInfoTitleText">'
+      +  '<div class="v274MapInfoHead">'
+      +    '<div class="v274MapInfoTitle"><small id="v274MapInfoKicker">MAP INFO</small><b id="v274MapInfoTitleText">DETAIL</b></div>'
+      +    '<button class="v274CloseBtn" type="button" data-v274-close aria-label="닫기">×</button>'
+      +  '</div>'
+      +  '<div id="v274MapInfoBody"></div>'
+      +  '<div class="v274MapInfoActions">'
+      +    '<button class="v274SecondaryBtn" type="button" data-v274-close>닫기</button>'
+      +    '<button id="v274MapInfoEnterBtn" class="v274PrimaryBtn" type="button">ENTER</button>'
+      +  '</div>'
+      +'</div>';
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function(e){
+      if(e.target===overlay || e.target.closest('[data-v274-close]')) closeInfo();
+    });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeInfo(); });
+    byId('v274MapInfoEnterBtn').addEventListener('click', function(){
+      var kind=overlay.dataset.kind;
+      closeInfo();
+      setTimeout(function(){ kind==='galaxy' ? showStage() : enterStage(); }, 0);
+    });
+    return overlay;
+  }
+  function closeInfo(){
+    var overlay=byId('v274MapInfoOverlay');
+    if(!overlay) return;
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden','true');
+  }
+  function titleFor(kind){
+    if(kind==='galaxy'){
+      var t=document.querySelector('#galaxyMap .galaxyTopTitle');
+      var s=document.querySelector('#galaxyMap #galaxyProgressLabel');
+      return {kicker:t ? t.textContent.trim() : 'GALAXY MAP', title:s ? s.textContent.trim().replace(/\s+/g,' ') : 'MILKY RIFT'};
+    }
+    var title=document.querySelector('#stageMap .stageTopTitle');
+    var prog=byId('stageProgressLabel');
+    return {kicker:title ? title.textContent.trim() : 'CONSTELLATION MAP', title:prog ? prog.textContent.trim() : 'SANCTUARY'};
+  }
+  function openInfo(kind){
+    var source = kind==='galaxy' ? byId('galaxyInfoPanel') : byId('stageInfoPanel');
+    if(!source) return;
+    var overlay=ensureOverlay();
+    var label=titleFor(kind);
+    byId('v274MapInfoKicker').textContent=label.kicker;
+    byId('v274MapInfoTitleText').textContent=label.title;
+    var body=byId('v274MapInfoBody');
+    var clone=source.cloneNode(true);
+    clone.removeAttribute('id');
+    clone.querySelectorAll('#stageEnterBtn,#galaxyEnterBtn,#stageGalaxyBtn,.stageActionRow,.stageEnter,.galaxyEnterBtn,.stageManageBtn').forEach(function(el){ el.remove(); });
+    body.innerHTML='';
+    body.appendChild(clone);
+    var enterBtn=byId('v274MapInfoEnterBtn');
+    var liveEnter = kind==='galaxy' ? byId('galaxyEnterBtn') : byId('stageEnterBtn');
+    enterBtn.textContent = liveEnter ? (liveEnter.textContent || 'ENTER') : 'ENTER';
+    overlay.dataset.kind=kind;
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden','false');
+  }
+  function ensureDock(mapId, dockId, infoId, enterId, infoText, enterText, kind){
+    var map=byId(mapId);
+    if(!map) return;
+    var dock=byId(dockId);
+    if(!dock){
+      dock=document.createElement('div');
+      dock.id=dockId;
+      dock.className='v274ActionDock';
+      map.appendChild(dock);
+    }
+    var info=byId(infoId);
+    if(!info){
+      info=makeBtn(infoId, infoText, 'v274InfoBtn');
+      dock.appendChild(info);
+    }else if(info.parentElement!==dock){
+      dock.appendChild(info);
+    }
+    var enter=byId(enterId);
+    if(!enter){
+      enter=makeBtn(enterId, enterText, 'v274EnterBtn');
+      dock.appendChild(enter);
+    }else if(enter.parentElement!==dock){
+      dock.appendChild(enter);
+    }
+    var realEnter = kind==='galaxy' ? byId('galaxyEnterBtn') : byId('stageEnterBtn');
+    if(realEnter && realEnter.textContent) enter.textContent = realEnter.textContent.trim();
+    info.textContent=infoText;
+    dock.style.display = isLandscape() ? 'grid' : 'none';
+  }
+  function ensureDocks(){
+    ensureOverlay();
+    ensureDock('galaxyMap','v274GalaxyActionDock','v274GalaxyInfoBtn','v274GalaxyEnterBtn','INFO','ENTER MILKY RIFT','galaxy');
+    ensureDock('stageMap','v274StageActionDock','v274StageInfoBtn','v274StageEnterBtn','INFO','ENTER SANCTUARY 1','stage');
+  }
+  function delegatedClick(e){
+    var target=e.target && e.target.closest ? e.target.closest('#v274GalaxyInfoBtn,#v274StageInfoBtn,#v274GalaxyEnterBtn,#v274StageEnterBtn') : null;
+    if(!target) return;
+    var now = Date.now();
+    if(now - lastDockActionAt < 220) return;
+    lastDockActionAt = now;
+    e.preventDefault();
+    e.stopPropagation();
+    if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+    if(target.id==='v274GalaxyInfoBtn') openInfo('galaxy');
+    else if(target.id==='v274StageInfoBtn') openInfo('stage');
+    else if(target.id==='v274GalaxyEnterBtn') showStage();
+    else if(target.id==='v274StageEnterBtn') enterStage();
+  }
+  function boot(){
+    ensureDocks();
+    setTimeout(ensureDocks, 80);
+    setTimeout(ensureDocks, 400);
+    setTimeout(ensureDocks, 1000);
+  }
+  document.addEventListener('click', delegatedClick, true);
+  document.addEventListener('pointerup', delegatedClick, true);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot, {once:true});
+  else boot();
+  window.addEventListener('load', boot, {once:true});
+  window.addEventListener('resize', function(){ setTimeout(ensureDocks, 80); }, {passive:true});
+  window.addEventListener('orientationchange', function(){ setTimeout(ensureDocks, 140); }, {passive:true});
+  window.PRD_MAP_HUD_V274 = {showGalaxy:showGalaxy, showStage:showStage, enterStage:enterStage, openInfo:openInfo, ensureDocks:ensureDocks};
+})();
+</script>
+
+
 </body>
 </html>
