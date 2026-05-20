@@ -17323,9 +17323,14 @@ function configureBattleBoardForCurrentLayout(reason='boot'){
   const coreMaxX = BOARD_IS_LANDSCAPE
     ? W - rightCommandReserve - Math.max(18, CELL * .18)
     : W - 42;
+  // v47: shift only the CORE anchor by one tactical block.
+  // Landscape moves the core one cell to the right; portrait moves it one cell down.
+  // The route endpoint uses CORE, so enemies and the visual core stay aligned.
+  const coreShiftX = BOARD_IS_LANDSCAPE ? CELL : 0;
+  const coreShiftY = BOARD_IS_LANDSCAPE ? 0 : CELL;
   CORE = {
-    x: clamp(GX + GRID_COLS * CELL + coreGapX, 48, coreMaxX),
-    y: clamp(GY + GRID_ROWS * CELL - CELL * .5, 48, H - Math.max(58, commandReserveY * .42))
+    x: clamp(GX + GRID_COLS * CELL + coreGapX + coreShiftX, 48, coreMaxX),
+    y: clamp(GY + GRID_ROWS * CELL - CELL * .5 + coreShiftY, 48, H - Math.max(58, commandReserveY * .42))
   };
 
   if(window.__DEBUG_BATTLE_BOARD__){
