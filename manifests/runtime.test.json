@@ -1,6 +1,10 @@
 {
   "id": "planet-rift-test-runtime",
+<<<<<<< HEAD
   "version": "v76",
+=======
+  "version": "v77",
+>>>>>>> 61dce0a (v004)
   "mode": "test",
   "enableTestHarness": true,
   "enableProgressMocks": true,

@@ -1,13 +1,21 @@
 {
   "id": "planet-rift-runtime",
+<<<<<<< HEAD
   "version": "v76",
+=======
+  "version": "v77",
+>>>>>>> 61dce0a (v004)
   "mode": "production",
   "enableTestHarness": false,
   "enableProgressMocks": false,
   "stageProgressKey": "planetRiftStageProgressV3",
   "offlineMetaKey": "planetRiftOfflineMetaV2",
   "progression": {
+<<<<<<< HEAD
     "stageClearRule": "clearing stage N unlocks stage N+1",
+=======
+    "stageClearRule": "clearing stage N unlocks stage N+1 and hides battle HUD on map/end screens",
+>>>>>>> 61dce0a (v004)
     "maxStage": 12,
     "sourceOfTruth": "planetRiftOfflineMetaV2.clears"
   }

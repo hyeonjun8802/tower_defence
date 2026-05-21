@@ -511,6 +511,88 @@ function syncStageUnlockFromClears(){
   }
   return null;
 }
+
+
+/* v77: in-closure runtime bridge for stage progression and battle chrome visibility.
+   Later DOM-only patches cannot directly mutate StageMapState because the main game runs inside this closure.
+   Keep the source of truth here: META.clears -> unlocked stage, and hide battle HUD outside battle. */
+function computeUnlockedStageFromClears(baseUnlocked=1){
+  const max = STAGE_MAP_DEFS.length;
+  if(TEST_MODE_CONFIG.enabled) return max;
+  const clears = META?.clears || {};
+  let unlocked = clamp(Number(baseUnlocked || 1), 1, max);
+  for(let stage=1; stage<=max; stage++){
+    if(Number(clears[String(stage)] || clears[stage] || 0) > 0){
+      unlocked = Math.max(unlocked, Math.min(max, stage + 1));
+    }
+  }
+  return clamp(unlocked, 1, max);
+}
+function hardSyncStageProgressFromClears(opts={}){
+  const max = STAGE_MAP_DEFS.length;
+  if(!META) META = defaultOfflineMeta();
+  if(TEST_MODE_CONFIG.enabled){
+    StageMapState.unlocked = max;
+    StageMapState.selected = clamp(Number(opts.selectStage || StageMapState.selected || 1), 1, max);
+    StageMapState.current = clamp(Number(opts.currentStage || StageMapState.current || StageMapState.selected || 1), 1, max);
+    META.unlockedTowers = allTowerTypesFromManifest();
+    return StageMapState.unlocked;
+  }
+  const unlocked = computeUnlockedStageFromClears(1);
+  StageMapState.unlocked = unlocked;
+  if(opts.selectStage){
+    StageMapState.selected = clamp(Number(opts.selectStage), 1, max);
+  }else if(opts.keepSelected || opts.allowLockedPreview){
+    StageMapState.selected = clamp(Number(StageMapState.selected || unlocked), 1, max);
+  }else{
+    StageMapState.selected = clamp(Number(StageMapState.selected || unlocked), 1, unlocked);
+  }
+  if(!opts.allowLockedPreview && StageMapState.selected > StageMapState.unlocked){
+    StageMapState.selected = StageMapState.unlocked;
+  }
+  StageMapState.current = clamp(Number(opts.currentStage || StageMapState.current || StageMapState.selected || unlocked), 1, max);
+  META.unlockedTowers = normalizeUnlockedTowers(META.unlockedTowers, META.clears || {});
+  if(opts.save !== false){
+    saveOfflineMeta();
+    saveStageMapProgress();
+  }
+  return StageMapState.unlocked;
+}
+function setBattleChromeVisible(visible){
+  const active = !!visible;
+  const body = document.body;
+  if(body){
+    body.classList.toggle('prd-combat-ui-active', active);
+    body.classList.toggle('prd-map-ui-active', !active);
+    body.classList.toggle('prd-battle-active', active);
+    body.classList.toggle('prd-combat-screen-active', active);
+  }
+  const combatSelectors = [
+    '#combatHudOverlay', '#combatHudTopLine', '#combatHudCommands',
+    '#combatHudCommandsLandscapeDock', '#combatHudCommandsPortraitDock',
+    '#battleHud', '#side > .battleActions', '#field > .fieldTopControls',
+    '#combatHudTopLine .fieldTopControls', '#combatHudOverlay .fieldTopControls'
+  ];
+  document.querySelectorAll(combatSelectors.join(',')).forEach(el => {
+    if(!el) return;
+    if(active){
+      if(el.dataset.v77Hidden === '1'){
+        el.style.removeProperty('display');
+        el.style.removeProperty('visibility');
+        el.style.removeProperty('opacity');
+        el.style.removeProperty('pointer-events');
+        delete el.dataset.v77Hidden;
+      }
+    }else{
+      el.dataset.v77Hidden = '1';
+      el.style.setProperty('display', 'none', 'important');
+      el.style.setProperty('visibility', 'hidden', 'important');
+      el.style.setProperty('opacity', '0', 'important');
+      el.style.setProperty('pointer-events', 'none', 'important');
+    }
+  });
+}
+function syncNonBattleChrome(){ setBattleChromeVisible(false); }
 const OFFLINE_CHAPTERS = {
   1:{title:'1장. 공허 성역 — 첫 균열', intro:'오리온 외곽 성좌의 입구에서 첫 균열이 열린다. 지휘관은 불안정한 장판 위에 행성 병기를 배치해 코어를 지켜야 한다.', mid:'성운 감시자가 방어선을 시험한다. 재생을 끊지 못하면 전선이 계속 밀린다.', final:'공허 심핵이 모습을 드러낸다. 이는 균열 너머 지휘체의 전조에 불과하다.', clear:'첫 성역이 안정화되며 오리온 성좌의 항로가 이어진다.'},
   2:{title:'2장. 빙결 외곽 — 멈춘 궤도', intro:'냉각 폭풍이 항로를 봉쇄한다. 배치와 병합 타이밍이 전투의 핵심이 된다.', mid:'빙하 포효체가 가장 강한 행성을 얼린다. 단일 화력만 믿으면 방어선이 무너진다.', final:'절대영도 핵은 복수의 행성을 봉쇄한다. 균형 잡힌 장판 운용이 필요하다.', clear:'얼어붙은 항로가 풀리며 다음 태양 플레어 구역 좌표가 열린다.'},
@@ -748,7 +830,9 @@ function recordOfflineRunEnd(cleared=false, stageNoOverride=null){
     StageMapState.unlocked = Math.max(Number(StageMapState.unlocked || 1), nextStageNo);
     StageMapState.current = nextStageNo;
     if(Number(StageMapState.selected || 1) <= Number(stageNo)) StageMapState.selected = nextStageNo;
-    if(typeof applyCanonicalProgressToState === 'function'){
+    if(typeof hardSyncStageProgressFromClears === 'function'){
+      hardSyncStageProgressFromClears({selectStage:StageMapState.selected, currentStage:StageMapState.current, keepSelected:true, allowLockedPreview:true, save:true});
+    }else if(typeof applyCanonicalProgressToState === 'function'){
       applyCanonicalProgressToState({selectStage:StageMapState.selected, currentStage:StageMapState.current, keepSelected:true, allowLockedPreview:true, save:true});
     }else{
       saveStageMapProgress();
@@ -817,6 +901,7 @@ function showGameOverOverlay(summary){
     if(mapBtn){
       mapBtn.onclick = () => {
         removeGameOverOverlay();
+        syncNonBattleChrome();
         cancelAnimationFrame(raf);
         $('game').style.display = 'none';
         $('stageMap').style.display = 'block';
@@ -866,6 +951,7 @@ function showEmergencyGameOverOverlay(summary={}, err=null){
 
 function triggerGameOver(reason='core'){
   if(!S || S.gameOver) return;
+  syncNonBattleChrome();
   S.gameOver = true;
   S.active = false;
   S.paused = true;
@@ -1088,6 +1174,7 @@ function resetBattleUnitsForStageMap(){
 function renderStageMap(){
   const map = $('stageMap');
   if(!map) return;
+  try{ hardSyncStageProgressFromClears({keepSelected:true, allowLockedPreview:true, save:false}); }catch(err){ console.warn('stage progress hard sync failed', err); }
   const unlocked = clamp(StageMapState.unlocked, 1, STAGE_MAP_DEFS.length);
   const selectedStage = clamp(StageMapState.selected, 1, STAGE_MAP_DEFS.length);
   const canEnterSelectedStage = selectedStage <= unlocked;
@@ -1133,6 +1220,7 @@ function renderStageMap(){
 }
 
 function showStageMap(){
+  syncNonBattleChrome();
   const menu = $('menu');
   const map = $('stageMap');
   const game = $('game');
@@ -1145,6 +1233,7 @@ function showStageMap(){
 }
 
 function startSelectedStageFromMap(){
+  setBattleChromeVisible(true);
   const selectedStageNo = clamp(StageMapState.selected, 1, STAGE_MAP_DEFS.length);
   if(selectedStageNo > StageMapState.unlocked){
     const defLocked = getStageDef(selectedStageNo);
@@ -1255,6 +1344,7 @@ function completeStageFromBattle(){
   const clearedDef = getStageDef(cleared);
 
   cancelAnimationFrame(raf);
+  syncNonBattleChrome();
   $('game').style.display = 'none';
   $('stageMap').style.display = 'block';
   stopStageBgm();
@@ -1268,6 +1358,7 @@ function completeStageFromBattle(){
   if(firstHint) firstHint.textContent = `${clearedDef.stage}. ${clearedDef.name} 클리어! ${stageTowerRewardText(cleared)} · ${getOfflineStoryLog(cleared, 'clear')}`;
   const beforeShards = Number(META?.shards || 0);
   recordOfflineRunEnd(true, cleared);
+  try{ hardSyncStageProgressFromClears({selectStage:finalSelected, currentStage:finalSelected, keepSelected:true, allowLockedPreview:false, save:true}); }catch(err){ console.warn('post-clear hard sync failed', err); }
   const afterShards = Number(META?.shards || 0);
   const clearSummary = {stageNo:cleared, shardsGained:Math.max(0, afterShards - beforeShards)};
   sound('clear');
@@ -1280,7 +1371,9 @@ function completeStageFromBattle(){
     StageMapState.current = finalSelected;
     StageMapState.unlocked = finalUnlocked;
     StageMapState.selected = finalSelected;
-    if(typeof applyCanonicalProgressToState === 'function'){
+    if(typeof hardSyncStageProgressFromClears === 'function'){
+      hardSyncStageProgressFromClears({selectStage:finalSelected, currentStage:finalSelected, keepSelected:true, allowLockedPreview:false, save:true});
+    }else if(typeof applyCanonicalProgressToState === 'function'){
       applyCanonicalProgressToState({selectStage:finalSelected, currentStage:finalSelected, keepSelected:true, allowLockedPreview:false, save:true});
     }else{
       saveStageMapProgress();
@@ -6509,6 +6602,12 @@ window.PRD_BATTLE = {
   renderHangar,
   updateUI,
   loop
+};
+window.PRD_STAGE_PROGRESS_BRIDGE = {
+  sync: hardSyncStageProgressFromClears,
+  setBattleChromeVisible,
+  computeUnlockedStageFromClears,
+  getState(){ return {unlocked:StageMapState.unlocked, selected:StageMapState.selected, current:StageMapState.current, clears:Object.assign({}, META?.clears || {})}; }
 };
 
 resizeStarfield();
