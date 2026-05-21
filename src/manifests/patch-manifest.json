@@ -1,0 +1,1402 @@
+[
+  {
+    "type": "style",
+    "id": "base-style",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/base.css",
+    "order_index": 0
+  },
+  {
+    "type": "style",
+    "id": "v74-step1-main-galaxy-ui",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 1
+  },
+  {
+    "type": "style",
+    "id": "v75-step2-constellation-ui",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 2
+  },
+  {
+    "type": "style",
+    "id": "v76-step3-battle-hud-ui",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 3
+  },
+  {
+    "type": "style",
+    "id": "v77-step4-popup-ui",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 4
+  },
+  {
+    "type": "style",
+    "id": "v78-popup-text-image-alignment-fix",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 5
+  },
+  {
+    "type": "style",
+    "id": "v79-common-research-tabs",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 6
+  },
+  {
+    "type": "style",
+    "id": "v80-icon-only-upgrade-armory",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 7
+  },
+  {
+    "type": "style",
+    "id": "v81-skill-codex-armory",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 8
+  },
+  {
+    "type": "style",
+    "id": "v82-premium-armory-polish",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 9
+  },
+  {
+    "type": "style",
+    "id": "v83-reference-armory-match",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 10
+  },
+  {
+    "type": "style",
+    "id": "v195-armory-close-wallet-polish",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 11
+  },
+  {
+    "type": "style",
+    "id": "v196-close-wallet-refine",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 12
+  },
+  {
+    "type": "style",
+    "id": "v197-wallet-emphasis",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 13
+  },
+  {
+    "type": "style",
+    "id": "v198-wallet-orange-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 14
+  },
+  {
+    "type": "style",
+    "id": "v202-wallet-icon-center-with-shard-text",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 15
+  },
+  {
+    "type": "style",
+    "id": "v203-wallet-icon-row-align-final",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 16
+  },
+  {
+    "type": "style",
+    "id": "v204-close-button-clear-label-final",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 17
+  },
+  {
+    "type": "style",
+    "id": "v186-armory-common-balance-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 18
+  },
+  {
+    "type": "style",
+    "id": "v187-wallet-text-lower-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 19
+  },
+  {
+    "type": "style",
+    "id": "v33-landscape-right-edge-tighten",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 20
+  },
+  {
+    "type": "style",
+    "id": "v34-compact-top-hud-no-selection-block",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 21
+  },
+  {
+    "type": "style",
+    "id": "v37-fix-original-command-hitbox",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 22
+  },
+  {
+    "type": "style",
+    "id": "v84-asset-applied-armory",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 23
+  },
+  {
+    "type": "style",
+    "id": "v85-final-armory-apply",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 24
+  },
+  {
+    "type": "style",
+    "id": "v86-final-css-hud-no-raster-frame",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 25
+  },
+  {
+    "type": "style",
+    "id": "v87-precision-armory-layout",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 26
+  },
+  {
+    "type": "style",
+    "id": "v88-armory-rebuild-final",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 27
+  },
+  {
+    "type": "style",
+    "id": "v89-armory-frame-containment-fix",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 28
+  },
+  {
+    "type": "style",
+    "id": "v90-polish-fixes",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 29
+  },
+  {
+    "type": "style",
+    "id": "v93-stage-map-button-bg-fix",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 30
+  },
+  {
+    "type": "style",
+    "id": "v94-canvas-hover-y-calibration",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 31
+  },
+  {
+    "type": "style",
+    "id": "v95-designer-polish-direct",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 32
+  },
+  {
+    "type": "style",
+    "id": "v96-tower-two-column-and-common-scroll-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 33
+  },
+  {
+    "type": "style",
+    "id": "v97-battle-hud-compact-polish",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 34
+  },
+  {
+    "type": "style",
+    "id": "v99-armory-scroll-stability-style",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 35
+  },
+  {
+    "type": "style",
+    "id": "v91-popup-overlap-correction",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 36
+  },
+  {
+    "type": "style",
+    "id": "v92-hover-frame-alignment-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 37
+  },
+  {
+    "type": "style",
+    "id": "v98-stage-armory-entry-unify",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 38
+  },
+  {
+    "type": "style",
+    "id": "v212-mobile-wallet-fixed-x",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 39
+  },
+  {
+    "type": "style",
+    "id": "v206-battle-stat-font-balance",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 40
+  },
+  {
+    "type": "style",
+    "id": "v208-game-hud-overlay-compact",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 41
+  },
+  {
+    "type": "style",
+    "id": "v209-true-floating-game-hud-fix",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 42
+  },
+  {
+    "type": "style",
+    "id": "v210-combat-actions-responsive-layout-fix",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 43
+  },
+  {
+    "type": "style",
+    "id": "v211-combat-actions-bottom-dock-tune",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 44
+  },
+  {
+    "type": "style",
+    "id": "v212-command-dock-true-field-bottom",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 45
+  },
+  {
+    "type": "style",
+    "id": "v213-dual-orientation-command-docks",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 46
+  },
+  {
+    "type": "style",
+    "id": "v214-top-hud-proportional-edge-layout",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 47
+  },
+  {
+    "type": "style",
+    "id": "v215-board-expand-square-and-fixed-hud-final",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 48
+  },
+  {
+    "type": "style",
+    "id": "v216-pause-decision-dialog",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 49
+  },
+  {
+    "type": "style",
+    "id": "v24-canvas-pointer-through-combat-hud",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 50
+  },
+  {
+    "type": "style",
+    "id": "v227-pause-decision-menu-final",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 51
+  },
+  {
+    "type": "style",
+    "id": "v230-native-pause-safety-css",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 52
+  },
+  {
+    "type": "style",
+    "id": "v101-single-stage-tower-button-safe",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 53
+  },
+  {
+    "type": "style",
+    "id": "v103-armory-stars-close-polish",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 54
+  },
+  {
+    "type": "style",
+    "id": "v104-armory-layout-star-recovery",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 55
+  },
+  {
+    "type": "style",
+    "id": "v105-armory-stars-font-compact-fix",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 56
+  },
+  {
+    "type": "style",
+    "id": "v106-shared-starfield-final-overrides",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 57
+  },
+  {
+    "type": "style",
+    "id": "v107-armory-header-alignment-fix",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 58
+  },
+  {
+    "type": "style",
+    "id": "v111-navigation-recovery-css",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 59
+  },
+  {
+    "type": "style",
+    "id": "v112-map-layout-alignment-restore",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 60
+  },
+  {
+    "type": "style",
+    "id": "v113-stage-info-panel-lift",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 61
+  },
+  {
+    "type": "style",
+    "id": "v114-galaxy-stage-layout-polish",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 62
+  },
+  {
+    "type": "style",
+    "id": "v117-stage-galaxy-back-button-force",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 63
+  },
+  {
+    "type": "style",
+    "id": "v118-stage-back-main-pill-match",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 64
+  },
+  {
+    "type": "style",
+    "id": "v122-map-duplicate-buttons-remove",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 65
+  },
+  {
+    "type": "style",
+    "id": "v142-stage-map-top-right-tower-shortcut-remove",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 66
+  },
+  {
+    "type": "style",
+    "id": "v164-armory-controller-style",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 67
+  },
+  {
+    "type": "style",
+    "id": "v168-plate-tile-first-image-style",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 68
+  },
+  {
+    "type": "style",
+    "id": "v170-plate-unified-color-width-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 69
+  },
+  {
+    "type": "style",
+    "id": "v171-plate-active-ring-remove",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 70
+  },
+  {
+    "type": "style",
+    "id": "v172-plate-ring-remove-list-size-unify",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 71
+  },
+  {
+    "type": "style",
+    "id": "v173-left-list-square-remove-circle",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 72
+  },
+  {
+    "type": "style",
+    "id": "v174-restore-locked-blurred-icons",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 73
+  },
+  {
+    "type": "style",
+    "id": "v175-keep-lock-on-active-locked-items",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 74
+  },
+  {
+    "type": "style",
+    "id": "v176-lock-badge-consistent-active-inactive",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 75
+  },
+  {
+    "type": "style",
+    "id": "v177-armory-close-button-polish",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 76
+  },
+  {
+    "type": "style",
+    "id": "v178-armory-wallet-header-overlap-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 77
+  },
+  {
+    "type": "style",
+    "id": "v179-armory-close-button-position-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 78
+  },
+  {
+    "type": "style",
+    "id": "v180-armory-header-wallet-no-overlap-final",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 79
+  },
+  {
+    "type": "style",
+    "id": "v181-armory-top-alignment-clean",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 80
+  },
+  {
+    "type": "style",
+    "id": "v184-stage-map-bg-fill-balance-8-10",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 81
+  },
+  {
+    "type": "style",
+    "id": "v193-topright-icons-final-override",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 82
+  },
+  {
+    "type": "style",
+    "id": "v119-stage-back-english-main-size",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 83
+  },
+  {
+    "type": "style",
+    "id": "v120-map-control-spacing-normalize",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 84
+  },
+  {
+    "type": "style",
+    "id": "v121-mobile-map-vertical-rhythm-fix",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 85
+  },
+  {
+    "type": "style",
+    "id": "v130-constellation-compact-planets-panel",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 86
+  },
+  {
+    "type": "style",
+    "id": "v143-battle-topright-controls-compact",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 87
+  },
+  {
+    "type": "style",
+    "id": "v144-stage-map-topright-two-buttons-restore",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 88
+  },
+  {
+    "type": "style",
+    "id": "v147-common-research-icon-and-title-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 89
+  },
+  {
+    "type": "style",
+    "id": "v148-armory-general-icon-enlarge",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 90
+  },
+  {
+    "type": "style",
+    "id": "v149-remove-tower-detail-common-hint-cards",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 91
+  },
+  {
+    "type": "style",
+    "id": "v150-common-research-layout-cleanup",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 92
+  },
+  {
+    "type": "style",
+    "id": "v151-locked-common-research-polish",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 93
+  },
+  {
+    "type": "style",
+    "id": "v152-common-timeline-row-compact-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 94
+  },
+  {
+    "type": "style",
+    "id": "v153-common-timeline-more-compact-center-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 95
+  },
+  {
+    "type": "style",
+    "id": "v154-tower-skill-row-compact-match-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 96
+  },
+  {
+    "type": "style",
+    "id": "v182-armory-wallet-lower-clear-title",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 97
+  },
+  {
+    "type": "style",
+    "id": "v183-armory-wallet-plain-text",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 98
+  },
+  {
+    "type": "style",
+    "id": "v184-common-frame-match",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 99
+  },
+  {
+    "type": "style",
+    "id": "v185-tower-tab-alignment-final",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 100
+  },
+  {
+    "type": "style",
+    "id": "v188-wallet-text-force-lower",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 101
+  },
+  {
+    "type": "style",
+    "id": "v206-wallet-orb-responsive-y-align-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 102
+  },
+  {
+    "type": "style",
+    "id": "v206-battle-stat-font-balance",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 103
+  },
+  {
+    "type": "style",
+    "id": "v207-screen-first-responsive-battle-layout",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 104
+  },
+  {
+    "type": "style",
+    "id": "v208-game-hud-overlay-compact",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 105
+  },
+  {
+    "type": "style",
+    "id": "v209-true-floating-game-hud-fix",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 106
+  },
+  {
+    "type": "style",
+    "id": "v210-combat-actions-responsive-layout-fix",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 107
+  },
+  {
+    "type": "style",
+    "id": "v211-combat-actions-bottom-dock-tune",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 108
+  },
+  {
+    "type": "style",
+    "id": "v212-command-dock-true-field-bottom",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 109
+  },
+  {
+    "type": "style",
+    "id": "v214-top-hud-proportional-edge-layout",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 110
+  },
+  {
+    "type": "style",
+    "id": "v215-battle-board-expansion-lock",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 111
+  },
+  {
+    "type": "style",
+    "id": "v216-pause-decision-dialog",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 112
+  },
+  {
+    "type": "style",
+    "id": "v218-front-polish-and-route-ux",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 113
+  },
+  {
+    "type": "style",
+    "id": "v21-safe-combat-only-controls",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 114
+  },
+  {
+    "type": "style",
+    "id": "v24-canvas-pointer-through-combat-hud",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 115
+  },
+  {
+    "type": "style",
+    "id": "v227-pause-decision-menu-final",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 116
+  },
+  {
+    "type": "style",
+    "id": "v229-reliable-pause-decision-modal",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 117
+  },
+  {
+    "type": "style",
+    "id": "v35-field-pointer-hotzone-fix",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 118
+  },
+  {
+    "type": "style",
+    "id": "v240-compact-transparent-top-hud-final",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 119
+  },
+  {
+    "type": "style",
+    "id": "v241-top-right-controls-and-hud-margin-final",
+    "domain": "battle",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 120
+  },
+  {
+    "type": "style",
+    "id": "v242-armory-landscape-separate-layout",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 121
+  },
+  {
+    "type": "style",
+    "id": "v243-armory-landscape-console-redesign",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 122
+  },
+  {
+    "type": "style",
+    "id": "v244-landscape-armory-final-layout",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 123
+  },
+  {
+    "type": "style",
+    "id": "v245-landscape-armory-compact-reflow",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 124
+  },
+  {
+    "type": "style",
+    "id": "v245-armory-landscape-polish",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 125
+  },
+  {
+    "type": "style",
+    "id": "v246-armory-landscape-tower-polish",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 126
+  },
+  {
+    "type": "style",
+    "id": "v247-armory-landscape-tower-section-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 127
+  },
+  {
+    "type": "style",
+    "id": "v248-armory-landscape-header-plate-polish",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 128
+  },
+  {
+    "type": "style",
+    "id": "v249-armory-landscape-common-right-list-polish",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 129
+  },
+  {
+    "type": "style",
+    "id": "v250-armory-landscape-tower-right-column-polish",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 130
+  },
+  {
+    "type": "style",
+    "id": "v251-armory-landscape-common-tower-horizontal-scroll",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 131
+  },
+  {
+    "type": "style",
+    "id": "v252-armory-landscape-final-efficiency-polish",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 132
+  },
+  {
+    "type": "style",
+    "id": "v253-armory-landscape-compact-snap-polish",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 133
+  },
+  {
+    "type": "style",
+    "id": "v264-armory-compact-combined-layout",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 134
+  },
+  {
+    "type": "style",
+    "id": "v265-tower-dense-no-empty-space",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 135
+  },
+  {
+    "type": "style",
+    "id": "v266-armory-landscape-resolution-adaptive-fix",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 136
+  },
+  {
+    "type": "style",
+    "id": "v267-landscape-hard-grid-reset",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 137
+  },
+  {
+    "type": "style",
+    "id": "v268-armory-landscape-resolution-final-lock",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 138
+  },
+  {
+    "type": "style",
+    "id": "v269-armory-landscape-wallet-list-polish",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 139
+  },
+  {
+    "type": "style",
+    "id": "v270-armory-landscape-wallet-noscale-scroll",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 140
+  },
+  {
+    "type": "style",
+    "id": "v271-armory-plate-rail-wallet-align-final",
+    "domain": "armory",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 141
+  },
+  {
+    "type": "style",
+    "id": "v272-stage-enter-width-fix",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 142
+  },
+  {
+    "type": "style",
+    "id": "v274-landscape-map-hud-recovery",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 143
+  },
+  {
+    "type": "style",
+    "id": "v75-stage-selected-background-full-cover-fix",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 144
+  },
+  {
+    "type": "style",
+    "id": "v77-map-battle-hud-separation",
+    "domain": "stage-unlock",
+    "runtime_file": "src/styles/patches.runtime.css",
+    "order_index": 145
+  },
+  {
+    "type": "script",
+    "id": "game-core",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/game-core.js",
+    "order_index": 0
+  },
+  {
+    "type": "script",
+    "id": "armory-base",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/armory-base.js",
+    "order_index": 1
+  },
+  {
+    "type": "script",
+    "id": "v87-armory-scroll-fix",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 2
+  },
+  {
+    "type": "script",
+    "id": "v88-armory-rebuild-script",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 3
+  },
+  {
+    "type": "script",
+    "id": "v96-detail-scroll-guard",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 4
+  },
+  {
+    "type": "script",
+    "id": "v99-armory-scroll-stability",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 5
+  },
+  {
+    "type": "script",
+    "id": "v98-stage-armory-entry-behavior",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 6
+  },
+  {
+    "type": "script",
+    "id": "v209-true-floating-game-hud-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 7
+  },
+  {
+    "type": "script",
+    "id": "v213-dual-orientation-command-docks-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 8
+  },
+  {
+    "type": "script",
+    "id": "v214-top-hud-proportional-edge-layout-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 9
+  },
+  {
+    "type": "script",
+    "id": "v216-pause-decision-dialog-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 10
+  },
+  {
+    "type": "script",
+    "id": "v227-pause-decision-menu-final-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 11
+  },
+  {
+    "type": "script",
+    "id": "v32-landscape-short-command-labels-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 12
+  },
+  {
+    "type": "script",
+    "id": "v37-original-command-hitbox-fix-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 13
+  },
+  {
+    "type": "script",
+    "id": "v101-stage-tower-button-safe-behavior",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 14
+  },
+  {
+    "type": "script",
+    "id": "v104-armory-scroll-stability",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 15
+  },
+  {
+    "type": "script",
+    "id": "v111-navigation-recovery-script",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 16
+  },
+  {
+    "type": "script",
+    "id": "v116-battle-enter-bridge",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 17
+  },
+  {
+    "type": "script",
+    "id": "v114-stage-back-label-script",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 18
+  },
+  {
+    "type": "script",
+    "id": "v117-stage-galaxy-back-button-script",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 19
+  },
+  {
+    "type": "script",
+    "id": "v118-stage-back-main-pill-match-script",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 20
+  },
+  {
+    "type": "script",
+    "id": "v122-map-duplicate-buttons-remove-script",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 21
+  },
+  {
+    "type": "script",
+    "id": "v126-test-mode-full-unlock-fix",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 22
+  },
+  {
+    "type": "script",
+    "id": "v128-canonical-manifest-unlock-finalizer",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 23
+  },
+  {
+    "type": "script",
+    "id": "v142-stage-map-top-right-tower-shortcut-remove-js",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 24
+  },
+  {
+    "type": "script",
+    "id": "v164-armory-controller-script",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 25
+  },
+  {
+    "type": "script",
+    "id": "v167-armory-refresh-guard-marker",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 26
+  },
+  {
+    "type": "script",
+    "id": "v184-custom-bgm-entry-autoplay",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 27
+  },
+  {
+    "type": "script",
+    "id": "v191-boss-bgm-return-and-autostart",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 28
+  },
+  {
+    "type": "script",
+    "id": "v119-stage-back-english-main-size-script",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 29
+  },
+  {
+    "type": "script",
+    "id": "v120-map-control-spacing-normalize-script",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 30
+  },
+  {
+    "type": "script",
+    "id": "v127-test-and-progress-unlock-hardening",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 31
+  },
+  {
+    "type": "script",
+    "id": "v144-stage-map-topright-two-buttons-restore-js",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 32
+  },
+  {
+    "type": "script",
+    "id": "v207-pointer-fill-calibration",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 33
+  },
+  {
+    "type": "script",
+    "id": "v209-true-floating-game-hud-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 34
+  },
+  {
+    "type": "script",
+    "id": "v214-top-hud-proportional-edge-layout-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 35
+  },
+  {
+    "type": "script",
+    "id": "v216-pause-decision-dialog-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 36
+  },
+  {
+    "type": "script",
+    "id": "v21-safe-combat-only-controls-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 37
+  },
+  {
+    "type": "script",
+    "id": "v227-pause-decision-menu-final-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 38
+  },
+  {
+    "type": "script",
+    "id": "v229-reliable-pause-decision-modal-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 39
+  },
+  {
+    "type": "script",
+    "id": "v35-field-pointer-bridge-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 40
+  },
+  {
+    "type": "script",
+    "id": "v240-compact-transparent-top-hud-final-script",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 41
+  },
+  {
+    "type": "script",
+    "id": "v241-top-right-controls-and-hud-margin-final-script",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 42
+  },
+  {
+    "type": "script",
+    "id": "v242-armory-orientation-mode-script",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 43
+  },
+  {
+    "type": "script",
+    "id": "v244-armory-layout-class-guard",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 44
+  },
+  {
+    "type": "script",
+    "id": "v253-armory-scroll-reset-guard",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 45
+  },
+  {
+    "type": "script",
+    "id": "v264-armory-compact-combined-layout-script",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 46
+  },
+  {
+    "type": "script",
+    "id": "v266-armory-landscape-resolution-adaptive-fix-script",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 47
+  },
+  {
+    "type": "script",
+    "id": "v267-landscape-hard-grid-reset-script",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 48
+  },
+  {
+    "type": "script",
+    "id": "v268-armory-landscape-resolution-final-lock-script",
+    "domain": "armory",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 49
+  },
+  {
+    "type": "script",
+    "id": "v274-landscape-map-hud-recovery-script",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 50
+  },
+  {
+    "type": "script",
+    "id": "v76-stage-unlock-manifest-fix",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 51
+  },
+  {
+    "type": "script",
+    "id": "v77-map-battle-hud-separation-js",
+    "domain": "battle",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 52
+  },
+  {
+    "type": "script",
+    "id": "v78-stage-unlock-and-enter-label-final-fix",
+    "domain": "stage-unlock",
+    "runtime_file": "src/scripts/patches.runtime.js",
+    "order_index": 53
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "version": "v81-refactor-from-v78-reconnected-landscape-stage-popup",
+  "source": "v003_saved_stage_unlock_final_v78.zip",
+  "runtime_files": [
+    "src/styles/base.css",
+    "src/styles/patches.runtime.css",
+    "src/scripts/game-core.js",
+    "src/scripts/armory-base.js",
+    "src/scripts/patches.runtime.js"
+  ],
+  "domain_counts": {
+    "stage-unlock": 74,
+    "battle": 55,
+    "armory": 71
+  },
+  "note": "Same split runtime as v80, with v274 landscape stage-node click reconnected to the existing info overlay. No new stage/map layout logic added."
+}
