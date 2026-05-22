@@ -20220,3 +20220,47 @@ body.prd-stage-entering #menu{
     font-size:12px !important;
   }
 }
+
+
+/* ===== v99-iphone-status-safe-combat-offset =====
+   Move battle top HUD and the tactical world down by the actual iPhone/Expo
+   status/notch amount. Command buttons (summon/merge/speed/pause) stay fixed. */
+:root{
+  --prd-status-top-offset: env(safe-area-inset-top, 0px);
+  --prd-battle-safe-top: var(--prd-status-top-offset, 0px);
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #mjTopMiniHud{
+  top:calc(6px + var(--prd-status-top-offset, 0px)) !important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #field .fieldTopControls,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay .fieldTopControls,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls{
+  top:calc(8px + var(--prd-status-top-offset, 0px)) !important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) .stageFxLabel{
+  top:calc(70px + var(--prd-status-top-offset, 0px)) !important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #toastLayer{
+  transform:translateY(var(--prd-status-top-offset, 0px)) !important;
+  will-change:transform !important;
+}
+@media (orientation:portrait){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #mjTopMiniHud{
+    top:calc(8px + var(--prd-status-top-offset, 0px)) !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #field .fieldTopControls,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay .fieldTopControls,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls{
+    top:calc(8px + var(--prd-status-top-offset, 0px)) !important;
+  }
+}
+@media (orientation:landscape){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #mjTopMiniHud{
+    top:calc(6px + var(--prd-status-top-offset, 0px)) !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #field .fieldTopControls,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay .fieldTopControls,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls{
+    top:calc(8px + var(--prd-status-top-offset, 0px)) !important;
+  }
+}

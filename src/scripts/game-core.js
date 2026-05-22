@@ -48,6 +48,46 @@ let H = Number(canvas.__logicalHeight || canvas.clientHeight || 708);
 const $ = id => document.getElementById(id);
 const TAU = Math.PI * 2;
 const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+
+// v99: iPhone/Expo safe top offset for the battle screen.
+// The WebView can render behind the status/notch area even when the desktop browser looks fine.
+// Keep the command buttons in their current dock, but move the tactical world + top HUD down.
+function measureCssSafeAreaTopV99(){
+  try{
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top, 0px);';
+    (document.body || document.documentElement).appendChild(probe);
+    const v = parseFloat(getComputedStyle(probe).paddingTop) || 0;
+    probe.remove();
+    return v;
+  }catch(_err){ return 0; }
+}
+function getBattleStatusTopOffsetV99(){
+  const vv = window.visualViewport || null;
+  const vvTop = Math.max(0, Math.round((vv && vv.offsetTop) || 0));
+  const envTop = Math.max(0, Math.round(measureCssSafeAreaTopV99() || 0));
+  const vw = Math.max(1, Math.round((vv && vv.width) || window.innerWidth || document.documentElement.clientWidth || 0));
+  const vh = Math.max(1, Math.round((vv && vv.height) || window.innerHeight || document.documentElement.clientHeight || 0));
+  const ua = navigator.userAgent || '';
+  const isIOS = /iP(hone|ad|od)/.test(ua) || ((navigator.platform || '') === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1);
+  const isTouch = (navigator.maxTouchPoints || 0) > 0 || (window.matchMedia && window.matchMedia('(hover:none), (pointer:coarse)').matches);
+  const landscape = vw >= vh;
+  // Expo/WKWebView sometimes reports env(safe-area-inset-top)=0 even though the status bar overlays the WebView.
+  // Use a conservative iOS fallback only when no measurable browser safe-area exists.
+  const iosFallback = (isIOS && isTouch && envTop < 4 && vvTop < 4) ? (landscape ? 18 : 44) : 0;
+  return Math.round(clamp(Math.max(envTop, vvTop, iosFallback), 0, 64));
+}
+function syncBattleStatusTopOffsetV99(reason='sync'){
+  const px = getBattleStatusTopOffsetV99();
+  try{
+    document.documentElement.style.setProperty('--prd-status-top-offset', px + 'px');
+    document.documentElement.style.setProperty('--prd-battle-safe-top', px + 'px');
+    document.body && (document.body.dataset.prdStatusTop = String(px));
+    window.PRD_STATUS_TOP_OFFSET_V99 = {px, reason, ts:Date.now()};
+  }catch(_err){}
+  return px;
+}
+syncBattleStatusTopOffsetV99('boot');
 const STAR_LAYER_CONFIG = [
   {count:110, speedX:-1.8, speedY:.9, alpha:.34},
   {count:90, speedX:-4.2, speedY:1.7, alpha:.52},
@@ -1426,12 +1466,40 @@ function showStageClearOverlay(summary){
   }
 }
 
+
+function forceStageClearUnlockAfterBattle(stageNo, opts={}){
+  const max = STAGE_MAP_DEFS.length;
+  const cleared = clamp(Number(stageNo || 1), 1, max);
+  const nextStage = Math.min(max, cleared + 1);
+  if(!META) META = defaultOfflineMeta();
+  if(!META.clears || typeof META.clears !== 'object') META.clears = {};
+  if(!META.story || typeof META.story !== 'object') META.story = {};
+
+  if(!TEST_MODE_CONFIG.enabled){
+    const key = String(cleared);
+    // v98: stage unlock must never depend on a delayed overlay/render pass.
+    // If an old wrapper returned early because S.runEnded was already true, still
+    // persist the clear marker once so deriveProgressFromManifest can open the next planet.
+    if(Number(META.clears[key] || 0) <= 0 && opts.recordClear !== false){
+      META.clears[key] = 1;
+      META.totalClears = Math.max(Number(META.totalClears || 0), 0) + 1;
+      META.story[`${cleared}_clear`] = true;
+    }
+    try{ unlockStageTower(cleared); }catch(err){ console.warn('[v98 stage unlock] tower reward repair failed', err); }
+  }
+
+  StageMapState.unlocked = TEST_MODE_CONFIG.enabled ? max : Math.max(clamp(Number(StageMapState.unlocked || 1), 1, max), nextStage, deriveUnlockedStageFromMeta());
+  StageMapState.selected = clamp(Number(opts.selectStage || nextStage), 1, max);
+  StageMapState.current = clamp(Number(opts.currentStage || StageMapState.selected), 1, max);
+  saveOfflineMeta();
+  saveStageMapProgress();
+  return {cleared, nextStage, unlocked:StageMapState.unlocked, selected:StageMapState.selected, current:StageMapState.current};
+}
+
 function completeStageFromBattle(){
   const cleared = clamp(Number(S.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
-  const previousUnlocked = clamp(Number(StageMapState.unlocked || 1), 1, STAGE_MAP_DEFS.length);
-  const finalUnlocked = Math.max(previousUnlocked, Math.min(STAGE_MAP_DEFS.length, cleared + 1));
   const finalSelected = Math.min(STAGE_MAP_DEFS.length, cleared + 1);
-  const clearedDef = getStageDef(cleared);
+  const nextDef = getStageDef(finalSelected);
 
   cancelAnimationFrame(raf);
   syncNonBattleChrome();
@@ -1439,28 +1507,23 @@ function completeStageFromBattle(){
   $('stageMap').style.display = 'block';
   stopStageBgm();
 
-  // 클리어 즉시 다음 성역 해금을 저장한다. 이후 연출에서는 잠깐 이전 상태를 보여주더라도,
-  // 브라우저 종료/새로고침이 발생해도 다음 행성 해금 상태가 유실되지 않게 한다.
-  StageMapState.current = finalSelected;
-  StageMapState.unlocked = finalUnlocked;
-  StageMapState.selected = finalSelected;
-  saveStageMapProgress();
-
-  // 연출용으로 클리어 직전 상태를 한 번 보여준 뒤 다시 unlock 값을 반영해 SVG 선이 자연스럽게 열린다.
-  StageMapState.current = cleared;
-  StageMapState.unlocked = previousUnlocked;
-  StageMapState.selected = cleared;
-  renderStageMap();
-  const firstHint = $('stageHint');
-  if(firstHint) firstHint.textContent = `${clearedDef.stage}. ${clearedDef.name} 클리어! ${stageTowerRewardText(cleared)} · ${getOfflineStoryLog(cleared, 'clear')}`;
   const beforeShards = Number(META?.shards || 0);
+
+  // v98: 이전 버전은 여기서 '클리어 직전 상태'를 먼저 renderStageMap()으로 보여주면서
+  // renderStageMap -> syncStageUnlockFromClears가 잠긴 진행 상태를 다시 저장할 수 있었다.
+  // Expo/WebView에서는 그 타이밍이 더 자주 드러나서 1성역 클리어 후 2성역이 잠긴 채 남았다.
+  // 따라서 클리어 기록과 다음 성역 해금을 먼저 확정 저장한 뒤 맵을 렌더링한다.
   recordOfflineRunEnd(true, cleared);
-  StageMapState.current = finalSelected;
-  StageMapState.unlocked = TEST_MODE_CONFIG.enabled ? STAGE_MAP_DEFS.length : Math.max(finalUnlocked, deriveUnlockedStageFromMeta());
-  StageMapState.selected = finalSelected;
-  saveStageMapProgress();
+  const repaired = forceStageClearUnlockAfterBattle(cleared, {
+    recordClear:true,
+    selectStage:finalSelected,
+    currentStage:finalSelected
+  });
+
   const afterShards = Number(META?.shards || 0);
   const clearSummary = {stageNo:cleared, shardsGained:Math.max(0, afterShards - beforeShards)};
+  window.PRD_LAST_STAGE_CLEAR_V98 = Object.assign({ts:Date.now()}, repaired, clearSummary);
+
   sound('clear');
   playResultBgm('clear');
 
@@ -1468,12 +1531,12 @@ function completeStageFromBattle(){
   resetBattleUnitsForStageMap();
 
   setTimeout(() => {
-    StageMapState.current = finalSelected;
-    StageMapState.unlocked = TEST_MODE_CONFIG.enabled ? STAGE_MAP_DEFS.length : Math.max(finalUnlocked, deriveUnlockedStageFromMeta());
-    StageMapState.selected = finalSelected;
-    saveStageMapProgress();
+    forceStageClearUnlockAfterBattle(cleared, {
+      recordClear:false,
+      selectStage:finalSelected,
+      currentStage:finalSelected
+    });
     renderStageMap();
-    const nextDef = getStageDef(finalSelected);
     const hint = $('stageHint');
     if(hint){
       hint.textContent = cleared >= STAGE_MAP_DEFS.length
@@ -2025,6 +2088,7 @@ function configureBattleBoardForCurrentLayout(reason='boot'){
   W = Number(logicalSize.w) || W || 748;
   H = Number(logicalSize.h) || H || 708;
 
+  const statusTopOffsetV99 = syncBattleStatusTopOffsetV99('board-' + reason);
   const size = battleViewportSize();
   IS_MOBILE_BOARD = size.viewportW <= 768 || size.viewportH <= 520;
 
@@ -2061,9 +2125,10 @@ function configureBattleBoardForCurrentLayout(reason='boot'){
   const availableBoardW = BOARD_IS_LANDSCAPE
     ? Math.max(260, W - outerPadX * 2 - rightCommandReserve)
     : Math.max(220, W - outerPadX * 2);
-  const topBottomReserve = BOARD_IS_LANDSCAPE
+  const statusReserveYV99 = Math.max(0, Number(statusTopOffsetV99 || 0));
+  const topBottomReserve = (BOARD_IS_LANDSCAPE
     ? Math.max(12, Math.min(28, H * .035))
-    : Math.max(148, Math.min(210, H * .19));
+    : Math.max(148, Math.min(210, H * .19))) + statusReserveYV99;
   const fitByExpandedW = Math.max(24, availableBoardW / GRID_COLS);
   const fitByExpandedH = Math.max(24, (H - topBottomReserve) / GRID_ROWS);
   const fixedAxisCell = BOARD_IS_LANDSCAPE ? fitByExpandedH : fitByExpandedW;
@@ -2100,9 +2165,9 @@ function configureBattleBoardForCurrentLayout(reason='boot'){
   // which also made hover/focus feel offset because the tactical area was not
   // where the player expected it to be.  Reserve only the real HUD/command
   // lanes, then bias the board slightly upward while keeping square cells.
-  const hudReserveY = BOARD_IS_LANDSCAPE
+  const hudReserveY = (BOARD_IS_LANDSCAPE
     ? Math.max(30, Math.min(48, H * .055))
-    : Math.max(70, Math.min(96, H * .075));
+    : Math.max(70, Math.min(96, H * .075))) + statusReserveYV99;
   const commandReserveY = BOARD_IS_LANDSCAPE
     ? Math.max(14, Math.min(28, H * .034))
     : Math.max(118, Math.min(166, H * .135));
@@ -2111,9 +2176,9 @@ function configureBattleBoardForCurrentLayout(reason='boot'){
   const upwardBias = BOARD_IS_LANDSCAPE
     ? Math.max(22, Math.min(38, CELL * .46))
     : Math.max(34, Math.min(64, CELL * .92));
-  const minTop = BOARD_IS_LANDSCAPE
+  const minTop = (BOARD_IS_LANDSCAPE
     ? Math.max(12, Math.min(26, H * .032))
-    : Math.max(62, Math.min(88, H * .06));
+    : Math.max(62, Math.min(88, H * .06))) + statusReserveYV99;
   const maxTop = Math.max(minTop, H - commandReserveY - boardH - Math.max(10, CELL * .18));
   GY = Math.round(clamp(naturalTop - upwardBias, minTop, maxTop));
 
@@ -2131,7 +2196,7 @@ function configureBattleBoardForCurrentLayout(reason='boot'){
   };
 
   if(window.__DEBUG_BATTLE_BOARD__){
-    console.info('[battle-board]', reason, {W,H,GRID_COLS,GRID_ROWS,CELL,GX,GY,CORE,BOARD_IS_LANDSCAPE,size});
+    console.info('[battle-board]', reason, {W,H,GRID_COLS,GRID_ROWS,CELL,GX,GY,CORE,BOARD_IS_LANDSCAPE,statusTopOffsetV99,size});
   }
 }
 
@@ -6329,8 +6394,9 @@ window.PRD_GAME_COMMANDS_V96 = {
     return {speed:S.speed, gold:S.gold, stage:S.stageNo, wave:S.ogge};
   },
   debug(){
-    return {speed:S.speed, gold:S.gold, hp:S.hp, active:S.active, paused:S.paused, gameOver:S.gameOver, stage:S.stageNo, wave:S.ogge};
-  }
+    return {speed:S.speed, gold:S.gold, hp:S.hp, active:S.active, paused:S.paused, gameOver:S.gameOver, stage:S.stageNo, wave:S.ogge, statusTopOffset:syncBattleStatusTopOffsetV99('debug')};
+  },
+  statusTopOffset(){ return syncBattleStatusTopOffsetV99('api'); }
 };
 function syncAudioControl(){
   const btn = $('audioBtn');
@@ -6375,7 +6441,12 @@ window.addEventListener('keydown', e=>{
   if(e.key === 'Escape') hidePlanetDetail();
 });
 
-window.addEventListener('resize', () => { resizeStarfield(); refreshScreenStarfields(); });
+window.addEventListener('resize', () => { syncBattleStatusTopOffsetV99('resize'); resizeStarfield(); refreshScreenStarfields(); });
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize', () => { syncBattleStatusTopOffsetV99('visualViewport-resize'); }, {passive:true});
+  window.visualViewport.addEventListener('scroll', () => { syncBattleStatusTopOffsetV99('visualViewport-scroll'); }, {passive:true});
+}
+window.addEventListener('orientationchange', () => { setTimeout(() => syncBattleStatusTopOffsetV99('orientationchange'), 80); }, {passive:true});
 
 window.addEventListener('keydown',e=>{
   if(e.repeat)return;
@@ -6947,6 +7018,7 @@ window.PRD_BATTLE = {
 };
 window.PRD_STAGE_PROGRESS_BRIDGE = {
   sync: hardSyncStageProgressFromClears,
+  repairAfterClear: forceStageClearUnlockAfterBattle,
   setBattleChromeVisible,
   computeUnlockedStageFromClears,
   getState(){ return {unlocked:StageMapState.unlocked, selected:StageMapState.selected, current:StageMapState.current, clears:Object.assign({}, META?.clears || {})}; }

@@ -4022,3 +4022,71 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
     });
   };
 })();
+
+
+/* ===== v99-iphone-status-safe-sync =====
+   Standalone safe-area synchronizer for Expo/iPhone WebView. */
+(function(){
+  'use strict';
+  if(window.PRD_V99_STATUS_SAFE_SYNC) return;
+  window.PRD_V99_STATUS_SAFE_SYNC = true;
+  function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+  function measureEnvTop(){
+    try{
+      var probe = document.createElement('div');
+      probe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px);';
+      (document.body || document.documentElement).appendChild(probe);
+      var v = parseFloat(getComputedStyle(probe).paddingTop) || 0;
+      probe.remove();
+      return v;
+    }catch(_e){ return 0; }
+  }
+  function compute(){
+    var vv = window.visualViewport || null;
+    var envTop = Math.max(0, Math.round(measureEnvTop() || 0));
+    var vvTop = Math.max(0, Math.round((vv && vv.offsetTop) || 0));
+    var w = Math.round((vv && vv.width) || window.innerWidth || document.documentElement.clientWidth || 0);
+    var h = Math.round((vv && vv.height) || window.innerHeight || document.documentElement.clientHeight || 0);
+    var ua = navigator.userAgent || '';
+    var isIOS = /iP(hone|ad|od)/.test(ua) || ((navigator.platform || '') === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1);
+    var isTouch = (navigator.maxTouchPoints || 0) > 0 || (window.matchMedia && window.matchMedia('(hover:none), (pointer:coarse)').matches);
+    var fallback = (isIOS && isTouch && envTop < 4 && vvTop < 4) ? (w >= h ? 18 : 44) : 0;
+    return Math.round(clamp(Math.max(envTop, vvTop, fallback), 0, 64));
+  }
+  function apply(reason){
+    var px = compute();
+    var root = document.documentElement;
+    if(root){
+      root.style.setProperty('--prd-status-top-offset', px + 'px');
+      root.style.setProperty('--prd-battle-safe-top', px + 'px');
+    }
+    if(document.body) document.body.dataset.prdStatusTop = String(px);
+    window.PRD_STATUS_TOP_OFFSET_V99 = {px:px, reason:reason || 'apply', ts:Date.now()};
+    return px;
+  }
+  function relayout(reason){
+    var before = window.PRD_STATUS_TOP_OFFSET_V99 && window.PRD_STATUS_TOP_OFFSET_V99.px;
+    var px = apply(reason);
+    if(document.body && document.body.classList && document.body.classList.contains('prd-combat-ui-active') && before !== px){
+      setTimeout(function(){
+        try{
+          if(window.PRD_GAME_COMMANDS_V96 && typeof window.PRD_GAME_COMMANDS_V96.relayout === 'function') window.PRD_GAME_COMMANDS_V96.relayout('v99-status-' + (reason || 'sync'));
+        }catch(e){ console.warn('[v99 status relayout]', e); }
+      }, 0);
+    }
+    return px;
+  }
+  window.PRD_APPLY_STATUS_SAFE_V99 = relayout;
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ relayout('DOMContentLoaded'); }, {once:true});
+  else relayout('boot');
+  window.addEventListener('load', function(){ relayout('load'); }, {once:true});
+  ['resize','orientationchange','pageshow'].forEach(function(type){
+    window.addEventListener(type, function(){ relayout(type); setTimeout(function(){ relayout(type + '-late'); }, 180); }, {passive:true});
+  });
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', function(){ relayout('visualViewport-resize'); }, {passive:true});
+    window.visualViewport.addEventListener('scroll', function(){ relayout('visualViewport-scroll'); }, {passive:true});
+  }
+  setTimeout(function(){ relayout('late-120'); }, 120);
+  setTimeout(function(){ relayout('late-800'); }, 800);
+})();
