@@ -72,10 +72,14 @@ function getBattleStatusTopOffsetV99(){
   const isIOS = /iP(hone|ad|od)/.test(ua) || ((navigator.platform || '') === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1);
   const isTouch = (navigator.maxTouchPoints || 0) > 0 || (window.matchMedia && window.matchMedia('(hover:none), (pointer:coarse)').matches);
   const landscape = vw >= vh;
-  // Expo/WKWebView sometimes reports env(safe-area-inset-top)=0 even though the status bar overlays the WebView.
-  // Use a conservative iOS fallback only when no measurable browser safe-area exists.
+  // v100: portrait iPhone/Expo WebView can still draw under the notch even when
+  // env(safe-area-inset-top) and visualViewport.offsetTop report too small.
+  // Force a stronger portrait combat-safe top, but keep landscape almost unchanged.
+  const mobilePortrait = isTouch && !landscape && vw <= 900;
   const iosFallback = (isIOS && isTouch && envTop < 4 && vvTop < 4) ? (landscape ? 18 : 44) : 0;
-  return Math.round(clamp(Math.max(envTop, vvTop, iosFallback), 0, 64));
+  const portraitForce = mobilePortrait ? 72 : 0;
+  const maxCap = mobilePortrait ? 96 : 64;
+  return Math.round(clamp(Math.max(envTop, vvTop, iosFallback, portraitForce), 0, maxCap));
 }
 function syncBattleStatusTopOffsetV99(reason='sync'){
   const px = getBattleStatusTopOffsetV99();
@@ -84,6 +88,7 @@ function syncBattleStatusTopOffsetV99(reason='sync'){
     document.documentElement.style.setProperty('--prd-battle-safe-top', px + 'px');
     document.body && (document.body.dataset.prdStatusTop = String(px));
     window.PRD_STATUS_TOP_OFFSET_V99 = {px, reason, ts:Date.now()};
+    window.PRD_STATUS_TOP_OFFSET_V100 = {px, reason, forcedPortrait: px >= 72, ts:Date.now()};
   }catch(_err){}
   return px;
 }

@@ -20264,3 +20264,26 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #toastLayer{
     top:calc(8px + var(--prd-status-top-offset, 0px)) !important;
   }
 }
+
+
+/* ===== v100-portrait-notch-force-offset =====
+   Portrait-only fallback for iPhone/Expo notch/status bar. The command buttons
+   are intentionally excluded because they live in the bottom command dock. */
+@media (orientation:portrait){
+  body.prd-combat-ui-active:not(.prd-map-ui-active){
+    --prd-status-top-offset: max(env(safe-area-inset-top, 0px), 72px) !important;
+    --prd-battle-safe-top: var(--prd-status-top-offset, 72px) !important;
+  }
+}
+body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active){
+  --prd-status-top-offset: max(env(safe-area-inset-top, 0px), 72px) !important;
+  --prd-battle-safe-top: var(--prd-status-top-offset, 72px) !important;
+}
+body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #mjTopMiniHud{
+  top:calc(12px + var(--prd-status-top-offset, 72px)) !important;
+}
+body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #field .fieldTopControls,
+body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay .fieldTopControls,
+body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls{
+  top:calc(12px + var(--prd-status-top-offset, 72px)) !important;
+}

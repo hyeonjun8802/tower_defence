@@ -4050,8 +4050,14 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
     var ua = navigator.userAgent || '';
     var isIOS = /iP(hone|ad|od)/.test(ua) || ((navigator.platform || '') === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1);
     var isTouch = (navigator.maxTouchPoints || 0) > 0 || (window.matchMedia && window.matchMedia('(hover:none), (pointer:coarse)').matches);
-    var fallback = (isIOS && isTouch && envTop < 4 && vvTop < 4) ? (w >= h ? 18 : 44) : 0;
-    return Math.round(clamp(Math.max(envTop, vvTop, fallback), 0, 64));
+    var landscape = w >= h;
+    // v100: Expo portrait can report safe-area as 0 or too small while still
+    // rendering under the iPhone notch/status bar. Force only portrait combat UI down.
+    var mobilePortrait = !!(isTouch && !landscape && w <= 900);
+    var fallback = (isIOS && isTouch && envTop < 4 && vvTop < 4) ? (landscape ? 18 : 44) : 0;
+    var portraitForce = mobilePortrait ? 72 : 0;
+    var maxCap = mobilePortrait ? 96 : 64;
+    return Math.round(clamp(Math.max(envTop, vvTop, fallback, portraitForce), 0, maxCap));
   }
   function apply(reason){
     var px = compute();
@@ -4062,6 +4068,7 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
     }
     if(document.body) document.body.dataset.prdStatusTop = String(px);
     window.PRD_STATUS_TOP_OFFSET_V99 = {px:px, reason:reason || 'apply', ts:Date.now()};
+    window.PRD_STATUS_TOP_OFFSET_V100 = {px:px, reason:reason || 'apply', forcedPortrait:px >= 72, ts:Date.now()};
     return px;
   }
   function relayout(reason){
