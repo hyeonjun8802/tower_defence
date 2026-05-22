@@ -1323,20 +1323,14 @@ function startSelectedStageFromMap(){
   const gameEl = $('game');
   if(gameEl){
     gameEl.style.display='flex';
-<<<<<<< HEAD
-=======
     // v96: Expo WebView can report the old portrait/landscape size for one frame.
     // Apply the measured visual viewport before the board/canvas reads its rect.
     try{ if(window.PRD_APPLY_EXPO_VIEWPORT_V96) window.PRD_APPLY_EXPO_VIEWPORT_V96('before-stage-start'); }catch(err){ console.warn('v96 viewport pre-sync failed', err); }
->>>>>>> 167d405 (v004)
     // v22: force layout before measuring field/canvas. Without this reflow,
     // some mobile/portrait browsers used the previous screen's rect and the
     // tactical grid appeared about one cell lower than the visible focus area.
     void gameEl.offsetHeight;
-<<<<<<< HEAD
-=======
     void gameEl.getBoundingClientRect();
->>>>>>> 167d405 (v004)
   }
 
   // Board size/orientation is locked when the battle actually starts.
@@ -6319,8 +6313,6 @@ $('summonBtn').onclick=summon;
 $('mergeBtn').onclick=()=>autoMerge();
 $('speedBtn').onclick=()=>{S.speed=S.speed===1?2:S.speed===2?3:1;updateUI()};
 $('pauseBtn').onclick=showNativePauseDialog;
-<<<<<<< HEAD
-=======
 
 /* v96: export direct combat command functions for mobile WebView touch bridges.
    The command buttons live inside closure-owned game logic.  Calling DOM click()
@@ -6340,7 +6332,6 @@ window.PRD_GAME_COMMANDS_V96 = {
     return {speed:S.speed, gold:S.gold, hp:S.hp, active:S.active, paused:S.paused, gameOver:S.gameOver, stage:S.stageNo, wave:S.ogge};
   }
 };
->>>>>>> 167d405 (v004)
 function syncAudioControl(){
   const btn = $('audioBtn');
   if(!btn) return;

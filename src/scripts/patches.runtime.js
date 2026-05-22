@@ -3621,8 +3621,6 @@
   window.addEventListener('resize', scheduleLabelSync, {passive:true});
   window.addEventListener('orientationchange', scheduleLabelSync, {passive:true});
 })();
-<<<<<<< HEAD
-=======
 
 /* ===== v96-expo-viewport-and-real-command-buttons =====
    Full audit result: command touch broke because the real buttons were moved into
@@ -3893,4 +3891,3 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
     return {viewport:p, body:document.body&&document.body.className, combatActive:combatActive(), commands:rows, api:!!window.PRD_GAME_COMMANDS_V96};
   };
 })();
->>>>>>> 167d405 (v004)
