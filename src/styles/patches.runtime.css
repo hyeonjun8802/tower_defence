@@ -20124,3 +20124,99 @@ body.prd-stage-entering #galaxyMap,
 body.prd-stage-entering #menu{
   pointer-events:none !important;
 }
+
+
+/* ===== v97-main-menu-mobile-actions-visible =====
+   Mobile/Expo WebView fix: the main menu card can become a scroll container, so
+   START DEFENSE / TEST MODE / RUN LOG CSV were clipped at the very bottom and
+   taps landed on #menu instead of the real buttons. Keep the action row fixed
+   inside the visible viewport whenever the menu is open. */
+@media (max-width: 768px), (hover: none) and (pointer: coarse){
+  #menu{
+    padding:calc(8px + env(safe-area-inset-top,0px)) 10px calc(8px + env(safe-area-inset-bottom,0px)) !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+    touch-action:manipulation !important;
+  }
+  #menu .card{
+    width:calc(var(--prd-vw, 100vw) - 20px) !important;
+    max-width:calc(var(--prd-vw, 100vw) - 20px) !important;
+    height:calc(var(--prd-vh, 100dvh) - 18px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)) !important;
+    max-height:calc(var(--prd-vh, 100dvh) - 18px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)) !important;
+    overflow:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+    padding:22px 18px calc(202px + env(safe-area-inset-bottom,0px)) !important;
+    box-sizing:border-box !important;
+  }
+  #menu .menuActionRow{
+    position:fixed !important;
+    left:calc(14px + env(safe-area-inset-left,0px)) !important;
+    right:calc(14px + env(safe-area-inset-right,0px)) !important;
+    bottom:calc(10px + env(safe-area-inset-bottom,0px)) !important;
+    z-index:2147483000 !important;
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:8px !important;
+    margin:0 !important;
+    padding:10px !important;
+    border:1px solid rgba(67,215,255,.24) !important;
+    border-radius:20px !important;
+    background:linear-gradient(180deg, rgba(5,13,28,.94), rgba(2,7,16,.98)) !important;
+    box-shadow:0 16px 44px rgba(0,0,0,.42), inset 0 0 0 1px rgba(119,245,255,.05) !important;
+    pointer-events:auto !important;
+    touch-action:manipulation !important;
+    transform:translateZ(0) !important;
+  }
+  #menu .menuActionRow button,
+  #menu #startBtn,
+  #menu #testModeBtn,
+  #menu #runLogBtn{
+    width:100% !important;
+    min-width:0 !important;
+    min-height:46px !important;
+    height:46px !important;
+    padding:0 14px !important;
+    border-radius:15px !important;
+    font-size:13px !important;
+    line-height:1 !important;
+    position:relative !important;
+    z-index:2147483001 !important;
+    pointer-events:auto !important;
+    touch-action:manipulation !important;
+    user-select:none !important;
+    -webkit-user-select:none !important;
+    -webkit-tap-highlight-color:transparent !important;
+  }
+}
+@media (max-height: 520px) and (orientation: landscape){
+  #menu .card{
+    padding:14px 16px calc(70px + env(safe-area-inset-bottom,0px)) !important;
+  }
+  #menu h1{font-size:clamp(18px, 4.8vh, 26px) !important; margin-bottom:3px !important;}
+  #menu .menuSub{font-size:10px !important; margin-bottom:8px !important; letter-spacing:.22em !important;}
+  #menu .card > p{display:none !important;}
+  #menu .menuGrid{grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:8px !important; margin:8px auto 6px !important;}
+  #menu .info,
+  #offlineMenuPanel{border-radius:14px !important; padding:10px 12px !important; min-height:0 !important;}
+  #menu .info .sub,
+  #offlineMenuPanel .offlineMetaStory{display:none !important;}
+  #offlineMenuPanel{margin:0 !important; max-width:none !important;}
+  #offlineMenuPanel .offlineMetaTop{gap:8px !important;}
+  #menu .menuActionRow{
+    grid-template-columns:1.15fr 1fr 1fr !important;
+    left:calc(12px + env(safe-area-inset-left,0px)) !important;
+    right:calc(12px + env(safe-area-inset-right,0px)) !important;
+    bottom:calc(8px + env(safe-area-inset-bottom,0px)) !important;
+    padding:8px !important;
+    gap:8px !important;
+  }
+  #menu .menuActionRow button,
+  #menu #startBtn,
+  #menu #testModeBtn,
+  #menu #runLogBtn{
+    min-height:40px !important;
+    height:40px !important;
+    font-size:12px !important;
+  }
+}

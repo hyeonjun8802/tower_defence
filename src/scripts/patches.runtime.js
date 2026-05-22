@@ -3891,3 +3891,134 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
     return {viewport:p, body:document.body&&document.body.className, combatActive:combatActive(), commands:rows, api:!!window.PRD_GAME_COMMANDS_V96};
   };
 })();
+
+
+/* ===== v97-main-menu-button-hardening =====
+   The menu action row is fixed on mobile. This handler makes the three main
+   buttons work even when Expo WebView dispatches touch events to the menu/card
+   layer instead of to the button node itself. */
+(function(){
+  'use strict';
+  var lastAction = '';
+  var lastAt = 0;
+  function byId(id){ return document.getElementById(id); }
+  function visible(el){
+    if(!el) return false;
+    var st = window.getComputedStyle(el);
+    if(!st || st.display === 'none' || st.visibility === 'hidden' || Number(st.opacity || 1) <= 0.01) return false;
+    var r = el.getBoundingClientRect();
+    return r.width > 1 && r.height > 1;
+  }
+  function menuActive(){ return visible(byId('menu')); }
+  function stop(ev){
+    try{ if(ev && ev.cancelable) ev.preventDefault(); }catch(_e){}
+    try{ if(ev) ev.stopPropagation(); }catch(_e){}
+    try{ if(ev && ev.stopImmediatePropagation) ev.stopImmediatePropagation(); }catch(_e){}
+  }
+  function safe(fn){ try{ return fn(); }catch(e){ console.warn('[v97 menu buttons]', e); } }
+  function setMapUi(){
+    safe(function(){ document.body.classList.add('prd-map-ui-active'); });
+    safe(function(){ document.body.classList.remove('prd-combat-ui-active','prd-stage-entering'); });
+  }
+  function goGalaxy(testMode){
+    setMapUi();
+    if(testMode){
+      safe(function(){ if(typeof loadOfflineMeta === 'function') loadOfflineMeta(); });
+      safe(function(){ if(typeof loadStageMapProgress === 'function') loadStageMapProgress(); });
+      safe(function(){ if(typeof applyTestModeOverrides === 'function') applyTestModeOverrides(); });
+      safe(function(){ if(typeof renderOfflineMetaPanel === 'function') renderOfflineMetaPanel(); });
+    }else{
+      safe(function(){ if(typeof setTestModeEnabled === 'function') setTestModeEnabled(false); });
+      safe(function(){ if(typeof loadOfflineMeta === 'function') loadOfflineMeta(); });
+      safe(function(){ if(typeof loadStageMapProgress === 'function') loadStageMapProgress(); });
+    }
+    safe(function(){ if(typeof bindGalaxyMapClean === 'function') bindGalaxyMapClean(); });
+    if(typeof showGalaxyMapClean === 'function'){
+      safe(function(){ showGalaxyMapClean(); });
+    }else{
+      var menu = byId('menu'), galaxy = byId('galaxyMap'), stage = byId('stageMap'), game = byId('game');
+      if(menu) menu.style.display = 'none';
+      if(stage) stage.style.display = 'none';
+      if(game) game.style.display = 'none';
+      if(galaxy) galaxy.style.display = 'block';
+    }
+    if(testMode){
+      safe(function(){ if(typeof toast === 'function') toast('TEST MODE 활성화 — 모든 성역과 기본 타워가 해금되었습니다'); });
+      setTimeout(function(){ safe(function(){ if(typeof renderStageMap === 'function' && byId('stageMap') && byId('stageMap').style.display !== 'none') renderStageMap(); }); }, 80);
+    }
+  }
+  function runLog(){
+    if(typeof showBattleLogSummary === 'function'){
+      safe(function(){ showBattleLogSummary(); });
+      return;
+    }
+    var btn = byId('runLogBtn');
+    if(btn && typeof btn.onclick === 'function') safe(function(){ btn.onclick.call(btn); });
+    else safe(function(){ if(typeof toast === 'function') toast('아직 저장된 전투 로그가 없습니다'); });
+  }
+  function execute(action, ev){
+    var now = Date.now();
+    if(action === lastAction && now - lastAt < 350){ stop(ev); return false; }
+    lastAction = action; lastAt = now;
+    stop(ev);
+    if(action === 'start') goGalaxy(false);
+    else if(action === 'test') goGalaxy(true);
+    else if(action === 'log') runLog();
+    return false;
+  }
+  function getActionFromNode(node){
+    if(!node || !node.closest) return '';
+    if(node.closest('#startBtn')) return 'start';
+    if(node.closest('#testModeBtn')) return 'test';
+    if(node.closest('#runLogBtn')) return 'log';
+    return '';
+  }
+  function point(ev){
+    var t = ev && ev.touches && ev.touches[0] ? ev.touches[0] : (ev && ev.changedTouches && ev.changedTouches[0] ? ev.changedTouches[0] : ev);
+    if(!t) return null;
+    return {x:Number(t.clientX || 0), y:Number(t.clientY || 0)};
+  }
+  function actionFromPoint(p){
+    if(!p) return '';
+    var pairs = [['start',byId('startBtn')],['test',byId('testModeBtn')],['log',byId('runLogBtn')]];
+    for(var i=0;i<pairs.length;i++){
+      var el = pairs[i][1];
+      if(!visible(el)) continue;
+      var r = el.getBoundingClientRect();
+      var pad = Math.max(8, Math.min(18, r.height * .25));
+      if(p.x >= r.left - pad && p.x <= r.right + pad && p.y >= r.top - pad && p.y <= r.bottom + pad) return pairs[i][0];
+    }
+    return '';
+  }
+  function capture(ev){
+    if(!menuActive()) return;
+    var action = getActionFromNode(ev.target) || actionFromPoint(point(ev));
+    if(!action) return;
+    execute(action, ev);
+  }
+  function bindDirect(){
+    [['startBtn','start'],['testModeBtn','test'],['runLogBtn','log']].forEach(function(pair){
+      var el = byId(pair[0]);
+      if(!el || el.dataset.v97MenuBound === '1') return;
+      el.dataset.v97MenuBound = '1';
+      el.setAttribute('type','button');
+      el.style.pointerEvents = 'auto';
+      ['pointerup','touchend','click'].forEach(function(type){
+        el.addEventListener(type, function(ev){ execute(pair[1], ev); }, {capture:true, passive:false});
+      });
+    });
+  }
+  function boot(){ bindDirect(); }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, {once:true}); else boot();
+  window.addEventListener('load', boot, {once:true});
+  setTimeout(boot, 80); setTimeout(boot, 500); setInterval(boot, 1000);
+  ['pointerup','touchend','click'].forEach(function(type){
+    window.addEventListener(type, capture, {capture:true, passive:false});
+  });
+  window.PRD_MENU_BUTTON_AUDIT_V97 = function(){
+    return ['startBtn','testModeBtn','runLogBtn'].map(function(id){
+      var el = byId(id), r = el && el.getBoundingClientRect(), st = el && getComputedStyle(el);
+      return {id:id, exists:!!el, visible:visible(el), rect:r?{left:r.left,top:r.top,width:r.width,height:r.height}:null, pointerEvents:st&&st.pointerEvents, display:st&&st.display, menuActive:menuActive()};
+    });
+  };
+})();
