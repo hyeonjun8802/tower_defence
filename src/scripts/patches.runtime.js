@@ -3621,3 +3621,276 @@
   window.addEventListener('resize', scheduleLabelSync, {passive:true});
   window.addEventListener('orientationchange', scheduleLabelSync, {passive:true});
 })();
+<<<<<<< HEAD
+=======
+
+/* ===== v96-expo-viewport-and-real-command-buttons =====
+   Full audit result: command touch broke because the real buttons were moved into
+   #combatHudCommands and then hidden offscreen by v37; visible proxy buttons were
+   separate DOM nodes, so Expo WebView hit-testing could route taps to canvas while
+   document-capture guards swallowed the original command buttons.  v96 disables
+   the proxy/hitbox route, shows the real buttons, and handles touches at window
+   capture before v37 can redirect them. */
+(function(){
+  'use strict';
+  if(window.PRD_V96_EXPO_REAL_COMMANDS) return;
+  window.PRD_V96_EXPO_REAL_COMMANDS = true;
+
+  var COMMANDS = [
+    {action:'summon', id:'summonBtn', label:'소환'},
+    {action:'merge',  id:'mergeBtn',  label:'합치기'},
+    {action:'speed',  id:'speedBtn',  label:'배속'},
+    {action:'pause',  id:'pauseBtn',  label:'정지'}
+  ];
+  var lastAction = '';
+  var lastAt = 0;
+  var raf = 0;
+
+  function byId(id){ return document.getElementById(id); }
+  function safe(fn, fallback){ try{ return fn(); }catch(err){ console.warn('[v96]', err); return fallback; } }
+  function getStyle(el){ return el && window.getComputedStyle ? getComputedStyle(el) : null; }
+  function rect(el){ return safe(function(){ return el && el.getBoundingClientRect ? el.getBoundingClientRect() : null; }, null); }
+  function point(ev){
+    var t = ev && ev.touches && ev.touches.length ? ev.touches[0] : (ev && ev.changedTouches && ev.changedTouches.length ? ev.changedTouches[0] : ev);
+    if(!t || typeof t.clientX !== 'number' || typeof t.clientY !== 'number') return null;
+    return {x:t.clientX, y:t.clientY};
+  }
+  function visible(el){
+    if(!el) return false;
+    var st = getStyle(el);
+    if(st && (st.display === 'none' || st.visibility === 'hidden' || Number(st.opacity) === 0)) return false;
+    var r = rect(el);
+    var vw = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 0);
+    var vh = Math.max(1, window.innerHeight || document.documentElement.clientHeight || 0);
+    return !!(r && r.width > 6 && r.height > 6 && r.right > 0 && r.bottom > 0 && r.left < vw && r.top < vh);
+  }
+  function inside(r, p, pad){
+    if(!r || !p) return false;
+    pad = Number(pad || 0);
+    return p.x >= r.left - pad && p.x <= r.right + pad && p.y >= r.top - pad && p.y <= r.bottom + pad;
+  }
+  function combatActive(){
+    var body = document.body;
+    if(!body || !body.classList) return false;
+    if(body.classList.contains('prd-map-ui-active')) return false;
+    if(body.classList.contains('native-pause-open') || body.classList.contains('prd-pause-v29-open') || body.classList.contains('prd-pause-menu-open')) return false;
+    // Trust the combat class first.  Some mobile WebViews keep the previous map
+    // element measurable behind the game for one frame, so checking stageMap/
+    // galaxyMap visibility here can incorrectly disable command taps.
+    if(body.classList.contains('prd-combat-ui-active')) return true;
+    return visible(byId('game')) && visible(byId('field'));
+  }
+  function readViewport(){
+    var root = document.documentElement || document.body;
+    var vv = window.visualViewport || null;
+    var w = Math.round((vv && vv.width) || window.innerWidth || (root && root.clientWidth) || 748);
+    var h = Math.round((vv && vv.height) || window.innerHeight || (root && root.clientHeight) || 708);
+    if((!w || !h || w < 120 || h < 120) && window.screen){
+      w = Math.round(window.screen.width || w || 748);
+      h = Math.round(window.screen.height || h || 708);
+    }
+    w = Math.max(320, w || 748);
+    h = Math.max(320, h || 708);
+    return {w:w, h:h, landscape:w >= h};
+  }
+  function applyViewport(reason){
+    var vp = readViewport();
+    window.PRD_EXPO_VIEWPORT_V96 = {w:vp.w, h:vp.h, landscape:vp.landscape, reason:reason || 'apply', ts:Date.now()};
+    var root = document.documentElement;
+    var body = document.body;
+    if(root){
+      root.style.setProperty('--prd-vw', vp.w + 'px');
+      root.style.setProperty('--prd-vh', vp.h + 'px');
+      root.style.setProperty('--prd-app-w', vp.w + 'px');
+      root.style.setProperty('--prd-app-h', vp.h + 'px');
+    }
+    if(body && body.classList){
+      body.classList.toggle('prd-vp-landscape', !!vp.landscape);
+      body.classList.toggle('prd-vp-portrait', !vp.landscape);
+      body.dataset.prdViewport = vp.landscape ? 'landscape' : 'portrait';
+    }
+    return vp;
+  }
+  function scheduleViewport(reason){
+    if(raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(function(){
+      raf = 0;
+      applyViewport(reason || 'raf');
+      if(combatActive() && window.PRD_GAME_COMMANDS_V96 && typeof window.PRD_GAME_COMMANDS_V96.relayout === 'function'){
+        setTimeout(function(){ window.PRD_GAME_COMMANDS_V96.relayout('v96-' + (reason || 'viewport')); }, 0);
+      }
+    });
+  }
+  window.PRD_APPLY_EXPO_VIEWPORT_V96 = function(reason){
+    var vp = applyViewport(reason || 'manual');
+    scheduleViewport(reason || 'manual');
+    return vp;
+  };
+
+  function injectCss(){
+    if(byId('v96-real-command-buttons-css')) return;
+    var st = document.createElement('style');
+    st.id = 'v96-real-command-buttons-css';
+    st.textContent = `
+/* v96 final command source of truth: hide proxy docks and use real buttons. */
+#combatHudCommandsLandscapeDock,
+#combatHudCommandsPortraitDock,
+#prdCommandHitboxLayerV95{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions .row,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions .row3,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
+  opacity:1!important;visibility:visible!important;pointer-events:auto!important;clip-path:none!important;filter:none!important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
+  position:fixed!important;left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;
+  width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;
+  margin:0!important;padding:0!important;overflow:visible!important;z-index:2147483200!important;transform:none!important;
+  display:block!important;background:transparent!important;border:0!important;box-shadow:none!important;contain:none!important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+  position:relative!important;left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;
+  width:100%!important;height:auto!important;margin:0!important;box-sizing:border-box!important;
+  display:grid!important;background:linear-gradient(180deg,rgba(15,23,42,.58),rgba(2,6,23,.78))!important;
+  border:1px solid rgba(103,232,249,.18)!important;box-shadow:0 14px 40px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.035)!important;
+  backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions .row,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions .row3{display:contents!important;margin:0!important;padding:0!important;}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn{
+  display:block!important;position:relative!important;left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;
+  width:100%!important;min-width:0!important;max-width:none!important;margin:0!important;padding:0 8px!important;
+  border-radius:15px!important;border:1px solid rgba(103,232,249,.24)!important;background:linear-gradient(180deg,rgba(15,23,42,.94),rgba(2,6,23,.98))!important;
+  color:#f8fafc!important;font-weight:900!important;text-align:center!important;letter-spacing:-.02em!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)!important;touch-action:manipulation!important;-webkit-tap-highlight-color:rgba(103,232,249,.18)!important;user-select:none!important;-webkit-user-select:none!important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn{border-color:rgba(251,191,36,.42)!important;color:#fff7ed!important;}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button:active{transform:translateY(1px) scale(.985)!important;}
+@media (orientation:landscape){body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{right:calc(8px + env(safe-area-inset-right,0px))!important;bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;width:clamp(92px,10vw,120px)!important;}}
+body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{right:calc(8px + env(safe-area-inset-right,0px))!important;bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;width:clamp(92px,10vw,120px)!important;}
+body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{grid-template-columns:1fr!important;gap:7px!important;padding:8px!important;border-radius:20px!important;}
+body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{height:clamp(32px,7vh,44px)!important;min-height:32px!important;max-height:44px!important;font-size:clamp(8px,1.18vw,11px)!important;}
+body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{left:50%!important;right:auto!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;transform:translateX(-50%)!important;width:min(680px,calc(var(--prd-vw,100vw) - 12px))!important;}
+body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{grid-template-columns:1fr 1fr!important;gap:8px!important;padding:8px calc(8px + env(safe-area-inset-right,0px)) 8px calc(8px + env(safe-area-inset-left,0px))!important;border-radius:18px!important;}
+body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{height:clamp(38px,5.4vh,48px)!important;min-height:38px!important;max-height:48px!important;font-size:clamp(8px,2.35vw,11px)!important;}
+body:not(.prd-combat-ui-active) #combatHudCommands,
+body.prd-map-ui-active #combatHudCommands{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important;}
+
+/* v96 Expo viewport lock: battle screen must fill the actual visual viewport. */
+html,body{width:var(--prd-vw,100vw)!important;height:var(--prd-vh,100dvh)!important;overflow:hidden!important;overscroll-behavior:none!important;}
+#wrap{position:fixed!important;inset:0!important;width:var(--prd-vw,100vw)!important;height:var(--prd-vh,100dvh)!important;margin:0!important;padding:0!important;overflow:hidden!important;}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #game{position:fixed!important;inset:0!important;width:var(--prd-vw,100vw)!important;height:var(--prd-vh,100dvh)!important;display:flex!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;background:#020617!important;box-shadow:none!important;}
+body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #game{flex-direction:row!important;}
+body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #game{flex-direction:column!important;}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #field{position:relative!important;flex:1 1 auto!important;width:var(--prd-vw,100vw)!important;height:var(--prd-vh,100dvh)!important;min-width:var(--prd-vw,100vw)!important;min-height:var(--prd-vh,100dvh)!important;max-width:var(--prd-vw,100vw)!important;max-height:var(--prd-vh,100dvh)!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;transform:none!important;}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #canvas{display:block!important;width:var(--prd-vw,100vw)!important;height:var(--prd-vh,100dvh)!important;min-width:var(--prd-vw,100vw)!important;min-height:var(--prd-vh,100dvh)!important;max-width:var(--prd-vw,100vw)!important;max-height:var(--prd-vh,100dvh)!important;object-fit:fill!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;touch-action:none!important;}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #side,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #side.battleMinimal{position:fixed!important;left:0!important;top:0!important;width:0!important;height:0!important;min-width:0!important;min-height:0!important;max-width:0!important;max-height:0!important;overflow:visible!important;pointer-events:none!important;background:transparent!important;margin:0!important;padding:0!important;border:0!important;}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;pointer-events:none!important;z-index:70!important;}
+`;
+    (document.head || document.documentElement).appendChild(st);
+  }
+
+  function commandFromPoint(p){
+    if(!p) return null;
+    // Prefer real buttons.  Proxy docks are intentionally hidden by v96, but keep
+    // them as fallback while the DOM is still settling during the first frame.
+    var selectors = [
+      ['summon','#summonBtn,#hudProxy_landscape_summon,#hudProxy_portrait_summon,[data-action="summon"]'],
+      ['merge', '#mergeBtn,#hudProxy_landscape_merge,#hudProxy_portrait_merge,[data-action="merge"]'],
+      ['speed', '#speedBtn,#hudProxy_landscape_speed,#hudProxy_portrait_speed,[data-action="speed"]'],
+      ['pause', '#pauseBtn,#hudProxy_landscape_pause,#hudProxy_portrait_pause,[data-action="pause"]']
+    ];
+    for(var i=0;i<selectors.length;i++){
+      var action = selectors[i][0];
+      var nodes = [];
+      try{ nodes = Array.prototype.slice.call(document.querySelectorAll(selectors[i][1])); }catch(_e){}
+      for(var j=nodes.length-1;j>=0;j--){
+        var el = nodes[j];
+        if(!visible(el)) continue;
+        if(inside(rect(el), p, Math.max(6, Math.min(12, (rect(el).height || 40) * .18)))) return {action:action, el:el};
+      }
+    }
+    return null;
+  }
+  function stop(ev){
+    safe(function(){ if(ev && ev.cancelable) ev.preventDefault(); });
+    safe(function(){ if(ev) ev.stopPropagation(); });
+    safe(function(){ if(ev && ev.stopImmediatePropagation) ev.stopImmediatePropagation(); });
+  }
+  function runCommand(action, ev){
+    var now = Date.now();
+    if(action === lastAction && now - lastAt < 210){ stop(ev); return false; }
+    lastAction = action;
+    lastAt = now;
+    stop(ev);
+    var api = window.PRD_GAME_COMMANDS_V96;
+    if(api && typeof api[action] === 'function'){
+      api[action](action === 'pause' ? (ev || null) : undefined);
+    }else{
+      var id = COMMANDS.find(function(c){ return c.action === action; })?.id;
+      var btn = id ? byId(id) : null;
+      if(btn && typeof btn.onclick === 'function') btn.onclick.call(btn);
+    }
+    safe(function(){ window.dispatchEvent(new Event('prd-command-sync')); });
+    return false;
+  }
+  function captureCommand(ev){
+    if(!combatActive()) return;
+    var hit = commandFromPoint(point(ev));
+    if(!hit) return;
+    runCommand(hit.action, ev);
+  }
+  function bindRealButtons(){
+    COMMANDS.forEach(function(cmd){
+      var btn = byId(cmd.id);
+      if(!btn || btn.dataset.v96Bound === '1') return;
+      btn.dataset.v96Bound = '1';
+      btn.setAttribute('aria-label', cmd.label);
+      btn.setAttribute('title', cmd.label);
+      ['pointerdown','touchstart','mousedown','click'].forEach(function(type){
+        btn.addEventListener(type, function(ev){ runCommand(cmd.action, ev); }, {capture:true, passive:false});
+      });
+    });
+  }
+  function boot(){
+    injectCss();
+    applyViewport('boot');
+    bindRealButtons();
+    scheduleViewport('boot');
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, {once:true});
+  else boot();
+  window.addEventListener('load', boot, {once:true});
+  ['pointerdown','touchstart','mousedown','click'].forEach(function(type){
+    window.addEventListener(type, captureCommand, {capture:true, passive:false});
+  });
+  ['resize','orientationchange','pageshow'].forEach(function(type){
+    window.addEventListener(type, function(){ scheduleViewport(type); setTimeout(function(){ scheduleViewport(type + '-late'); }, 220); }, {passive:true});
+  });
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', function(){ scheduleViewport('visualViewport-resize'); }, {passive:true});
+    window.visualViewport.addEventListener('scroll', function(){ scheduleViewport('visualViewport-scroll'); }, {passive:true});
+  }
+  document.addEventListener('visibilitychange', function(){ scheduleViewport('visibilitychange'); }, {passive:true});
+  setTimeout(boot, 120);
+  setTimeout(boot, 600);
+  setInterval(function(){ bindRealButtons(); if(combatActive()) applyViewport('interval'); }, 500);
+
+  window.PRD_COMMAND_AUDIT_V96 = function(){
+    var p = readViewport();
+    var rows = COMMANDS.map(function(c){
+      var el = byId(c.id);
+      var r = rect(el);
+      var st = getStyle(el);
+      return {action:c.action, exists:!!el, visible:visible(el), display:st&&st.display, visibility:st&&st.visibility, opacity:st&&st.opacity, pointerEvents:st&&st.pointerEvents, rect:r?{left:r.left,top:r.top,width:r.width,height:r.height}:null, onclick:!!(el&&typeof el.onclick==='function')};
+    });
+    return {viewport:p, body:document.body&&document.body.className, combatActive:combatActive(), commands:rows, api:!!window.PRD_GAME_COMMANDS_V96};
+  };
+})();
+>>>>>>> 167d405 (v004)

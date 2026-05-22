@@ -332,6 +332,7 @@
 <script src="src/scripts/map-hud-recovery.v83.js"></script>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 function buildStarfield(w, h){
   starField.stars = [];
   STAR_LAYER_CONFIG.forEach((layer, layerIndex) => {
@@ -10221,6 +10222,8 @@ window.addEventListener('DOMContentLoaded', () => {
 </script>
 =======
 >>>>>>> 6585224 (v004)
+=======
+>>>>>>> 167d405 (v004)
 
 <!-- moved invalid trailing patches into body for HTML stability -->
 
@@ -10341,6 +10344,7 @@ window.addEventListener('DOMContentLoaded', () => {
 <!-- v76: production progress manifest + deterministic stage unlock fix.
      Test/debug unlock code is gated behind explicit test mode and normal stage progression is derived
      from saved clear records every time the map renders or a run ends. -->
+<<<<<<< HEAD
 
 
 <!-- v78: final stage unlock + visible enter label sync.
@@ -10449,238 +10453,15 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock
 })();
 </script>
 
+=======
+>>>>>>> 167d405 (v004)
 
 
 <!-- v78: final stage unlock + visible enter label sync.
      Fixes the remaining case where the map state was open but the visible v274 dock still showed
      ENTER SANCTUARY 1, and hardens clear persistence if an older wrapper marks S.runEnded before
      recordOfflineRunEnd can write META.clears. -->
-<script id="v78-stage-unlock-and-enter-label-final-fix">
-(function(){
-  'use strict';
-  var META_KEY='planetRiftOfflineMetaV2';
-  var PROGRESS_KEY='planetRiftStageProgressV3';
-  var lastRepair=0;
-  function safe(fn, fallback){ try{return fn();}catch(err){ console.warn('[v78 stage unlock]', err); return fallback; } }
-  function maxStage(){ return safe(function(){ return Array.isArray(STAGE_MAP_DEFS) ? STAGE_MAP_DEFS.length : 12; }, 12) || 12; }
-  function clampStage(v){ var n=Math.floor(Number(v)||1); return Math.max(1, Math.min(maxStage(), n)); }
-  function byId(id){ return document.getElementById(id); }
-  function readJson(key, fallback){ return safe(function(){ var raw=localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }, fallback); }
-  function writeJson(key, value){ safe(function(){ localStorage.setItem(key, JSON.stringify(value)); }); }
-  function getMeta(){
-    if(typeof META !== 'undefined' && META){
-      if(!META.clears || typeof META.clears !== 'object') META.clears={};
-      if(!META.story || typeof META.story !== 'object') META.story={};
-      if(!Array.isArray(META.unlockedTowers)) META.unlockedTowers=[2,5];
-      return META;
-    }
-    var stored=readJson(META_KEY, null) || {saveVersion:2,shards:0,totalClears:0,totalDefeats:0,bestWave:{},clears:{},story:{},upgrades:{},mastery:{},flags:{},settings:{},unlockedTowers:[2,5]};
-    if(!stored.clears || typeof stored.clears !== 'object') stored.clears={};
-    return stored;
-  }
-  function saveMeta(meta){
-    safe(function(){ if(typeof saveOfflineMeta === 'function' && typeof META !== 'undefined' && META === meta) saveOfflineMeta(); else writeJson(META_KEY, meta); });
-    writeJson(META_KEY, meta);
-  }
-  function testMode(){ return safe(function(){ return !!(TEST_MODE_CONFIG && TEST_MODE_CONFIG.enabled); }, false); }
-  function deriveUnlocked(meta){
-    if(testMode()) return maxStage();
-    meta=meta || getMeta();
-    var unlocked=1;
-    Object.keys(meta.clears || {}).forEach(function(k){
-      var st=clampStage(k);
-      if(Number(meta.clears[k] || 0) > 0) unlocked=Math.max(unlocked, Math.min(maxStage(), st+1));
-    });
-    var saved=readJson(PROGRESS_KEY, null);
-    if(saved && Number(saved.unlocked)) unlocked=Math.max(unlocked, clampStage(saved.unlocked));
-    return clampStage(unlocked);
-  }
-  function ensureTowerRewards(meta){
-    meta=meta || getMeta();
-    var set=new Set(Array.isArray(meta.unlockedTowers) ? meta.unlockedTowers.map(Number) : [2,5]);
-    safe(function(){
-      Object.keys(meta.clears || {}).forEach(function(k){
-        if(Number(meta.clears[k] || 0) <= 0) return;
-        var reward = typeof stageTowerReward === 'function' ? stageTowerReward(Number(k)) : null;
-        if(reward && Number.isFinite(Number(reward.type))) set.add(Number(reward.type));
-      });
-    });
-    meta.unlockedTowers=Array.from(set).filter(function(v){ return Number.isInteger(Number(v)); }).sort(function(a,b){return a-b;});
-  }
-  function selectedStage(){
-    var st=safe(function(){ return StageMapState && StageMapState.selected; }, null);
-    if(!st){
-      var map=byId('stageMap');
-      st=map && map.dataset ? map.dataset.selected : null;
-    }
-    if(!st){
-      var active=document.querySelector('#stageMap .stageNode.active');
-      st=active && active.dataset ? active.dataset.stage : 1;
-    }
-    return clampStage(st || 1);
-  }
-  function setStageStateFromProgress(selectStage, currentStage, allowLocked){
-    var meta=getMeta();
-    ensureTowerRewards(meta);
-    var unlocked=deriveUnlocked(meta);
-    var selected=clampStage(selectStage || selectedStage() || unlocked);
-    if(!allowLocked && selected>unlocked) selected=unlocked;
-    var current=clampStage(currentStage || selected);
-    safe(function(){
-      if(typeof StageMapState !== 'undefined' && StageMapState){
-        StageMapState.unlocked=unlocked;
-        StageMapState.selected=selected;
-        StageMapState.current=current;
-      }
-    });
-    writeJson(PROGRESS_KEY,{saveVersion:2,unlocked:unlocked,selected:selected,current:current});
-    saveMeta(meta);
-    return {unlocked:unlocked, selected:selected, current:current};
-  }
-  function repairAfterClear(stageNo, opts){
-    opts=opts || {};
-    var st=clampStage(stageNo || safe(function(){ return S && S.stageNo; }, 1));
-    if(testMode()){
-      return setStageStateFromProgress(opts.selectStage || st, opts.currentStage || st, true);
-    }
-    var meta=getMeta();
-    var key=String(st);
-    var before=Number(meta.clears[key] || 0);
-    if(opts.recordClear !== false && before <= 0){
-      meta.clears[key]=1;
-      meta.totalClears=Math.max(Number(meta.totalClears || 0), 0)+1;
-      meta.story[key + '_clear']=true;
-    }
-    ensureTowerRewards(meta);
-    saveMeta(meta);
-    var next=Math.min(maxStage(), st+1);
-    return setStageStateFromProgress(opts.selectStage || next, opts.currentStage || next, true);
-  }
-  function applyDomUnlock(){
-    var state=setStageStateFromProgress(selectedStage(), selectedStage(), true);
-    var map=byId('stageMap');
-    if(map){ map.dataset.unlocked=String(state.unlocked); map.dataset.selected=String(state.selected); }
-    document.querySelectorAll('#stageMap .stageNode').forEach(function(node){
-      var st=clampStage(node.dataset && node.dataset.stage || 1);
-      var open=st<=state.unlocked;
-      var active=st===state.selected;
-      node.classList.toggle('locked', !open);
-      node.classList.toggle('unlocked', open);
-      node.classList.toggle('active', active);
-      node.setAttribute('aria-disabled', open ? 'false' : 'true');
-      var lock=node.querySelector('.nodeLock');
-      if(lock) lock.style.display=open?'none':'block';
-    });
-    return state;
-  }
-  function stageName(st){
-    var def=safe(function(){ return typeof getStageDef === 'function' ? getStageDef(st) : null; }, null);
-    return def && def.name ? def.name : ('SANCTUARY ' + st);
-  }
-  function updateVisibleEnterLabel(){
-    var state=applyDomUnlock();
-    var st=state.selected;
-    var open=testMode() || st<=state.unlocked;
-    var label=open ? ('ENTER SANCTUARY ' + st) : ('LOCKED · SANCTUARY ' + st);
-    var original=byId('stageEnterBtn');
-    if(original){
-      original.textContent=label;
-      original.disabled=!open;
-      original.classList.toggle('locked', !open);
-    }
-    var dock=byId('v274StageEnterBtn');
-    if(dock){
-      dock.textContent=label;
-      dock.disabled=!open;
-      dock.classList.toggle('locked', !open);
-      dock.setAttribute('aria-disabled', open ? 'false' : 'true');
-    }
-    var popupEnter=byId('v274MapInfoEnterBtn');
-    var overlay=byId('v274MapInfoOverlay');
-    if(popupEnter && overlay && overlay.dataset.kind==='stage') popupEnter.textContent=label;
-    var hint=byId('stageProgressSub');
-    if(hint){
-      var name=stageName(st);
-      hint.textContent=(open?'선택됨':'미개방 미리보기') + ' · ' + st + '. ' + name;
-    }
-    return state;
-  }
-  function scheduleLabelSync(){
-    setTimeout(updateVisibleEnterLabel, 0);
-    setTimeout(updateVisibleEnterLabel, 80);
-    setTimeout(updateVisibleEnterLabel, 240);
-  }
 
-  var oldRecord = typeof recordOfflineRunEnd === 'function' ? recordOfflineRunEnd : null;
-  if(oldRecord && !oldRecord.__v78FinalUnlock){
-    var wrappedRecord=function(cleared, stageNoOverride){
-      var st=clampStage(stageNoOverride || safe(function(){ return S && S.stageNo; }, null) || safe(function(){ return StageMapState && StageMapState.current; }, 1));
-      var ret=oldRecord.apply(this, arguments);
-      if(cleared){
-        repairAfterClear(st, {recordClear:true, selectStage:Math.min(maxStage(), st+1), currentStage:Math.min(maxStage(), st+1)});
-        scheduleLabelSync();
-      }
-      return ret;
-    };
-    wrappedRecord.__v78FinalUnlock=true;
-    recordOfflineRunEnd=wrappedRecord;
-    try{ window.recordOfflineRunEnd=wrappedRecord; }catch(_){ }
-  }
-
-  var oldComplete = typeof completeStageFromBattle === 'function' ? completeStageFromBattle : null;
-  if(oldComplete && !oldComplete.__v78FinalUnlock){
-    var wrappedComplete=function(){
-      var st=clampStage(safe(function(){ return S && S.stageNo; }, null) || safe(function(){ return StageMapState && StageMapState.current; }, 1));
-      var ret=oldComplete.apply(this, arguments);
-      repairAfterClear(st, {recordClear:true, selectStage:Math.min(maxStage(), st+1), currentStage:Math.min(maxStage(), st+1)});
-      scheduleLabelSync();
-      setTimeout(function(){ repairAfterClear(st,{recordClear:true,selectStage:Math.min(maxStage(),st+1),currentStage:Math.min(maxStage(),st+1)}); if(typeof renderStageMap === 'function' && byId('stageMap') && byId('stageMap').style.display!=='none') renderStageMap(); scheduleLabelSync(); }, 120);
-      setTimeout(function(){ repairAfterClear(st,{recordClear:true,selectStage:Math.min(maxStage(),st+1),currentStage:Math.min(maxStage(),st+1)}); scheduleLabelSync(); }, 520);
-      return ret;
-    };
-    wrappedComplete.__v78FinalUnlock=true;
-    completeStageFromBattle=wrappedComplete;
-    try{ window.completeStageFromBattle=wrappedComplete; }catch(_){ }
-  }
-
-  var oldRender = typeof renderStageMap === 'function' ? renderStageMap : null;
-  if(oldRender && !oldRender.__v78LabelSync){
-    var wrappedRender=function(){
-      var ret=oldRender.apply(this, arguments);
-      scheduleLabelSync();
-      return ret;
-    };
-    wrappedRender.__v78LabelSync=true;
-    renderStageMap=wrappedRender;
-    try{ window.renderStageMap=wrappedRender; }catch(_){ }
-  }
-
-  document.addEventListener('click', function(e){
-    if(e.target && e.target.closest && e.target.closest('#stageMap .stageNode')) scheduleLabelSync();
-    if(e.target && e.target.closest && e.target.closest('#v274StageEnterBtn')){
-      updateVisibleEnterLabel();
-    }
-  }, true);
-  document.addEventListener('pointerup', function(e){
-    if(e.target && e.target.closest && e.target.closest('#stageMap .stageNode')) scheduleLabelSync();
-  }, true);
-  var observer=safe(function(){ return new MutationObserver(function(){
-    var now=Date.now();
-    if(now-lastRepair<80) return;
-    lastRepair=now;
-    scheduleLabelSync();
-  }); }, null);
-  if(observer){
-    var target=byId('stageMap') || document.body;
-    observer.observe(target,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-selected','data-unlocked','style']});
-  }
-  window.PRD_STAGE_UNLOCK_V78={repairAfterClear:repairAfterClear, updateVisibleEnterLabel:updateVisibleEnterLabel, applyDomUnlock:applyDomUnlock};
-  scheduleLabelSync();
-  window.addEventListener('load', scheduleLabelSync, {once:true});
-  window.addEventListener('resize', scheduleLabelSync, {passive:true});
-  window.addEventListener('orientationchange', scheduleLabelSync, {passive:true});
-})();
-</script>
 
 </body>
 </html>
