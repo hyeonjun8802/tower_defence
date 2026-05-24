@@ -287,7 +287,7 @@
   window.addEventListener('load', init, {once:true});
   setTimeout(init, 200);
   setTimeout(init, 1000);
-  setInterval(syncProxyButtons, 1000);
+  setInterval(function(){ if(!document.hidden) syncProxyButtons(); }, 1200);
 })();
 
 /* ===== v214-top-hud-proportional-edge-layout-script ===== */
@@ -660,12 +660,18 @@
 
   try{
     var mo = new MutationObserver(schedule);
-    mo.observe(document.documentElement, {childList:true, subtree:true, characterData:true});
+    ['combatHudCommands','combatHudCommandsLandscapeDock','combatHudCommandsPortraitDock'].forEach(function(id){
+      var root=document.getElementById(id);
+      if(root) mo.observe(root, {childList:true, subtree:true, attributes:true, attributeFilter:['class','style','data-label']});
+    });
   }catch(_e){}
 
   setTimeout(schedule, 100);
   setTimeout(schedule, 500);
-  setInterval(applyShortLandscapeLabels, 250);
+  setInterval(function(){
+    var game=document.getElementById('game');
+    if(game && getComputedStyle(game).display !== 'none') applyShortLandscapeLabels();
+  }, 1000);
 })();
 
 /* ===== v37-original-command-hitbox-fix-script ===== */
@@ -1466,7 +1472,7 @@
     setTimeout(autoStart, 120);
     setTimeout(autoStart, 700);
     setTimeout(recover, 1600);
-    setInterval(recover, 500);
+    setInterval(function(){ if(!document.hidden) recover(); }, 1500);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind, {once:true});
   else bind();
@@ -2587,7 +2593,7 @@
   window.addEventListener('orientationchange', function(){ setTimeout(sync, 120); }, {passive:true});
   document.addEventListener('click', function(){ setTimeout(sync, 0); setTimeout(sync, 160); }, true);
   document.addEventListener('keyup', function(){ setTimeout(sync, 0); }, true);
-  setInterval(sync, 350);
+  setInterval(function(){ if(!document.hidden) sync(); }, 900);
 })();
 
 /* ===== v241-top-right-controls-and-hud-margin-final-script ===== */
@@ -2613,7 +2619,7 @@
   setTimeout(keepControlsOnTop, 80);
   setTimeout(keepControlsOnTop, 400);
   setTimeout(keepControlsOnTop, 1300);
-  setInterval(keepControlsOnTop, 900);
+  setInterval(function(){ if(!document.hidden) keepControlsOnTop(); }, 1800);
 })();
 
 /* ===== v242-armory-orientation-mode-script ===== */
@@ -3392,7 +3398,7 @@
   });
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sync, {once:true}); else sync();
   window.addEventListener('load', function(){ sync(); setTimeout(sync,180); setTimeout(sync,700); }, {once:true});
-  setInterval(sync, 500);
+  setInterval(function(){ if(!document.hidden) sync(); }, 1000);
   window.PRD_SYNC_MAP_BATTLE_HUD_V77 = sync;
 })();
 
@@ -3878,7 +3884,7 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
   document.addEventListener('visibilitychange', function(){ scheduleViewport('visibilitychange'); }, {passive:true});
   setTimeout(boot, 120);
   setTimeout(boot, 600);
-  setInterval(function(){ bindRealButtons(); if(combatActive()) applyViewport('interval'); }, 500);
+  setInterval(function(){ if(document.hidden) return; bindRealButtons(); if(combatActive()) applyViewport('interval'); }, 1000);
 
   window.PRD_COMMAND_AUDIT_V96 = function(){
     var p = readViewport();
@@ -4011,7 +4017,7 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
   function boot(){ bindDirect(); }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, {once:true}); else boot();
   window.addEventListener('load', boot, {once:true});
-  setTimeout(boot, 80); setTimeout(boot, 500); setInterval(boot, 1000);
+  setTimeout(boot, 80); setTimeout(boot, 500); setInterval(function(){ if(!document.hidden && menuActive()) boot(); }, 3000);
   ['pointerup','touchend','click'].forEach(function(type){
     window.addEventListener(type, capture, {capture:true, passive:false});
   });

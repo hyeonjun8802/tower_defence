@@ -45,8 +45,37 @@ const starCtx = starCanvas.getContext('2d');
 let starField = {stars:[], last: performance.now(), raf:0};
 let W = Number(canvas.__logicalWidth || canvas.clientWidth || 748);
 let H = Number(canvas.__logicalHeight || canvas.clientHeight || 708);
-const $ = id => document.getElementById(id);
+const DOM_NODE_CACHE = Object.create(null);
+const $ = id => {
+  const cached = DOM_NODE_CACHE[id];
+  if(cached && cached.isConnected) return cached;
+  const node = document.getElementById(id);
+  if(node) DOM_NODE_CACHE[id] = node;
+  else delete DOM_NODE_CACHE[id];
+  return node;
+};
+function setTextIfChanged(el, value){
+  if(!el) return;
+  const text = String(value ?? '');
+  if(el.textContent !== text) el.textContent = text;
+}
+function setHtmlIfChanged(el, value){
+  if(!el) return;
+  const html = String(value ?? '');
+  if(el.innerHTML !== html) el.innerHTML = html;
+}
+function setTitleIfChanged(el, value){
+  if(!el) return;
+  const title = String(value ?? '');
+  if(el.title !== title) el.title = title;
+}
+function setStyleWidthIfChanged(el, value){
+  if(!el) return;
+  const width = String(value ?? '');
+  if(el.style.width !== width) el.style.width = width;
+}
 const TAU = Math.PI * 2;
+const ENEMY_DRAW_SORT_BY_Y = (a,b)=>a.y-b.y;
 const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
 
 // v99: iPhone/Expo safe top offset for the battle screen.
@@ -264,6 +293,10 @@ function screenStarLoop(now){
   const dt = Math.min((now - screenStarLast) / 1000, 0.05);
   screenStarLast = now;
   for(const sf of screenStarFields){
+    const el = sf.canvas;
+    if(!el || !el.isConnected) continue;
+    const st = getComputedStyle(el);
+    if(st.display === 'none' || st.visibility === 'hidden') continue;
     if(!resizeScreenStarfield(sf)) continue;
     updateScreenStarfield(sf, dt);
     drawScreenStarfield(sf);
@@ -855,6 +888,7 @@ function syncGlobalUpgradesFromMeta(){
     out[u.id] = Math.max(0, Number(META?.upgrades?.[u.id] || 0));
   }
   S.globalUpgrades = out;
+  invalidateGlobalUpgradeStatsCache();
 }
 function globalSkillSummaryText(){
   const g = getGlobalUpgradeStats();
@@ -889,6 +923,7 @@ function buyOfflineUpgrade(key){
   if(META.shards < cost){ toast(`성흔 조각이 부족합니다: ${fmt2(cost)} 필요`); return; }
   META.shards -= cost;
   META.upgrades[key] = lv + 1;
+  invalidateGlobalUpgradeStatsCache();
   saveOfflineMeta();
   renderOfflineMetaPanel();
   toast(`${cfg.name} Lv.${fmt2(lv+1)}`);
@@ -1267,6 +1302,8 @@ function saveStageMapProgress(){
 function resetBattleUnitsForStageMap(){
   grid = Array(GRID_COLS*GRID_ROWS).fill(null);
   terrain = Array(GRID_COLS*GRID_ROWS).fill('empty');
+  recycleAllEnemies();
+  recycleAllBullets();
   enemies = [];
   bullets = [];
   particles = [];
@@ -1999,19 +2036,31 @@ function getGlobalUpgrade(id){
 }
 function getGlobalUpgradeStats(){
   const levels = S?.globalUpgrades || META?.upgrades || {};
-  const lv = id => Math.max(0, Number(levels[id] || 0));
-  return {
-    damage: lv('global_damage') * .10,
-    fireRate: lv('global_speed') * .08,
-    critChance: lv('global_crit') * .035,
-    critMul: lv('global_crit') * .08,
-    range: lv('global_range') * 8,
-    plateDamage: lv('global_plate') * .08,
-    plateFireRate: lv('global_plate') * .05,
-    bossDamage: lv('global_boss') * .09,
-    armorBreak: lv('global_boss') * .02,
-    reward: lv('global_economy') * .06
+  if(globalUpgradeStatsCache && globalUpgradeStatsCacheOwner === levels && globalUpgradeStatsCacheRevision === globalUpgradeStatsRevision){
+    return globalUpgradeStatsCache;
+  }
+  const damageLv = Math.max(0, Number(levels.global_damage || 0));
+  const speedLv = Math.max(0, Number(levels.global_speed || 0));
+  const critLv = Math.max(0, Number(levels.global_crit || 0));
+  const rangeLv = Math.max(0, Number(levels.global_range || 0));
+  const plateLv = Math.max(0, Number(levels.global_plate || 0));
+  const bossLv = Math.max(0, Number(levels.global_boss || 0));
+  const economyLv = Math.max(0, Number(levels.global_economy || 0));
+  globalUpgradeStatsCache = {
+    damage: damageLv * .10,
+    fireRate: speedLv * .08,
+    critChance: critLv * .035,
+    critMul: critLv * .08,
+    range: rangeLv * 8,
+    plateDamage: plateLv * .08,
+    plateFireRate: plateLv * .05,
+    bossDamage: bossLv * .09,
+    armorBreak: bossLv * .02,
+    reward: economyLv * .06
   };
+  globalUpgradeStatsCacheOwner = levels;
+  globalUpgradeStatsCacheRevision = globalUpgradeStatsRevision;
+  return globalUpgradeStatsCache;
 }
 function globalUpgradeText(upgrade, level){
   if(!upgrade) return '';
@@ -2038,6 +2087,175 @@ const TACTICAL_COOLDOWN_MAX = {blackhole:720, nova:820, repair:900};
 
 
 let S, grid, terrain, enemies, bullets, particles, beams, floats, anomalies, route, selected, dragging;
+
+// v004-perf-memory: gameplay state is left intact, but purely visual FX arrays are
+// bounded and pooled so tower-heavy battles do not allocate thousands of short-lived objects.
+const PERF_MAX_PARTICLES = 900;
+const PERF_MAX_FLOATS = 120;
+const PERF_MAX_BEAMS = 160;
+const PERF_MAX_TRAIL_PARTICLES_PER_FRAME = 90;
+const PERF_MAX_BURST_PARTICLES_PER_FRAME = 220;
+const PERF_BULLET_POOL_MAX = 420;
+const PERF_ENEMY_POOL_MAX = 260;
+const PERF_PARTICLE_POOL_MAX = 1100;
+const PERF_FLOAT_POOL_MAX = 180;
+const PERF_BEAM_POOL_MAX = 220;
+let perfTrailParticlesThisFrame = 0;
+let perfBurstParticlesThisFrame = 0;
+let perfFrameId = 0;
+let perfActiveTowerCount = 0;
+let globalUpgradeStatsCache = null;
+let globalUpgradeStatsCacheOwner = null;
+let globalUpgradeStatsRevision = 0;
+let globalUpgradeStatsCacheRevision = -1;
+const bulletPool = [];
+const enemyPool = [];
+const particlePool = [];
+const floatPool = [];
+const beamPool = [];
+function countActiveTowersFast(){
+  if(!Array.isArray(grid)) return 0;
+  let count = 0;
+  for(let i=0;i<grid.length;i++) if(grid[i]) count++;
+  return count;
+}
+function invalidateGlobalUpgradeStatsCache(){
+  globalUpgradeStatsRevision++;
+  globalUpgradeStatsCache = null;
+  globalUpgradeStatsCacheOwner = null;
+}
+function beginVisualFxFrame(){
+  perfFrameId++;
+  perfActiveTowerCount = countActiveTowersFast();
+  perfTrailParticlesThisFrame = 0;
+  perfBurstParticlesThisFrame = 0;
+}
+function currentTrailParticleBudget(){
+  if(perfActiveTowerCount >= 46) return 42;
+  if(perfActiveTowerCount >= 32) return 58;
+  if(perfActiveTowerCount >= 22) return 74;
+  return PERF_MAX_TRAIL_PARTICLES_PER_FRAME;
+}
+function currentBurstParticleBudget(){
+  if(perfActiveTowerCount >= 46) return 130;
+  if(perfActiveTowerCount >= 32) return 160;
+  return PERF_MAX_BURST_PARTICLES_PER_FRAME;
+}
+function projectileTrailStride(){
+  if(perfActiveTowerCount >= 46) return 4;
+  if(perfActiveTowerCount >= 30) return 3;
+  if(perfActiveTowerCount >= 18) return 2;
+  return 1;
+}
+function addBullet(tower,target,st){
+  const b = bulletPool.pop() || new Bullet();
+  b.init(tower,target,st);
+  bullets.push(b);
+  return b;
+}
+function recycleBullet(b){
+  if(b && bulletPool.length < PERF_BULLET_POOL_MAX){
+    b.target=null;b.tower=null;b.st=null;b.dead=true;
+    bulletPool.push(b);
+  }
+}
+function recycleAllBullets(){
+  if(!Array.isArray(bullets)) return;
+  for(let i=0;i<bullets.length;i++) recycleBullet(bullets[i]);
+  bullets.length = 0;
+}
+function acquireEnemy(entry){
+  const e = enemyPool.pop() || new Enemy();
+  return e.init(entry);
+}
+function recycleEnemy(e){
+  if(!e) return;
+  e.dead = true;
+  if(enemyPool.length < PERF_ENEMY_POOL_MAX) enemyPool.push(e);
+}
+function recycleAllEnemies(){
+  if(!Array.isArray(enemies)) return;
+  for(let i=0;i<enemies.length;i++) recycleEnemy(enemies[i]);
+  enemies.length = 0;
+}
+function recycleFxItem(item, arr){
+  if(!item) return;
+  if(arr === particles){ if(particlePool.length < PERF_PARTICLE_POOL_MAX) particlePool.push(item); return; }
+  if(arr === floats){ if(floatPool.length < PERF_FLOAT_POOL_MAX) floatPool.push(item); return; }
+  if(arr === beams){ if(beamPool.length < PERF_BEAM_POOL_MAX) beamPool.push(item); }
+}
+function trimFxArray(arr, max){
+  if(!Array.isArray(arr) || arr.length <= max) return;
+  const drop = arr.length - max;
+  for(let i=0;i<drop;i++) recycleFxItem(arr[i], arr);
+  arr.copyWithin(0, drop);
+  arr.length = max;
+}
+function canAddParticle(kind='burst', count=1){
+  if(!Array.isArray(particles)) particles = [];
+  if(particles.length + count > PERF_MAX_PARTICLES) return false;
+  if(kind === 'trail'){
+    if(perfTrailParticlesThisFrame + count > currentTrailParticleBudget()) return false;
+    perfTrailParticlesThisFrame += count;
+  }else{
+    if(perfBurstParticlesThisFrame + count > currentBurstParticleBudget()) return false;
+    perfBurstParticlesThisFrame += count;
+  }
+  return true;
+}
+function acquireParticle(){ return particlePool.pop() || {}; }
+function pushParticle(x,y,vx,vy,r,life,maxLife,color,kind='burst', extra=null){
+  if(!canAddParticle(kind, 1)) return false;
+  const p = acquireParticle();
+  p.x=x; p.y=y; p.vx=vx||0; p.vy=vy||0; p.r=r||0; p.life=life||0; p.maxLife=maxLife||life||0; p.color=color||'#fff';
+  p.type=extra?.type || ''; p.len=extra?.len || 0; p.w=extra?.w || 0; p.rot=extra?.rot || 0; p.spin=extra?.spin || 0;
+  p.glow=extra?.glow || ''; p.blur=extra?.blur || 0; p.ring=!!extra?.ring; p.max=extra?.max || 0; p.core=extra?.core || '';
+  particles.push(p);
+  return true;
+}
+function addParticle(item, kind='burst'){
+  if(!item) return false;
+  return pushParticle(item.x,item.y,item.vx,item.vy,item.r,item.life,item.maxLife,item.color,kind,item);
+}
+function pushFloat(x,y,text,color='#fff',size=12,life=54,vy=-.52){
+  if(!Array.isArray(floats)) floats = [];
+  if(floats.length >= PERF_MAX_FLOATS) return false;
+  const f = floatPool.pop() || {};
+  f.x=x; f.y=y; f.text=text; f.color=color || '#fff';
+  f.life=life || 0; f.maxLife=life || 0; f.vy=vy || 0; f.size=size || 12;
+  floats.push(f);
+  return true;
+}
+function addFloat(item){
+  if(!item) return false;
+  return pushFloat(item.x,item.y,item.text,item.color,item.size,item.life,item.vy);
+}
+function pushBeam(x1,y1,x2,y2,color,life,style='',width=0){
+  if(!Array.isArray(beams)) beams = [];
+  if(beams.length >= PERF_MAX_BEAMS) return false;
+  const b = beamPool.pop() || {};
+  b.x1=x1; b.y1=y1; b.x2=x2; b.y2=y2; b.color=color || '#fff';
+  b.life=life || 0; b.style=style || ''; b.width=width || 0;
+  beams.push(b);
+  return true;
+}
+function addBeam(item){
+  if(!item) return false;
+  return pushBeam(item.x1,item.y1,item.x2,item.y2,item.color,item.life,item.style,item.width);
+}
+function trimVisualFxBuffers(){
+  trimFxArray(particles, PERF_MAX_PARTICLES);
+  trimFxArray(floats, PERF_MAX_FLOATS);
+  trimFxArray(beams, PERF_MAX_BEAMS);
+}
+let offlineMetaPanelLastRenderAt = 0;
+function renderOfflineMetaPanelThrottled(){
+  const now = performance.now ? performance.now() : Date.now();
+  if(now - offlineMetaPanelLastRenderAt < 700) return;
+  offlineMetaPanelLastRenderAt = now;
+  renderOfflineMetaPanel();
+}
+let hangarVisualLastCheckAt = 0;
 let dragHoverTargetIdx = -1;
 let dragHoverTargetStartedAt = 0;
 let plateAffinity = {};
@@ -2072,6 +2290,8 @@ let CELL = 74;
 let GX = 0;
 let GY = 0;
 let CORE = {x:0, y:0};
+let CELL_CENTER_CACHE = [];
+let CELL_CENTER_LAYOUT_KEY = '';
 
 function battleViewportSize(){
   const vw = Math.max(320, Math.round(window.innerWidth || document.documentElement.clientWidth || canvas.clientWidth || 748));
@@ -2199,6 +2419,7 @@ function configureBattleBoardForCurrentLayout(reason='boot'){
     x: clamp(GX + GRID_COLS * CELL + coreGapX + coreShiftX, 48, coreMaxX),
     y: clamp(GY + GRID_ROWS * CELL - CELL * .5 + coreShiftY, 48, H - Math.max(58, commandReserveY * .42))
   };
+  rebuildCellCenterCache();
 
   if(window.__DEBUG_BATTLE_BOARD__){
     console.info('[battle-board]', reason, {W,H,GRID_COLS,GRID_ROWS,CELL,GX,GY,CORE,BOARD_IS_LANDSCAPE,statusTopOffsetV99,size});
@@ -2221,11 +2442,29 @@ function planetSheetImage(type){
   return PLANET_EVOLUTION_SHEETS[id] || null;
 }
 
+const LIVE_PLANET_LEVELS_CACHE = [];
+function fillLivePlanetLevels(out=LIVE_PLANET_LEVELS_CACHE){
+  const count = Array.isArray(PLANETS) ? PLANETS.length : 0;
+  out.length = count;
+  for(let i=0;i<count;i++) out[i] = 0;
+  if(Array.isArray(grid)){
+    for(let i=0;i<grid.length;i++){
+      const tower = grid[i];
+      if(tower){
+        const type = tower.type;
+        const level = tower.level || 1;
+        if(type >= 0 && type < out.length && level > out[type]) out[type] = level;
+      }
+    }
+  }
+  return out;
+}
 function livePlanetLevel(type){
   if(!Array.isArray(grid) || !grid.length) return 0;
   let max = 0;
-  for(const tower of grid){
-    if(tower && tower.type === type) max = Math.max(max, tower.level || 1);
+  for(let i=0;i<grid.length;i++){
+    const tower = grid[i];
+    if(tower && tower.type === type && (tower.level || 1) > max) max = tower.level || 1;
   }
   return max || 0;
 }
@@ -2237,7 +2476,8 @@ function planetThumbColumnForLevel(level){
 
 function hangarVisualSignature(){
   if(!Array.isArray(PLANETS)) return '0';
-  return PLANETS.map((_, idx)=>livePlanetLevel(idx)).join('|') + '::' + (selected >= 0 && grid[selected] ? `${grid[selected].type}:${grid[selected].level}` : 'none');
+  const levels = fillLivePlanetLevels();
+  return levels.join('|') + '::' + (selected >= 0 && grid[selected] ? `${grid[selected].type}:${grid[selected].level}` : 'none');
 }
 
 function applyLiveThumb(el, type, frameIndex){
@@ -2514,6 +2754,9 @@ function renderHangar(){
   if(rp) rp.innerHTML = `E<br>코어 과충전 ${fmt2(Math.ceil(S.tacticalCd.repair/60)||65)}`;
 }
 function updateHangarVisuals(force=false){
+  const now = performance.now ? performance.now() : Date.now();
+  if(!force && now - hangarVisualLastCheckAt < 250) return;
+  hangarVisualLastCheckAt = now;
   const signature = hangarVisualSignature();
   if(!force && signature === hangarFrame) return;
   hangarFrame = signature;
@@ -2521,43 +2764,48 @@ function updateHangarVisuals(force=false){
 }
 function updateHangarState(){
   if(!S || !grid) return;
+  const levels = fillLivePlanetLevels();
   document.querySelectorAll('#hangar .planetCard').forEach(card => {
     const type = Number(card.dataset.type);
     const active = selected >= 0 && grid[selected] && grid[selected].type === type;
-    const highest = livePlanetLevel(type);
+    const highest = levels[type] || 0;
     card.classList.toggle('active', active);
     card.classList.toggle('locked', isHangarPlanetLocked(type));
     card.classList.toggle('hasUnit', highest > 0);
-    const cost = card.querySelector('.planetCardCost');
-    if(cost) cost.textContent = hangarCostText(type);
-    const role = card.querySelector('.planetCardRole');
-    if(role) role.innerHTML = `${hangarRoleText(type)}`;
-    const badge = card.querySelector('.planetCardLevel');
-    if(badge) badge.textContent = highest > 0 ? `MAX Lv.${fmt2(highest)}` : 'LV.1';
+    setTextIfChanged(card.querySelector('.planetCardCost'), hangarCostText(type));
+    setHtmlIfChanged(card.querySelector('.planetCardRole'), `${hangarRoleText(type)}`);
+    setTextIfChanged(card.querySelector('.planetCardLevel'), highest > 0 ? `MAX Lv.${fmt2(highest)}` : 'LV.1');
   });
 }
 
 function drawBulletTrail(kind, x, y, color){
+  // Purely visual trail objects are the hottest allocation path when many towers fire.
+  // Keep the same projectile logic, but budget trail creation per frame.
   if(kind === 'solar'){
-    particles.push({x,y,vx:rand(-.18,.18),vy:rand(-.10,.12),r:rand(1.2,2.1),life:10,maxLife:16,color});
-    particles.push({x,y,vx:rand(-.10,.10),vy:rand(-.10,.08),r:rand(.9,1.7),life:9,maxLife:14,color:'#fde68a'});
+    if(!canAddParticle('trail', 2)) return;
+    pushParticle(x,y,rand(-.18,.18),rand(-.10,.12),rand(1.2,2.1),10,16,color,'trail');
+    pushParticle(x,y,rand(-.10,.10),rand(-.10,.08),rand(.9,1.7),9,14,'#fde68a','trail');
   }else if(kind === 'frost'){
-    particles.push({x,y,vx:rand(-.16,.16),vy:rand(-.16,.16),r:1.1,life:11,maxLife:18,color:'#e0f2fe',type:'shard',len:rand(4,7),w:rand(1.8,3.0),rot:Math.random()*TAU,spin:rand(-.22,.22),glow:'#bfdbfe'});
+    pushParticle(x,y,rand(-.16,.16),rand(-.16,.16),1.1,11,18,'#e0f2fe','trail',{type:'shard',len:rand(4,7),w:rand(1.8,3.0),rot:Math.random()*TAU,spin:rand(-.22,.22),glow:'#bfdbfe'});
   }else if(kind === 'storm'){
-    particles.push({x,y,vx:rand(-.20,.20),vy:rand(-.20,.20),r:1.0,life:8,maxLife:14,color:'#fde047',type:'spark',len:rand(4,8),w:rand(1.1,1.9),rot:Math.random()*TAU,spin:rand(-.30,.30),glow:'#fde047'});
+    pushParticle(x,y,rand(-.20,.20),rand(-.20,.20),1.0,8,14,'#fde047','trail',{type:'spark',len:rand(4,8),w:rand(1.1,1.9),rot:Math.random()*TAU,spin:rand(-.30,.30),glow:'#fde047'});
   }else if(kind === 'toxic'){
-    particles.push({x,y,vx:rand(-.12,.12),vy:rand(-.10,.08),r:rand(1.2,2.0),life:10,maxLife:16,color:'#86efac'});
+    pushParticle(x,y,rand(-.12,.12),rand(-.10,.08),rand(1.2,2.0),10,16,'#86efac','trail');
   }else if(kind === 'laser'){
-    particles.push({x,y,vx:rand(-.18,.18),vy:rand(-.18,.18),r:1.0,life:8,maxLife:14,color:'#fff7ed',type:'spark',len:rand(4,7),w:1.4,rot:Math.random()*TAU,spin:rand(-.16,.16),glow:color});
+    pushParticle(x,y,rand(-.18,.18),rand(-.18,.18),1.0,8,14,'#fff7ed','trail',{type:'spark',len:rand(4,7),w:1.4,rot:Math.random()*TAU,spin:rand(-.16,.16),glow:color});
   }else{
-    particles.push({x,y,vx:rand(-.24,.24),vy:rand(-.24,.24),r:rand(1.5,2.6),life:14,maxLife:22,color});
+    pushParticle(x,y,rand(-.24,.24),rand(-.24,.24),rand(1.5,2.6),14,22,color,'trail');
   }
 }
 function spawnImpactSparks(x,y,color,count=8,spread=1){
-  for(let i=0;i<count;i++) particles.push({x,y,vx:rand(-.42,.42)*spread,vy:rand(-.34,.34)*spread,r:1.2,life:12+Math.random()*10,maxLife:20,color,type:'spark',len:rand(5,10),w:rand(1.2,2.2),rot:Math.random()*TAU,spin:rand(-.18,.18),glow:color,blur:10});
+  for(let i=0;i<count;i++){
+    if(!pushParticle(x,y,rand(-.42,.42)*spread,rand(-.34,.34)*spread,1.2,12+Math.random()*10,20,color,'burst',{type:'spark',len:rand(5,10),w:rand(1.2,2.2),rot:Math.random()*TAU,spin:rand(-.18,.18),glow:color,blur:10})) break;
+  }
 }
 function spawnImpactShards(x,y,color='#dbeafe',count=7){
-  for(let i=0;i<count;i++) particles.push({x,y,vx:rand(-.30,.30),vy:rand(-.30,.30),r:1.2,life:13+Math.random()*8,maxLife:24,color,type:'shard',len:rand(5,10),w:rand(2.1,4.2),rot:Math.random()*TAU,spin:rand(-.2,.2),glow:color,blur:8});
+  for(let i=0;i<count;i++){
+    if(!pushParticle(x,y,rand(-.30,.30),rand(-.30,.30),1.2,13+Math.random()*8,24,color,'burst',{type:'shard',len:rand(5,10),w:rand(2.1,4.2),rot:Math.random()*TAU,spin:rand(-.2,.2),glow:color,blur:8})) break;
+  }
 }
 function spawnImpactMist(x,y,color='rgba(74,222,128,.24)',count=5){
   // v87: remove cloudy/misty particles for clearer battle view.
@@ -2623,7 +2871,13 @@ function pushBossTelegraph(enemy, label, color){
 }
 
 function updateBossTelegraphs(dt){
-  bossTelegraphs = bossTelegraphs.filter(t => { t.life -= dt; return t.life > 0; });
+  let write = 0;
+  for(let i=0;i<bossTelegraphs.length;i++){
+    const t = bossTelegraphs[i];
+    t.life -= dt;
+    if(t.life > 0) bossTelegraphs[write++] = t;
+  }
+  bossTelegraphs.length = write;
 }
 
 function drawBossTelegraphs(){
@@ -2782,6 +3036,7 @@ function reset(){
     runEnded:false,
     offline:{summonCost:100,cooldownScale:1}
   };
+  invalidateGlobalUpgradeStatsCache();
   grid = Array(GRID_COLS*GRID_ROWS).fill(null);
   terrain = Array(GRID_COLS*GRID_ROWS).fill('empty');
   enemies = [];
@@ -2798,7 +3053,22 @@ function reset(){
 }
 
 function theme(){return THEMES[S.theme]}
-function center(i){return {x:GX+(i%GRID_COLS)*CELL+CELL/2,y:GY+Math.floor(i/GRID_COLS)*CELL+CELL/2}}
+function rebuildCellCenterCache(){
+  const key = `${GRID_COLS}|${GRID_ROWS}|${CELL}|${GX}|${GY}`;
+  const total = GRID_COLS * GRID_ROWS;
+  if(CELL_CENTER_LAYOUT_KEY === key && CELL_CENTER_CACHE.length === total) return;
+  CELL_CENTER_LAYOUT_KEY = key;
+  CELL_CENTER_CACHE.length = total;
+  const half = CELL * .5;
+  for(let i=0;i<total;i++){
+    const c = CELL_CENTER_CACHE[i] || (CELL_CENTER_CACHE[i] = {x:0,y:0});
+    c.x = GX + (i % GRID_COLS) * CELL + half;
+    c.y = GY + Math.floor(i / GRID_COLS) * CELL + half;
+  }
+}
+function center(i){
+  return CELL_CENTER_CACHE[i] || {x:GX+(i%GRID_COLS)*CELL+CELL/2,y:GY+Math.floor(i/GRID_COLS)*CELL+CELL/2};
+}
 function gridPoint(col,row){return {x:GX+col*CELL+CELL/2,y:GY+row*CELL+CELL/2}}
 function idxAt(x,y){
   // v22: exact grid hit-test.  Padded/clamped hit-testing made focus snap
@@ -2810,6 +3080,7 @@ function idxAt(x,y){
   return gy * GRID_COLS + gx;
 }
 function dist(a,b,c,d){return Math.hypot(a-c,b-d)}
+function distSq(a,b,c,d){const dx=a-c,dy=b-d;return dx*dx+dy*dy}
 function canBuild(i){return i>=0 && terrain[i]!=='path' && terrain[i]!=='blocked'}
 function defaultAug(){
   return {damage:0,fireRate:0,range:0,area:0,dot:0,freeze:0,freezeChance:0,chain:0,gravity:0,beamWidth:0,markAmp:0,poisonSlow:0,critChance:0,critMul:0,burstChance:0,crystalCharge:0,prismLink:0,resonancePlate:0,shieldDismantle:0,satelliteForge:0,emergencyBarrier:0};
@@ -2840,9 +3111,15 @@ function createMergedPlanet(a,b,idx){
   return p;
 }
 function pointSeg(px,py,x1,y1,x2,y2){
+  return Math.sqrt(pointSegSq(px,py,x1,y1,x2,y2));
+}
+function pointSegSq(px,py,x1,y1,x2,y2){
   const dx=x2-x1,dy=y2-y1;
-  const t=clamp(((px-x1)*dx+(py-y1)*dy)/(dx*dx+dy*dy),0,1);
-  return dist(px,py,x1+t*dx,y1+t*dy);
+  const lenSq = dx*dx+dy*dy || 1;
+  const t=clamp(((px-x1)*dx+(py-y1)*dy)/lenSq,0,1);
+  const nx = x1 + t*dx, ny = y1 + t*dy;
+  const ox = px - nx, oy = py - ny;
+  return ox*ox + oy*oy;
 }
 
 function applyRouteChamfers(points){
@@ -3075,14 +3352,14 @@ function renderWavePreview(){
   const el = $('wavePreviewText');
   if(!el || !S) return;
   const info = getWavePreviewInfo(S.ogge || 1, S.stageNo || StageMapState.current || 1);
-  el.textContent = `${info.title} · ${info.detail}`;
+  setTextIfChanged(el, `${info.title} · ${info.detail}`);
 }
 
 function prepareWave(){
   makeRoute();
   makeTerrain();
   relocateInvalidPlanets();
-  enemies.length=0;bullets.length=0;particles.length=0;beams.length=0;floats.length=0;anomalies.length=0;
+  recycleAllEnemies();recycleAllBullets();particles.length=0;beams.length=0;floats.length=0;anomalies.length=0;
   S.stageArmorBonus=0;
   S.globalCooldownPenalty=0;
   S.hazardTimer=150;
@@ -3242,36 +3519,53 @@ function drawPlanetEvolutionFx(tower, x, y){
   ctx.restore();
 }
 
-function nearestPointOnSegment(px, py, x1, y1, x2, y2){
-  const dx = x2 - x1, dy = y2 - y1;
-  const lenSq = dx*dx + dy*dy || 1;
-  const t = clamp(((px - x1) * dx + (py - y1) * dy) / lenSq, 0, 1);
-  const x = x1 + dx * t;
-  const y = y1 + dy * t;
-  const distVal = Math.hypot(px - x, py - y);
-  return {x, y, t, dist:distVal};
-}
+const NEAREST_ROUTE_HIT = {x:0,y:0,t:0,dist:0,seg:0,score:0};
 
 function nearestRoutePoint(px, py, preferredSeg=0){
-  let best = null;
   const start = Math.max(0, preferredSeg - 1);
   const end = Math.min(route.length - 2, preferredSeg + 1);
+  let bestScore = Infinity, bestX = px, bestY = py, bestT = 0, bestDist = 0, bestSeg = preferredSeg;
   for(let seg=start; seg<=end; seg++){
     const a = route[seg], b = route[seg+1];
-    const hit = nearestPointOnSegment(px, py, a.x, a.y, b.x, b.y);
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const lenSq = dx*dx + dy*dy || 1;
+    const t = clamp(((px - a.x) * dx + (py - a.y) * dy) / lenSq, 0, 1);
+    const x = a.x + dx * t;
+    const y = a.y + dy * t;
+    const ddx = px - x, ddy = py - y;
+    const distVal = Math.sqrt(ddx*ddx + ddy*ddy);
     // 코너에서는 이전 segment와 현재 segment의 거리가 동시에 0이 될 수 있다.
     // 이때 이전 segment를 고르면 적이 첫 꺾임 지점에서 되돌아가는 것처럼 멈춘다.
     // 따라서 현재 진행 segment를 우선하고, 동일 거리에서는 뒤쪽 segment보다 현재/앞쪽 segment를 우선한다.
     const tiePenalty = Math.abs(seg - preferredSeg) * .001 + (seg < preferredSeg ? .002 : 0);
-    const score = hit.dist + tiePenalty;
-    if(!best || score < best.score) best = {...hit, seg, score};
+    const score = distVal + tiePenalty;
+    if(score < bestScore){ bestScore = score; bestX = x; bestY = y; bestT = t; bestDist = distVal; bestSeg = seg; }
   }
-  return best;
+  NEAREST_ROUTE_HIT.x = bestX;
+  NEAREST_ROUTE_HIT.y = bestY;
+  NEAREST_ROUTE_HIT.t = bestT;
+  NEAREST_ROUTE_HIT.dist = bestDist;
+  NEAREST_ROUTE_HIT.seg = bestSeg;
+  NEAREST_ROUTE_HIT.score = bestScore;
+  return NEAREST_ROUTE_HIT;
 }
 
 function confineEnemyToRoute(enemy, maxOffset=12){
-  if(!route || route.length < 2) return;
+  if(!route || route.length < 2 || !enemy) return;
   const currentSeg = Math.max(0, Math.min(route.length - 2, enemy.seg || 0));
+  const a = route[currentSeg], b = route[currentSeg + 1];
+  if(a && b){
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const lenSq = dx * dx + dy * dy || 1;
+    const t = clamp(((enemy.x - a.x) * dx + (enemy.y - a.y) * dy) / lenSq, 0, 1);
+    const nx = a.x + dx * t, ny = a.y + dy * t;
+    const ox = enemy.x - nx, oy = enemy.y - ny;
+    const limitSq = maxOffset * maxOffset;
+    const ds = ox * ox + oy * oy;
+    // Most enemies are already exactly on their current segment. Avoid the older
+    // neighbor-segment scan and sqrt in that hot path; fall back only for real drift.
+    if(ds <= limitSq) return;
+  }
   const hit = nearestRoutePoint(enemy.x, enemy.y, currentSeg);
   if(!hit) return;
   const d = hit.dist;
@@ -3523,7 +3817,8 @@ function relocateInvalidPlanets(){
 }
 
 function updateAnomalies(dt){
-  for(let i=anomalies.length-1;i>=0;i--){
+  let write = 0;
+  for(let i=0;i<anomalies.length;i++){
     const a = anomalies[i];
     a.life -= dt;
     a.tick -= dt;
@@ -3533,10 +3828,13 @@ function updateAnomalies(dt){
     }
     if(a.tick <= 0){
       a.tick = 3.5;
-      for(const e of enemies){
+      const rr = a.radius * a.radius;
+      for(let j=0;j<enemies.length;j++){
+        const e = enemies[j];
         if(e.dead) continue;
-        const d = dist(e.x,e.y,a.x,a.y);
-        if(d < a.radius){
+        const ds = distSq(e.x,e.y,a.x,a.y);
+        if(ds < rr){
+          const d = Math.sqrt(ds);
           const pull = (1 - d / a.radius) * a.pull;
           e.x += (a.x - e.x) * .05 * pull;
           e.y += (a.y - e.y) * .05 * pull;
@@ -3547,8 +3845,9 @@ function updateAnomalies(dt){
         }
       }
     }
-    if(a.life <= 0) anomalies.splice(i,1);
+    if(a.life > 0) anomalies[write++] = a;
   }
+  anomalies.length = write;
 }
 
 function drawAnomalies(){
@@ -3616,38 +3915,47 @@ function drawAnomalies(){
   }
 }
 
+const TERRAIN_BONUS_DEFAULT = {dmg:.72,cd:1.16,range:-3,gold:0,over:false,plate:false};
+const TERRAIN_BONUS_BY_KEY = {
+  amp:{dmg:1.55,cd:.96,range:0,gold:0,over:false,plate:true},
+  coil:{dmg:1.02,cd:.62,range:4,gold:0,over:false,plate:true},
+  lens:{dmg:.92,cd:.96,range:50,gold:0,over:false,plate:true},
+  mine:{dmg:.82,cd:1.08,range:0,gold:1,over:false,plate:true},
+  rift:{dmg:1.82,cd:1.10,range:8,gold:0,over:true,plate:true}
+};
+
 class Planet{
   constructor(type,level,idx){
     this.type=type;this.level=level;this.idx=idx;this.cool=rand(0,20);this.phase=Math.random()*TAU;this.frozen=0;this.uid=nextPlanetUid++;this.aug=defaultAug();this.skillLevels={};syncTowerSkillUnlocks(this);
   }
   get def(){return PLANETS[this.type]}
-  get pos(){return center(this.idx)}
+  get pos(){
+    return center(this.idx);
+  }
   terrainBonus(){
-    const t=terrain[this.idx];
-    const b={dmg:.72,cd:1.16,range:-3,gold:0,over:false,plate:false};
-    if(t==='amp'){b.dmg=1.55;b.cd=.96;b.range=0;b.plate=true}
-    if(t==='coil'){b.dmg=1.02;b.cd=.62;b.range=4;b.plate=true}
-    if(t==='lens'){b.dmg=.92;b.cd=.96;b.range=50;b.plate=true}
-    if(t==='mine'){b.dmg=.82;b.cd=1.08;b.range=0;b.gold=1;b.plate=true}
-    if(t==='rift'){b.dmg=1.82;b.cd=1.10;b.range=8;b.over=true;b.plate=true}
-    return b;
+    return TERRAIN_BONUS_BY_KEY[terrain[this.idx]] || TERRAIN_BONUS_DEFAULT;
   }
   stats(){
+    if(this._statsCache && this._statsFrame === perfFrameId && this._statsRevision === globalUpgradeStatsRevision){
+      return this._statsCache;
+    }
     const b=this.terrainBonus();
     const a=ensureAug(this);
     const g=getGlobalUpgradeStats();
-    const ambient = getDustCloudPenalty(this.pos.x, this.pos.y);
+    const d=this.def;
+    const p=this.pos;
+    const ambient = getDustCloudPenalty(p.x, p.y);
     const affinityMatched = isPlateAffinityMatched(this);
     const plateDamage = b.plate ? g.plateDamage + (affinityMatched ? PLATE_AFFINITY_DAMAGE_BONUS : 0) : 0;
     const plateFireRate = b.plate ? g.plateFireRate + (affinityMatched ? PLATE_AFFINITY_FIRE_RATE_BONUS : 0) : 0;
     const globalCritExpected = g.critChance * Math.max(0, (1.8 + g.critMul) - 1);
-    return {
-      dmg:(this.def.dmg+this.level*15)*b.dmg*(1+a.damage+g.damage+plateDamage+globalCritExpected) * ambient.damageMul,
-      range:Math.max(70,this.def.range+this.level*8+b.range+a.range+g.range),
-      cd:Math.max(8,(this.def.cd-this.level*1.7)*b.cd*(1+S.globalCooldownPenalty) * ambient.cooldownMul/(1+a.fireRate+g.fireRate+plateFireRate+S.tacticalBoost)),
+    const stats = {
+      dmg:(d.dmg+this.level*15)*b.dmg*(1+a.damage+g.damage+plateDamage+globalCritExpected) * ambient.damageMul,
+      range:Math.max(70,d.range+this.level*8+b.range+a.range+g.range),
+      cd:Math.max(8,(d.cd-this.level*1.7)*b.cd*(1+S.globalCooldownPenalty) * ambient.cooldownMul/(1+a.fireRate+g.fireRate+plateFireRate+S.tacticalBoost)),
       gold:b.gold, over:b.over, plateMatched: affinityMatched,
-      critChance:(this.def.critChance||0)+a.critChance+g.critChance,
-      critMul:(this.def.critMul||1.8)+a.critMul+g.critMul,
+      critChance:(d.critChance||0)+a.critChance+g.critChance,
+      critMul:(d.critMul||1.8)+a.critMul+g.critMul,
       area:a.area, dot:a.dot, freeze:a.freeze, freezeChance:a.freezeChance,
       chain:a.chain, gravity:a.gravity, beamWidth:a.beamWidth, markAmp:a.markAmp,
       poisonSlow:a.poisonSlow, burstChance:a.burstChance,
@@ -3655,26 +3963,37 @@ class Planet{
       shieldDismantle:a.shieldDismantle, satelliteForge:a.satelliteForge, emergencyBarrier:a.emergencyBarrier,
       dustPenalty: ambient.alpha
     };
+    this._statsCache = stats;
+    this._statsFrame = perfFrameId;
+    this._statsRevision = globalUpgradeStatsRevision;
+    return stats;
   }
-  target(){
-    const p=this.pos, st=this.stats();
-    const list=enemies.filter(e=>!e.dead && dist(e.x,e.y,p.x,p.y)<=st.range);
-    if(!list.length)return null;
-    list.sort((a,b)=>b.progress-a.progress);
-    return list[0];
+  target(stOverride=null){
+    const p=this.pos, st=stOverride || this.stats();
+    let best = null;
+    let bestProgress = -Infinity;
+    const rangeSq = st.range * st.range;
+    for(let i=0;i<enemies.length;i++){
+      const e = enemies[i];
+      if(e.dead) continue;
+      const dx = e.x - p.x, dy = e.y - p.y;
+      if(dx*dx + dy*dy > rangeSq) continue;
+      if(e.progress > bestProgress){ best = e; bestProgress = e.progress; }
+    }
+    return best;
   }
   update(dt){
     if(this.frozen>0){this.frozen-=dt;return;}
     this.cool-=dt;
     if(this.cool>0)return;
-    const target=this.target();
-    if(!target)return;
     const st=this.stats();
+    const target=this.target(st);
+    if(!target)return;
     this.cool=st.cd;
     if(st.over && Math.random()<.08){this.cool+=24;floatText(this.pos.x,this.pos.y-30,'과열','#fb7185')}
     if(this.def.kind==='beam') fireBeam(this,target,st);
     else if(this.def.kind==='gravity') blackholePulse(this,target,st);
-    else bullets.push(new Bullet(this,target,st));
+    else addBullet(this,target,st);
   }
 
   draw(){
@@ -3695,7 +4014,7 @@ class Planet{
     const dragTargetScale = isDragTarget ? (1 - .13 * targetEase) : 1;
     const baseSize = ((IS_MOBILE_BOARD ? PLANET_BASE_SIZE + 2 : PLANET_BASE_SIZE) + this.level * 2.05 + tier * 1.45) * settleScale * dragTargetScale;
     const bobY = Math.sin(nowMs/420 + this.phase * 1.7 + this.level * .42) * (1.6 + Math.min(3.2, this.level * .12));
-    const bobX = Math.cos(performance.now()/620 + this.phase * .9) * .9;
+    const bobX = Math.cos(nowMs/620 + this.phase * .9) * .9;
     const rx = p.x + bobX, ry = p.y + bobY;
     const st = this.stats();
     ctx.save();
@@ -3794,23 +4113,32 @@ class Planet{
 
 }
 
+const ENEMY_BASE_MAP = {
+  grunt:{hp:1.62,spd:1.08,size:13,color:'#e2e8f0',reward:.50,exp:3,armor:0,regen:false,treasure:false,boss:false},
+  runner:{hp:1.05,spd:1.82,size:11,color:'#7dd3fc',reward:.50,exp:3,armor:0,regen:false,treasure:false,boss:false},
+  brute:{hp:4.10,spd:.84,size:18,color:'#fbbf24',reward:.90,exp:5,armor:.23,regen:false,treasure:false,boss:false},
+  regen:{hp:2.65,spd:.98,size:15,color:'#22c55e',reward:.80,exp:5,armor:0,regen:true,treasure:false,boss:false},
+  treasure:{hp:3.75,spd:1.00,size:18,color:'#facc15',reward:2.2,exp:8,armor:0,regen:false,treasure:true,boss:false},
+  boss:{hp:16,spd:.58,size:30,color:'#fb7185',reward:3.5,exp:18,armor:.18,regen:false,treasure:false,boss:true},
+  midboss:{hp:21,spd:.62,size:34,color:'#f8fafc',reward:5.0,exp:26,armor:.22,regen:false,treasure:false,boss:true},
+  finalboss:{hp:28,spd:.64,size:41,color:'#f8fafc',reward:8.0,exp:38,armor:.26,regen:false,treasure:false,boss:true}
+};
+
 class Enemy{
   constructor(entry){
-    const payload = (entry && typeof entry === 'object') ? entry : {type: entry};
-    const type = payload.type || 'grunt';
+    if(entry !== undefined) this.init(entry);
+  }
+  init(entry){
+    const payload = (entry && typeof entry === 'object') ? entry : null;
+    const type = payload ? (payload.type || 'grunt') : (entry || 'grunt');
     this.type=type;
-    const baseMap = {
-      grunt:{hp:1.62,spd:1.08,size:13,color:'#e2e8f0',reward:.50,exp:3},
-      runner:{hp:1.05,spd:1.82,size:11,color:'#7dd3fc',reward:.50,exp:3},
-      brute:{hp:4.10,spd:.84,size:18,color:'#fbbf24',reward:.90,exp:5,armor:.23},
-      regen:{hp:2.65,spd:.98,size:15,color:'#22c55e',reward:.80,exp:5,regen:true},
-      treasure:{hp:3.75,spd:1.00,size:18,color:'#facc15',reward:2.2,exp:8,treasure:true},
-      boss:{hp:16,spd:.58,size:30,color:'#fb7185',reward:3.5,exp:18,armor:.18,boss:true},
-      midboss:{hp:21,spd:.62,size:34,color:'#f8fafc',reward:5.0,exp:26,armor:.22,boss:true},
-      finalboss:{hp:28,spd:.64,size:41,color:'#f8fafc',reward:8.0,exp:38,armor:.26,boss:true}
-    };
-    const m = {...baseMap[type]};
-    const bossData = payload.bossData || null;
+    this.stageBoss=false;this.bossTier='';this.bossName='';this.bossKo='';this.abilityName='';this.bossTitle='';this.bossDesc='';this.auraColor='';
+    this.hpScale=1;this.coreDamage=0;this.bossEffect='';this.skillInterval=0;this.skillCd=0;
+    const base = ENEMY_BASE_MAP[type] || ENEMY_BASE_MAP.grunt;
+    let hpBase = base.hp, spd = base.spd, size = base.size, color = base.color;
+    let reward = base.reward, exp = base.exp, armor = base.armor || 0;
+    this.regen=!!base.regen;this.treasure=!!base.treasure;this.boss=!!base.boss;
+    const bossData = payload?.bossData || null;
     if(bossData){
       this.stageBoss = true;
       this.bossTier = payload.bossTier || (type === 'finalboss' ? 'final' : 'mid');
@@ -3820,25 +4148,26 @@ class Enemy{
       this.bossTitle = bossData.title;
       this.bossDesc = bossData.desc;
       this.auraColor = bossData.aura || bossData.color;
-      m.color = bossData.color || m.color;
-      m.size = bossData.size || m.size;
-      m.spd *= bossData.speedMul || 1;
-      m.reward *= bossData.rewardMul || 1;
-      m.exp *= bossData.expMul || 1;
-      m.armor = (m.armor || 0) + (bossData.armor || 0);
+      color = bossData.color || color;
+      size = bossData.size || size;
+      spd *= bossData.speedMul || 1;
+      reward *= bossData.rewardMul || 1;
+      exp *= bossData.expMul || 1;
+      armor += bossData.armor || 0;
       this.hpScale = bossData.hpMul || 1;
       this.coreDamage = bossData.coreDamage || (type === 'finalboss' ? 5 : 2);
       this.bossEffect = bossData.effect;
       this.skillInterval = bossData.interval || 128;
       this.skillCd = this.skillInterval * .75;
     }
-    Object.assign(this,m);
+    this.spd=spd;this.size=size;this.color=color;this.reward=reward;this.exp=exp;this.armor=armor;
     this.x=route[0].x;this.y=route[0].y;this.seg=0;this.progress=0;
     const hpScale = this.hpScale || 1;
     const bossRunEase = this.stageBoss ? (this.bossTier === 'final' ? .72 : .80) : 1;
-    this.maxHp=Math.floor(295*m.hp*(1+S.ogge*.30+S.theme*.38) * hpScale * bossRunEase);
+    this.maxHp=Math.floor(295*hpBase*(1+S.ogge*.30+S.theme*.38) * hpScale * bossRunEase);
     this.hp=this.maxHp;
     this.dead=false;this.slow=0;this.freeze=0;this.dot=0;this.dotTime=0;this.mark=0;
+    return this;
   }
   update(dt){
     if(this.dotTime>0){this.hp-=this.dot*dt;this.dotTime-=dt}
@@ -4017,40 +4346,57 @@ function pushEnemyBack(enemy, amount){
 
 
 function nearestEnemyExcept(source, x, y, range){
-  const list = enemies.filter(e => !e.dead && e !== source && dist(e.x,e.y,x,y) <= range);
-  if(!list.length) return null;
-  list.sort((a,b)=>b.progress-a.progress);
-  return list[0];
+  let best = null;
+  let bestProgress = -Infinity;
+  const r2 = range * range;
+  for(let i=0;i<enemies.length;i++){
+    const e = enemies[i];
+    if(e.dead || e === source) continue;
+    const dx = e.x - x, dy = e.y - y;
+    if(dx*dx + dy*dy > r2) continue;
+    if(e.progress > bestProgress){ best = e; bestProgress = e.progress; }
+  }
+  return best;
 }
+const NEAREST_BUILD_PLATE_HIT = {idx:-1,x:0,y:0};
 function nearestBuildPlate(fromIdx, radius=2){
   const from = center(fromIdx);
-  let best = null, bestD = 9999;
+  const limitSq = CELL * radius * CELL * radius;
+  let bestIdx = -1, bestX = 0, bestY = 0, bestD = limitSq;
   for(let i=0;i<terrain.length;i++){
     if(i === fromIdx || !canBuild(i)) continue;
     const c = center(i);
-    const d = dist(from.x, from.y, c.x, c.y);
-    if(d < bestD && d <= CELL * radius){ best = {idx:i, x:c.x, y:c.y}; bestD = d; }
+    const dx = from.x - c.x, dy = from.y - c.y;
+    const d = dx*dx + dy*dy;
+    if(d < bestD){ bestIdx = i; bestX = c.x; bestY = c.y; bestD = d; }
   }
-  return best;
+  if(bestIdx < 0) return null;
+  NEAREST_BUILD_PLATE_HIT.idx = bestIdx;
+  NEAREST_BUILD_PLATE_HIT.x = bestX;
+  NEAREST_BUILD_PLATE_HIT.y = bestY;
+  return NEAREST_BUILD_PLATE_HIT;
 }
 function triggerPrismLink(tower, target, st, baseDamage){
   const p = tower.pos;
   const plate = nearestBuildPlate(tower.idx, 2.4);
-  const end = plate || {x:target.x, y:target.y};
+  const endX = plate ? plate.x : target.x;
+  const endY = plate ? plate.y : target.y;
   const life = 34 + st.prismLink * 22;
-  beams.push({x1:p.x,y1:p.y,x2:end.x,y2:end.y,color:'#c084fc',life,style:'prism',width:3.2});
+  pushBeam(p.x,p.y,endX,endY,'#c084fc',life,'prism',3.2);
   const width = 18 + st.prismLink * 4;
+  const widthSq = width * width;
   let hits = 0;
-  for(const e of enemies){
+  for(let i=0;i<enemies.length;i++){
+    const e = enemies[i];
     if(e.dead) continue;
-    if(pointSeg(e.x,e.y,p.x,p.y,end.x,end.y) < width){
+    if(pointSegSq(e.x,e.y,p.x,p.y,endX,endY) < widthSq){
       e.damage(baseDamage * (.18 + st.prismLink * .055), 'prism_link', '#d8b4fe');
       e.mark = Math.max(e.mark, 34 + st.prismLink * 12);
       hits++;
     }
   }
   if(hits){
-    impactLabel((p.x+end.x)/2, (p.y+end.y)/2 - 10, 'PRISM LINK', '#e9d5ff', 12, 52);
+    impactLabel((p.x+endX)/2, (p.y+endY)/2 - 10, 'PRISM LINK', '#e9d5ff', 12, 52);
   }
 }
 function triggerResonancePlate(tower, st){
@@ -4069,14 +4415,14 @@ function triggerMechaSatellite(tower, target, st, baseDamage){
   const angle = performance.now() * .003 + tower.phase;
   const sx = p.x + Math.cos(angle) * 34;
   const sy = p.y + Math.sin(angle) * 22;
-  const alt = nearestEnemyExcept(target, p.x, p.y, tower.stats().range + 52) || target;
-  beams.push({x1:sx,y1:sy,x2:alt.x,y2:alt.y,color:'#60a5fa',life:18,style:'satellite',width:2.2});
+  const alt = nearestEnemyExcept(target, p.x, p.y, st.range + 52) || target;
+  pushBeam(sx,sy,alt.x,alt.y,'#60a5fa',18,'satellite',2.2);
   alt.damage(baseDamage * (.24 + st.satelliteForge * .24), 'satellite', '#93c5fd');
   burst(sx, sy, '#60a5fa', 7, 15);
 }
 function applyEmergencyBarrier(tower, target, st){
   if(!st.emergencyBarrier) return;
-  if(dist(target.x,target.y,CORE.x,CORE.y) > 172) return;
+  if(distSq(target.x,target.y,CORE.x,CORE.y) > 172 * 172) return;
   const add = Math.max(1, Math.floor(st.emergencyBarrier));
   S.coreShield = Math.min(12, (S.coreShield || 0) + add);
   ring(CORE.x, CORE.y, 42 + S.coreShield * 2, '#93c5fd');
@@ -4085,23 +4431,37 @@ function applyEmergencyBarrier(tower, target, st){
 }
 
 class Bullet{
-  constructor(tower,target,st){
+  constructor(tower=null,target=null,st=null){
+    if(tower) this.init(tower,target,st);
+  }
+  init(tower,target,st){
     const p=tower.pos;
     this.x=p.x;this.y=p.y;this.tower=tower;this.target=target;this.st=st;
-    this.speed=18;this.dead=false;this.color=tower.def.color;this.kind=tower.def.id;this.rot=Math.random()*TAU;
+    this.speed=18;this.dead=false;this.color=tower.def.color;this.kind=tower.def.id;this.rot=Math.random()*TAU;this.trailPhase=(Math.random()*4)|0;
+    return this;
   }
   update(dt){
-    if(!this.target||this.target.dead){this.dead=true;return}
-    const dx=this.target.x-this.x,dy=this.target.y-this.y,d=Math.hypot(dx,dy);
-    if(d<this.speed*dt){this.hit();this.dead=true;return}
-    this.x+=dx/d*this.speed*dt;this.y+=dy/d*this.speed*dt;this.rot += .16*dt;
-    drawBulletTrail(this.kind,this.x,this.y,this.color);
+    const target = this.target;
+    if(!target||target.dead){this.dead=true;return}
+    const dx=target.x-this.x,dy=target.y-this.y;
+    const step=this.speed*dt;
+    const dSq=dx*dx+dy*dy;
+    if(dSq<=step*step){this.hit();this.dead=true;return}
+    const inv=step/Math.sqrt(dSq);
+    this.x+=dx*inv;this.y+=dy*inv;this.rot += .16*dt;
+    const stride = projectileTrailStride();
+    if(stride <= 1 || ((perfFrameId + this.trailPhase) % stride) === 0) drawBulletTrail(this.kind,this.x,this.y,this.color);
   }
   hit(){
     const id=this.tower.def.id,dmg=this.st.dmg;
     if(id==='solar'){
-      areaDamage(this.target.x,this.target.y,(58+this.tower.level*3)*(1+this.st.area),dmg,'solar',this.color);
-      for(const e of enemies) if(dist(e.x,e.y,this.target.x,this.target.y)<70*(1+this.st.area)){e.dot=(1.4+this.tower.level*.2)*(1+this.st.dot);e.dotTime=120}
+      const tx=this.target.x, ty=this.target.y;
+      areaDamage(tx,ty,(58+this.tower.level*3)*(1+this.st.area),dmg,'solar',this.color);
+      const dotRadius=70*(1+this.st.area), dotRadiusSq=dotRadius*dotRadius;
+      for(let i=0;i<enemies.length;i++){
+        const e = enemies[i];
+        if(distSq(e.x,e.y,tx,ty)<dotRadiusSq){e.dot=(1.4+this.tower.level*.2)*(1+this.st.dot);e.dotTime=120}
+      }
       if(signatureChance(this.tower,.10,.016)) triggerSolarNova(this.tower,this.target,this.st,dmg);
     }else if(id==='frost'){
       this.target.damage(dmg,'frost',this.color);this.target.slow=120*(1+this.st.freeze);
@@ -4152,8 +4512,10 @@ class Bullet{
       const fieldRadius = (48 + this.tower.level * 2.8) * (1 + this.st.area);
       this.target.damage(dmg * .64, 'smog', this.color);
       let reversed = false;
-      for(const e of enemies){
-        if(e.dead || dist(e.x,e.y,this.target.x,this.target.y) > fieldRadius) continue;
+      const fieldRadiusSq = fieldRadius * fieldRadius;
+      for(let i=0;i<enemies.length;i++){
+        const e = enemies[i];
+        if(e.dead || distSq(e.x,e.y,this.target.x,this.target.y) > fieldRadiusSq) continue;
         e.slow = Math.max(e.slow, 76 + this.st.poisonSlow * 28);
         e.mark = Math.max(e.mark, 86 + this.st.markAmp * 220);
         if(this.st.dot > 0){
@@ -4212,9 +4574,12 @@ function fireBeam(tower,target,st){
   const p=tower.pos,color=tower.def.color;
   const overcharge = signatureChance(tower,.10,.012);
   const width = 23 + tower.level * 1.1 + st.beamWidth + (overcharge ? 12 : 0);
-  beams.push({x1:p.x,y1:p.y,x2:target.x,y2:target.y,color,life:overcharge?26:18,style:'laser',width:overcharge?6:4});
-  for(const e of enemies){
-    if(!e.dead && pointSeg(e.x,e.y,p.x,p.y,target.x,target.y)<width) e.damage(st.dmg*(overcharge?1.34:1),'laser',color);
+  pushBeam(p.x,p.y,target.x,target.y,color,overcharge?26:18,'laser',overcharge?6:4);
+  const widthSq = width * width;
+  const beamDamage = st.dmg * (overcharge ? 1.34 : 1);
+  for(let i=0;i<enemies.length;i++){
+    const e = enemies[i];
+    if(!e.dead && pointSegSq(e.x,e.y,p.x,p.y,target.x,target.y)<widthSq) e.damage(beamDamage,'laser',color);
   }
   burst(target.x,target.y,color,overcharge?22:10,overcharge?44:25);
   if(overcharge){
@@ -4229,13 +4594,20 @@ function fireBeam(tower,target,st){
 
 
 function choosePlacedPlanets(count=1){
-  const placed = grid.filter(Boolean);
-  if(!placed.length) return [];
-  const copy = [...placed];
   const picks = [];
-  for(let i=0;i<count && copy.length;i++){
-    const idx = Math.floor(Math.random()*copy.length);
-    picks.push(copy.splice(idx,1)[0]);
+  let placedCount = 0;
+  for(let i=0;i<grid.length;i++) if(grid[i]) placedCount++;
+  if(!placedCount) return picks;
+  const targetCount = Math.min(count, placedCount);
+  while(picks.length < targetCount){
+    let nth = Math.floor(Math.random() * placedCount);
+    let chosen = null;
+    for(let i=0;i<grid.length;i++){
+      const t = grid[i];
+      if(!t) continue;
+      if(nth-- === 0){ chosen = t; break; }
+    }
+    if(chosen && !picks.includes(chosen)) picks.push(chosen);
   }
   return picks;
 }
@@ -4301,8 +4673,9 @@ function triggerBossSkill(enemy){
       break;
     case 'sporeBloom':
       bossWarning(enemy,'포자 증식', labelColor);
-      for(const e of enemies){
-        if(!e.dead && e !== enemy && dist(e.x,e.y,enemy.x,enemy.y) < 120){
+      for(let i=0;i<enemies.length;i++){
+        const e = enemies[i];
+        if(!e.dead && e !== enemy && distSq(e.x,e.y,enemy.x,enemy.y) < 120*120){
           e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .08));
           e.slow = Math.max(0, e.slow - 24);
         }
@@ -4313,8 +4686,9 @@ function triggerBossSkill(enemy){
       break;
     case 'overgrowth':
       bossWarning(enemy,'과성장', labelColor);
-      for(const e of enemies){
-        if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 150){
+      for(let i=0;i<enemies.length;i++){
+        const e = enemies[i];
+        if(!e.dead && distSq(e.x,e.y,enemy.x,enemy.y) < 150*150){
           e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .10));
         }
       }
@@ -4335,8 +4709,9 @@ function triggerBossSkill(enemy){
       bossWarning(enemy,'산업 장막', labelColor);
       healPct(.06);
       enemy.armor = Math.min(.48, (enemy.armor || 0) + .018);
-      for(const e of enemies){
-        if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 170){
+      for(let i=0;i<enemies.length;i++){
+        const e = enemies[i];
+        if(!e.dead && distSq(e.x,e.y,enemy.x,enemy.y) < 170*170){
           e.armor = Math.min(.42, (e.armor || 0) + .010);
           e.slow = Math.max(0, (e.slow || 0) - 14);
         }
@@ -4356,8 +4731,9 @@ function triggerBossSkill(enemy){
       bossWarning(enemy,'수정 과부하', labelColor);
       healPct(.055);
       enemy.armor = Math.min(.49, (enemy.armor || 0) + .018);
-      for(const e of enemies){
-        if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 145) e.armor = Math.min(.44, (e.armor || 0) + .012);
+      for(let i=0;i<enemies.length;i++){
+        const e = enemies[i];
+        if(!e.dead && distSq(e.x,e.y,enemy.x,enemy.y) < 145*145) e.armor = Math.min(.44, (e.armor || 0) + .012);
       }
       ring(enemy.x, enemy.y, enemy.size + 48, '#a78bfa');
       spawnImpactShards(enemy.x, enemy.y, '#ddd6fe', 16);
@@ -4365,8 +4741,9 @@ function triggerBossSkill(enemy){
       break;
     case 'fieldRepair':
       bossWarning(enemy,'전장 수리', labelColor);
-      for(const e of enemies){
-        if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 132){
+      for(let i=0;i<enemies.length;i++){
+        const e = enemies[i];
+        if(!e.dead && distSq(e.x,e.y,enemy.x,enemy.y) < 132*132){
           e.hp = Math.min(e.maxHp, e.hp + Math.floor(e.maxHp * .055));
           e.armor = Math.min(.42, (e.armor || 0) + .008);
         }
@@ -4378,8 +4755,9 @@ function triggerBossSkill(enemy){
       bossWarning(enemy,'코어 재부팅', labelColor);
       healPct(.06);
       enemy.armor = Math.min(.50, (enemy.armor || 0) + .020);
-      for(const e of enemies){
-        if(!e.dead && dist(e.x,e.y,enemy.x,enemy.y) < 160) e.armor = Math.min(.44, (e.armor || 0) + .012);
+      for(let i=0;i<enemies.length;i++){
+        const e = enemies[i];
+        if(!e.dead && distSq(e.x,e.y,enemy.x,enemy.y) < 160*160) e.armor = Math.min(.44, (e.armor || 0) + .012);
       }
       burst(enemy.x, enemy.y, '#60a5fa', 24, 38);
       ring(enemy.x, enemy.y, enemy.size + 52, '#ef4444');
@@ -4421,7 +4799,7 @@ function blackholePulse(tower,target,st){
     maxLife: 21,
     tick: 0
   });
-  beams.push({x1:p.x,y1:p.y,x2:mx,y2:my,color,life:9,style:'voidShot',width:1.15});
+  pushBeam(p.x,p.y,mx,my,color,9,'voidShot',1.15);
   ring(hx,hy,28 + tower.level * 1.8,color);
   burst(hx,hy,color,14,24);
   if(signatureChance(tower,.10,.012)) triggerVoidCollapse(tower,hx,hy,st);
@@ -4429,22 +4807,28 @@ function blackholePulse(tower,target,st){
 }
 
 function areaDamage(x,y,r,dmg,source,color){
-  for(const e of enemies) if(!e.dead && dist(e.x,e.y,x,y)<=r)e.damage(dmg,source,color);
+  const rr = r * r;
+  for(let i=0;i<enemies.length;i++){
+    const e = enemies[i];
+    if(!e.dead && distSq(e.x,e.y,x,y)<=rr) e.damage(dmg,source,color);
+  }
   ring(x,y,r,color);
 }
 function chain(start,dmg,count,color,markAmp=0){
   let cur=start;
   const hit=new Set();
+  const maxChainDistSq = 115 * 115;
   for(let i=0;i<count;i++){
     if(!cur||hit.has(cur))break;
     hit.add(cur);cur.damage(dmg*(1-i*.16)*(1+markAmp),'storm',color);cur.slow=Math.max(cur.slow,25);
-    let next=null,best=9999;
-    for(const e of enemies){
+    let next=null,best=maxChainDistSq;
+    for(let j=0;j<enemies.length;j++){
+      const e = enemies[j];
       if(e.dead||hit.has(e))continue;
-      const d=dist(e.x,e.y,cur.x,cur.y);
-      if(d<115&&d<best){best=d;next=e}
+      const d=distSq(e.x,e.y,cur.x,cur.y);
+      if(d<best){best=d;next=e}
     }
-    if(next)beams.push({x1:cur.x,y1:cur.y,x2:next.x,y2:next.y,color,life:14,style:'chain'});
+    if(next)pushBeam(cur.x,cur.y,next.x,next.y,color,14,'chain');
     cur=next;
   }
 }
@@ -4505,6 +4889,7 @@ function applyGlobalUpgradeCandidate(c){
   const count = Math.max(1, Math.min(GLOBAL_UPGRADE_MAX_LEVEL - prev, Number(c.nextLevel || prev + rarityApplyCount(c)) - prev));
   if(count <= 0) return false;
   levels[c.upgrade.id] = prev + count;
+  invalidateGlobalUpgradeStatsCache();
   const color = c.upgrade.color || '#67e8f9';
   for(const t of grid){
     if(!t) continue;
@@ -4531,7 +4916,12 @@ function openSkillChoice(rare){
 }
 
 function updateTacticalCooldowns(dt){
-  for(const k of Object.keys(S.tacticalCd||{})) S.tacticalCd[k]=Math.max(0,S.tacticalCd[k]-dt);
+  const cd = S.tacticalCd;
+  if(cd){
+    if(cd.blackhole>0) cd.blackhole=Math.max(0,cd.blackhole-dt);
+    if(cd.nova>0) cd.nova=Math.max(0,cd.nova-dt);
+    if(cd.repair>0) cd.repair=Math.max(0,cd.repair-dt);
+  }
   if(S.tacticalBoost>0) S.tacticalBoost=Math.max(0,S.tacticalBoost-.004*dt);
 }
 function canUseTactical(type,cost){
@@ -4541,15 +4931,39 @@ function canUseTactical(type,cost){
   S.tacticalCd[type]=Math.floor((TACTICAL_COOLDOWN_MAX[type]||700) * (S.offline?.cooldownScale || 1));
   return true;
 }
+function leadingEnemy(){
+  let best = null, bestProgress = -Infinity;
+  for(let i=0;i<enemies.length;i++){
+    const e = enemies[i];
+    if(!e || e.dead) continue;
+    if(e.progress > bestProgress){ best = e; bestProgress = e.progress; }
+  }
+  return best;
+}
+function leadingEnemies(limit=5){
+  const out = [];
+  for(let i=0;i<enemies.length;i++){
+    const e = enemies[i];
+    if(!e || e.dead) continue;
+    let pos = out.length;
+    while(pos > 0 && out[pos - 1].progress < e.progress) pos--;
+    if(pos < limit){
+      out.splice(pos, 0, e);
+      if(out.length > limit) out.length = limit;
+    }
+  }
+  return out;
+}
 function useSkill(type){
   if(type==='blackhole'){
     if(!canUseTactical('blackhole',70))return;
-    const target=enemies.length?enemies.slice().sort((a,b)=>b.progress-a.progress)[0]:{x:W/2,y:H/2};
+    const target=leadingEnemy() || {x:W/2,y:H/2};
     const x=target.x,y=target.y,r=230;
     anomalies.push({x,y,target:null,kind:'tactical',radius:210,damage:28,pull:2.1,color:'#c084fc',life:130,maxLife:130,tick:0});
-    for(const e of enemies){
-      const d=dist(e.x,e.y,x,y);
-      if(d<r){
+    const rr = r * r;
+    for(let i=0;i<enemies.length;i++){
+      const e = enemies[i];
+      if(distSq(e.x,e.y,x,y)<rr){
         e.x+=(x-e.x)*.36;e.y+=(y-e.y)*.36;
         confineEnemyToRoute(e, e.stageBoss ? 24 : 18);
         e.slow=210;e.mark=240;e.damage(180,'skill','#c084fc');
@@ -4559,7 +4973,7 @@ function useSkill(type){
   }
   if(type==='nova'){
     if(!canUseTactical('nova',75))return;
-    const targets=enemies.slice().sort((a,b)=>b.progress-a.progress).slice(0,5);
+    const targets=leadingEnemies(5);
     if(!targets.length){toast('포격 대상이 없습니다');S.exp+=75;S.tacticalCd.nova=0;return}
     targets.forEach((e,i)=>{
       setTimeout(()=>{
@@ -4744,18 +5158,30 @@ function autoMerge(continueSession=false, runId=null){
 
 
 function tryCreateHiddenPlanet(){
-  if(grid.some(t => t && t.type === HIDDEN_PLANET_TYPE)) return false;
+  for(let i=0;i<grid.length;i++){
+    const t = grid[i];
+    if(t && t.type === HIDDEN_PLANET_TYPE) return false;
+  }
   const recipe = [];
   for(let type=0; type<BASE_PLANET_COUNT; type++) {
-    const idx = grid.findIndex(t => t && t.type === type && t.level >= 5);
+    let idx = -1;
+    for(let i=0;i<grid.length;i++){
+      const t = grid[i];
+      if(t && t.type === type && t.level >= 5){ idx = i; break; }
+    }
     if(idx < 0) return false;
     recipe.push(idx);
   }
-  const avg = recipe.reduce((acc, idx) => { const c = center(idx); acc.x += c.x; acc.y += c.y; return acc; }, {x:0,y:0});
-  avg.x /= recipe.length; avg.y /= recipe.length;
+  let sumX = 0, sumY = 0;
+  for(let i=0;i<recipe.length;i++){ const c = center(recipe[i]); sumX += c.x; sumY += c.y; }
+  const avgX = sumX / recipe.length, avgY = sumY / recipe.length;
   let anchor = recipe[0], best = Infinity;
-  recipe.forEach(idx => { const c = center(idx); const d = dist(c.x,c.y,avg.x,avg.y); if(d < best){ best = d; anchor = idx; } });
-  recipe.forEach(idx => { if(idx !== anchor) grid[idx] = null; });
+  for(let i=0;i<recipe.length;i++){
+    const idx = recipe[i], c = center(idx);
+    const dx = c.x - avgX, dy = c.y - avgY, d = dx*dx + dy*dy;
+    if(d < best){ best = d; anchor = idx; }
+  }
+  for(let i=0;i<recipe.length;i++){ const idx = recipe[i]; if(idx !== anchor) grid[idx] = null; }
   grid[anchor] = new Planet(HIDDEN_PLANET_TYPE, 1, anchor);
   S.hiddenUnlocked = true;
   selected = anchor;
@@ -4772,7 +5198,7 @@ function tryCreateHiddenPlanet(){
 }
 
 function spawn(entry){
-  const enemy = new Enemy(entry);
+  const enemy = acquireEnemy(entry);
   enemies.push(enemy);
   if(enemy.stageBoss){
     impactLabel(enemy.x + 56, enemy.y - 26, enemy.bossTier === 'final' ? 'FINAL BOSS' : 'MID BOSS', enemy.auraColor || enemy.color, 16, 120);
@@ -4796,10 +5222,17 @@ function triggerStageFx(reason){
   }
 
   if(kind==='ice'){
-    const towers=grid.filter(Boolean);
-    const freezeCount=Math.min(3, Math.max(1, Math.ceil(towers.length*.22)));
+    let towerCount = 0;
+    for(let i=0;i<grid.length;i++) if(grid[i]) towerCount++;
+    const freezeCount=Math.min(3, Math.max(1, Math.ceil(towerCount*.22)));
     for(let i=0;i<freezeCount;i++){
-      const t=towers[Math.floor(Math.random()*towers.length)];
+      if(!towerCount) break;
+      let nth = Math.floor(Math.random()*towerCount);
+      let t = null;
+      for(let j=0;j<grid.length;j++){
+        if(!grid[j]) continue;
+        if(nth-- === 0){ t = grid[j]; break; }
+      }
       if(t) t.frozen=Math.max(t.frozen||0, 130+S.ogge*5);
     }
     toast('눈보라 발생 — 일부 행성이 잠시 빙결됩니다');
@@ -4815,7 +5248,7 @@ function triggerStageFx(reason){
     toast('생체 포자장 — 행성 공격속도가 잠시 느려집니다');
     log('스테이지 효과: 포자장 / 공격속도 감소');
   }else{
-    for(const e of enemies){ if(!e.dead) e.mark=Math.max(e.mark,90); }
+    for(let i=0;i<enemies.length;i++){ const e = enemies[i]; if(!e.dead) e.mark=Math.max(e.mark,90); }
     toast('오로라 균열 — 전장 전체가 흔들립니다');
     log('스테이지 효과: 오로라 균열');
   }
@@ -5273,9 +5706,12 @@ function drawCore(){
   ctx.restore();
 }
 function drawParticles(dt){
-  for(let i=particles.length-1;i>=0;i--){
-    const p=particles[i];p.life-=dt;
-    if(p.life<=0){particles.splice(i,1);continue}
+  trimFxArray(particles, PERF_MAX_PARTICLES);
+  let write = 0;
+  for(let i=0;i<particles.length;i++){
+    const p=particles[i];
+    p.life-=dt;
+    if(p.life<=0){ recycleFxItem(p, particles); continue; }
     ctx.save();
     if(p.ring){
       p.r+=(p.max-p.r)*.12+dt*.4;
@@ -5312,13 +5748,17 @@ function drawParticles(dt){
       }
     }
     ctx.restore();
+    particles[write++] = p;
   }
+  particles.length = write;
 }
 
 function drawBeams(dt){
-  for(let i=beams.length-1;i>=0;i--){
+  trimFxArray(beams, PERF_MAX_BEAMS);
+  let write = 0;
+  for(let i=0;i<beams.length;i++){
     const b=beams[i];b.life-=dt;
-    if(b.life<=0){beams.splice(i,1);continue}
+    if(b.life<=0){ recycleFxItem(b, beams); continue; }
     ctx.save();
     const alpha = clamp(b.life/18,0,1);
     if(b.style==='laser'){
@@ -5353,13 +5793,17 @@ function drawBeams(dt){
       ctx.beginPath();ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2);ctx.stroke();
     }
     ctx.restore();
+    beams[write++] = b;
   }
+  beams.length = write;
 }
 
 function drawFloats(dt){
-  for(let i=floats.length-1;i>=0;i--){
+  trimFxArray(floats, PERF_MAX_FLOATS);
+  let write = 0;
+  for(let i=0;i<floats.length;i++){
     const f=floats[i];f.life-=dt;f.y+=f.vy*dt;
-    if(f.life<=0){floats.splice(i,1);continue}
+    if(f.life<=0){ recycleFxItem(f, floats); continue; }
     const maxLife = f.maxLife || 70;
     const alpha = clamp(f.life/maxLife,0,1);
     const size = f.size || 12;
@@ -5369,7 +5813,9 @@ function drawFloats(dt){
     ctx.font=`900 ${size}px Orbitron`;ctx.textAlign='center';
     ctx.strokeText(f.text,f.x,f.y);ctx.fillText(f.text,f.x,f.y);
     ctx.restore();
+    floats[write++] = f;
   }
+  floats.length = write;
 }
 function drawDragging(){
   if(!dragging)return;
@@ -5383,7 +5829,12 @@ function drawDragging(){
   const previewType = Number.isFinite(dragging.dragPreviewType) ? dragging.dragPreviewType : dragging.type;
   const size = ((IS_MOBILE_BOARD ? 46 : 39) + previewLevel*1.65) * shrink;
   const ok = drawPlanetSprite(previewType, mouse.x, mouse.y, size, currentPlanetFrameIndex(), previewLevel);
-  if(!ok) drawProceduralPlanetBody({...dragging, type:previewType, level:previewLevel}, mouse.x, mouse.y);
+  if(!ok){
+    const oldType = dragging.type, oldLevel = dragging.level;
+    dragging.type = previewType; dragging.level = previewLevel;
+    drawProceduralPlanetBody(dragging, mouse.x, mouse.y);
+    dragging.type = oldType; dragging.level = oldLevel;
+  }
   ctx.filter = 'none';
   ctx.globalAlpha=.28;
   ctx.strokeStyle='rgba(219,234,254,.58)';
@@ -5396,6 +5847,7 @@ function loop(now){
   raf=requestAnimationFrame(loop);
   const raw=clamp((now-last)/16.666,0,3);last=now;
   const dt=S.paused?0:raw*S.speed;
+  beginVisualFxFrame();
   if(S && S.hp <= 0 && !S.gameOver) triggerGameOver('core');
   if(S && S.gameOver && !$('gameOverOverlay') && !S.gameOverOverlayRequested){
     S.gameOverOverlayRequested = true;
@@ -5417,10 +5869,24 @@ function loop(now){
     spawnTimer-=dt;
     const interval=Math.max(18,54-S.ogge*1.8-S.theme*3);
     if(S.active&&S.queue.length&&spawnTimer<=0){spawn(S.queue.shift());spawnTimer=interval}
-    grid.forEach(t=>t&&t.update(dt));
+    for(let i=0;i<grid.length;i++){ const t = grid[i]; if(t) t.update(dt); }
     tryCreateHiddenPlanet();
-    bullets.forEach(b=>b.update(dt));bullets=bullets.filter(b=>!b.dead);
-    enemies.forEach(e=>e.update(dt));enemies=enemies.filter(e=>!e.dead);
+    for(let i=0;i<bullets.length;i++) bullets[i].update(dt);
+    let bulletWrite = 0;
+    for(let i=0;i<bullets.length;i++){
+      const b = bullets[i];
+      if(!b.dead) bullets[bulletWrite++] = b;
+      else recycleBullet(b);
+    }
+    bullets.length = bulletWrite;
+    for(let i=0;i<enemies.length;i++) enemies[i].update(dt);
+    let enemyWrite = 0;
+    for(let i=0;i<enemies.length;i++){
+      const e = enemies[i];
+      if(!e.dead) enemies[enemyWrite++] = e;
+      else recycleEnemy(e);
+    }
+    enemies.length = enemyWrite;
     updateAnomalies(dt);
     updateDustClouds(dt);
     updateStageHazards(dt);
@@ -5431,11 +5897,13 @@ function loop(now){
   }
 
   updateHangarVisuals();
+  trimVisualFxBuffers();
   drawAnomalies();
-  grid.forEach(t=>t&&t.draw());
-  enemies.sort((a,b)=>a.y-b.y).forEach(e=>e.draw());
+  for(let i=0;i<grid.length;i++){ const t = grid[i]; if(t) t.draw(); }
+  if(enemies.length > 1) enemies.sort(ENEMY_DRAW_SORT_BY_Y);
+  for(let i=0;i<enemies.length;i++) enemies[i].draw();
   drawBossTelegraphs();
-  bullets.forEach(b=>b.draw());
+  for(let i=0;i<bullets.length;i++) bullets[i].draw();
   drawBeams(raw);drawParticles(raw);drawFloats(raw);drawDragging();
 
   if(flash>0){ctx.globalAlpha=flash;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);flash=Math.max(0,flash-.035*raw);ctx.globalAlpha=1}
@@ -5457,31 +5925,37 @@ function loop(now){
   ctx.restore();
 }
 
+let updateUiLastHangarStateAt = 0;
 function updateUI(){
   const currentStageDef = getStageDef(S.stageNo || StageMapState.current || (S.theme + 1));
-  $('themeName').textContent=currentStageDef.ko || currentStageDef.name || theme().ko || theme().name;
-  $('themeName').title=`${currentStageDef.stage}. ${currentStageDef.name} / ${currentStageDef.ko}`;
-  $('stageLabel').textContent=`${currentStageDef.stage}‑${S.ogge}`;
+  const themeName = $('themeName');
+  setTextIfChanged(themeName, currentStageDef.ko || currentStageDef.name || theme().ko || theme().name);
+  setTitleIfChanged(themeName, `${currentStageDef.stage}. ${currentStageDef.name} / ${currentStageDef.ko}`);
+  setTextIfChanged($('stageLabel'), `${currentStageDef.stage}‑${S.ogge}`);
   const stageType = $('stageType');
   const waveLabel = getStageBattleDescription(S.stageNo || StageMapState.current || 1, S.ogge);
   if(stageType){
-    stageType.textContent = waveLabel;
-    stageType.title = getStageBattleFullDescription(currentStageDef.stage, S.ogge);
+    setTextIfChanged(stageType, waveLabel);
+    setTitleIfChanged(stageType, getStageBattleFullDescription(currentStageDef.stage, S.ogge));
   }
   renderWavePreview();
-  $('gold').textContent=fmt2(S.gold);
-  $('hp').textContent=S.coreShield ? `${fmt2(S.hp)}+${fmt2(S.coreShield)}` : fmt2(S.hp);
-  $('exp').textContent=`${fmt2(S.exp)}/${fmt2(S.nextExp)}`;
-  const expBar=$('expBar'); if(expBar) expBar.style.width=clamp(S.exp/S.nextExp*100,0,100)+'%';
-  $('level').textContent=fmt2(S.level);
-  $('waveBar').style.width=S.total?Math.floor(S.spawned/S.total*100)+'%':'0%';
-  $('speedBtn').textContent=`${fmt2(S.speed)}x`;
-  $('pauseBtn').textContent='정지';
-  $('summonBtn').textContent='소환';
+  setTextIfChanged($('gold'), fmt2(S.gold));
+  setTextIfChanged($('hp'), S.coreShield ? `${fmt2(S.hp)}+${fmt2(S.coreShield)}` : fmt2(S.hp));
+  setTextIfChanged($('exp'), `${fmt2(S.exp)}/${fmt2(S.nextExp)}`);
+  setStyleWidthIfChanged($('expBar'), clamp(S.exp/S.nextExp*100,0,100)+'%');
+  setTextIfChanged($('level'), fmt2(S.level));
+  setStyleWidthIfChanged($('waveBar'), S.total?Math.floor(S.spawned/S.total*100)+'%':'0%');
+  setTextIfChanged($('speedBtn'), `${fmt2(S.speed)}x`);
+  setTextIfChanged($('pauseBtn'), '정지');
+  setTextIfChanged($('summonBtn'), '소환');
   const globalLine = $('globalEffectLine');
-  if(globalLine) globalLine.innerHTML = `<b>전역</b>${escapeHtml(globalSkillSummaryText())}`;
-  renderOfflineMetaPanel();
-  updateHangarState();
+  if(globalLine) setHtmlIfChanged(globalLine, `<b>전역</b>${escapeHtml(globalSkillSummaryText())}`);
+  renderOfflineMetaPanelThrottled();
+  const now = performance.now ? performance.now() : Date.now();
+  if(now - updateUiLastHangarStateAt > 160){
+    updateUiLastHangarStateAt = now;
+    updateHangarState();
+  }
 }
 
 function updateSelected(){
@@ -5545,17 +6019,18 @@ function toast(t, priority='normal'){
   layer.appendChild(div);
   setTimeout(()=>div.remove(),2200);
 }
-function floatText(x,y,text,color,size=12,life=54){floats.push({x,y,text:(typeof text === 'number' ? fmt2(text) : String(text)),color,life,maxLife:life,vy:-.52,size})}
+function floatText(x,y,text,color,size=12,life=54){pushFloat(x,y,(typeof text === 'number' ? fmt2(text) : String(text)),color,size,life,-.52)}
 function burst(x,y,color,count,force){
   for(let i=0;i<count;i++){
     const a=Math.random()*TAU,s=rand(.5,force/22);
-    particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,r:rand(1.5,3.0),life:rand(16,38),maxLife:38,color});
+    if(!pushParticle(x,y,Math.cos(a)*s,Math.sin(a)*s,rand(1.5,3.0),rand(16,38),38,color,'burst')) break;
   }
 }
-function ring(x,y,r,color){particles.push({x,y,r:2,max:r,color,life:26,maxLife:26,ring:true})}
+function ring(x,y,r,color){pushParticle(x,y,0,0,2,26,26,color,'burst',{ring:true,max:r})}
 
 function impactLabel(x,y,text,color='#fff',size=18,life=76){
-  floats.push({x,y,text:(typeof text === 'number' ? fmt2(text) : String(text)),color,life:Math.round(life*.86),maxLife:Math.round(life*.86),vy:-.48,size:Math.round(size*.92)});
+  const adjustedLife = Math.round(life*.86);
+  pushFloat(x,y,(typeof text === 'number' ? fmt2(text) : String(text)),color,Math.round(size*.92),adjustedLife,-.48);
 }
 function signatureChance(tower,base=.10,perLevel=.012){
   return Math.random() < Math.min(.38, base + tower.level * perLevel);
@@ -5637,9 +6112,11 @@ function triggerStormOverload(tower,target,st,dmg,chainCount){
 }
 function triggerSporeCloud(tower,target,st,dmg){
   const r=68+tower.level*1.6;
-  for(const e of enemies){
+  const rSq = r * r;
+  for(let i=0;i<enemies.length;i++){
+    const e = enemies[i];
     if(e.dead) continue;
-    if(dist(e.x,e.y,target.x,target.y)<r){
+    if(distSq(e.x,e.y,target.x,target.y)<rSq){
       e.dot += (.42+tower.level*.06)*(1+st.dot);
       e.dotTime = Math.max(e.dotTime,155);
       e.slow = Math.max(e.slow,35);
@@ -6353,7 +6830,7 @@ function exitNativePauseDialog(ev){
     S.queue = [];
     S.gameOver = false;
   }
-  try{ enemies = []; bullets = []; beams = []; particles = []; floats = []; }catch(err){}
+  try{ recycleAllEnemies(); recycleAllBullets(); enemies = []; bullets = []; beams = []; particles = []; floats = []; }catch(err){}
   try{ stopAllGameAudio(); }catch(err){}
   try{ $('game').style.display = 'none'; }catch(err){}
   try{ $('stageMap').style.display = 'block'; }catch(err){}
@@ -7140,9 +7617,8 @@ try { renderHangar(); } catch(err) { console.error('renderHangar failed during i
   });
   setInterval(() => {
     const map = $('stageMap');
-    const game = $('game');
-    if((map && getComputedStyle(map).display !== 'none') || (game && getComputedStyle(game).display !== 'none')) applyStageDescription();
-  }, 700);
+    if(map && getComputedStyle(map).display !== 'none') applyStageDescription();
+  }, 900);
 })();
 
 
