@@ -30,7 +30,7 @@ function configureBattleCanvasBackingStore(){
   canvas.style.height = h + 'px';
 }
 configureBattleCanvasBackingStore();
-const ctx = canvas.getContext('2d');
+let ctx = canvas.getContext('2d');
 function syncBattleCanvasTransform(){
   const logicalW = Number(canvas.__logicalWidth || canvas.dataset.logicalWidth || canvas.clientWidth || 748);
   const logicalH = Number(canvas.__logicalHeight || canvas.dataset.logicalHeight || canvas.clientHeight || 708);
@@ -162,7 +162,8 @@ function buildStarfield(w, h){
 function updateStarfield(dt){
   const w = window.innerWidth;
   const h = window.innerHeight;
-  for(const s of starField.stars){
+  for(let i=0;i<starField.stars.length;i++){
+    const s = starField.stars[i];
     s.x += s.speedX * dt;
     s.y += s.speedY * dt;
     s.twinkle += s.twinkleSpeed * dt;
@@ -177,7 +178,8 @@ function drawStarfield(){
   const w = window.innerWidth;
   const h = window.innerHeight;
   starCtx.clearRect(0, 0, w, h);
-  for(const s of starField.stars){
+  for(let i=0;i<starField.stars.length;i++){
+    const s = starField.stars[i];
     const glow = .55 + Math.sin(s.twinkle) * .28;
     const a = Math.max(.12, Math.min(1, s.alpha * glow));
     starCtx.globalAlpha = a;
@@ -231,8 +233,8 @@ function buildScreenStarfield(sf, w, h){
   });
 }
 
-function resizeScreenStarfield(sf){
-  const rect = sf.canvas.getBoundingClientRect();
+function resizeScreenStarfield(sf, measuredRect=null){
+  const rect = measuredRect || sf.canvas.getBoundingClientRect();
   const w = Math.max(0, Math.round(rect.width));
   const h = Math.max(0, Math.round(rect.height));
   if(w < 2 || h < 2) return false;
@@ -257,7 +259,8 @@ function updateScreenStarfield(sf, dt){
   const w = sf.lastW;
   const h = sf.lastH;
   if(w < 2 || h < 2) return;
-  for(const s of sf.stars){
+  for(let i=0;i<sf.stars.length;i++){
+    const s = sf.stars[i];
     s.x += s.speedX * dt;
     s.y += s.speedY * dt;
     s.twinkle += s.twinkleSpeed * dt;
@@ -274,7 +277,8 @@ function drawScreenStarfield(sf){
   if(w < 2 || h < 2) return;
   const ctx2 = sf.ctx;
   ctx2.clearRect(0, 0, w, h);
-  for(const s of sf.stars){
+  for(let i=0;i<sf.stars.length;i++){
+    const s = sf.stars[i];
     const glow = .55 + Math.sin(s.twinkle) * .28;
     const a = Math.max(.12, Math.min(1, s.alpha * glow));
     ctx2.globalAlpha = a;
@@ -292,12 +296,27 @@ function drawScreenStarfield(sf){
 function screenStarLoop(now){
   const dt = Math.min((now - screenStarLast) / 1000, 0.05);
   screenStarLast = now;
+<<<<<<< HEAD
   for(const sf of screenStarFields){
     const el = sf.canvas;
     if(!el || !el.isConnected) continue;
     const st = getComputedStyle(el);
     if(st.display === 'none' || st.visibility === 'hidden') continue;
     if(!resizeScreenStarfield(sf)) continue;
+=======
+  for(let i=0;i<screenStarFields.length;i++){
+    const sf = screenStarFields[i];
+    const el = sf.canvas;
+    if(!el || !el.isConnected) continue;
+    const rect = el.getBoundingClientRect();
+    if(rect.width < 2 || rect.height < 2) continue;
+    // getComputedStyle() can force style resolution; keep it as a rare safety check only.
+    if((perfFrameId & 31) === 0){
+      const st = getComputedStyle(el);
+      if(st.display === 'none' || st.visibility === 'hidden') continue;
+    }
+    if(!resizeScreenStarfield(sf, rect)) continue;
+>>>>>>> b95f30a (메모리 최적화)
     updateScreenStarfield(sf, dt);
     drawScreenStarfield(sf);
   }
@@ -364,12 +383,6 @@ const STAGE_DESCRIPTION_COPY = {
 function getStageDescriptionCopy(stageNo){
   const n = clamp(Number(stageNo || 1), 1, STAGE_MAP_DEFS.length);
   return STAGE_DESCRIPTION_COPY[n] || STAGE_DESCRIPTION_COPY[1];
-}
-function stageDescriptionLine(stageNo){
-  const n = clamp(Number(stageNo || 1), 1, STAGE_MAP_DEFS.length);
-  const def = getStageDef(n);
-  const copy = getStageDescriptionCopy(n);
-  return `${def.ko} 설명 · ${copy.summary} 추천 전략: ${copy.strategy}`;
 }
 function stageHintLine(stageNo, canEnter=true){
   const n = clamp(Number(stageNo || 1), 1, STAGE_MAP_DEFS.length);
@@ -555,14 +568,6 @@ function applyTestModeOverrides(){
   META.unlockedTowers = allTowerTypesFromManifest();
   if(!META.flags || typeof META.flags !== 'object') META.flags = {};
   META.flags.testMode = true;
-}
-function enterTestMode(){
-  loadOfflineMeta();
-  loadStageMapProgress();
-  applyTestModeOverrides();
-  renderOfflineMetaPanel();
-  showStageMap();
-  toast('TEST MODE 활성화 — 모든 성역과 기본 타워가 해금되었습니다');
 }
 
 const SAVE_SCHEMA_VERSION = 2;
@@ -828,9 +833,6 @@ function unlockStageTower(stageNo){
   sound('unlock');
   log(`${msg}: ${reward.desc}`);
   return true;
-}
-function unlockedTowerCount(){
-  return availableSummonTypes().length;
 }
 function nextTowerRewardText(){
   for(const stage of STAGE_MAP_DEFS){
@@ -1302,6 +1304,10 @@ function saveStageMapProgress(){
 function resetBattleUnitsForStageMap(){
   grid = Array(GRID_COLS*GRID_ROWS).fill(null);
   terrain = Array(GRID_COLS*GRID_ROWS).fill('empty');
+<<<<<<< HEAD
+=======
+  invalidateTerrainRenderCache();
+>>>>>>> b95f30a (메모리 최적화)
   recycleAllEnemies();
   recycleAllBullets();
   enemies = [];
@@ -1617,19 +1623,12 @@ const PLANET_EVOLUTION_SHEETS = Object.fromEntries(Object.entries(PLANET_EVOLUTI
   return [key, img];
 }));
 
-const STAGE_FX_IMAGES = ['assets/images/effects/fx_cosmic.webp?v=6','assets/images/effects/fx_frost.webp?v=6','assets/images/effects/fx_lava.webp?v=6','assets/images/effects/fx_jungle.webp?v=6','assets/images/effects/fx_smog.webp?v=1','assets/images/effects/fx_crystal.webp?v=1','assets/images/effects/fx_machine.webp?v=1'].map(src=>{
-  const img = new Image();
-  img.src = src;
-  return img;
-});
-
 const PLANET_ICON_COLS = 4;
 const PLANET_ICON_ROWS = 2;
 const PLANET_BASE_SIZE = 34; // v39: tower visual size reduced
 const PLANET_RENDER_SCALE = 0.76; // v39: icon sheet render scale reduced
 const BASE_PLANET_COUNT = 9;
 const HIDDEN_PLANET_TYPE = 9;
-const TECH_BONUS_PER_POINT = 0.08;
 
 function fmtInt(value){
   const n = Number(value);
@@ -1637,13 +1636,6 @@ function fmtInt(value){
 }
 function fmt2(value){ return fmtInt(value); }
 function fmtPct2(value){ return `${fmtInt(Number(value || 0) * 100)}%`; }
-function fmtSigned2(value){
-  const n = Number(value);
-  if(!Number.isFinite(n)) return '0';
-  const v = Math.round(n);
-  return `${v >= 0 ? '+' : ''}${v}`;
-}
-function fmtWholeOr2(value){ return fmtInt(value); }
 
 const PLANET_THUMB_IMAGE_CACHE = {};
 function planetThumbLevel(level){
@@ -1733,40 +1725,59 @@ function buildFieldStars(){
   });
 }
 
+let coverImageCropCacheKey = '';
+let coverImageCropCache = null;
+let coverFallbackGradient = null;
+let coverFallbackGradientKey = '';
 function drawCoverImage(img){
   if(!img || !img.complete || !img.naturalWidth){
-    const fallback = ctx.createLinearGradient(0,0,W,H);
-    fallback.addColorStop(0,'#020617');
-    fallback.addColorStop(1,theme().color);
+    const thColor = theme().color;
+    const fallbackKey = `${W}|${H}|${thColor}`;
+    if(!coverFallbackGradient || coverFallbackGradientKey !== fallbackKey){
+      const fallback = ctx.createLinearGradient(0,0,W,H);
+      fallback.addColorStop(0,'#020617');
+      fallback.addColorStop(1,thColor);
+      coverFallbackGradient = fallback;
+      coverFallbackGradientKey = fallbackKey;
+    }
     ctx.globalAlpha=.42;
-    ctx.fillStyle=fallback;
+    ctx.fillStyle=coverFallbackGradient;
     ctx.fillRect(0,0,W,H);
     ctx.globalAlpha=1;
     return;
   }
-  const ir = img.naturalWidth / img.naturalHeight;
-  const cr = W / H;
-  let sw = img.naturalWidth, sh = img.naturalHeight, sx = 0, sy = 0;
-  if(ir > cr){ sw = img.naturalHeight * cr; sx = (img.naturalWidth - sw) / 2; }
-  else { sh = img.naturalWidth / cr; sy = (img.naturalHeight - sh) / 2; }
-  ctx.save();
+  const key = `${img.currentSrc || img.src || 'img'}|${img.naturalWidth}x${img.naturalHeight}|${W}x${H}`;
+  let crop = coverImageCropCache;
+  if(!crop || coverImageCropCacheKey !== key){
+    const ir = img.naturalWidth / img.naturalHeight;
+    const cr = W / H;
+    let sw = img.naturalWidth, sh = img.naturalHeight, sx = 0, sy = 0;
+    if(ir > cr){ sw = img.naturalHeight * cr; sx = (img.naturalWidth - sw) / 2; }
+    else { sh = img.naturalWidth / cr; sy = (img.naturalHeight - sh) / 2; }
+    crop = coverImageCropCache = {sx, sy, sw, sh};
+    coverImageCropCacheKey = key;
+  }
   ctx.globalAlpha = .76;
-  ctx.drawImage(img, sx, sy, sw, sh, 0, 0, W, H);
-  ctx.restore();
+  ctx.drawImage(img, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, W, H);
+  ctx.globalAlpha = 1;
 }
 
 function buildDustClouds(){
   // v87: cloud/fog gameplay overlay removed per UI polish request.
+  if(!DUST_CLOUDS_ACTIVE) return;
   if(S) S.dustClouds = [];
 }
 
 function updateDustClouds(dt){
-  // v87: no drifting dust clouds.
+  // v11: dust clouds are disabled; avoid allocating a fresh [] every frame.
+  if(!DUST_CLOUDS_ACTIVE) return;
   if(S) S.dustClouds = [];
 }
 
+const DUST_CLOUDS_ACTIVE = false;
+const DUST_NO_PENALTY = {damageMul:1,cooldownMul:1,alpha:0};
 function getDustCloudPenalty(x,y){
-  return {damageMul:1,cooldownMul:1,alpha:0};
+  return DUST_NO_PENALTY;
 }
 
 function drawDustClouds(){
@@ -1794,7 +1805,7 @@ function drawElectricArc(x1,y1,x2,y2,options={}){
   ctx.moveTo(x1,y1);
   for(let i=1;i<segments;i++){
     const t=i/segments;
-    const wobble=Math.sin(performance.now()*.02+i*1.37)*.28;
+    const wobble=Math.sin((visualNowMs || (performance.now ? performance.now() : Date.now()))*.02+i*1.37)*.28;
     const offset=(Math.random()*2-1+wobble)*amplitude*(1-Math.abs(.5-t)*.65);
     ctx.lineTo(x1+dx*t+nx*offset,y1+dy*t+ny*offset);
   }
@@ -1811,19 +1822,24 @@ function updateAndDrawFieldStars(raw){
   const th = theme();
   const themeStarFactor = 0.72 + (th.starSpeed * 0.18);
   ctx.save();
-  for(const s of fieldStars){
+  ctx.fillStyle = '#ffffff';
+  ctx.shadowColor = 'rgba(255,255,255,.95)';
+  let lastLayer = -1;
+  for(let i=0;i<fieldStars.length;i++){
+    const s = fieldStars[i];
     s.x += s.speedX * themeStarFactor * raw;
     s.y += s.speedY * themeStarFactor * raw;
     s.twinkle += s.twinkleSpeed * raw;
     if(s.x < -10) s.x = W + 10;
-    if(s.x > W + 10) s.x = -10;
+    else if(s.x > W + 10) s.x = -10;
     if(s.y < -10) s.y = H + 10;
-    if(s.y > H + 10) s.y = -10;
+    else if(s.y > H + 10) s.y = -10;
+    if(s.layer !== lastLayer){
+      lastLayer = s.layer;
+      ctx.shadowBlur = s.layer === 2 ? 8 : 4;
+    }
     const glow = .62 + Math.sin(s.twinkle) * .30;
     ctx.globalAlpha = clamp(s.alpha * glow, .12, .95);
-    ctx.fillStyle = '#ffffff';
-    ctx.shadowColor = 'rgba(255,255,255,.95)';
-    ctx.shadowBlur = s.layer === 2 ? 8 : 4;
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.size, 0, TAU);
     ctx.fill();
@@ -1864,17 +1880,12 @@ function randomPlateAffinityType(){
   const list = pool.length ? pool : fallback;
   return list[Math.floor(Math.random() * list.length)] ?? 0;
 }
-function specialPlateKeys(){ return new Set(['amp','coil','lens','mine','rift']); }
-function isSpecialPlateKey(key){ return specialPlateKeys().has(key); }
+const SPECIAL_PLATE_KEY_SET = new Set(['amp','coil','lens','mine','rift']);
+function isSpecialPlateKey(key){ return SPECIAL_PLATE_KEY_SET.has(key); }
 function getPlateAffinity(idx){
   const a = plateAffinity && plateAffinity[idx];
   if(!a || !PLANETS[a.type]) return null;
   return a;
-}
-function getPlateColor(idx, terrainKey){
-  const a = getPlateAffinity(idx);
-  if(a && isSpecialPlateKey(terrainKey)) return a.color || PLANETS[a.type].color;
-  return TERRAIN[terrainKey]?.color || 'rgba(148,163,184,.055)';
 }
 function isPlateAffinityMatched(tower){
   if(!tower || !terrain || !isSpecialPlateKey(terrain[tower.idx])) return false;
@@ -1961,7 +1972,10 @@ function syncTowerSkillUnlocks(t){
     const unlockLv = towerSkillUnlockLevel(i);
     if(Number(t.level || 1) >= unlockLv && !t.skillLevels[skill.id]){
       t.skillLevels[skill.id] = 1;
-      if(typeof skill.apply === 'function') skill.apply(t);
+      if(typeof skill.apply === 'function'){
+        skill.apply(t);
+        touchAug(t);
+      }
       newly.push(skill);
     }
   }
@@ -2022,15 +2036,6 @@ const GLOBAL_UPGRADE_CATALOG = [
   }
 ];
 
-function ensureGlobalUpgrades(){
-  if(!S) return {};
-  if(!S.globalUpgrades) S.globalUpgrades = {};
-  return S.globalUpgrades;
-}
-function globalUpgradeLevel(id){
-  const levels = S?.globalUpgrades || META?.upgrades || {};
-  return Math.max(0, Number(levels[id] || 0));
-}
 function getGlobalUpgrade(id){
   return GLOBAL_UPGRADE_CATALOG.find(u => u.id === id) || null;
 }
@@ -2066,24 +2071,7 @@ function globalUpgradeText(upgrade, level){
   if(!upgrade) return '';
   return typeof upgrade.text === 'function' ? upgrade.text(level) : '';
 }
-function recommendedGlobalUpgradeIds(type){
-  const id = PLANETS[type]?.id;
-  const map = {
-    solar:['global_damage','global_plate','global_crit'],
-    frost:['global_speed','global_range','global_plate'],
-    storm:['global_speed','global_crit','global_damage'],
-    toxic:['global_speed','global_boss','global_plate'],
-    void:['global_range','global_plate','global_speed'],
-    laser:['global_damage','global_range','global_boss'],
-    smog:['global_plate','global_speed','global_boss'],
-    crystal:['global_plate','global_crit','global_damage'],
-    mecha:['global_boss','global_speed','global_economy'],
-    starengine:['global_crit','global_damage','global_boss']
-  };
-  return map[id] || ['global_damage','global_speed','global_plate'];
-}
 
-const TACTICAL_COOLDOWN_MAX = {blackhole:720, nova:820, repair:900};
 
 
 let S, grid, terrain, enemies, bullets, particles, beams, floats, anomalies, route, selected, dragging;
@@ -2103,7 +2091,20 @@ const PERF_BEAM_POOL_MAX = 220;
 let perfTrailParticlesThisFrame = 0;
 let perfBurstParticlesThisFrame = 0;
 let perfFrameId = 0;
+<<<<<<< HEAD
 let perfActiveTowerCount = 0;
+=======
+let chainHitStamp = 1;
+let enemyDrawSortLastFrame = -1;
+let visualNowMs = 0;
+let visualNowSec = 0;
+let perfActiveTowerCount = 0;
+let perfActiveTowerCountCached = 0;
+let perfActiveTowerCountDirty = true;
+let hiddenPlanetCheckDirty = true;
+let hiddenPlanetCheckLastFrame = -9999;
+const HIDDEN_PLANET_CHECK_INTERVAL_FRAMES = 18;
+>>>>>>> b95f30a (메모리 최적화)
 let globalUpgradeStatsCache = null;
 let globalUpgradeStatsCacheOwner = null;
 let globalUpgradeStatsRevision = 0;
@@ -2114,9 +2115,24 @@ const particlePool = [];
 const floatPool = [];
 const beamPool = [];
 function countActiveTowersFast(){
+<<<<<<< HEAD
   if(!Array.isArray(grid)) return 0;
   let count = 0;
   for(let i=0;i<grid.length;i++) if(grid[i]) count++;
+=======
+  if(!Array.isArray(grid)){
+    perfActiveTowerCountCached = 0;
+    perfActiveTowerCountDirty = false;
+    return 0;
+  }
+  // v12: active tower count only changes when the board composition changes.
+  // Reuse the cached value in normal frames to avoid scanning the whole grid before every render.
+  if(!perfActiveTowerCountDirty && (perfFrameId % 8) !== 0) return perfActiveTowerCountCached;
+  let count = 0;
+  for(let i=0;i<grid.length;i++) if(grid[i]) count++;
+  perfActiveTowerCountCached = count;
+  perfActiveTowerCountDirty = false;
+>>>>>>> b95f30a (메모리 최적화)
   return count;
 }
 function invalidateGlobalUpgradeStatsCache(){
@@ -2171,6 +2187,10 @@ function acquireEnemy(entry){
 function recycleEnemy(e){
   if(!e) return;
   e.dead = true;
+<<<<<<< HEAD
+=======
+  e._chainHitStamp = 0;
+>>>>>>> b95f30a (메모리 최적화)
   if(enemyPool.length < PERF_ENEMY_POOL_MAX) enemyPool.push(e);
 }
 function recycleAllEnemies(){
@@ -2213,10 +2233,13 @@ function pushParticle(x,y,vx,vy,r,life,maxLife,color,kind='burst', extra=null){
   particles.push(p);
   return true;
 }
+<<<<<<< HEAD
 function addParticle(item, kind='burst'){
   if(!item) return false;
   return pushParticle(item.x,item.y,item.vx,item.vy,item.r,item.life,item.maxLife,item.color,kind,item);
 }
+=======
+>>>>>>> b95f30a (메모리 최적화)
 function pushFloat(x,y,text,color='#fff',size=12,life=54,vy=-.52){
   if(!Array.isArray(floats)) floats = [];
   if(floats.length >= PERF_MAX_FLOATS) return false;
@@ -2226,10 +2249,13 @@ function pushFloat(x,y,text,color='#fff',size=12,life=54,vy=-.52){
   floats.push(f);
   return true;
 }
+<<<<<<< HEAD
 function addFloat(item){
   if(!item) return false;
   return pushFloat(item.x,item.y,item.text,item.color,item.size,item.life,item.vy);
 }
+=======
+>>>>>>> b95f30a (메모리 최적화)
 function pushBeam(x1,y1,x2,y2,color,life,style='',width=0){
   if(!Array.isArray(beams)) beams = [];
   if(beams.length >= PERF_MAX_BEAMS) return false;
@@ -2239,10 +2265,13 @@ function pushBeam(x1,y1,x2,y2,color,life,style='',width=0){
   beams.push(b);
   return true;
 }
+<<<<<<< HEAD
 function addBeam(item){
   if(!item) return false;
   return pushBeam(item.x1,item.y1,item.x2,item.y2,item.color,item.life,item.style,item.width);
 }
+=======
+>>>>>>> b95f30a (메모리 최적화)
 function trimVisualFxBuffers(){
   trimFxArray(particles, PERF_MAX_PARTICLES);
   trimFxArray(floats, PERF_MAX_FLOATS);
@@ -2269,7 +2298,6 @@ let hoverIdx = -1;
 let audio = null;
 let audioCtx = null;
 const towerSfxLimiter = {};
-const audioBufferCache = {};
 const htmlAudioCache = {};
 const activeOneShotAudio = new Set();
 const soundLimiter = {};
@@ -2588,7 +2616,6 @@ function planetDetailTowerSummary(type){
 }
 
 const PLANET_DETAIL_MAX_LEVEL = 12;
-const PLANET_SKILL_PREVIEW_MAX_LEVEL = 5;
 
 function planetBaseLevelStats(type, level){
   const p = PLANETS[type];
@@ -2637,12 +2664,6 @@ function planetLevelProgressHtml(type, currentLevel=0){
   <div class="planetDetailNote">장판 보너스, 전술 업그레이드, 전술 버프, 스모그/먼지 페널티는 제외한 기본 성장 기준입니다. 공격 주기는 숫자가 낮을수록 빠릅니다.</div>`;
 }
 
-function planetSkillLevelPreviewHtml(skill){
-  if(!skill || typeof skill.text !== 'function') return '';
-  return `<div class="planetSkillPreview">
-    ${Array.from({length: PLANET_SKILL_PREVIEW_MAX_LEVEL}, (_, i) => i + 1).map(level => `<div><b>Lv.${fmt2(level)}</b><span>${escapeHtml(skill.text(level))}</span></div>`).join('')}
-  </div>`;
-}
 
 function planetGlobalSummaryHtml(){
   return `<div class="planetGlobalText">${globalSkillSummaryHtml()}<br><span style="color:#94a3b8">일반 스킬은 성역 지도에서 강화되고, 전투 중에는 여기서 간략 표기만 됩니다.</span></div>`;
@@ -2810,57 +2831,6 @@ function spawnImpactShards(x,y,color='#dbeafe',count=7){
 function spawnImpactMist(x,y,color='rgba(74,222,128,.24)',count=5){
   // v87: remove cloudy/misty particles for clearer battle view.
 }
-const SKILL_ICON_THEME = {
-  global_damage:['#fb923c','#fdba74','solarCore'], global_speed:['#67e8f9','#dbeafe','laserCooler'], global_crit:['#fde68a','#fff7cc','starCrit'], global_range:['#a78bfa','#ede9fe','frostRange'], global_plate:['#22c55e','#bbf7d0','stormBreak'], global_boss:['#f87171','#fecaca','starBurst'], global_economy:['#facc15','#fef3c7','toxicSpore'],
-  solar_core:['#fb923c','#fdba74','solarCore'], solar_flare:['#f97316','#fbbf24','solarFlare'], solar_burn:['#ef4444','#fb923c','solarBurn'],
-  frost_core:['#67e8f9','#dbeafe','frostCore'], frost_lock:['#93c5fd','#dbeafe','frostLock'], frost_range:['#38bdf8','#e0f2fe','frostRange'],
-  storm_coil:['#facc15','#fde68a','stormCoil'], storm_chain:['#f59e0b','#fde047','stormChain'], storm_break:['#fcd34d','#fff7cc','stormBreak'],
-  toxic_reactor:['#22c55e','#86efac','toxicReactor'], toxic_spore:['#4ade80','#dcfce7','toxicSpore'], toxic_slow:['#84cc16','#bef264','toxicSlow'],
-  void_pull:['#a855f7','#e9d5ff','voidPull'], void_radius:['#c084fc','#f3e8ff','voidRadius'], void_decay:['#8b5cf6','#ddd6fe','voidDecay'],
-  laser_lens:['#a78bfa','#ede9fe','laserLens'], laser_width:['#8b5cf6','#c4b5fd','laserWidth'], laser_cooler:['#7c3aed','#ddd6fe','laserCooler'],
-  smog_choke:['#9cab62','#e9f5b5','smogVeil'], smog_catalyst:['#6ee7b7','#d9f99d','smogCondense'], smog_front:['#f59e0b','#e5e7eb','smogReverse'],
-  star_crit:['#f8fafc','#fde68a','starCrit'], star_burst:['#fbbf24','#fff7cc','starBurst'], star_nova:['#f8fafc','#ffffff','starNova']
-};
-
-function svgDataUri(svg){ return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`; }
-
-function skillIconSvg(skillId){
-  const theme = SKILL_ICON_THEME[skillId] || ['#38bdf8','#e2e8f0','generic'];
-  const [c1,c2,kind] = theme;
-  let body = '';
-  switch(kind){
-    case 'solarCore': body = `<circle cx="32" cy="32" r="12" fill="${c2}" opacity=".95"/><path d="M32 8 L36 18 L48 16 L42 26 L52 32 L42 38 L48 48 L36 46 L32 56 L28 46 L16 48 L22 38 L12 32 L22 26 L16 16 L28 18 Z" fill="${c1}" opacity=".88"/>`; break;
-    case 'solarFlare': body = `<circle cx="32" cy="32" r="10" fill="${c2}"/><path d="M14 40 C22 26, 24 14, 34 10 C30 18, 42 20, 46 28 C52 38, 44 50, 30 50 C20 50, 14 46, 14 40 Z" fill="${c1}"/><path d="M26 28 L34 18 L33 28 L42 28 L30 42 L31 33 L22 33 Z" fill="rgba(255,255,255,.9)"/>`; break;
-    case 'solarBurn': body = `<path d="M32 12 C40 22, 46 28, 46 38 C46 47, 40 54, 32 54 C24 54, 18 47, 18 38 C18 31, 22 24, 32 12 Z" fill="${c1}"/><path d="M31 24 C36 30, 38 33, 38 38 C38 43, 35 46, 31 46 C27 46, 24 43, 24 38 C24 34, 26 30, 31 24 Z" fill="${c2}"/>`; break;
-    case 'frostCore': body = `<path d="M32 10 L35 22 L46 18 L40 28 L52 32 L40 36 L46 46 L35 42 L32 54 L29 42 L18 46 L24 36 L12 32 L24 28 L18 18 L29 22 Z" fill="${c1}"/><circle cx="32" cy="32" r="8" fill="${c2}" opacity=".85"/>`; break;
-    case 'frostLock': body = `<path d="M32 10 L35 22 L46 18 L40 28 L52 32 L40 36 L46 46 L35 42 L32 54 L29 42 L18 46 L24 36 L12 32 L24 28 L18 18 L29 22 Z" fill="${c1}" opacity=".95"/><rect x="25" y="30" width="14" height="13" rx="3" fill="${c2}"/><path d="M28 30 v-3 a4 4 0 0 1 8 0 v3" stroke="${c1}" stroke-width="3" fill="none"/>`; break;
-    case 'frostRange': body = `<circle cx="32" cy="32" r="18" stroke="${c1}" stroke-width="4" fill="none"/><circle cx="32" cy="32" r="8" stroke="${c2}" stroke-width="3" fill="none"/><circle cx="32" cy="32" r="3" fill="${c2}"/>`; break;
-    case 'stormCoil': body = `<circle cx="32" cy="32" r="18" stroke="${c1}" stroke-width="4" fill="none" opacity=".7"/><path d="M35 12 L24 31 H32 L29 52 L42 29 H34 Z" fill="${c2}"/>`; break;
-    case 'stormChain': body = `<path d="M18 24 L28 32 L18 40" stroke="${c1}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 24 L38 32 L28 40" stroke="${c2}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M38 24 L48 32 L38 40" stroke="${c1}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`; break;
-    case 'stormBreak': body = `<circle cx="32" cy="32" r="18" stroke="${c1}" stroke-width="3" fill="none"/><path d="M32 16 v32 M16 32 h32" stroke="${c2}" stroke-width="3"/><path d="M40 24 L24 40" stroke="${c1}" stroke-width="4"/>`; break;
-    case 'toxicReactor': body = `<path d="M32 12 C40 22, 44 29, 44 37 C44 46, 38 52, 32 52 C26 52, 20 46, 20 37 C20 29, 24 22, 32 12 Z" fill="${c1}"/><circle cx="27" cy="31" r="3" fill="${c2}"/><circle cx="35" cy="37" r="4" fill="${c2}" opacity=".92"/>`; break;
-    case 'toxicSpore': body = `<circle cx="24" cy="28" r="8" fill="${c1}"/><circle cx="38" cy="24" r="7" fill="${c2}"/><circle cx="40" cy="38" r="9" fill="${c1}" opacity=".88"/><circle cx="24" cy="42" r="5" fill="${c2}"/>`; break;
-    case 'toxicSlow': body = `<path d="M16 38 C22 32, 26 32, 32 38 C38 44, 42 44, 48 38" stroke="${c1}" stroke-width="4" fill="none"/><path d="M16 28 C22 22, 26 22, 32 28 C38 34, 42 34, 48 28" stroke="${c2}" stroke-width="4" fill="none"/><circle cx="18" cy="46" r="3" fill="${c1}"/><circle cx="46" cy="20" r="3" fill="${c2}"/>`; break;
-    case 'voidPull': body = `<path d="M32 14 C42 14, 50 22, 50 32 C50 42, 42 50, 32 50 C24 50, 18 44, 18 36 C18 28, 24 24, 31 24 C36 24, 40 28, 40 33 C40 37, 37 40, 33 40 C30 40, 28 38, 28 35" stroke="${c1}" stroke-width="4" fill="none" stroke-linecap="round"/>`; break;
-    case 'voidRadius': body = `<circle cx="32" cy="32" r="10" fill="${c1}" opacity=".85"/><circle cx="32" cy="32" r="18" stroke="${c2}" stroke-width="3" fill="none" opacity=".9"/><circle cx="32" cy="32" r="24" stroke="${c1}" stroke-width="2" fill="none" opacity=".5"/>`; break;
-    case 'voidDecay': body = `<circle cx="32" cy="32" r="11" fill="${c1}" opacity=".9"/><path d="M20 18 L26 24 M42 20 L36 26 M44 44 L38 38 M18 42 L24 36" stroke="${c2}" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="32" r="20" stroke="${c1}" stroke-width="2" fill="none" opacity=".5"/>`; break;
-    case 'laserLens': body = `<path d="M32 14 L48 32 L32 50 L16 32 Z" fill="none" stroke="${c1}" stroke-width="4"/><path d="M14 32 H50" stroke="${c2}" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="32" r="4" fill="${c2}"/>`; break;
-    case 'laserWidth': body = `<path d="M14 26 H50" stroke="${c1}" stroke-width="6" stroke-linecap="round"/><path d="M18 38 H46" stroke="${c2}" stroke-width="10" stroke-linecap="round" opacity=".8"/>`; break;
-    case 'laserCooler': body = `<path d="M32 14 L35 22 L44 20 L39 28 L48 32 L39 36 L44 44 L35 42 L32 50 L29 42 L20 44 L25 36 L16 32 L25 28 L20 20 L29 22 Z" fill="${c2}"/><circle cx="32" cy="32" r="17" stroke="${c1}" stroke-width="3" fill="none"/>`; break;
-    case 'smogVeil': body = `<circle cx="32" cy="32" r="18" fill="${c1}" opacity=".22"/><path d="M15 35 C22 25, 29 25, 36 34 C42 42, 48 39, 52 31" stroke="${c2}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M13 45 C22 38, 29 39, 35 45 C41 51, 48 49, 52 43" stroke="${c1}" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="32" cy="32" r="23" stroke="${c2}" stroke-width="2" fill="none" opacity=".55"/>`; break;
-    case 'smogCondense': body = `<circle cx="32" cy="32" r="20" stroke="${c1}" stroke-width="4" fill="none" opacity=".72"/><circle cx="32" cy="32" r="10" fill="${c2}" opacity=".92"/><path d="M18 24 C25 20, 39 20, 46 24 M17 40 C25 45, 39 45, 47 40" stroke="${c1}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M32 17 V47" stroke="${c2}" stroke-width="3" opacity=".75"/>`; break;
-    case 'smogReverse': body = `<path d="M47 20 C36 12, 21 15, 17 28 C13 42, 25 52, 39 48" stroke="${c1}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M41 16 L48 20 L43 27" stroke="${c2}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 44 C26 35, 37 35, 47 42" stroke="${c2}" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="32" cy="32" r="5" fill="${c2}" opacity=".86"/>`; break;
-    case 'starCrit': body = `<path d="M32 12 L36 26 L50 26 L38 34 L42 48 L32 39 L22 48 L26 34 L14 26 L28 26 Z" fill="${c2}"/><path d="M18 18 L46 46" stroke="${c1}" stroke-width="4" opacity=".85"/>`; break;
-    case 'starBurst': body = `<circle cx="32" cy="32" r="9" fill="${c2}"/><path d="M32 10 V18 M32 46 V54 M10 32 H18 M46 32 H54 M18 18 L23 23 M41 41 L46 46 M18 46 L23 41 M41 23 L46 18" stroke="${c1}" stroke-width="4" stroke-linecap="round"/>`; break;
-    case 'starNova': body = `<circle cx="32" cy="32" r="8" fill="${c2}"/><circle cx="32" cy="32" r="18" stroke="${c1}" stroke-width="3" fill="none"/><path d="M32 8 L35 22 L49 25 L37 32 L40 46 L32 38 L24 46 L27 32 L15 25 L29 22 Z" fill="${c1}" opacity=".88"/>`; break;
-    default: body = `<circle cx="32" cy="32" r="14" fill="${c1}"/><circle cx="32" cy="32" r="22" stroke="${c2}" stroke-width="3" fill="none" opacity=".7"/>`;
-  }
-  return svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-    <defs><radialGradient id="g" cx="50%" cy="40%" r="70%"><stop offset="0%" stop-color="rgba(255,255,255,.22)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs>
-    <rect x="4" y="4" width="56" height="56" rx="18" fill="rgba(3,7,18,.96)" stroke="${c1}" stroke-opacity=".5"/>
-    <circle cx="32" cy="32" r="24" fill="url(#g)"/>${body}</svg>`);
-}
-
 function bossSkillGlyph(effect){
   return ({phaseRegen:'✦', voidSurge:'◎', frostLock:'❄', blizzardPrison:'❄', magmaShell:'✹', cataclysmBurst:'☄', sporeBloom:'✿', overgrowth:'❋'})[effect] || '◆';
 }
@@ -2883,7 +2853,8 @@ function updateBossTelegraphs(dt){
 function drawBossTelegraphs(){
   if(!bossTelegraphs.length) return;
   ctx.save();
-  bossTelegraphs.forEach(t => {
+  for(let i=0;i<bossTelegraphs.length;i++){
+    const t = bossTelegraphs[i];
     const p = 1 - t.life / t.maxLife;
     const alpha = Math.max(0, t.life / t.maxLife);
     const r = t.size + p * 46;
@@ -2908,7 +2879,7 @@ function drawBossTelegraphs(){
     ctx.fillStyle = t.color;
     ctx.font = '900 10px Noto Sans KR';
     ctx.fillText(t.label, t.x, pillY + 15);
-  });
+  }
   ctx.restore();
 }
 
@@ -2972,39 +2943,77 @@ function impactEffect(kind, x, y, color, level){
     burst(x,y,'#fff7ed',10,18); ring(x,y,28+level*1.15,'#f8fafc'); spawnImpactSparks(x,y,'#fff7ed',12,1.2);
   } else { burst(x,y,color,5,14); }
 }
-function drawProjectileVisual(b){
-  ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(b.rot);
-  if(b.kind === 'solar'){
-    ctx.shadowColor=b.color;ctx.shadowBlur=24;
-    const g=ctx.createRadialGradient(1,-1,1,0,0,10); g.addColorStop(0,'#fff7ed'); g.addColorStop(.42,'#fdba74'); g.addColorStop(1,b.color);
-    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,0,6.0,0,TAU); ctx.fill();
-    ctx.globalAlpha=1; ctx.fillStyle='rgba(255,244,214,.8)'; ctx.beginPath(); ctx.ellipse(-4.6,0,4.5,2.4,0,0,TAU); ctx.fill();
-  }else if(b.kind === 'frost'){
-    ctx.shadowColor='#67e8f9';ctx.shadowBlur=24;ctx.fillStyle='#e0f2fe';
-    ctx.beginPath(); ctx.moveTo(0,-7.4); ctx.lineTo(3.8,-1.8); ctx.lineTo(6.2,0); ctx.lineTo(3.8,1.8); ctx.lineTo(0,7.4); ctx.lineTo(-3.6,1.8); ctx.lineTo(-5.4,0); ctx.lineTo(-3.6,-1.8); ctx.closePath(); ctx.fill();
-  }else if(b.kind === 'storm'){
-    ctx.shadowColor='#fde047';ctx.shadowBlur=24;ctx.strokeStyle='#facc15';ctx.lineWidth=3.1;
-    ctx.beginPath(); ctx.moveTo(-5.2,-6.5); ctx.lineTo(-.8,-1.4); ctx.lineTo(-2.5,1.1); ctx.lineTo(5.8,6.2); ctx.stroke();
-    ctx.strokeStyle='#fff7cc';ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(-5.2,-6.5); ctx.lineTo(-.8,-1.4); ctx.lineTo(-2.5,1.1); ctx.lineTo(5.8,6.2); ctx.stroke();
-  }else if(b.kind === 'toxic'){
-    ctx.shadowColor='#4ade80';ctx.shadowBlur=20;ctx.fillStyle='#22c55e'; ctx.beginPath(); ctx.arc(0,0,5.4,0,TAU); ctx.fill();
-    ctx.globalAlpha=.92; ctx.fillStyle='rgba(187,247,208,.72)'; ctx.beginPath(); ctx.ellipse(-5,0,4.6,2.6,0,0,TAU); ctx.fill();
-  }else if(b.kind === 'crystal'){
-    ctx.shadowColor='#d8b4fe';ctx.shadowBlur=24;
-    ctx.fillStyle='#e9d5ff';
-    ctx.beginPath(); ctx.moveTo(0,-7.8); ctx.lineTo(6.6,0); ctx.lineTo(0,7.8); ctx.lineTo(-6.6,0); ctx.closePath(); ctx.fill();
-    ctx.globalAlpha=.74; ctx.strokeStyle='#c084fc'; ctx.lineWidth=1.8; ctx.beginPath(); ctx.ellipse(0,0,9.2,3.4,.4,0,TAU); ctx.stroke();
-  }else if(b.kind === 'mecha'){
-    ctx.shadowColor='#60a5fa';ctx.shadowBlur=22;
-    ctx.fillStyle='#93c5fd'; ctx.fillRect(-5.8,-4.2,11.6,8.4);
-    ctx.fillStyle='#eff6ff'; ctx.fillRect(-1.8,-1.8,3.6,3.6);
-    ctx.strokeStyle='#f87171'; ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(-8,0); ctx.lineTo(8,0); ctx.stroke();
-  }else if(b.kind === 'smog'){
-    ctx.shadowColor='#d9f99d';ctx.shadowBlur=22;ctx.fillStyle='#9cab62'; ctx.beginPath(); ctx.arc(0,0,5.8,0,TAU); ctx.fill();
-    ctx.globalAlpha=.72; ctx.fillStyle='rgba(229,231,235,.62)'; ctx.beginPath(); ctx.ellipse(-5.4,0,5.6,2.5,0,0,TAU); ctx.fill();
-    ctx.globalAlpha=.52; ctx.strokeStyle='rgba(245,158,11,.75)'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(0,0,8.5,Math.PI*.15,Math.PI*1.25); ctx.stroke();
+const PROJECTILE_SPRITE_RENDER_CACHE = new Map();
+const PROJECTILE_SPRITE_RENDER_CACHE_MAX = 32;
+const PROJECTILE_SPRITE_RENDER_CACHE_MAX_PIXELS = 180000;
+function drawProjectileVisualShape(targetCtx, kind, color){
+  if(kind === 'solar'){
+    targetCtx.shadowColor=color;targetCtx.shadowBlur=24;
+    const g=targetCtx.createRadialGradient(1,-1,1,0,0,10); g.addColorStop(0,'#fff7ed'); g.addColorStop(.42,'#fdba74'); g.addColorStop(1,color);
+    targetCtx.fillStyle=g; targetCtx.beginPath(); targetCtx.arc(0,0,6.0,0,TAU); targetCtx.fill();
+    targetCtx.globalAlpha=1; targetCtx.fillStyle='rgba(255,244,214,.8)'; targetCtx.beginPath(); targetCtx.ellipse(-4.6,0,4.5,2.4,0,0,TAU); targetCtx.fill();
+  }else if(kind === 'frost'){
+    targetCtx.shadowColor='#67e8f9';targetCtx.shadowBlur=24;targetCtx.fillStyle='#e0f2fe';
+    targetCtx.beginPath(); targetCtx.moveTo(0,-7.4); targetCtx.lineTo(3.8,-1.8); targetCtx.lineTo(6.2,0); targetCtx.lineTo(3.8,1.8); targetCtx.lineTo(0,7.4); targetCtx.lineTo(-3.6,1.8); targetCtx.lineTo(-5.4,0); targetCtx.lineTo(-3.6,-1.8); targetCtx.closePath(); targetCtx.fill();
+  }else if(kind === 'storm'){
+    targetCtx.shadowColor='#fde047';targetCtx.shadowBlur=24;targetCtx.strokeStyle='#facc15';targetCtx.lineWidth=3.1;
+    targetCtx.beginPath(); targetCtx.moveTo(-5.2,-6.5); targetCtx.lineTo(-.8,-1.4); targetCtx.lineTo(-2.5,1.1); targetCtx.lineTo(5.8,6.2); targetCtx.stroke();
+    targetCtx.strokeStyle='#fff7cc';targetCtx.lineWidth=1.6; targetCtx.beginPath(); targetCtx.moveTo(-5.2,-6.5); targetCtx.lineTo(-.8,-1.4); targetCtx.lineTo(-2.5,1.1); targetCtx.lineTo(5.8,6.2); targetCtx.stroke();
+  }else if(kind === 'toxic'){
+    targetCtx.shadowColor='#4ade80';targetCtx.shadowBlur=20;targetCtx.fillStyle='#22c55e'; targetCtx.beginPath(); targetCtx.arc(0,0,5.4,0,TAU); targetCtx.fill();
+    targetCtx.globalAlpha=.92; targetCtx.fillStyle='rgba(187,247,208,.72)'; targetCtx.beginPath(); targetCtx.ellipse(-5,0,4.6,2.6,0,0,TAU); targetCtx.fill();
+  }else if(kind === 'crystal'){
+    targetCtx.shadowColor='#d8b4fe';targetCtx.shadowBlur=24;
+    targetCtx.fillStyle='#e9d5ff';
+    targetCtx.beginPath(); targetCtx.moveTo(0,-7.8); targetCtx.lineTo(6.6,0); targetCtx.lineTo(0,7.8); targetCtx.lineTo(-6.6,0); targetCtx.closePath(); targetCtx.fill();
+    targetCtx.globalAlpha=.74; targetCtx.strokeStyle='#c084fc'; targetCtx.lineWidth=1.8; targetCtx.beginPath(); targetCtx.ellipse(0,0,9.2,3.4,.4,0,TAU); targetCtx.stroke();
+  }else if(kind === 'mecha'){
+    targetCtx.shadowColor='#60a5fa';targetCtx.shadowBlur=22;
+    targetCtx.fillStyle='#93c5fd'; targetCtx.fillRect(-5.8,-4.2,11.6,8.4);
+    targetCtx.fillStyle='#eff6ff'; targetCtx.fillRect(-1.8,-1.8,3.6,3.6);
+    targetCtx.strokeStyle='#f87171'; targetCtx.lineWidth=1.6; targetCtx.beginPath(); targetCtx.moveTo(-8,0); targetCtx.lineTo(8,0); targetCtx.stroke();
+  }else if(kind === 'smog'){
+    targetCtx.shadowColor='#d9f99d';targetCtx.shadowBlur=22;targetCtx.fillStyle='#9cab62'; targetCtx.beginPath(); targetCtx.arc(0,0,5.8,0,TAU); targetCtx.fill();
+    targetCtx.globalAlpha=.72; targetCtx.fillStyle='rgba(229,231,235,.62)'; targetCtx.beginPath(); targetCtx.ellipse(-5.4,0,5.6,2.5,0,0,TAU); targetCtx.fill();
+    targetCtx.globalAlpha=.52; targetCtx.strokeStyle='rgba(245,158,11,.75)'; targetCtx.lineWidth=1.5; targetCtx.beginPath(); targetCtx.arc(0,0,8.5,Math.PI*.15,Math.PI*1.25); targetCtx.stroke();
   }else{
-    ctx.fillStyle='#f3e8ff';ctx.shadowColor=b.color;ctx.shadowBlur=20; ctx.beginPath();ctx.arc(0,0,5.8,0,TAU);ctx.fill(); ctx.fillStyle=b.color; ctx.beginPath(); ctx.arc(0,0,4.0,0,TAU); ctx.fill();
+    targetCtx.fillStyle='#f3e8ff';targetCtx.shadowColor=color;targetCtx.shadowBlur=20; targetCtx.beginPath();targetCtx.arc(0,0,5.8,0,TAU);targetCtx.fill(); targetCtx.fillStyle=color; targetCtx.beginPath(); targetCtx.arc(0,0,4.0,0,TAU); targetCtx.fill();
+  }
+}
+function getCachedProjectileSprite(kind, color){
+  const key = `${kind}|${color}`;
+  const cached = PROJECTILE_SPRITE_RENDER_CACHE.get(key);
+  if(cached){
+    PROJECTILE_SPRITE_RENDER_CACHE.delete(key);
+    PROJECTILE_SPRITE_RENDER_CACHE.set(key, cached);
+    return cached;
+  }
+  try{
+    const canvasSize = 72;
+    const canvasEl = makeRenderCanvas(canvasSize, canvasSize);
+    const spriteCtx = canvasEl.getContext('2d');
+    if(!spriteCtx) return null;
+    spriteCtx.save();
+    spriteCtx.translate(canvasSize / 2, canvasSize / 2);
+    drawProjectileVisualShape(spriteCtx, kind, color);
+    spriteCtx.restore();
+    const entry = {canvas: canvasEl, w: canvasSize, h: canvasSize};
+    PROJECTILE_SPRITE_RENDER_CACHE.set(key, entry);
+    trimRenderCache(PROJECTILE_SPRITE_RENDER_CACHE, PROJECTILE_SPRITE_RENDER_CACHE_MAX, PROJECTILE_SPRITE_RENDER_CACHE_MAX_PIXELS);
+    return entry;
+  }catch(_err){
+    return null;
+  }
+}
+function drawProjectileVisual(b){
+  ctx.save();
+  ctx.translate(b.x,b.y);
+  ctx.rotate(b.rot);
+  const cachedProjectile = getCachedProjectileSprite(b.kind, b.color);
+  if(cachedProjectile){
+    ctx.drawImage(cachedProjectile.canvas, -cachedProjectile.w / 2, -cachedProjectile.h / 2, cachedProjectile.w, cachedProjectile.h);
+  }else{
+    drawProjectileVisualShape(ctx, b.kind, b.color);
   }
   ctx.restore();
 }
@@ -3039,6 +3048,7 @@ function reset(){
   invalidateGlobalUpgradeStatsCache();
   grid = Array(GRID_COLS*GRID_ROWS).fill(null);
   terrain = Array(GRID_COLS*GRID_ROWS).fill('empty');
+  invalidateTerrainRenderCache();
   enemies = [];
   bullets = [];
   particles = [];
@@ -3085,14 +3095,28 @@ function canBuild(i){return i>=0 && terrain[i]!=='path' && terrain[i]!=='blocked
 function defaultAug(){
   return {damage:0,fireRate:0,range:0,area:0,dot:0,freeze:0,freezeChance:0,chain:0,gravity:0,beamWidth:0,markAmp:0,poisonSlow:0,critChance:0,critMul:0,burstChance:0,crystalCharge:0,prismLink:0,resonancePlate:0,shieldDismantle:0,satelliteForge:0,emergencyBarrier:0};
 }
+let augRevisionSeq = 1;
+function touchAug(t){
+  if(!t) return;
+  t._augRevision = augRevisionSeq++;
+  t._statsCache = null;
+  t._statsTerrainKey = '';
+}
 function ensureAug(t){
-  if(!t.aug) t.aug = defaultAug();
+  if(!t.aug){
+    t.aug = defaultAug();
+    touchAug(t);
+  }
   if(!t.skillLevels) t.skillLevels = {};
   return t.aug;
 }
+const AUG_KEYS = Object.freeze(Object.keys(defaultAug()));
 function combineAugments(a,b){
   const out = defaultAug();
-  for(const k of Object.keys(out)) out[k] = ((a?.aug?.[k]||0) + (b?.aug?.[k]||0)) * .75;
+  for(let i=0;i<AUG_KEYS.length;i++){
+    const k = AUG_KEYS[i];
+    out[k] = ((a?.aug?.[k]||0) + (b?.aug?.[k]||0)) * .75;
+  }
   return out;
 }
 function combineSkillLevels(a,b){
@@ -3105,6 +3129,7 @@ function combineSkillLevels(a,b){
 function createMergedPlanet(a,b,idx){
   const p = new Planet(a.type, a.level+1, idx);
   p.aug = combineAugments(a,b);
+  touchAug(p);
   p.skillLevels = combineSkillLevels(a,b);
   const unlocked = syncTowerSkillUnlocks(p);
   if(unlocked.length && S){ log(`${p.def.name} Lv.${fmt2(p.level)} 고유 스킬 해금: ${unlocked.map(s=>s.name).join(' · ')}`); }
@@ -3235,6 +3260,8 @@ function makeRoute(){
   });
 
   route = applyRouteChamfers(deduped);
+  clearRouteOffsetCache();
+  invalidateTerrainRenderCache();
 }
 
 function makeTerrain(){
@@ -3254,16 +3281,23 @@ function makeTerrain(){
     const k=pool.splice(Math.floor(Math.random()*pool.length),1)[0];
     if(k!==undefined) terrain[k]='blocked';
   }
-  for(const t of ['amp','coil','lens','mine','rift','amp','coil','lens','mine','amp']){
-    const free=pool.filter(i=>terrain[i]==='empty');
-    if(!free.length) break;
-    const pick = free[Math.floor(Math.random()*free.length)];
+  const specialPlateOrder = ['amp','coil','lens','mine','rift','amp','coil','lens','mine','amp'];
+  for(let n=0;n<specialPlateOrder.length;n++){
+    if(!pool.length) break;
+    const pidx = Math.floor(Math.random()*pool.length);
+    const pick = pool[pidx];
+    if(pick === undefined || terrain[pick] !== 'empty'){
+      pool.splice(pidx,1);
+      n--;
+      continue;
+    }
+    const t = specialPlateOrder[n];
     terrain[pick]=t;
     const affinityType = randomPlateAffinityType();
     plateAffinity[pick] = {type: affinityType, color: PLANETS[affinityType]?.color || '#67e8f9'};
-    const pidx = pool.indexOf(pick);
-    if(pidx>=0) pool.splice(pidx,1);
+    pool.splice(pidx,1);
   }
+  invalidateTerrainRenderCache();
 }
 
 
@@ -3317,9 +3351,13 @@ function getStageBattleFullDescription(stageNo, waveNo){
 }
 
 
+let wavePreviewInfoCacheKey = '';
+let wavePreviewInfoCacheValue = null;
 function getWavePreviewInfo(waveNo, stageNo){
   const stage = clamp(Number(stageNo || S?.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
   const wave = Number(waveNo || 1);
+  const cacheKey = `${stage}|${wave}`;
+  if(wavePreviewInfoCacheValue && wavePreviewInfoCacheKey === cacheKey) return wavePreviewInfoCacheValue;
   const enemyLine = STAGE_WAVE_LINES[stage] || '기본 적 웨이브';
   const stageTip = STAGE_WAVE_TIPS[stage] || '균형 배치';
   const parts = [];
@@ -3343,10 +3381,13 @@ function getWavePreviewInfo(waveNo, stageNo){
     tips.push(stageTip);
     if(wave >= 3) tips.push('병합 준비');
   }
-  return {
+  const result = {
     title: parts.join(' · '),
     detail: `추천: ${tips.filter(Boolean).join(' / ')}`
   };
+  wavePreviewInfoCacheKey = cacheKey;
+  wavePreviewInfoCacheValue = result;
+  return result;
 }
 function renderWavePreview(){
   const el = $('wavePreviewText');
@@ -3434,6 +3475,144 @@ function drawSpriteCover(img, sx, sy, sw, sh, dx, dy, dw, dh){
   ctx.drawImage(img, cropX, cropY, cropW, cropH, dx, dy, dw, dh);
 }
 
+
+// v8: cache expensive planet sprite draws. The main battle loop keeps all
+// orbit/glow/evolution effects, but avoids repeating image filter + shadowBlur +
+// sprite crop work for every placed planet on every frame.
+const PLANET_SPRITE_RENDER_CACHE = new Map();
+const PLANET_SPRITE_RENDER_CACHE_MAX = 180;
+const PLANET_SPRITE_RENDER_CACHE_MAX_PIXELS = 1800000;
+function renderCacheEntryPixels(entry){
+  if(!entry) return 0;
+  const canvas = entry.canvas;
+  if(canvas) return (canvas.width || entry.w || 0) * (canvas.height || entry.h || 0);
+  return (entry.w || 0) * (entry.h || 0);
+}
+function renderCachePixelTotal(cache){
+  let total = 0;
+  for(const entry of cache.values()) total += renderCacheEntryPixels(entry);
+  return total;
+}
+function trimRenderCache(cache, maxEntries, maxPixels=0){
+  while(cache.size > maxEntries){
+    const first = cache.keys().next().value;
+    if(first === undefined) break;
+    cache.delete(first);
+  }
+  if(maxPixels > 0){
+    let totalPixels = renderCachePixelTotal(cache);
+    while(totalPixels > maxPixels && cache.size > 1){
+      const first = cache.keys().next().value;
+      if(first === undefined) break;
+      const entry = cache.get(first);
+      totalPixels -= renderCacheEntryPixels(entry);
+      cache.delete(first);
+    }
+  }
+}
+function makeRenderCanvas(w, h){
+  const canvasEl = document.createElement('canvas');
+  canvasEl.width = Math.max(1, Math.ceil(w));
+  canvasEl.height = Math.max(1, Math.ceil(h));
+  return canvasEl;
+}
+function imageRenderKey(img){
+  return `${img.currentSrc || img.src || 'img'}|${img.naturalWidth || 0}x${img.naturalHeight || 0}`;
+}
+function drawImageContainCenteredOn(targetCtx, img, cx, cy, maxW, maxH){
+  const iw = img.naturalWidth || img.width;
+  const ih = img.naturalHeight || img.height;
+  if(!iw || !ih) return;
+  const scale = Math.min(maxW / iw, maxH / ih);
+  const dw = iw * scale;
+  const dh = ih * scale;
+  targetCtx.drawImage(img, cx - dw / 2, cy - dh / 2, dw, dh);
+}
+function drawSpriteCoverOn(targetCtx, img, sx, sy, sw, sh, dx, dy, dw, dh){
+  const ir = sw / sh;
+  const cr = dw / dh;
+  let cropW = sw, cropH = sh, cropX = sx, cropY = sy;
+  if(ir > cr){
+    cropW = sh * cr;
+    cropX = sx + (sw - cropW) / 2;
+  }else{
+    cropH = sw / cr;
+    cropY = sy + (sh - cropH) / 2;
+  }
+  targetCtx.drawImage(img, cropX, cropY, cropW, cropH, dx, dy, dw, dh);
+}
+function getCachedPlanetSprite(type, size, level=1){
+  let img = null, mode = '', sx = 0, sy = 0, sw = 0, sh = 0, drawSize = 0;
+  const thumbImg = planetThumbImage(type, level);
+  if(thumbImg && thumbImg.complete && thumbImg.naturalWidth){
+    img = thumbImg;
+    mode = 'thumb';
+    drawSize = size * (type === HIDDEN_PLANET_TYPE ? 1.20 : 1.14);
+  }else{
+    const evoImg = planetSheetImage(type);
+    const evoCol = planetEvolutionColumn(level);
+    if(evoImg && evoImg.complete && evoImg.naturalWidth){
+      img = evoImg;
+      mode = 'evo';
+      sw = evoImg.naturalWidth / PLANET_EVOLUTION_COLS;
+      sh = evoImg.naturalHeight;
+      sx = evoCol * sw;
+      sy = 0;
+      drawSize = size * (type === HIDDEN_PLANET_TYPE ? 1.12 : 1.00);
+    }else if(PLANET_ICON_SHEET && PLANET_ICON_SHEET.complete && PLANET_ICON_SHEET.naturalWidth){
+      img = PLANET_ICON_SHEET;
+      mode = 'icon';
+      sw = img.naturalWidth / PLANET_ICON_COLS;
+      sh = img.naturalHeight / PLANET_ICON_ROWS;
+      sx = (type % PLANET_ICON_COLS) * sw;
+      sy = Math.floor(type / PLANET_ICON_COLS) * sh;
+      drawSize = size * (type === HIDDEN_PLANET_TYPE ? 1.08 : PLANET_RENDER_SCALE);
+    }
+  }
+  if(!img || !drawSize) return null;
+
+  // Rounded size prevents drag/settle animation from creating a new canvas for
+  // every tiny sub-pixel change while keeping the rendered size visually equal.
+  const roundedDrawSize = Math.max(8, Math.round(drawSize * 2) / 2);
+  const hidden = type === HIDDEN_PLANET_TYPE;
+  const shadowBlur = hidden ? (mode === 'icon' ? 26 : 24) : (mode === 'icon' ? 17 : 16);
+  const shadowColor = hidden ? (mode === 'icon' ? 'rgba(255,250,230,.44)' : 'rgba(255,250,230,.48)') : (mode === 'icon' ? 'rgba(255,255,255,.32)' : 'rgba(255,255,255,.30)');
+  const key = `${mode}|${type}|${level}|${roundedDrawSize}|${imageRenderKey(img)}`;
+  const cached = PLANET_SPRITE_RENDER_CACHE.get(key);
+  if(cached){
+    PLANET_SPRITE_RENDER_CACHE.delete(key);
+    PLANET_SPRITE_RENDER_CACHE.set(key, cached);
+    return cached;
+  }
+
+  try{
+    const pad = Math.ceil(shadowBlur * 2.2 + 6);
+    const canvasSize = Math.ceil(roundedDrawSize + pad * 2);
+    const canvasEl = makeRenderCanvas(canvasSize, canvasSize);
+    const spriteCtx = canvasEl.getContext('2d');
+    if(!spriteCtx) return null;
+    const cx = canvasSize / 2;
+    const cy = canvasSize / 2;
+    spriteCtx.save();
+    spriteCtx.imageSmoothingEnabled = true;
+    spriteCtx.shadowColor = shadowColor;
+    spriteCtx.shadowBlur = shadowBlur;
+    spriteCtx.filter = 'brightness(1.10) saturate(1.15)';
+    if(mode === 'thumb'){
+      drawImageContainCenteredOn(spriteCtx, img, cx, cy, roundedDrawSize, roundedDrawSize);
+    }else{
+      drawSpriteCoverOn(spriteCtx, img, sx, sy, sw, sh, cx - roundedDrawSize / 2, cy - roundedDrawSize / 2, roundedDrawSize, roundedDrawSize);
+    }
+    spriteCtx.restore();
+    const entry = {canvas: canvasEl, w: canvasSize, h: canvasSize};
+    PLANET_SPRITE_RENDER_CACHE.set(key, entry);
+    trimRenderCache(PLANET_SPRITE_RENDER_CACHE, PLANET_SPRITE_RENDER_CACHE_MAX, PLANET_SPRITE_RENDER_CACHE_MAX_PIXELS);
+    return entry;
+  }catch(_err){
+    return null;
+  }
+}
+
 function planetEvolutionTier(level){
   if(level >= 10) return 4;
   if(level >= 7) return 3;
@@ -3450,7 +3629,8 @@ function drawPlanetEvolutionFx(tower, x, y){
   const tier = planetEvolutionTier(tower.level);
   if(tier <= 0) return;
   const color = tower.def.color;
-  const pulse = 1 + Math.sin(performance.now() / (260 - tier * 20) + tower.phase) * 0.05;
+  const nowMs = visualNowMs || (performance.now ? performance.now() : Date.now());
+  const pulse = 1 + Math.sin(nowMs / (260 - tier * 20) + tower.phase) * 0.05;
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(pulse, pulse);
@@ -3469,7 +3649,7 @@ function drawPlanetEvolutionFx(tower, x, y){
   if(tier >= 2){
     ctx.globalAlpha = 1;
     for(let i=0;i<2;i++){
-      const a = tower.phase + performance.now() * .0012 * (i ? -1 : 1) + i * Math.PI;
+      const a = tower.phase + nowMs * .0012 * (i ? -1 : 1) + i * Math.PI;
       const sx = Math.cos(a) * (18 + tier * 2);
       const sy = Math.sin(a) * (10 + tier);
       ctx.fillStyle = '#ffffff';
@@ -3486,7 +3666,7 @@ function drawPlanetEvolutionFx(tower, x, y){
     ctx.lineWidth = 1.1;
     ctx.beginPath();
     for(let i=0;i<6;i++){
-      const a = -Math.PI/2 + i * TAU / 6 + performance.now() * .0004;
+      const a = -Math.PI/2 + i * TAU / 6 + nowMs * .0004;
       const r1 = 34 + tier * 2;
       const r2 = 40 + tier * 2;
       const x1 = Math.cos(a) * r1, y1 = Math.sin(a) * r1;
@@ -3508,7 +3688,7 @@ function drawPlanetEvolutionFx(tower, x, y){
     ctx.fillStyle = '#f8fafc';
     ctx.shadowBlur = 14;
     for(let i=0;i<5;i++){
-      const a = performance.now() * .0012 + i * TAU / 5;
+      const a = nowMs * .0012 + i * TAU / 5;
       const sx = Math.cos(a) * 28;
       const sy = Math.sin(a) * 28;
       ctx.beginPath();
@@ -3524,7 +3704,11 @@ const NEAREST_ROUTE_HIT = {x:0,y:0,t:0,dist:0,seg:0,score:0};
 function nearestRoutePoint(px, py, preferredSeg=0){
   const start = Math.max(0, preferredSeg - 1);
   const end = Math.min(route.length - 2, preferredSeg + 1);
+<<<<<<< HEAD
   let bestScore = Infinity, bestX = px, bestY = py, bestT = 0, bestDist = 0, bestSeg = preferredSeg;
+=======
+  let bestScore = Infinity, bestX = px, bestY = py, bestT = 0, bestDistSq = 0, bestSeg = preferredSeg;
+>>>>>>> b95f30a (메모리 최적화)
   for(let seg=start; seg<=end; seg++){
     const a = route[seg], b = route[seg+1];
     const dx = b.x - a.x, dy = b.y - a.y;
@@ -3533,6 +3717,7 @@ function nearestRoutePoint(px, py, preferredSeg=0){
     const x = a.x + dx * t;
     const y = a.y + dy * t;
     const ddx = px - x, ddy = py - y;
+<<<<<<< HEAD
     const distVal = Math.sqrt(ddx*ddx + ddy*ddy);
     // 코너에서는 이전 segment와 현재 segment의 거리가 동시에 0이 될 수 있다.
     // 이때 이전 segment를 고르면 적이 첫 꺾임 지점에서 되돌아가는 것처럼 멈춘다.
@@ -3540,11 +3725,23 @@ function nearestRoutePoint(px, py, preferredSeg=0){
     const tiePenalty = Math.abs(seg - preferredSeg) * .001 + (seg < preferredSeg ? .002 : 0);
     const score = distVal + tiePenalty;
     if(score < bestScore){ bestScore = score; bestX = x; bestY = y; bestT = t; bestDist = distVal; bestSeg = seg; }
+=======
+    const distSqVal = ddx*ddx + ddy*ddy;
+    // v11: compare squared distance in the hot path and take sqrt once only for the winning segment.
+    // Tiny tie penalty keeps the original corner preference without paying sqrt for every candidate.
+    const tiePenalty = Math.abs(seg - preferredSeg) * .000001 + (seg < preferredSeg ? .000002 : 0);
+    const score = distSqVal + tiePenalty;
+    if(score < bestScore){ bestScore = score; bestX = x; bestY = y; bestT = t; bestDistSq = distSqVal; bestSeg = seg; }
+>>>>>>> b95f30a (메모리 최적화)
   }
   NEAREST_ROUTE_HIT.x = bestX;
   NEAREST_ROUTE_HIT.y = bestY;
   NEAREST_ROUTE_HIT.t = bestT;
+<<<<<<< HEAD
   NEAREST_ROUTE_HIT.dist = bestDist;
+=======
+  NEAREST_ROUTE_HIT.dist = Math.sqrt(bestDistSq);
+>>>>>>> b95f30a (메모리 최적화)
   NEAREST_ROUTE_HIT.seg = bestSeg;
   NEAREST_ROUTE_HIT.score = bestScore;
   return NEAREST_ROUTE_HIT;
@@ -3581,6 +3778,11 @@ function confineEnemyToRoute(enemy, maxOffset=12){
 }
 
 function drawPlanetSprite(type, x, y, size, frameIndex, level=1){
+  const cachedSprite = getCachedPlanetSprite(type, size, level);
+  if(cachedSprite){
+    ctx.drawImage(cachedSprite.canvas, x - cachedSprite.w / 2, y - cachedSprite.h / 2, cachedSprite.w, cachedSprite.h);
+    return true;
+  }
   const thumbImg = planetThumbImage(type, level);
   if(thumbImg && thumbImg.complete && thumbImg.naturalWidth){
     const drawSize = size * (type === HIDDEN_PLANET_TYPE ? 1.20 : 1.14);
@@ -3633,9 +3835,50 @@ function drawPlanetSprite(type, x, y, size, frameIndex, level=1){
   return true;
 }
 
+const ORBIT_ASTEROID_RENDER_CACHE = new Map();
+const ORBIT_ASTEROID_RENDER_CACHE_MAX = 48;
+const ORBIT_ASTEROID_RENDER_CACHE_MAX_PIXELS = 180000;
+function getCachedOrbitAsteroidSprite(type, color, index){
+  const hidden = type === HIDDEN_PLANET_TYPE;
+  const r = (hidden ? 3.8 : 2.6) + index * .55;
+  const blur = hidden ? 10 : 6;
+  const key = `${hidden ? 'h' : 'n'}|${index}|${color}|${r}`;
+  const cached = ORBIT_ASTEROID_RENDER_CACHE.get(key);
+  if(cached){
+    ORBIT_ASTEROID_RENDER_CACHE.delete(key);
+    ORBIT_ASTEROID_RENDER_CACHE.set(key, cached);
+    return cached;
+  }
+  try{
+    const pad = Math.ceil(blur * 2 + 5);
+    const canvasSize = Math.ceil(r * 4 + pad * 2);
+    const canvasEl = makeRenderCanvas(canvasSize, canvasSize);
+    const spriteCtx = canvasEl.getContext('2d');
+    if(!spriteCtx) return null;
+    const cx = canvasSize / 2, cy = canvasSize / 2;
+    spriteCtx.save();
+    spriteCtx.globalAlpha = .95;
+    spriteCtx.shadowColor = index === 0 ? '#ffffff' : color;
+    spriteCtx.shadowBlur = blur;
+    const g = spriteCtx.createRadialGradient(cx-r*.4, cy-r*.5, 0, cx, cy, r*1.8);
+    g.addColorStop(0, 'rgba(255,255,255,.96)');
+    g.addColorStop(.28, index === 0 ? 'rgba(241,245,249,.95)' : color);
+    g.addColorStop(1, index === 0 ? 'rgba(71,85,105,.75)' : 'rgba(15,23,42,.86)');
+    spriteCtx.fillStyle = g;
+    spriteCtx.beginPath(); spriteCtx.arc(cx, cy, r, 0, TAU); spriteCtx.fill();
+    spriteCtx.restore();
+    const entry = {canvas: canvasEl, w: canvasSize, h: canvasSize};
+    ORBIT_ASTEROID_RENDER_CACHE.set(key, entry);
+    trimRenderCache(ORBIT_ASTEROID_RENDER_CACHE, ORBIT_ASTEROID_RENDER_CACHE_MAX, ORBIT_ASTEROID_RENDER_CACHE_MAX_PIXELS);
+    return entry;
+  }catch(_err){
+    return null;
+  }
+}
+
 function drawPlanetOrbitAsteroids(type, x, y, level, phase){
   const d = PLANETS[type];
-  const t = performance.now() * 0.001;
+  const t = visualNowSec || ((performance.now ? performance.now() : Date.now()) * 0.001);
   const count = type === HIDDEN_PLANET_TYPE ? 3 : 2;
   const baseR = type === HIDDEN_PLANET_TYPE ? 26 : 20;
   const major = baseR + level * .68;
@@ -3650,27 +3893,92 @@ function drawPlanetOrbitAsteroids(type, x, y, level, phase){
     const ang = phase + t * (.9 + i*.14) * dir + i * (TAU / count);
     const orx = x + Math.cos(ang) * (major + i * 5);
     const ory = y + Math.sin(ang) * (minor + i * 2) + Math.sin(t * 2.1 + phase + i) * 2.2;
-    const r = (type === HIDDEN_PLANET_TYPE ? 3.8 : 2.6) + i * .55;
-    ctx.save();
-    ctx.globalAlpha = .95;
-    ctx.shadowColor = i === 0 ? '#ffffff' : d.color;
-    ctx.shadowBlur = type === HIDDEN_PLANET_TYPE ? 10 : 6;
-    const g = ctx.createRadialGradient(orx-r*.4, ory-r*.5, 0, orx, ory, r*1.8);
-    g.addColorStop(0, 'rgba(255,255,255,.96)');
-    g.addColorStop(.28, i === 0 ? 'rgba(241,245,249,.95)' : d.color);
-    g.addColorStop(1, i === 0 ? 'rgba(71,85,105,.75)' : 'rgba(15,23,42,.86)');
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(orx, ory, r, 0, TAU); ctx.fill();
-    ctx.restore();
+    const asteroidSprite = getCachedOrbitAsteroidSprite(type, d.color, i);
+    if(asteroidSprite){
+      ctx.drawImage(asteroidSprite.canvas, orx - asteroidSprite.w / 2, ory - asteroidSprite.h / 2, asteroidSprite.w, asteroidSprite.h);
+    }else{
+      const r = (type === HIDDEN_PLANET_TYPE ? 3.8 : 2.6) + i * .55;
+      ctx.save();
+      ctx.globalAlpha = .95;
+      ctx.shadowColor = i === 0 ? '#ffffff' : d.color;
+      ctx.shadowBlur = type === HIDDEN_PLANET_TYPE ? 10 : 6;
+      const g = ctx.createRadialGradient(orx-r*.4, ory-r*.5, 0, orx, ory, r*1.8);
+      g.addColorStop(0, 'rgba(255,255,255,.96)');
+      g.addColorStop(.28, i === 0 ? 'rgba(241,245,249,.95)' : d.color);
+      g.addColorStop(1, i === 0 ? 'rgba(71,85,105,.75)' : 'rgba(15,23,42,.86)');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(orx, ory, r, 0, TAU); ctx.fill();
+      ctx.restore();
+    }
   }
   ctx.restore();
 }
 
 
+const PEDESTAL_BASE_RENDER_CACHE = new Map();
+const PEDESTAL_BASE_RENDER_CACHE_MAX = 96;
+const PEDESTAL_BASE_RENDER_CACHE_MAX_PIXELS = 720000;
+function getCachedPedestalBase(accent, rx, ry, tier){
+  const qx = Math.round(rx * 2) / 2;
+  const qy = Math.round(ry * 2) / 2;
+  const key = `${accent}|${qx}|${qy}|${tier}`;
+  const cached = PEDESTAL_BASE_RENDER_CACHE.get(key);
+  if(cached){
+    PEDESTAL_BASE_RENDER_CACHE.delete(key);
+    PEDESTAL_BASE_RENDER_CACHE.set(key, cached);
+    return cached;
+  }
+  try{
+    const pad = 8;
+    const canvasW = Math.ceil(qx * 2.72 + pad * 2);
+    const canvasH = Math.ceil(qy * 5.24 + pad * 2);
+    const canvasEl = makeRenderCanvas(canvasW, canvasH);
+    const baseCtx = canvasEl.getContext('2d');
+    if(!baseCtx) return null;
+    const cx = canvasW / 2, cy = canvasH / 2;
+    baseCtx.save();
+    const floorGlow = baseCtx.createRadialGradient(cx, cy, 1, cx, cy, qx * 1.34);
+    floorGlow.addColorStop(0, 'rgba(255,255,255,.16)');
+    floorGlow.addColorStop(.18, accent);
+    floorGlow.addColorStop(.55, 'rgba(15,23,42,.14)');
+    floorGlow.addColorStop(1, 'rgba(15,23,42,0)');
+    baseCtx.globalAlpha = .18 + tier * .03;
+    baseCtx.fillStyle = floorGlow;
+    baseCtx.beginPath();
+    baseCtx.ellipse(cx, cy, qx * 1.26, qy * 2.55, 0, 0, TAU);
+    baseCtx.fill();
+
+    const coreGlow = baseCtx.createRadialGradient(cx, cy - 1, 0, cx, cy, qx * .74);
+    coreGlow.addColorStop(0, 'rgba(255,255,255,.36)');
+    coreGlow.addColorStop(.25, accent);
+    coreGlow.addColorStop(1, 'rgba(15,23,42,0)');
+    baseCtx.globalAlpha = .24;
+    baseCtx.fillStyle = coreGlow;
+    baseCtx.beginPath();
+    baseCtx.ellipse(cx, cy, qx * .78, qy * 1.22, 0, 0, TAU);
+    baseCtx.fill();
+    baseCtx.restore();
+    const entry = {canvas: canvasEl, w: canvasW, h: canvasH, cx, cy};
+    PEDESTAL_BASE_RENDER_CACHE.set(key, entry);
+    trimRenderCache(PEDESTAL_BASE_RENDER_CACHE, PEDESTAL_BASE_RENDER_CACHE_MAX, PEDESTAL_BASE_RENDER_CACHE_MAX_PIXELS);
+    return entry;
+  }catch(_err){
+    return null;
+  }
+}
+function drawCachedPedestalBase(accent, rx, ry, tier){
+  const base = getCachedPedestalBase(accent, rx, ry, tier);
+  if(base){
+    ctx.drawImage(base.canvas, -base.cx, -base.cy, base.w, base.h);
+    return true;
+  }
+  return false;
+}
+
 function drawTowerPedestalFx(tower, x, y, size){
   if(!isPlateAffinityMatched(tower)) return;
   const d = tower.def || { color:'#67e8f9', id:'unknown' };
-  const t = performance.now() * 0.001;
+  const t = visualNowSec || ((performance.now ? performance.now() : Date.now()) * 0.001);
   const tier = planetEvolutionTier ? planetEvolutionTier(tower.level || 1) : 0;
   const baseY = y + Math.max(17, size * 0.40);
   const rx = Math.max(26, size * 0.72 + tier * 3.8);
@@ -3682,28 +3990,30 @@ function drawTowerPedestalFx(tower, x, y, size){
   ctx.translate(x, baseY);
   ctx.scale(pulse, pulse);
 
-  // soft underglow disk
-  const floorGlow = ctx.createRadialGradient(0, 0, 1, 0, 0, rx * 1.34);
-  floorGlow.addColorStop(0, 'rgba(255,255,255,.16)');
-  floorGlow.addColorStop(.18, accent);
-  floorGlow.addColorStop(.55, 'rgba(15,23,42,.14)');
-  floorGlow.addColorStop(1, 'rgba(15,23,42,0)');
-  ctx.globalAlpha = .18 + tier * .03;
-  ctx.fillStyle = floorGlow;
-  ctx.beginPath();
-  ctx.ellipse(0, 0, rx * 1.26, ry * 2.55, 0, 0, TAU);
-  ctx.fill();
+  // soft underglow disk + subtle center pad are static for a given
+  // color/size/tier, so render them from cache and keep the animated rings below.
+  if(!drawCachedPedestalBase(accent, rx, ry, tier)){
+    const floorGlow = ctx.createRadialGradient(0, 0, 1, 0, 0, rx * 1.34);
+    floorGlow.addColorStop(0, 'rgba(255,255,255,.16)');
+    floorGlow.addColorStop(.18, accent);
+    floorGlow.addColorStop(.55, 'rgba(15,23,42,.14)');
+    floorGlow.addColorStop(1, 'rgba(15,23,42,0)');
+    ctx.globalAlpha = .18 + tier * .03;
+    ctx.fillStyle = floorGlow;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx * 1.26, ry * 2.55, 0, 0, TAU);
+    ctx.fill();
 
-  // subtle center pad
-  const coreGlow = ctx.createRadialGradient(0, -1, 0, 0, 0, rx * .74);
-  coreGlow.addColorStop(0, 'rgba(255,255,255,.36)');
-  coreGlow.addColorStop(.25, accent);
-  coreGlow.addColorStop(1, 'rgba(15,23,42,0)');
-  ctx.globalAlpha = .24;
-  ctx.fillStyle = coreGlow;
-  ctx.beginPath();
-  ctx.ellipse(0, 0, rx * .78, ry * 1.22, 0, 0, TAU);
-  ctx.fill();
+    const coreGlow = ctx.createRadialGradient(0, -1, 0, 0, 0, rx * .74);
+    coreGlow.addColorStop(0, 'rgba(255,255,255,.36)');
+    coreGlow.addColorStop(.25, accent);
+    coreGlow.addColorStop(1, 'rgba(15,23,42,0)');
+    ctx.globalAlpha = .24;
+    ctx.fillStyle = coreGlow;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx * .78, ry * 1.22, 0, 0, TAU);
+    ctx.fill();
+  }
 
   ctx.globalCompositeOperation = 'lighter';
   ctx.lineCap = 'round';
@@ -3790,12 +4100,14 @@ function drawProceduralPlanetBody(tower, x, y){
   ctx.beginPath();ctx.ellipse(x,y,34+tower.level,10,Math.sin(tower.phase)*.5,0,TAU);ctx.stroke();
   if(d.id==='void'){
     ctx.strokeStyle=d.color;ctx.lineWidth=3;
-    ctx.beginPath();ctx.arc(x,y,13+Math.sin(performance.now()/220)*3,0,TAU);ctx.stroke();
+    const nowMs = visualNowMs || (performance.now ? performance.now() : Date.now());
+    ctx.beginPath();ctx.arc(x,y,13+Math.sin(nowMs/220)*3,0,TAU);ctx.stroke();
   }
   ctx.restore();
 }
 
 function relocateInvalidPlanets(){
+  let moved = false;
   const available = [];
   for(let i=0;i<grid.length;i++) if(!grid[i] && canBuild(i)) available.push(i);
   const sortByDistance = (origin) => available.sort((a,b)=>{
@@ -3811,9 +4123,11 @@ function relocateInvalidPlanets(){
     grid[i] = null;
     tower.idx = next;
     grid[next] = tower;
+    moved = true;
     if(selected === i) selected = next;
     burst(center(next).x, center(next).y, tower.def.color, 14, 22);
   }
+  if(moved) invalidateTerrainRenderCache();
 }
 
 function updateAnomalies(dt){
@@ -3924,6 +4238,91 @@ const TERRAIN_BONUS_BY_KEY = {
   rift:{dmg:1.82,cd:1.10,range:8,gold:0,over:true,plate:true}
 };
 
+<<<<<<< HEAD
+=======
+const PLANET_CORE_GLOW_RENDER_CACHE = new Map();
+const PLANET_CORE_GLOW_RENDER_CACHE_MAX = 128;
+const PLANET_CORE_GLOW_RENDER_CACHE_MAX_PIXELS = 1250000;
+function getCachedPlanetCoreGlow(color, baseSize, tier, level){
+  const qSize = Math.round(baseSize * 2) / 2;
+  const key = `${color}|${qSize}|${tier}|${level}`;
+  const cached = PLANET_CORE_GLOW_RENDER_CACHE.get(key);
+  if(cached){
+    PLANET_CORE_GLOW_RENDER_CACHE.delete(key);
+    PLANET_CORE_GLOW_RENDER_CACHE.set(key, cached);
+    return cached;
+  }
+  try{
+    const coreR = Math.max(13, qSize * .30);
+    const haloDrawR = tier >= 1 ? (26 + tier * 6) : 0;
+    const haloGradientR = tier >= 1 ? (34 + tier * 8 + level * .6) : 0;
+    const shadowY = 16 + tier * .45;
+    const shadowRx = 14 + level * .24;
+    const shadowRy = 4.8 + tier * .18;
+    const radiusX = Math.max(coreR, haloGradientR, shadowRx) + 8;
+    const radiusTop = Math.max(coreR, haloGradientR) + 8;
+    const radiusBottom = Math.max(coreR, haloGradientR, shadowY + shadowRy) + 8;
+    const canvasW = Math.ceil(radiusX * 2);
+    const canvasH = Math.ceil(radiusTop + radiusBottom);
+    const canvasEl = makeRenderCanvas(canvasW, canvasH);
+    const glowCtx = canvasEl.getContext('2d');
+    if(!glowCtx) return null;
+    const cx = canvasW / 2;
+    const cy = radiusTop;
+    glowCtx.save();
+    const coreGlow = glowCtx.createRadialGradient(cx - 4, cy - 6, 2, cx, cy, Math.max(18, qSize * .56));
+    coreGlow.addColorStop(0, 'rgba(255,255,255,.96)');
+    coreGlow.addColorStop(.22, 'rgba(255,255,255,.88)');
+    coreGlow.addColorStop(.55, color);
+    coreGlow.addColorStop(1, 'rgba(2,6,23,.92)');
+    glowCtx.fillStyle = coreGlow;
+    glowCtx.beginPath(); glowCtx.arc(cx, cy, coreR, 0, TAU); glowCtx.fill();
+    glowCtx.globalAlpha = .34;
+    glowCtx.fillStyle = 'rgba(2,6,23,.52)';
+    glowCtx.beginPath(); glowCtx.ellipse(cx, cy + shadowY, shadowRx, shadowRy, 0, 0, TAU); glowCtx.fill();
+    if(tier >= 1){
+      glowCtx.globalAlpha = .28 + tier * .06;
+      const halo = glowCtx.createRadialGradient(cx, cy, 10, cx, cy, haloGradientR);
+      halo.addColorStop(0, 'rgba(255,255,255,.16)');
+      halo.addColorStop(.45, color);
+      halo.addColorStop(1, 'rgba(2,6,23,0)');
+      glowCtx.fillStyle = halo;
+      glowCtx.beginPath();
+      glowCtx.arc(cx, cy, haloDrawR, 0, TAU);
+      glowCtx.fill();
+    }
+    glowCtx.restore();
+    const entry = {canvas: canvasEl, w: canvasW, h: canvasH, cx, cy};
+    PLANET_CORE_GLOW_RENDER_CACHE.set(key, entry);
+    trimRenderCache(PLANET_CORE_GLOW_RENDER_CACHE, PLANET_CORE_GLOW_RENDER_CACHE_MAX, PLANET_CORE_GLOW_RENDER_CACHE_MAX_PIXELS);
+    return entry;
+  }catch(_err){
+    return null;
+  }
+}
+function drawCachedPlanetCoreGlow(x, y, color, baseSize, tier, level){
+  const core = getCachedPlanetCoreGlow(color, baseSize, tier, level);
+  if(core){
+    ctx.drawImage(core.canvas, x - core.cx, y - core.cy, core.w, core.h);
+    return true;
+  }
+  return false;
+}
+
+function trimAllRenderCachesForPressure(force=false){
+  if(!force && (perfFrameId % 240) !== 0) return;
+  const pressureScale = perfActiveTowerCount >= 44 ? .72 : (perfActiveTowerCount >= 32 ? .86 : 1);
+  const scaleEntries = (n) => Math.max(16, Math.floor(n * pressureScale));
+  const scalePixels = (n) => Math.max(120000, Math.floor(n * pressureScale));
+  trimRenderCache(PROJECTILE_SPRITE_RENDER_CACHE, PROJECTILE_SPRITE_RENDER_CACHE_MAX, PROJECTILE_SPRITE_RENDER_CACHE_MAX_PIXELS);
+  if(typeof ENEMY_BODY_RENDER_CACHE !== 'undefined') trimRenderCache(ENEMY_BODY_RENDER_CACHE, scaleEntries(ENEMY_BODY_RENDER_CACHE_MAX), scalePixels(ENEMY_BODY_RENDER_CACHE_MAX_PIXELS));
+  trimRenderCache(PLANET_SPRITE_RENDER_CACHE, scaleEntries(PLANET_SPRITE_RENDER_CACHE_MAX), scalePixels(PLANET_SPRITE_RENDER_CACHE_MAX_PIXELS));
+  trimRenderCache(ORBIT_ASTEROID_RENDER_CACHE, scaleEntries(ORBIT_ASTEROID_RENDER_CACHE_MAX), scalePixels(ORBIT_ASTEROID_RENDER_CACHE_MAX_PIXELS));
+  trimRenderCache(PEDESTAL_BASE_RENDER_CACHE, scaleEntries(PEDESTAL_BASE_RENDER_CACHE_MAX), scalePixels(PEDESTAL_BASE_RENDER_CACHE_MAX_PIXELS));
+  trimRenderCache(PLANET_CORE_GLOW_RENDER_CACHE, scaleEntries(PLANET_CORE_GLOW_RENDER_CACHE_MAX), scalePixels(PLANET_CORE_GLOW_RENDER_CACHE_MAX_PIXELS));
+}
+
+>>>>>>> b95f30a (메모리 최적화)
 class Planet{
   constructor(type,level,idx){
     this.type=type;this.level=level;this.idx=idx;this.cool=rand(0,20);this.phase=Math.random()*TAU;this.frozen=0;this.uid=nextPlanetUid++;this.aug=defaultAug();this.skillLevels={};syncTowerSkillUnlocks(this);
@@ -3936,15 +4335,40 @@ class Planet{
     return TERRAIN_BONUS_BY_KEY[terrain[this.idx]] || TERRAIN_BONUS_DEFAULT;
   }
   stats(){
+<<<<<<< HEAD
     if(this._statsCache && this._statsFrame === perfFrameId && this._statsRevision === globalUpgradeStatsRevision){
       return this._statsCache;
     }
     const b=this.terrainBonus();
+=======
+    const terrainKey = terrain ? terrain[this.idx] : 'empty';
+>>>>>>> b95f30a (메모리 최적화)
     const a=ensureAug(this);
+    const augRevision = this._augRevision || 0;
+    const cooldownPenalty = S.globalCooldownPenalty || 0;
+    const tacticalBoost = S.tacticalBoost || 0;
+    const dustSig = DUST_CLOUDS_ACTIVE ? perfFrameId : 0;
+    if(this._statsCache
+      && this._statsType === this.type
+      && this._statsLevel === this.level
+      && this._statsTerrainKey === terrainKey
+      && this._statsGlobalRevision === globalUpgradeStatsRevision
+      && this._statsCooldownPenalty === cooldownPenalty
+      && this._statsTacticalBoost === tacticalBoost
+      && this._statsAugRevision === augRevision
+      && this._statsDustSig === dustSig){
+      return this._statsCache;
+    }
+    const b=TERRAIN_BONUS_BY_KEY[terrainKey] || TERRAIN_BONUS_DEFAULT;
     const g=getGlobalUpgradeStats();
     const d=this.def;
+<<<<<<< HEAD
     const p=this.pos;
     const ambient = getDustCloudPenalty(p.x, p.y);
+=======
+    const pos = DUST_CLOUDS_ACTIVE ? this.pos : null;
+    const ambient = DUST_CLOUDS_ACTIVE ? getDustCloudPenalty(pos.x, pos.y) : DUST_NO_PENALTY;
+>>>>>>> b95f30a (메모리 최적화)
     const affinityMatched = isPlateAffinityMatched(this);
     const plateDamage = b.plate ? g.plateDamage + (affinityMatched ? PLATE_AFFINITY_DAMAGE_BONUS : 0) : 0;
     const plateFireRate = b.plate ? g.plateFireRate + (affinityMatched ? PLATE_AFFINITY_FIRE_RATE_BONUS : 0) : 0;
@@ -3964,8 +4388,19 @@ class Planet{
       dustPenalty: ambient.alpha
     };
     this._statsCache = stats;
+<<<<<<< HEAD
     this._statsFrame = perfFrameId;
     this._statsRevision = globalUpgradeStatsRevision;
+=======
+    this._statsType = this.type;
+    this._statsLevel = this.level;
+    this._statsTerrainKey = terrainKey;
+    this._statsGlobalRevision = globalUpgradeStatsRevision;
+    this._statsCooldownPenalty = cooldownPenalty;
+    this._statsTacticalBoost = tacticalBoost;
+    this._statsAugRevision = augRevision;
+    this._statsDustSig = dustSig;
+>>>>>>> b95f30a (메모리 최적화)
     return stats;
   }
   target(stOverride=null){
@@ -4000,7 +4435,7 @@ class Planet{
     const p=this.pos,d=this.def;
     const frameIndex = currentPlanetFrameIndex();
     const tier = planetEvolutionTier(this.level);
-    const nowMs = performance.now();
+    const nowMs = visualNowMs || (performance.now ? performance.now() : Date.now());
     const isDragTarget = !!(dragging && dragHoverTargetIdx === this.idx);
     const targetAge = isDragTarget ? Math.max(0, nowMs - (dragHoverTargetStartedAt || nowMs)) : 0;
     const targetEase = isDragTarget ? (1 - Math.pow(1 - clamp(targetAge / 150, 0, 1), 3)) : 0;
@@ -4016,7 +4451,8 @@ class Planet{
     const bobY = Math.sin(nowMs/420 + this.phase * 1.7 + this.level * .42) * (1.6 + Math.min(3.2, this.level * .12));
     const bobX = Math.cos(nowMs/620 + this.phase * .9) * .9;
     const rx = p.x + bobX, ry = p.y + bobY;
-    const st = this.stats();
+    const selectedTower = selected===this.idx;
+    const st = selectedTower ? this.stats() : null;
     ctx.save();
     if(isDragTarget){
       ctx.globalAlpha = .62 + .18 * (1 - targetEase);
@@ -4025,28 +4461,30 @@ class Planet{
       ctx.globalAlpha = 1;
     }
     drawTowerPedestalFx(this, rx, ry, baseSize);
-    const coreGlow = ctx.createRadialGradient(rx - 4, ry - 6, 2, rx, ry, Math.max(18, baseSize * .56));
-    coreGlow.addColorStop(0, 'rgba(255,255,255,.96)');
-    coreGlow.addColorStop(.22, 'rgba(255,255,255,.88)');
-    coreGlow.addColorStop(.55, d.color);
-    coreGlow.addColorStop(1, 'rgba(2,6,23,.92)');
-    ctx.fillStyle = coreGlow;
-    ctx.beginPath(); ctx.arc(rx, ry, Math.max(13, baseSize * .30), 0, TAU); ctx.fill();
-    ctx.globalAlpha = .34;
-    ctx.fillStyle = 'rgba(2,6,23,.52)';
-    ctx.beginPath(); ctx.ellipse(rx, ry + 16 + tier * .45, 14 + this.level*.24, 4.8 + tier*.18, 0, 0, TAU); ctx.fill();
-    if(tier >= 1){
-      ctx.globalAlpha = .28 + tier * .06;
-      const halo = ctx.createRadialGradient(rx, ry, 10, rx, ry, 34 + tier * 8 + this.level * .6);
-      halo.addColorStop(0, 'rgba(255,255,255,.16)');
-      halo.addColorStop(.45, d.color);
-      halo.addColorStop(1, 'rgba(2,6,23,0)');
-      ctx.fillStyle = halo;
-      ctx.beginPath();
-      ctx.arc(rx, ry, 26 + tier * 6, 0, TAU);
-      ctx.fill();
-      ctx.globalAlpha = 1;
+    if(!drawCachedPlanetCoreGlow(rx, ry, d.color, baseSize, tier, this.level)){
+      const coreGlow = ctx.createRadialGradient(rx - 4, ry - 6, 2, rx, ry, Math.max(18, baseSize * .56));
+      coreGlow.addColorStop(0, 'rgba(255,255,255,.96)');
+      coreGlow.addColorStop(.22, 'rgba(255,255,255,.88)');
+      coreGlow.addColorStop(.55, d.color);
+      coreGlow.addColorStop(1, 'rgba(2,6,23,.92)');
+      ctx.fillStyle = coreGlow;
+      ctx.beginPath(); ctx.arc(rx, ry, Math.max(13, baseSize * .30), 0, TAU); ctx.fill();
+      ctx.globalAlpha = .34;
+      ctx.fillStyle = 'rgba(2,6,23,.52)';
+      ctx.beginPath(); ctx.ellipse(rx, ry + 16 + tier * .45, 14 + this.level*.24, 4.8 + tier*.18, 0, 0, TAU); ctx.fill();
+      if(tier >= 1){
+        ctx.globalAlpha = .28 + tier * .06;
+        const halo = ctx.createRadialGradient(rx, ry, 10, rx, ry, 34 + tier * 8 + this.level * .6);
+        halo.addColorStop(0, 'rgba(255,255,255,.16)');
+        halo.addColorStop(.45, d.color);
+        halo.addColorStop(1, 'rgba(2,6,23,0)');
+        ctx.fillStyle = halo;
+        ctx.beginPath();
+        ctx.arc(rx, ry, 26 + tier * 6, 0, TAU);
+        ctx.fill();
+      }
     }
+    ctx.globalAlpha = tier >= 1 ? 1 : .34;
     drawPlanetOrbitAsteroids(this.type, rx, ry, this.level, this.phase);
     const ok = drawPlanetSprite(this.type, rx, ry, baseSize, frameIndex, this.level);
     if(!ok) drawProceduralPlanetBody(this, rx, ry);
@@ -4061,7 +4499,7 @@ class Planet{
     ctx.strokeStyle='rgba(255,255,255,.55)';
     ctx.lineWidth=1.2;
     ctx.beginPath();ctx.ellipse(rx,ry,21+this.level*.42+tier*.7,6.2+tier*.16,0.18,0,TAU);ctx.stroke();
-    if(st.dustPenalty > 0.02){
+    if(DUST_CLOUDS_ACTIVE && st && st.dustPenalty > 0.02){
       ctx.globalAlpha = .22 + st.dustPenalty * .8;
       const mist = ctx.createRadialGradient(rx - 5, ry - 7, 1, rx, ry, 26 + tier * 4);
       mist.addColorStop(0, 'rgba(255,244,214,.35)');
@@ -4103,9 +4541,10 @@ class Planet{
       ctx.fillText(planetEvolutionName(this.level), rx, ry - 23 - tier * 2.2);
       ctx.globalAlpha = 1;
     }
-    if(selected===this.idx){
+    if(selectedTower){
+      const rangeStats = st || this.stats();
       ctx.globalAlpha=.13;ctx.strokeStyle=d.color;ctx.lineWidth=1.8;
-      ctx.beginPath();ctx.arc(rx,ry,st.range,0,TAU);ctx.stroke();
+      ctx.beginPath();ctx.arc(rx,ry,rangeStats.range,0,TAU);ctx.stroke();
       ctx.globalAlpha = 1;
     }
     ctx.restore();
@@ -4113,6 +4552,71 @@ class Planet{
 
 }
 
+<<<<<<< HEAD
+=======
+const ENEMY_BODY_RENDER_CACHE = new Map();
+const ENEMY_BODY_RENDER_CACHE_MAX = 64;
+const ENEMY_BODY_RENDER_CACHE_MAX_PIXELS = 360000;
+function getCachedEnemyBodySprite(color, size, boss){
+  const qSize = Math.max(4, Math.round(size * 2) / 2);
+  const key = `${boss ? 'boss' : 'normal'}|${color}|${qSize}`;
+  const cached = ENEMY_BODY_RENDER_CACHE.get(key);
+  if(cached){
+    ENEMY_BODY_RENDER_CACHE.delete(key);
+    ENEMY_BODY_RENDER_CACHE.set(key, cached);
+    return cached;
+  }
+  try{
+    const blur = boss ? 24 : 13;
+    const pad = Math.ceil(blur * 2 + qSize * .35 + 8);
+    const canvasSize = Math.ceil(qSize * 2.4 + pad * 2);
+    const canvasEl = makeRenderCanvas(canvasSize, canvasSize);
+    const bodyCtx = canvasEl.getContext('2d');
+    if(!bodyCtx) return null;
+    const cx = canvasSize / 2, cy = canvasSize / 2;
+    bodyCtx.save();
+    bodyCtx.shadowColor = color;
+    bodyCtx.shadowBlur = blur;
+    bodyCtx.fillStyle = color;
+    bodyCtx.beginPath();
+    if(boss){
+      for(let i=0;i<9;i++){
+        const a = i * TAU / 9;
+        const r = qSize * (i % 2 ? .72 : 1.08);
+        const x = cx + Math.cos(a) * r;
+        const y = cy + Math.sin(a) * r;
+        if(i === 0) bodyCtx.moveTo(x, y); else bodyCtx.lineTo(x, y);
+      }
+      bodyCtx.closePath();
+    }else{
+      bodyCtx.arc(cx, cy, qSize, 0, TAU);
+    }
+    bodyCtx.fill();
+    bodyCtx.restore();
+    const entry = {canvas: canvasEl, w: canvasSize, h: canvasSize, cx, cy, boss};
+    ENEMY_BODY_RENDER_CACHE.set(key, entry);
+    trimRenderCache(ENEMY_BODY_RENDER_CACHE, ENEMY_BODY_RENDER_CACHE_MAX, ENEMY_BODY_RENDER_CACHE_MAX_PIXELS);
+    return entry;
+  }catch(_err){
+    return null;
+  }
+}
+function drawCachedEnemyBody(enemy, color){
+  const body = getCachedEnemyBodySprite(color, enemy.size, !!enemy.boss);
+  if(!body) return false;
+  if(body.boss){
+    ctx.save();
+    ctx.translate(enemy.x, enemy.y);
+    ctx.rotate(visualNowSec);
+    ctx.drawImage(body.canvas, -body.cx, -body.cy, body.w, body.h);
+    ctx.restore();
+  }else{
+    ctx.drawImage(body.canvas, enemy.x - body.cx, enemy.y - body.cy, body.w, body.h);
+  }
+  return true;
+}
+
+>>>>>>> b95f30a (메모리 최적화)
 const ENEMY_BASE_MAP = {
   grunt:{hp:1.62,spd:1.08,size:13,color:'#e2e8f0',reward:.50,exp:3,armor:0,regen:false,treasure:false,boss:false},
   runner:{hp:1.05,spd:1.82,size:11,color:'#7dd3fc',reward:.50,exp:3,armor:0,regen:false,treasure:false,boss:false},
@@ -4166,7 +4670,11 @@ class Enemy{
     const bossRunEase = this.stageBoss ? (this.bossTier === 'final' ? .72 : .80) : 1;
     this.maxHp=Math.floor(295*hpBase*(1+S.ogge*.30+S.theme*.38) * hpScale * bossRunEase);
     this.hp=this.maxHp;
+<<<<<<< HEAD
     this.dead=false;this.slow=0;this.freeze=0;this.dot=0;this.dotTime=0;this.mark=0;
+=======
+    this.dead=false;this.slow=0;this.freeze=0;this.dot=0;this.dotTime=0;this.mark=0;this._chainHitStamp=0;
+>>>>>>> b95f30a (메모리 최적화)
     return this;
   }
   update(dt){
@@ -4270,29 +4778,33 @@ class Enemy{
     let c=this.color;
     if(this.freeze>0)c='#bae6fd';
     else if(this.dotTime>0)c='#86efac';
-    ctx.save();
-    ctx.shadowColor=c;ctx.shadowBlur=this.boss?24:13;
-    ctx.fillStyle=c;
-    ctx.beginPath();
-    if(this.boss){
-      for(let i=0;i<9;i++){
-        const a=i*TAU/9+performance.now()/1000;
-        const r=this.size*(i%2?.72:1.08);
-        const x=this.x+Math.cos(a)*r,y=this.y+Math.sin(a)*r;
-        if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    // v13: enemy draw does not need a full canvas state stack. All modified state is
+    // either overwritten below or reset before returning; boss body rotation remains
+    // isolated inside drawCachedEnemyBody().
+    if(!drawCachedEnemyBody(this, c)){
+      ctx.shadowColor=c;ctx.shadowBlur=this.boss?24:13;
+      ctx.fillStyle=c;
+      ctx.beginPath();
+      if(this.boss){
+        for(let i=0;i<9;i++){
+          const a=i*TAU/9+visualNowSec;
+          const r=this.size*(i%2?.72:1.08);
+          const x=this.x+Math.cos(a)*r,y=this.y+Math.sin(a)*r;
+          if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+        }
+        ctx.closePath();
+      }else{
+        ctx.arc(this.x,this.y,this.size,0,TAU);
       }
-      ctx.closePath();
-    }else{
-      ctx.arc(this.x,this.y,this.size,0,TAU);
+      ctx.fill();
     }
-    ctx.fill();
     if(this.treasure){
       ctx.strokeStyle='#fde68a';ctx.lineWidth=3;
       ctx.beginPath();ctx.arc(this.x,this.y,this.size+6,0,TAU);ctx.stroke();
     }
     if(this.stageBoss){
       ctx.strokeStyle=this.auraColor || this.color;ctx.lineWidth=2.4;ctx.globalAlpha=.9;
-      ctx.beginPath();ctx.arc(this.x,this.y,this.size+9+Math.sin(performance.now()/180)*2,0,TAU);ctx.stroke();
+      ctx.beginPath();ctx.arc(this.x,this.y,this.size+9+Math.sin((visualNowMs || 0)/180)*2,0,TAU);ctx.stroke();
       ctx.globalAlpha=1;
     }
     const r=clamp(this.hp/this.maxHp,0,1);
@@ -4309,7 +4821,8 @@ class Enemy{
       ctx.fillStyle='#f8fafc';ctx.font='900 10px Orbitron';ctx.textAlign='center';
       ctx.fillText(this.bossKo || this.bossName, this.x, this.y - this.size - 22);
     }
-    ctx.restore();
+    ctx.globalAlpha=1;
+    ctx.shadowBlur=0;
   }
 }
 
@@ -4412,7 +4925,7 @@ function triggerMechaSatellite(tower, target, st, baseDamage){
   const chance = clamp(.10 + st.satelliteForge, 0, .72);
   if(Math.random() > chance) return;
   const p = tower.pos;
-  const angle = performance.now() * .003 + tower.phase;
+  const angle = (visualNowMs || 0) * .003 + tower.phase;
   const sx = p.x + Math.cos(angle) * 34;
   const sy = p.y + Math.sin(angle) * 22;
   const alt = nearestEnemyExcept(target, p.x, p.y, st.range + 52) || target;
@@ -4779,7 +5292,7 @@ function blackholePulse(tower,target,st){
   const hy = target.y;
   const dx = hx - p.x;
   const dy = hy - p.y;
-  const distToTarget = Math.max(1, Math.hypot(dx,dy));
+  const distToTarget = Math.max(1, Math.sqrt(dx*dx + dy*dy));
   // 발사 이펙트는 작고 얇게, 실제 블랙홀은 피격 지점에 생성한다.
   const muzzleDist = Math.min(18 + tower.level * .8, distToTarget * .28);
   const mx = p.x + dx / distToTarget * muzzleDist;
@@ -4816,6 +5329,7 @@ function areaDamage(x,y,r,dmg,source,color){
 }
 function chain(start,dmg,count,color,markAmp=0){
   let cur=start;
+<<<<<<< HEAD
   const hit=new Set();
   const maxChainDistSq = 115 * 115;
   for(let i=0;i<count;i++){
@@ -4825,6 +5339,18 @@ function chain(start,dmg,count,color,markAmp=0){
     for(let j=0;j<enemies.length;j++){
       const e = enemies[j];
       if(e.dead||hit.has(e))continue;
+=======
+  const stamp = ++chainHitStamp;
+  if(chainHitStamp > 1000000000) chainHitStamp = 1;
+  const maxChainDistSq = 115 * 115;
+  for(let i=0;i<count;i++){
+    if(!cur||cur._chainHitStamp===stamp)break;
+    cur._chainHitStamp=stamp;cur.damage(dmg*(1-i*.16)*(1+markAmp),'storm',color);cur.slow=Math.max(cur.slow,25);
+    let next=null,best=maxChainDistSq;
+    for(let j=0;j<enemies.length;j++){
+      const e = enemies[j];
+      if(e.dead||e._chainHitStamp===stamp)continue;
+>>>>>>> b95f30a (메모리 최적화)
       const d=distSq(e.x,e.y,cur.x,cur.y);
       if(d<best){best=d;next=e}
     }
@@ -4846,6 +5372,7 @@ function gainExp(v){
 }
 
 
+<<<<<<< HEAD
 function liveTowers(){
   return grid.map((t,idx)=>t?{t,idx}:null).filter(Boolean);
 }
@@ -4914,6 +5441,8 @@ function openSkillChoice(rare){
   }
   return false;
 }
+=======
+>>>>>>> b95f30a (메모리 최적화)
 
 function updateTacticalCooldowns(dt){
   const cd = S.tacticalCd;
@@ -4924,6 +5453,7 @@ function updateTacticalCooldowns(dt){
   }
   if(S.tacticalBoost>0) S.tacticalBoost=Math.max(0,S.tacticalBoost-.004*dt);
 }
+<<<<<<< HEAD
 function canUseTactical(type,cost){
   if(S.exp<cost){toast('EXP가 부족합니다');return false}
   if((S.tacticalCd?.[type]||0)>0){toast('전술판 재충전 중입니다');return false}
@@ -4994,6 +5524,8 @@ function useSkill(type){
   }
   updateUI();
 }
+=======
+>>>>>>> b95f30a (메모리 최적화)
 
 function summon(typeOverride=null){
   if(S.gameOver) return;
@@ -5007,6 +5539,7 @@ function summon(typeOverride=null){
   if(!free.length)return toast('배치 가능한 장판이 없습니다');
   const idx=free[Math.floor(Math.random()*free.length)];
   grid[idx]=new Planet(type,1,idx);
+  invalidateTerrainRenderCache();
   S.runSummons = (S.runSummons || 0) + 1;
   S.gold-=cost;selected=idx;
   burst(center(idx).x,center(idx).y,PLANETS[type].color,24,42);
@@ -5149,6 +5682,7 @@ function autoMerge(continueSession=false, runId=null){
 
   grid[pair.anchor] = createMergedPlanet(a,b,pair.anchor);
   grid[pair.consume] = null;
+  invalidateTerrainRenderCache();
   selected = mergeFocusSession?.anchor ?? pair.anchor;
   triggerMergeImpact(pair.anchor,a.def.color,a.level+1);
   S.runMerges = (S.runMerges || 0) + 1;
@@ -5158,6 +5692,7 @@ function autoMerge(continueSession=false, runId=null){
 
 
 function tryCreateHiddenPlanet(){
+<<<<<<< HEAD
   for(let i=0;i<grid.length;i++){
     const t = grid[i];
     if(t && t.type === HIDDEN_PLANET_TYPE) return false;
@@ -5172,6 +5707,29 @@ function tryCreateHiddenPlanet(){
     if(idx < 0) return false;
     recipe.push(idx);
   }
+=======
+  // v14 safety-pass: keep the exact hidden-planet recipe, but avoid scanning the
+  // full grid once per base type. This only runs after board changes / fallback.
+  if(S?.hiddenUnlocked) return false;
+  if(!hiddenPlanetCheckDirty && (perfFrameId - hiddenPlanetCheckLastFrame) < HIDDEN_PLANET_CHECK_INTERVAL_FRAMES) return false;
+  hiddenPlanetCheckDirty = false;
+  hiddenPlanetCheckLastFrame = perfFrameId;
+
+  const recipe = new Array(BASE_PLANET_COUNT);
+  let matched = 0;
+  for(let i=0;i<grid.length;i++){
+    const t = grid[i];
+    if(!t) continue;
+    if(t.type === HIDDEN_PLANET_TYPE) return false;
+    const type = Number(t.type);
+    if(type >= 0 && type < BASE_PLANET_COUNT && t.level >= 5 && recipe[type] == null){
+      recipe[type] = i;
+      matched++;
+    }
+  }
+  if(matched < BASE_PLANET_COUNT) return false;
+
+>>>>>>> b95f30a (메모리 최적화)
   let sumX = 0, sumY = 0;
   for(let i=0;i<recipe.length;i++){ const c = center(recipe[i]); sumX += c.x; sumY += c.y; }
   const avgX = sumX / recipe.length, avgY = sumY / recipe.length;
@@ -5183,6 +5741,7 @@ function tryCreateHiddenPlanet(){
   }
   for(let i=0;i<recipe.length;i++){ const idx = recipe[i]; if(idx !== anchor) grid[idx] = null; }
   grid[anchor] = new Planet(HIDDEN_PLANET_TYPE, 1, anchor);
+  invalidateTerrainRenderCache();
   S.hiddenUnlocked = true;
   selected = anchor;
   const c = center(anchor);
@@ -5289,6 +5848,19 @@ function waveDone(){
   prepareWave();
 }
 
+let backgroundGlowGradient = null;
+let backgroundGlowGradientKey = '';
+function getBackgroundGlowGradient(color){
+  const key = `${W}|${H}|${color}`;
+  if(backgroundGlowGradient && backgroundGlowGradientKey === key) return backgroundGlowGradient;
+  const g = ctx.createRadialGradient(W/2,H+120,40,W/2,H+120,380);
+  g.addColorStop(0,color);
+  g.addColorStop(.45,'rgba(56,189,248,.08)');
+  g.addColorStop(1,'transparent');
+  backgroundGlowGradient = g;
+  backgroundGlowGradientKey = key;
+  return g;
+}
 function drawBackground(raw=1){
   const th=theme();
   drawCoverImage(STAGE_BGS[S.theme]);
@@ -5300,21 +5872,21 @@ function drawBackground(raw=1){
   // 게임판 내부 전용 별 레이어. 실제 캔버스 안에서 움직이므로 스크린샷처럼 검게 비는 문제가 없습니다.
   updateAndDrawFieldStars(raw);
 
-  const g=ctx.createRadialGradient(W/2,H+120,40,W/2,H+120,380);
-  g.addColorStop(0,th.color);
-  g.addColorStop(.45,'rgba(56,189,248,.08)');
-  g.addColorStop(1,'transparent');
   ctx.globalAlpha=.12;
-  ctx.fillStyle=g;
+  ctx.fillStyle=getBackgroundGlowGradient(th.color);
   ctx.beginPath();
   ctx.arc(W/2,H+120,380,0,TAU);
   ctx.fill();
   ctx.globalAlpha=1;
 }
 function drawRouteChevron(x, y, angle, size, color, alpha=.48){
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(angle);
+  // v13: hot animated route markers no longer use ctx.save/translate/rotate per chevron.
+  // Rotate the three local points manually so the visual stays identical while avoiding
+  // dozens of canvas state-stack operations per frame on mobile browsers.
+  const c = Math.cos(angle), s = Math.sin(angle);
+  const ax = -size * .62, ay = -size * .42;
+  const bx =  size * .14, by = 0;
+  const cx = -size * .62, cy =  size * .42;
   ctx.globalAlpha = alpha;
   ctx.shadowColor = color;
   ctx.shadowBlur = 12;
@@ -5323,19 +5895,22 @@ function drawRouteChevron(x, y, angle, size, color, alpha=.48){
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   ctx.beginPath();
-  ctx.moveTo(-size * .62, -size * .42);
-  ctx.lineTo(size * .14, 0);
-  ctx.lineTo(-size * .62, size * .42);
+  ctx.moveTo(x + ax * c - ay * s, y + ax * s + ay * c);
+  ctx.lineTo(x + bx * c - by * s, y + bx * s + by * c);
+  ctx.lineTo(x + cx * c - cy * s, y + cx * s + cy * c);
   ctx.stroke();
+
+  const iax = -size * .48, iay = -size * .30;
+  const ibx =  size * .04, iby = 0;
+  const icx = -size * .48, icy =  size * .30;
   ctx.globalAlpha = alpha * .30;
   ctx.strokeStyle = 'rgba(255,255,255,.95)';
   ctx.lineWidth = 1.05;
   ctx.beginPath();
-  ctx.moveTo(-size * .48, -size * .30);
-  ctx.lineTo(size * .04, 0);
-  ctx.lineTo(-size * .48, size * .30);
+  ctx.moveTo(x + iax * c - iay * s, y + iax * s + iay * c);
+  ctx.lineTo(x + ibx * c - iby * s, y + ibx * s + iby * c);
+  ctx.lineTo(x + icx * c - icy * s, y + icx * s + icy * c);
   ctx.stroke();
-  ctx.restore();
 }
 
 function traceRoutePath(){
@@ -5346,9 +5921,58 @@ function traceRoutePath(){
 
 function lineCross(ax, ay, bx, by){ return ax * by - ay * bx; }
 
+const ROUTE_OFFSET_POINTS_CACHE = new Map();
+const ROUTE_SEGMENT_MARKER_CACHE = [];
+let routeStaticCacheCanvas = null;
+let routeStaticCacheCtx = null;
+let routeStaticCacheSig = -1;
+let routeStaticCacheDirty = true;
+function routeOffsetCacheKey(offset){
+  return offset;
+}
+function clearRouteOffsetCache(){
+  ROUTE_OFFSET_POINTS_CACHE.clear();
+  ROUTE_SEGMENT_MARKER_CACHE.length = 0;
+  routeStaticCacheSig = -1;
+  routeStaticCacheDirty = true;
+}
+function getRouteStaticSignature(){
+  let h = 2166136261;
+  h = Math.imul(h ^ (W|0), 16777619);
+  h = Math.imul(h ^ (H|0), 16777619);
+  h = Math.imul(h ^ ((canvas.width || 0)|0), 16777619);
+  h = Math.imul(h ^ ((canvas.height || 0)|0), 16777619);
+  h = Math.imul(h ^ ((CELL * 100)|0), 16777619);
+  h = Math.imul(h ^ ((S?.theme || 0)|0), 16777619);
+  const color = theme().color || '#22d3ee';
+  for(let i=0;i<color.length;i++) h = Math.imul(h ^ color.charCodeAt(i), 16777619);
+  if(Array.isArray(route)){
+    h = Math.imul(h ^ route.length, 16777619);
+    for(let i=0;i<route.length;i++){
+      const p = route[i] || {x:0,y:0};
+      h = Math.imul(h ^ ((p.x * 10)|0), 16777619);
+      h = Math.imul(h ^ ((p.y * 10)|0), 16777619);
+    }
+  }
+  return h >>> 0;
+}
+function ensureRouteMarkerCache(){
+  if(ROUTE_SEGMENT_MARKER_CACHE.length || !Array.isArray(route) || route.length < 2) return ROUTE_SEGMENT_MARKER_CACHE;
+  for(let i=0;i<route.length-1;i++){
+    const a = route[i], b = route[i+1];
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.sqrt(dx*dx + dy*dy) || 1;
+    ROUTE_SEGMENT_MARKER_CACHE.push({a,b,dx,dy,len,angle:Math.atan2(dy, dx),count:Math.max(1, Math.floor(len / 82))});
+  }
+  return ROUTE_SEGMENT_MARKER_CACHE;
+}
+
 function offsetRoutePoints(offset){
   const pts = route || [];
   if(pts.length < 2) return pts.slice();
+  const cacheKey = routeOffsetCacheKey(offset);
+  const cached = ROUTE_OFFSET_POINTS_CACHE.get(cacheKey);
+  if(cached) return cached;
 
   function unit(a, b){
     const dx = b.x - a.x, dy = b.y - a.y;
@@ -5398,6 +6022,7 @@ function offsetRoutePoints(offset){
     }
     out.push(m);
   }
+  ROUTE_OFFSET_POINTS_CACHE.set(cacheKey, out);
   return out;
 }
 
@@ -5425,37 +6050,23 @@ function drawRouteRail(offset, width, stroke, alpha=.8, blur=8){
 }
 
 function drawRouteSegmentMarkers(){
-  const tNow = performance.now();
+  const tNow = visualNowMs || (performance.now ? performance.now() : Date.now());
   const pulse = .44 + Math.sin(tNow / 520) * .12;
-  for(let i=0;i<route.length-1;i++){
-    const a = route[i], b = route[i+1];
-    const dx = b.x - a.x, dy = b.y - a.y;
-    const len = Math.hypot(dx, dy) || 1;
-    const angle = Math.atan2(dy, dx);
-    const count = Math.max(1, Math.floor(len / 82));
+  const segments = ensureRouteMarkerCache();
+  const drift = (tNow % 2100) / 2100 * .06;
+  for(let i=0;i<segments.length;i++){
+    const seg = segments[i];
+    const a = seg.a, b = seg.b, count = seg.count;
     for(let j=1;j<=count;j++){
-      const t = (j / (count + 1) + (tNow % 2100) / 2100 * .06) % 1;
-      const x = a.x + dx * t;
-      const y = a.y + dy * t;
-      drawRouteChevron(x, y, angle, 13.5, '#c9fbff', pulse);
+      const t = (j / (count + 1) + drift) % 1;
+      drawRouteChevron(a.x + seg.dx * t, a.y + seg.dy * t, seg.angle, 13.5, '#c9fbff', pulse);
     }
-    ctx.save();
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.globalAlpha = .30;
-    ctx.fillStyle = '#67e8f9';
-    ctx.shadowColor = '#22d3ee';
-    ctx.shadowBlur = 18;
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, 3.4, 0, TAU);
-    ctx.fill();
-    ctx.restore();
   }
 }
 
-function drawRoute(){
+function renderStaticRouteLayer(){
   ctx.save();
   ctx.lineCap='round';ctx.lineJoin='round';
-  const color = theme().color || '#22d3ee';
   const glowWidth = Math.max(22, CELL*.34);
   const glassWidth = Math.max(13, CELL*.205);
   const railOffset = Math.max(9, CELL*.155);
@@ -5488,18 +6099,6 @@ function drawRoute(){
   drawRouteRail( railOffset*.62, 1.0, 'rgba(255,255,255,.70)', .42, 6);
   drawRouteRail(-railOffset*.62, 1.0, 'rgba(255,255,255,.70)', .42, 6);
 
-  // animated dotted center guide.
-  ctx.globalCompositeOperation = 'screen';
-  ctx.globalAlpha = .32;
-  ctx.strokeStyle = 'rgba(207,250,254,.78)';
-  ctx.lineWidth = 1.25;
-  ctx.setLineDash([3, 18]);
-  ctx.lineDashOffset = -performance.now() / 42;
-  traceRoutePath();
-  ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.globalAlpha = 1;
-
   // subtle corner nodes. Small circular dots keep turns clean instead of creating
   // boxy artifacts on the neon rail corners.
   ctx.globalCompositeOperation = 'lighter';
@@ -5515,10 +6114,72 @@ function drawRoute(){
     ctx.fill();
     ctx.restore();
   }
+  for(let i=1;i<route.length;i++){
+    const p = route[i];
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = .30;
+    ctx.fillStyle = '#67e8f9';
+    ctx.shadowColor = '#22d3ee';
+    ctx.shadowBlur = 18;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3.4, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
+}
+function ensureRouteStaticCache(){
+  if(!routeStaticCacheCanvas){
+    routeStaticCacheCanvas = document.createElement('canvas');
+    routeStaticCacheCtx = routeStaticCacheCanvas.getContext('2d');
+  }
+  if(routeStaticCacheCanvas.width !== canvas.width || routeStaticCacheCanvas.height !== canvas.height){
+    routeStaticCacheCanvas.width = canvas.width;
+    routeStaticCacheCanvas.height = canvas.height;
+    routeStaticCacheSig = -1;
+    routeStaticCacheDirty = true;
+  }
+  if(!routeStaticCacheDirty && routeStaticCacheSig !== -1) return routeStaticCacheCanvas;
+  const sig = getRouteStaticSignature();
+  if(sig !== routeStaticCacheSig){
+    const oldCtx = ctx;
+    ctx = routeStaticCacheCtx;
+    ctx.setTransform((canvas.width || W) / Math.max(1, W), 0, 0, (canvas.height || H) / Math.max(1, H), 0, 0);
+    ctx.clearRect(0,0,W,H);
+    renderStaticRouteLayer();
+    ctx = oldCtx;
+    routeStaticCacheSig = sig;
+  }
+  routeStaticCacheDirty = false;
+  return routeStaticCacheCanvas;
+}
+function drawRoute(){
+  ctx.save();
+  const cached = ensureRouteStaticCache();
+  // v20: cached route layer is rendered at backing-store resolution (DPR-scaled).
+  // Draw it back into the logical canvas bounds; otherwise mobile/retina browsers
+  // display the monster road larger than the live enemies/towers/hover grid.
+  if(cached) ctx.drawImage(cached, 0, 0, W, H);
 
+  // animated dotted center guide.
+  ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.globalCompositeOperation = 'screen';
+  ctx.globalAlpha = .32;
+  ctx.strokeStyle = 'rgba(207,250,254,.78)';
+  ctx.lineWidth = 1.25;
+  ctx.setLineDash([3, 18]);
+  ctx.lineDashOffset = -(visualNowMs || 0) / 42;
+  traceRoutePath();
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.globalAlpha = 1;
+
+  ctx.globalCompositeOperation = 'lighter';
   drawRouteSegmentMarkers();
   ctx.restore();
 }
+
 
 
 function plateColorWithAlpha(raw, alpha){
@@ -5664,12 +6325,85 @@ function drawPremiumTileBase(c, i, key){
   ctx.restore();
 }
 
+let terrainRenderCacheCanvas = null;
+let terrainRenderCacheCtx = null;
+let terrainRenderCacheSig = -1;
+let terrainRenderCacheDirty = true;
+const TERRAIN_RENDER_KEY_HASH = {empty:1,path:2,blocked:3,amp:4,coil:5,lens:6,mine:7,rift:8};
+function invalidateTerrainRenderCache(){
+  terrainRenderCacheSig = -1;
+  terrainRenderCacheDirty = true;
+  perfActiveTowerCountDirty = true;
+  hiddenPlanetCheckDirty = true;
+}
+function getTerrainRenderSignature(){
+  let h = 2166136261;
+  h = Math.imul(h ^ (W|0), 16777619);
+  h = Math.imul(h ^ (H|0), 16777619);
+  h = Math.imul(h ^ ((canvas.width || 0)|0), 16777619);
+  h = Math.imul(h ^ ((canvas.height || 0)|0), 16777619);
+  h = Math.imul(h ^ (GRID_COLS|0), 16777619);
+  h = Math.imul(h ^ (GRID_ROWS|0), 16777619);
+  h = Math.imul(h ^ (CELL|0), 16777619);
+  h = Math.imul(h ^ (GX|0), 16777619);
+  h = Math.imul(h ^ (GY|0), 16777619);
+  h = Math.imul(h ^ ((S?.theme || 0)|0), 16777619);
+  if(Array.isArray(terrain)){
+    h = Math.imul(h ^ terrain.length, 16777619);
+    for(let i=0;i<terrain.length;i++) h = Math.imul(h ^ (TERRAIN_RENDER_KEY_HASH[terrain[i]] || 0), 16777619);
+  }
+  if(Array.isArray(grid)){
+    h = Math.imul(h ^ grid.length, 16777619);
+    for(let i=0;i<grid.length;i++){
+      const t = grid[i];
+      h = Math.imul(h ^ (t ? (((t.type + 1) * 131 + (t.level + 1))|0) : 0), 16777619);
+    }
+  }
+  return h >>> 0;
+}
+function ensureTerrainRenderCache(){
+  if(!terrainRenderCacheCanvas){
+    terrainRenderCacheCanvas = document.createElement('canvas');
+    terrainRenderCacheCtx = terrainRenderCacheCanvas.getContext('2d');
+  }
+  if(terrainRenderCacheCanvas.width !== canvas.width || terrainRenderCacheCanvas.height !== canvas.height){
+    terrainRenderCacheCanvas.width = canvas.width;
+    terrainRenderCacheCanvas.height = canvas.height;
+    terrainRenderCacheSig = '';
+    terrainRenderCacheDirty = true;
+  }
+  if(!terrainRenderCacheDirty && terrainRenderCacheSig !== -1) return terrainRenderCacheCanvas;
+  const sig = getTerrainRenderSignature();
+  if(sig !== terrainRenderCacheSig){
+    const oldCtx = ctx;
+    ctx = terrainRenderCacheCtx;
+    ctx.setTransform((canvas.width || W) / Math.max(1, W), 0, 0, (canvas.height || H) / Math.max(1, H), 0, 0);
+    ctx.clearRect(0,0,W,H);
+    ctx.save();
+    for(let i=0;i<terrain.length;i++){
+      const c=center(i), key=terrain[i];
+      drawPremiumTileBase(c, i, key);
+    }
+    ctx.restore();
+    ctx = oldCtx;
+    terrainRenderCacheSig = sig;
+  }
+  terrainRenderCacheDirty = false;
+  return terrainRenderCacheCanvas;
+}
 function drawTerrain(){
   ctx.save();
   const dragActive = !!dragging;
-  for(let i=0;i<terrain.length;i++){
-    const c=center(i), key=terrain[i];
-    drawPremiumTileBase(c, i, key);
+  if(dragActive){
+    for(let i=0;i<terrain.length;i++){
+      const c=center(i), key=terrain[i];
+      drawPremiumTileBase(c, i, key);
+    }
+  }else{
+    const cached = ensureTerrainRenderCache();
+    // v20: terrain/plate cache is also DPR-scaled. Keep it in logical W/H
+    // coordinates so plates, monster route, enemies and drag hit grid share one scale.
+    if(cached) ctx.drawImage(cached, 0, 0, W, H);
   }
   const idx = dragActive ? hoverIdx : -1;
   if(idx>=0){
@@ -5689,14 +6423,17 @@ function drawTerrain(){
 }
 
 function drawCore(){
+  const th = theme();
+  const color = th.color;
+  const nowMs = visualNowMs || 0;
   ctx.save();
   ctx.translate(CORE.x,CORE.y);
-  ctx.shadowColor=theme().color;ctx.shadowBlur=24;
-  ctx.strokeStyle=theme().color;ctx.lineWidth=3;
+  ctx.shadowColor=color;ctx.shadowBlur=24;
+  ctx.strokeStyle=color;ctx.lineWidth=3;
   ctx.beginPath();ctx.arc(0,0,38,0,TAU);ctx.stroke();
   ctx.beginPath();
   for(let i=0;i<6;i++){
-    const a=-Math.PI/2+i*TAU/6+performance.now()/2400;
+    const a=-Math.PI/2+i*TAU/6+nowMs/2400;
     const x=Math.cos(a)*34,y=Math.sin(a)*34;
     if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
   }
@@ -5712,54 +6449,89 @@ function drawParticles(dt){
     const p=particles[i];
     p.life-=dt;
     if(p.life<=0){ recycleFxItem(p, particles); continue; }
+<<<<<<< HEAD
     ctx.save();
+=======
+>>>>>>> b95f30a (메모리 최적화)
     if(p.ring){
       p.r+=(p.max-p.r)*.12+dt*.4;
       ctx.globalAlpha=clamp(p.life/(p.maxLife||26),0,1);
       ctx.strokeStyle=p.color;ctx.lineWidth=1.7;ctx.shadowColor=p.color;ctx.shadowBlur=10;
       ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,TAU);ctx.stroke();
-    }else{
-      p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.98;p.vy*=.98;
-      p.rot = (p.rot || 0) + (p.spin || 0) * dt;
-      ctx.globalAlpha=clamp(p.life/(p.maxLife||40),0,1);
-      ctx.fillStyle=p.color;ctx.strokeStyle=p.color;ctx.shadowColor=p.glow || p.color;ctx.shadowBlur=p.blur || 8;
-      if(p.type==='spark'){
-        ctx.translate(p.x,p.y);ctx.rotate(p.rot || 0);
-        const len = p.len || 8;
-        ctx.lineCap='round';ctx.lineWidth=p.w || 1.6;
-        ctx.beginPath();ctx.moveTo(-len*.55,0);ctx.lineTo(len*.55,0);ctx.stroke();
-      }else if(p.type==='shard'){
-        ctx.translate(p.x,p.y);ctx.rotate(p.rot || 0);
-        const len = p.len || 8, wide = p.w || 3.4;
-        ctx.beginPath();
-        ctx.moveTo(0,-len*.62);ctx.lineTo(wide,0);ctx.lineTo(0,len*.62);ctx.lineTo(-wide,0);ctx.closePath();
-        ctx.fill();
-      }else if(p.type==='smoke'){
-        const rr = p.r * (1 + (1 - clamp(p.life/(p.maxLife||30),0,1)) * .65);
-        ctx.globalAlpha *= .62;
-        const g = ctx.createRadialGradient(p.x - rr*.25, p.y - rr*.25, 1, p.x, p.y, rr);
-        g.addColorStop(0, p.core || 'rgba(255,255,255,.30)');
-        g.addColorStop(.55, p.color);
-        g.addColorStop(1, 'rgba(15,23,42,0)');
-        ctx.fillStyle = g;
-        ctx.beginPath();ctx.arc(p.x,p.y,rr,0,TAU);ctx.fill();
-      }else{
-        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,TAU);ctx.fill();
-      }
+      particles[write++] = p;
+      continue;
     }
+<<<<<<< HEAD
     ctx.restore();
     particles[write++] = p;
   }
   particles.length = write;
+=======
+    p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.98;p.vy*=.98;
+    p.rot = (p.rot || 0) + (p.spin || 0) * dt;
+    const alpha = clamp(p.life/(p.maxLife||40),0,1);
+    const glow = p.glow || p.color;
+    const blur = p.blur || 8;
+    if(p.type==='spark'){
+      // v13: draw rotated spark line by coordinates instead of save/translate/rotate.
+      ctx.globalAlpha=alpha;
+      ctx.strokeStyle=p.color;ctx.shadowColor=glow;ctx.shadowBlur=blur;
+      const len = p.len || 8;
+      const half = len * .55;
+      const rot = p.rot || 0;
+      const c = Math.cos(rot), s = Math.sin(rot);
+      ctx.lineCap='round';ctx.lineWidth=p.w || 1.6;
+      ctx.beginPath();ctx.moveTo(p.x - c * half, p.y - s * half);ctx.lineTo(p.x + c * half, p.y + s * half);ctx.stroke();
+    }else if(p.type==='shard'){
+      // v13: manual four-point rotation avoids canvas state-stack churn for impact shards.
+      ctx.globalAlpha=alpha;
+      ctx.fillStyle=p.color;ctx.shadowColor=glow;ctx.shadowBlur=blur;
+      const len = p.len || 8, wide = p.w || 3.4;
+      const rot = p.rot || 0;
+      const c = Math.cos(rot), s = Math.sin(rot);
+      const top = -len*.62, bottom = len*.62;
+      ctx.beginPath();
+      ctx.moveTo(p.x - top * s, p.y + top * c);
+      ctx.lineTo(p.x + wide * c, p.y + wide * s);
+      ctx.lineTo(p.x - bottom * s, p.y + bottom * c);
+      ctx.lineTo(p.x - wide * c, p.y - wide * s);
+      ctx.closePath();
+      ctx.fill();
+    }else if(p.type==='smoke'){
+      ctx.globalAlpha=alpha*.62;
+      ctx.shadowColor=glow;ctx.shadowBlur=blur;
+      const rr = p.r * (1 + (1 - clamp(p.life/(p.maxLife||30),0,1)) * .65);
+      const g = ctx.createRadialGradient(p.x - rr*.25, p.y - rr*.25, 1, p.x, p.y, rr);
+      g.addColorStop(0, p.core || 'rgba(255,255,255,.30)');
+      g.addColorStop(.55, p.color);
+      g.addColorStop(1, 'rgba(15,23,42,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();ctx.arc(p.x,p.y,rr,0,TAU);ctx.fill();
+    }else{
+      ctx.globalAlpha=alpha;
+      ctx.fillStyle=p.color;ctx.shadowColor=glow;ctx.shadowBlur=blur;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,TAU);ctx.fill();
+    }
+    particles[write++] = p;
+  }
+  particles.length = write;
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+>>>>>>> b95f30a (메모리 최적화)
 }
 
+const ELECTRIC_ARC_CHAIN_OPTIONS = { amplitude: 12, segments: 10, alpha: 1, glow: '#fde047', main: '#fefce8', outerWidth: 4.2, innerWidth: 2.0, blur: 22 };
 function drawBeams(dt){
   trimFxArray(beams, PERF_MAX_BEAMS);
   let write = 0;
   for(let i=0;i<beams.length;i++){
     const b=beams[i];b.life-=dt;
     if(b.life<=0){ recycleFxItem(b, beams); continue; }
+<<<<<<< HEAD
     ctx.save();
+=======
+    // v13: beam rendering sets all state it needs; avoid save/restore per beam.
+>>>>>>> b95f30a (메모리 최적화)
     const alpha = clamp(b.life/18,0,1);
     if(b.style==='laser'){
       const beamWidth = b.width || 4;
@@ -5769,13 +6541,13 @@ function drawBeams(dt){
       ctx.strokeStyle=b.color;ctx.lineWidth=beamWidth+1;ctx.globalAlpha=alpha*.72;
       ctx.beginPath();ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2);ctx.stroke();
     }else if(b.style==='chain'){
-      drawElectricArc(b.x1, b.y1, b.x2, b.y2, { amplitude: 12, segments: 10, alpha, glow: b.color, main: '#fefce8', outerWidth: 4.2, innerWidth: 2.0, blur: 22 });
-      ctx.save();
+      ELECTRIC_ARC_CHAIN_OPTIONS.alpha = alpha;
+      ELECTRIC_ARC_CHAIN_OPTIONS.glow = b.color;
+      drawElectricArc(b.x1, b.y1, b.x2, b.y2, ELECTRIC_ARC_CHAIN_OPTIONS);
       ctx.globalAlpha = alpha * .8;
       ctx.fillStyle = '#fefce8';
       ctx.shadowColor = b.color; ctx.shadowBlur = 10;
       ctx.beginPath(); ctx.arc(b.x2, b.y2, 2.4, 0, TAU); ctx.fill();
-      ctx.restore();
     }else if(b.style==='voidShot'){
       ctx.globalAlpha=alpha*.88;
       ctx.strokeStyle='rgba(255,255,255,.76)';ctx.lineWidth=Math.max(1.1,b.width||1.2);ctx.shadowColor=b.color;ctx.shadowBlur=11;
@@ -5792,35 +6564,60 @@ function drawBeams(dt){
       ctx.strokeStyle=b.color;ctx.lineWidth=b.style==='void'?3.4:4;ctx.shadowColor=b.color;ctx.shadowBlur=18;
       ctx.beginPath();ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2);ctx.stroke();
     }
+<<<<<<< HEAD
     ctx.restore();
     beams[write++] = b;
   }
   beams.length = write;
+=======
+    beams[write++] = b;
+  }
+  beams.length = write;
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+  ctx.setLineDash([]);
+>>>>>>> b95f30a (메모리 최적화)
 }
 
 function drawFloats(dt){
   trimFxArray(floats, PERF_MAX_FLOATS);
   let write = 0;
+<<<<<<< HEAD
+=======
+  ctx.textAlign='center';
+  ctx.strokeStyle='rgba(0,0,0,.72)';
+  ctx.shadowColor='rgba(0,0,0,.18)';
+  ctx.shadowBlur=4;
+>>>>>>> b95f30a (메모리 최적화)
   for(let i=0;i<floats.length;i++){
     const f=floats[i];f.life-=dt;f.y+=f.vy*dt;
     if(f.life<=0){ recycleFxItem(f, floats); continue; }
     const maxLife = f.maxLife || 70;
     const alpha = clamp(f.life/maxLife,0,1);
     const size = f.size || 12;
-    ctx.save();ctx.globalAlpha=alpha;
-    ctx.fillStyle=f.color;ctx.strokeStyle='rgba(0,0,0,.72)';ctx.lineWidth=Math.max(2.2, size*.18);
-    ctx.shadowColor='rgba(0,0,0,.18)';ctx.shadowBlur=4;
-    ctx.font=`900 ${size}px Orbitron`;ctx.textAlign='center';
+    // v13: no transform/composite is used here, so avoid save/restore per floating label.
+    ctx.globalAlpha=alpha;
+    ctx.fillStyle=f.color;ctx.lineWidth=Math.max(2.2, size*.18);
+    ctx.font=`900 ${size}px Orbitron`;
     ctx.strokeText(f.text,f.x,f.y);ctx.fillText(f.text,f.x,f.y);
+<<<<<<< HEAD
     ctx.restore();
     floats[write++] = f;
   }
   floats.length = write;
+=======
+    floats[write++] = f;
+  }
+  floats.length = write;
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+>>>>>>> b95f30a (메모리 최적화)
 }
 function drawDragging(){
   if(!dragging)return;
   ctx.save();
-  const dragAge = Math.max(0, performance.now() - (dragging.dragStartedAt || performance.now()));
+  const nowMs = visualNowMs || (performance.now ? performance.now() : Date.now());
+  const dragAge = Math.max(0, nowMs - (dragging.dragStartedAt || nowMs));
   const ease = 1 - Math.pow(1 - clamp(dragAge / 170, 0, 1), 3);
   const shrink = 1 - .15 * ease;
   ctx.globalAlpha=.58;
@@ -5846,6 +6643,8 @@ function drawDragging(){
 function loop(now){
   raf=requestAnimationFrame(loop);
   const raw=clamp((now-last)/16.666,0,3);last=now;
+  visualNowMs = now || (performance.now ? performance.now() : Date.now());
+  visualNowSec = visualNowMs * 0.001;
   const dt=S.paused?0:raw*S.speed;
   beginVisualFxFrame();
   if(S && S.hp <= 0 && !S.gameOver) triggerGameOver('core');
@@ -5898,9 +6697,22 @@ function loop(now){
 
   updateHangarVisuals();
   trimVisualFxBuffers();
+<<<<<<< HEAD
   drawAnomalies();
   for(let i=0;i<grid.length;i++){ const t = grid[i]; if(t) t.draw(); }
   if(enemies.length > 1) enemies.sort(ENEMY_DRAW_SORT_BY_Y);
+=======
+  trimAllRenderCachesForPressure(false);
+  drawAnomalies();
+  for(let i=0;i<grid.length;i++){ const t = grid[i]; if(t) t.draw(); }
+  if(enemies.length > 1){
+    const sortInterval = enemies.length > 96 ? 3 : (enemies.length > 48 ? 2 : 1);
+    if(sortInterval === 1 || enemyDrawSortLastFrame < 0 || (perfFrameId - enemyDrawSortLastFrame) >= sortInterval){
+      enemies.sort(ENEMY_DRAW_SORT_BY_Y);
+      enemyDrawSortLastFrame = perfFrameId;
+    }
+  }
+>>>>>>> b95f30a (메모리 최적화)
   for(let i=0;i<enemies.length;i++) enemies[i].draw();
   drawBossTelegraphs();
   for(let i=0;i<bullets.length;i++) bullets[i].draw();
@@ -6211,6 +7023,7 @@ function onDown(e){
     dragging.dragPreviewLevel=Math.max(1, Number(dragging.level||1));
     dragging.dragStartedAt=performance.now();
     grid[idx]=null;
+    invalidateTerrainRenderCache();
     selected=idx;
   }else if(idx>=0){selected=idx}
   updateSelected();
@@ -6236,6 +7049,7 @@ function onUp(e){
   }else{
     grid[original]=dragging;selected=original;settleIdx=original;
   }
+  invalidateTerrainRenderCache();
   if(grid[settleIdx]) grid[settleIdx].dragSettleAt = performance.now();
   delete dragging.original;
   delete dragging.dragPreviewType;
@@ -6819,9 +7633,68 @@ function resumeNativePauseDialog(ev){
   try{ updateUI(); }catch(err){ console.warn('pause resume ui update failed', err); }
   return false;
 }
-function exitNativePauseDialog(ev){
-  if(ev){ ev.preventDefault(); ev.stopPropagation(); }
+function clearCombatHiddenMapElementV21(el){
+  if(!el) return;
+  if(el.dataset && el.dataset.v19CombatHidden === '1'){
+    delete el.dataset.v19CombatHidden;
+    delete el.dataset.v19PrevDisplay;
+    delete el.dataset.v19PrevDisplayPriority;
+    delete el.dataset.v19PrevVisibility;
+    delete el.dataset.v19PrevVisibilityPriority;
+    delete el.dataset.v19PrevOpacity;
+    delete el.dataset.v19PrevOpacityPriority;
+    delete el.dataset.v19PrevPointerEvents;
+    delete el.dataset.v19PrevPointerEventsPriority;
+  }
+  try{
+    el.style.removeProperty('display');
+    el.style.removeProperty('visibility');
+    el.style.removeProperty('opacity');
+    el.style.removeProperty('pointer-events');
+  }catch(err){}
+}
+function hideAllPauseOverlaysV21(){
   hideNativePauseDialog();
+  ['pauseDecisionOverlayV29','pauseDecisionOverlayV27','pauseDecisionOverlay'].forEach(id => {
+    const el = $(id);
+    if(!el) return;
+    el.classList.remove('is-open','open');
+    el.setAttribute('hidden','');
+    el.setAttribute('aria-hidden','true');
+    if(id === 'pauseDecisionOverlayNative') el.style.display = 'none';
+  });
+  document.body.classList.remove('native-pause-open','prd-pause-v29-open','prd-pause-menu-open');
+}
+function forceStageMapScreenFromBattleV21(){
+  ['menu','galaxyMap','stageMap','v274GalaxyActionDock','v274StageActionDock','v274MapInfoOverlay'].forEach(id => clearCombatHiddenMapElementV21($(id)));
+  const body = document.body;
+  if(body && body.classList){
+    body.classList.remove('prd-combat-ui-active','prd-battle-active','prd-combat-screen-active','native-pause-open','prd-pause-v29-open','prd-pause-menu-open','prd-stage-entering');
+    body.classList.add('prd-map-ui-active');
+  }
+  const game = $('game');
+  const menu = $('menu');
+  const galaxy = $('galaxyMap');
+  const stage = $('stageMap');
+  if(game){
+    game.style.setProperty('display', 'none', 'important');
+    game.classList.remove('prd-combat-ui-active');
+  }
+  if(menu) menu.style.setProperty('display', 'none', 'important');
+  if(galaxy){
+    galaxy.style.setProperty('display', 'none', 'important');
+    galaxy.classList.remove('cleanVisible');
+  }
+  if(stage){
+    stage.style.setProperty('display', 'block', 'important');
+    stage.style.setProperty('visibility', 'visible', 'important');
+    stage.style.setProperty('opacity', '1', 'important');
+    stage.style.setProperty('pointer-events', 'auto', 'important');
+    stage.classList.add('premiumStage');
+  }
+}
+function returnToStageMapFromBattleV21(){
+  hideAllPauseOverlaysV21();
   try{ cancelAnimationFrame(raf); }catch(err){}
   if(S){
     S.paused = true;
@@ -6829,17 +7702,32 @@ function exitNativePauseDialog(ev){
     S.skillModalOpen = false;
     S.queue = [];
     S.gameOver = false;
+    S.gameOverOverlayRequested = false;
+    S.gameOverOverlayShown = false;
+    S.runEnded = true;
   }
+<<<<<<< HEAD
+=======
+  try{ removeGameOverOverlay(); }catch(err){}
+>>>>>>> b95f30a (메모리 최적화)
   try{ recycleAllEnemies(); recycleAllBullets(); enemies = []; bullets = []; beams = []; particles = []; floats = []; }catch(err){}
   try{ stopAllGameAudio(); }catch(err){}
-  try{ $('game').style.display = 'none'; }catch(err){}
-  try{ $('stageMap').style.display = 'block'; }catch(err){}
   try{ reset(); }catch(err){ console.warn('pause exit reset failed', err); }
   try{ resetBattleUnitsForStageMap(); }catch(err){ console.warn('pause exit unit reset failed', err); }
+  forceStageMapScreenFromBattleV21();
   try{ renderStageMap(); }catch(err){ console.warn('pause exit map render failed', err); }
+  try{ if(audio && audio.on) playMapBgm(); }catch(err){}
+  try{ if(typeof refreshScreenStarfields === 'function') refreshScreenStarfields(); }catch(err){}
   const hint = $('stageHint');
   if(hint) hint.textContent = '전투를 중단하고 성역 지도로 돌아왔습니다.';
+  setTimeout(() => forceStageMapScreenFromBattleV21(), 0);
+  setTimeout(() => { forceStageMapScreenFromBattleV21(); try{ renderStageMap(); }catch(err){} }, 120);
   return false;
+}
+if(typeof window !== 'undefined') window.PRD_FORCE_STAGE_MAP_FROM_BATTLE_V21 = returnToStageMapFromBattleV21;
+function exitNativePauseDialog(ev){
+  if(ev){ ev.preventDefault(); ev.stopPropagation(); }
+  return returnToStageMapFromBattleV21();
 }
 function isNativePauseTarget(target){
   return !!(target && target.closest && target.closest('#pauseBtn'));

@@ -50,7 +50,6 @@
     if(e.key === 'ArrowDown'){ detail.scrollTop = Math.min(max, detail.scrollTop + step); e.preventDefault(); }
     if(e.key === 'ArrowUp'){ detail.scrollTop = Math.max(0, detail.scrollTop - step); e.preventDefault(); }
   });
-  const oldSet = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'innerHTML');
   // no monkey patch: simply make detail focusable for keyboard scroll when popup opens/clicks
   detail.setAttribute('tabindex','0');
 })();
@@ -262,7 +261,6 @@
     syncProxyButtons();
   }
 
-  var obs;
   function watchOriginalButtons(){
     ACTIONS.forEach(function(action){
       var src = document.getElementById(action.src);
@@ -536,6 +534,10 @@
     safe(function(){ selected = -1; dragging = null; });
   }
   function showPreviousStagePage(){
+    if(window.PRD_FORCE_STAGE_MAP_FROM_BATTLE_V21){
+      safe(function(){ window.PRD_FORCE_STAGE_MAP_FROM_BATTLE_V21(); });
+      return;
+    }
     document.body.classList.remove('prd-combat-ui-active','prd-battle-active','prd-pause-menu-open');
     document.body.classList.add('prd-map-ui-active');
     if(window.PRD_NAV && typeof PRD_NAV.showStage === 'function'){
@@ -625,10 +627,6 @@
       btn.setAttribute('aria-label', fullText);
     }
   }
-  function summonShort(full){
-    // v46: button label is fixed to a single word. Prevent "소환 소환" when source text is already "소환".
-    return '소환';
-  }
   function applyShortLandscapeLabels(){
     injectStyle();
     var summonFull=textOf('summonBtn');
@@ -715,10 +713,6 @@
     if(!el || !p) return false;
     var r=el.getBoundingClientRect();
     return p.x>=r.left && p.x<=r.right && p.y>=r.top && p.y<=r.bottom;
-  }
-  function isProxyOrRealVisibleControl(target){
-    if(!target || !target.closest) return false;
-    return !!target.closest('#combatHudCommandsLandscapeDock,#combatHudCommandsPortraitDock,#combatHudButtons,.fieldTopControls,#towerPopup,#pauseDecisionOverlay,#pauseDecisionOverlayV27,#pauseDecisionOverlayV29,#gameOverOverlay,button:not(#summonBtn):not(#mergeBtn):not(#speedBtn):not(#pauseBtn),a,input,select,textarea,[role="button"]');
   }
   function isStaleOriginalCommand(target){
     return !!(target && target.closest && target.closest('#combatHudCommands'));
@@ -1781,8 +1775,10 @@
     if(!c) return {x:0,y:0};
     var r = c.getBoundingClientRect();
     var p = e && e.touches ? e.touches[0] : e;
-    var cw = Number(c.width) || 748;
-    var ch = Number(c.height) || 708;
+    // v20: canvas.width/height are backing-store pixels after the DPR optimization.
+    // Pointer coordinates must stay in the same logical coordinate space as CELL/GX/GY.
+    var cw = Number(c.__logicalWidth || c.dataset.logicalWidth || Math.round(r.width)) || 748;
+    var ch = Number(c.__logicalHeight || c.dataset.logicalHeight || Math.round(r.height)) || 708;
     return {
       x: clampLocal(((p.clientX - r.left) * cw) / Math.max(1, r.width), 0, cw),
       y: clampLocal(((p.clientY - r.top) * ch) / Math.max(1, r.height), 0, ch)
@@ -1794,210 +1790,6 @@
   }catch(err){
     window.pos = fillPos;
   }
-})();
-
-/* ===== v209-true-floating-game-hud-script ===== */
-(function(){
-  function moveNode(node, target){
-    if(node && target && node.parentElement !== target){
-      target.appendChild(node);
-    }
-  }
-  function ensure(id, className, parent){
-    var el=document.getElementById(id);
-    if(!el){
-      el=document.createElement('div');
-      el.id=id;
-      if(className) el.className=className;
-    }
-    if(parent && el.parentElement !== parent) parent.appendChild(el);
-    return el;
-  }
-  function installCombatHud(){
-    var field=document.getElementById('field');
-    if(!field) return;
-    var hud=ensure('combatHudOverlay','combatHudOverlay',field);
-    var left=ensure('combatHudLeft','combatHudLeft',hud);
-    var meta=ensure('combatHudMeta','combatHudMeta',left);
-    var commands=ensure('combatHudCommands','combatHudCommands',left);
-    var right=ensure('combatHudRight','combatHudRight',hud);
-    var statsWrap=ensure('combatHudStatsWrap','combatHudStatsWrap',right);
-    var buttons=ensure('combatHudButtons','combatHudButtons',right);
-
-    moveNode(document.querySelector('.battleStageLine'), meta);
-    moveNode(document.querySelector('.bar.compactWave, .compactWave'), meta);
-    moveNode(document.getElementById('wavePreviewLine'), meta);
-    moveNode(document.getElementById('globalEffectLine'), meta);
-    moveNode(document.querySelector('.battleActions'), commands);
-    moveNode(document.querySelector('.battleStatLine'), statsWrap);
-    moveNode(document.querySelector('.fieldTopControls'), buttons);
-  }
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', installCombatHud, {once:true});
-  }else{
-    installCombatHud();
-  }
-  window.addEventListener('load', installCombatHud, {once:true});
-  setTimeout(installCombatHud, 250);
-  setTimeout(installCombatHud, 1000);
-})();
-
-/* ===== v214-top-hud-proportional-edge-layout-script ===== */
-(function(){
-  function ensureTopLine(){
-    var hud = document.getElementById('combatHudOverlay');
-    if(!hud) return;
-    var topLine = document.getElementById('combatHudTopLine');
-    if(!topLine){
-      topLine = document.createElement('div');
-      topLine.id = 'combatHudTopLine';
-      hud.insertBefore(topLine, hud.firstChild);
-    }else if(topLine.parentElement !== hud){
-      hud.insertBefore(topLine, hud.firstChild);
-    }
-    var left = document.getElementById('combatHudLeft');
-    var right = document.getElementById('combatHudRight');
-    if(left && left.parentElement !== topLine) topLine.appendChild(left);
-    if(right && right.parentElement !== topLine) topLine.appendChild(right);
-  }
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', ensureTopLine, {once:true});
-  }else{
-    ensureTopLine();
-  }
-  window.addEventListener('load', ensureTopLine, {once:true});
-  setTimeout(ensureTopLine, 100);
-  setTimeout(ensureTopLine, 500);
-  setTimeout(ensureTopLine, 1200);
-})();
-
-/* ===== v216-pause-decision-dialog-script ===== */
-(function(){
-  function byId(id){ return document.getElementById(id); }
-
-  function ensurePauseDecisionOverlay(){
-    var overlay = byId('pauseDecisionOverlay');
-    if(overlay) return overlay;
-    overlay = document.createElement('div');
-    overlay.id = 'pauseDecisionOverlay';
-    overlay.setAttribute('hidden','');
-    overlay.innerHTML = '<div class="pauseDecisionCard" role="dialog" aria-modal="true" aria-labelledby="pauseDecisionTitle">'
-      + '<div class="pauseDecisionKicker">BATTLE PAUSED</div>'
-      + '<h2 id="pauseDecisionTitle">일시정지</h2>'
-      + '<p>전투가 멈춰 있습니다. 이어서 플레이하거나 현재 전투를 종료하고 성역 지도로 돌아갈 수 있습니다.</p>'
-      + '<div class="pauseDecisionActions">'
-      + '<button id="pauseQuitBtn" type="button">게임 종료하기</button>'
-      + '<button id="pauseResumeBtn" type="button">계속 이어서하기</button>'
-      + '</div>'
-      + '</div>';
-    document.body.appendChild(overlay);
-    var resume = byId('pauseResumeBtn');
-    var quit = byId('pauseQuitBtn');
-    if(resume) resume.addEventListener('click', resumeBattleFromPauseMenu);
-    if(quit) quit.addEventListener('click', quitBattleFromPauseMenu);
-    overlay.addEventListener('click', function(e){
-      // Clicking the backdrop keeps the battle paused intentionally. Use the buttons for explicit action.
-      if(e.target === overlay) e.preventDefault();
-    });
-    return overlay;
-  }
-
-  function showPauseDecisionOverlay(){
-    if(!window.S || S.gameOver) return;
-    var overlay = ensurePauseDecisionOverlay();
-    S.paused = true;
-    overlay.removeAttribute('hidden');
-    overlay.classList.add('open');
-    try{ if(typeof updateUI === 'function') updateUI(); }catch(_){ }
-    var resume = byId('pauseResumeBtn');
-    if(resume){ setTimeout(function(){ try{ resume.focus({preventScroll:true}); }catch(_){ resume.focus(); } }, 20); }
-  }
-
-  function hidePauseDecisionOverlay(){
-    var overlay = byId('pauseDecisionOverlay');
-    if(!overlay) return;
-    overlay.setAttribute('hidden','');
-    overlay.classList.remove('open');
-  }
-
-  function resumeBattleFromPauseMenu(){
-    hidePauseDecisionOverlay();
-    if(window.S && !S.gameOver){
-      S.paused = false;
-      try{ if(typeof updateUI === 'function') updateUI(); }catch(_){ }
-      try{ if(typeof toast === 'function') toast('전투 재개'); }catch(_){ }
-    }
-  }
-
-  function quitBattleFromPauseMenu(){
-    hidePauseDecisionOverlay();
-    try{ if(typeof cancelAnimationFrame === 'function' && typeof raf !== 'undefined') cancelAnimationFrame(raf); }catch(_){ }
-    try{ if(typeof stopAllGameAudio === 'function') stopAllGameAudio(); else if(typeof stopStageBgm === 'function') stopStageBgm(); }catch(_){ }
-    try{ if(typeof removeGameOverOverlay === 'function') removeGameOverOverlay(); }catch(_){ }
-    try{ if(window.S){ S.paused = true; S.active = false; S.skillModalOpen = false; S.gameOver = true; } }catch(_){ }
-
-    var game = byId('game');
-    var stageMap = byId('stageMap');
-    var menu = byId('menu');
-    if(game) game.style.display = 'none';
-    if(menu) menu.style.display = 'none';
-    if(stageMap) stageMap.style.display = 'block';
-
-    try{ if(typeof reset === 'function') reset(); }catch(err){ console.warn('pause quit reset failed', err); }
-    try{ if(typeof resetBattleUnitsForStageMap === 'function') resetBattleUnitsForStageMap(); }catch(err){ console.warn('pause quit unit reset failed', err); }
-    try{ if(typeof renderStageMap === 'function') renderStageMap(); }catch(err){ console.warn('pause quit map render failed', err); }
-    try{ if(typeof renderOfflineMetaPanel === 'function') renderOfflineMetaPanel(); }catch(_){ }
-    try{
-      var hint = byId('stageHint');
-      if(hint) hint.textContent = '전투를 종료했습니다. 같은 성역을 다시 선택해 이어서 도전할 수 있습니다.';
-    }catch(_){ }
-    try{ if(typeof toast === 'function') toast('전투 종료 — 성역 지도로 이동'); }catch(_){ }
-  }
-
-  function installPauseDecisionHook(){
-    var pauseBtn = byId('pauseBtn');
-    if(!pauseBtn || pauseBtn.dataset.pauseDecisionHook === '1') return;
-    pauseBtn.dataset.pauseDecisionHook = '1';
-    pauseBtn.onclick = function(){
-      if(!window.S || S.gameOver) return;
-      if(S.paused){
-        resumeBattleFromPauseMenu();
-      }else{
-        S.paused = true;
-        try{ if(typeof updateUI === 'function') updateUI(); }catch(_){ }
-        showPauseDecisionOverlay();
-      }
-    };
-  }
-
-  function initPauseDecision(){
-    ensurePauseDecisionOverlay();
-    installPauseDecisionHook();
-  }
-
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initPauseDecision, {once:true});
-  else initPauseDecision();
-  window.addEventListener('load', initPauseDecision, {once:true});
-  setTimeout(initPauseDecision, 300);
-  setTimeout(initPauseDecision, 1200);
-
-  // Original Space-key pause handler still toggles the state. This listener runs later
-  // and opens/closes the decision dialog according to the resulting state.
-  window.addEventListener('keydown', function(e){
-    if(e.repeat || e.code !== 'Space') return;
-    setTimeout(function(){
-      if(!window.S || S.gameOver) return;
-      if(S.paused) showPauseDecisionOverlay();
-      else hidePauseDecisionOverlay();
-    }, 0);
-  });
-
-  window.PauseDecisionMenu = {
-    show: showPauseDecisionOverlay,
-    hide: hidePauseDecisionOverlay,
-    resume: resumeBattleFromPauseMenu,
-    quit: quitBattleFromPauseMenu
-  };
 })();
 
 /* ===== v21-safe-combat-only-controls-script ===== */
@@ -2099,144 +1891,6 @@
   window.PRD_SYNC_STRICT_COMBAT_UI = sync;
 })();
 
-/* ===== v227-pause-decision-menu-final-script ===== */
-(function(){
-  'use strict';
-  function byId(id){ return document.getElementById(id); }
-  function safe(fn){ try{ return fn && fn(); }catch(err){ console.warn('[v227 pause]', err); return null; } }
-  function isVisible(el){
-    if(!el) return false;
-    var st = window.getComputedStyle ? getComputedStyle(el) : null;
-    if(st && (st.display === 'none' || st.visibility === 'hidden' || Number(st.opacity) === 0)) return false;
-    var rect = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
-    return !rect || (rect.width > 2 && rect.height > 2);
-  }
-  function isBattleVisible(){
-    var game = byId('game');
-    if(!isVisible(game)) return false;
-    if(isVisible(byId('stageMap')) || isVisible(byId('galaxyMap')) || isVisible(byId('menu')) || isVisible(byId('stageClearOverlay'))) return false;
-    return true;
-  }
-  function hideLegacyPauseOverlay(){
-    var legacy = byId('pauseDecisionOverlay');
-    if(legacy){ legacy.setAttribute('hidden',''); legacy.classList.remove('open'); }
-  }
-  function ensureOverlay(){
-    document.body.classList.add('prd-v27-pause-installed');
-    hideLegacyPauseOverlay();
-    var overlay = byId('pauseDecisionOverlayV27');
-    if(overlay) return overlay;
-    overlay = document.createElement('div');
-    overlay.id = 'pauseDecisionOverlayV27';
-    overlay.setAttribute('hidden','');
-    overlay.innerHTML = '<div class="pauseV27Card" role="dialog" aria-modal="true" aria-labelledby="pauseDecisionTitleV27">'
-      + '<div class="pauseV27Kicker">BATTLE PAUSED</div>'
-      + '<h2 id="pauseDecisionTitleV27">일시정지</h2>'
-      + '<p>전투가 멈춰 있습니다. 현재 전투를 종료하고 이전 스테이지 화면으로 돌아가거나, 그대로 이어서 진행할 수 있습니다.</p>'
-      + '<div class="pauseV27Actions">'
-      + '<button id="pauseQuitBtnV27" type="button">게임 종료하기</button>'
-      + '<button id="pauseResumeBtnV27" type="button">계속 이어서하기</button>'
-      + '</div>'
-      + '</div>';
-    document.body.appendChild(overlay);
-    overlay.addEventListener('click', function(e){ if(e.target === overlay) e.preventDefault(); }, true);
-    var resume = byId('pauseResumeBtnV27');
-    var quit = byId('pauseQuitBtnV27');
-    if(resume) resume.addEventListener('click', resumeBattle, true);
-    if(quit) quit.addEventListener('click', quitBattle, true);
-    return overlay;
-  }
-  function showPauseMenu(e){
-    if(e){ e.preventDefault(); e.stopImmediatePropagation(); }
-    if(!isBattleVisible() || !window.S || S.gameOver) return;
-    var overlay = ensureOverlay();
-    S.paused = true;
-    overlay.removeAttribute('hidden');
-    document.body.classList.add('prd-pause-menu-open');
-    safe(function(){ if(typeof updateUI === 'function') updateUI(); });
-    var resume = byId('pauseResumeBtnV27');
-    if(resume) setTimeout(function(){ safe(function(){ resume.focus({preventScroll:true}); }); }, 20);
-  }
-  function hidePauseMenu(){
-    var overlay = byId('pauseDecisionOverlayV27');
-    if(overlay) overlay.setAttribute('hidden','');
-    document.body.classList.remove('prd-pause-menu-open');
-    hideLegacyPauseOverlay();
-  }
-  function resumeBattle(e){
-    if(e){ e.preventDefault(); e.stopImmediatePropagation(); }
-    hidePauseMenu();
-    if(window.S && !S.gameOver){
-      S.paused = false;
-      safe(function(){ if(typeof updateUI === 'function') updateUI(); });
-      safe(function(){ if(typeof toast === 'function') toast('전투 재개'); });
-    }
-  }
-  function cleanupBattleState(){
-    safe(function(){ if(typeof cancelAnimationFrame === 'function' && typeof raf !== 'undefined') cancelAnimationFrame(raf); });
-    safe(function(){ if(typeof removeGameOverOverlay === 'function') removeGameOverOverlay(); });
-    safe(function(){ if(typeof stopAllGameAudio === 'function') stopAllGameAudio(); else if(typeof stopStageBgm === 'function') stopStageBgm(); });
-    if(window.S){
-      S.paused = true;
-      S.active = false;
-      S.skillModalOpen = false;
-      S.gameOver = true;
-      S.runEnded = true;
-    }
-    safe(function(){ if(typeof resetBattleUnitsForStageMap === 'function') resetBattleUnitsForStageMap(); });
-    safe(function(){ selected = -1; dragging = null; });
-  }
-  function showPreviousStagePage(){
-    document.body.classList.remove('prd-combat-ui-active','prd-battle-active','prd-pause-menu-open');
-    document.body.classList.add('prd-map-ui-active');
-    if(window.PRD_NAV && typeof PRD_NAV.showStage === 'function'){
-      PRD_NAV.showStage();
-      return;
-    }
-    var game = byId('game');
-    var menu = byId('menu');
-    var galaxy = byId('galaxyMap');
-    var stage = byId('stageMap');
-    if(game) game.style.display = 'none';
-    if(menu) menu.style.display = 'none';
-    if(galaxy) galaxy.style.display = 'none';
-    if(stage){ stage.style.display = 'block'; stage.classList.add('premiumStage'); }
-    safe(function(){ if(typeof renderStageMap === 'function') renderStageMap(); });
-    safe(function(){ if(typeof playMapBgm === 'function' && window.audio && audio.on) playMapBgm(); });
-  }
-  function quitBattle(e){
-    if(e){ e.preventDefault(); e.stopImmediatePropagation(); }
-    hidePauseMenu();
-    cleanupBattleState();
-    showPreviousStagePage();
-    safe(function(){ if(typeof toast === 'function') toast('전투 종료 — 스테이지 화면으로 이동'); });
-  }
-  function bindPauseButton(){
-    var pauseBtn = byId('pauseBtn');
-    if(!pauseBtn || pauseBtn.dataset.pauseDecisionFinal === '1') return;
-    pauseBtn.dataset.pauseDecisionFinal = '1';
-    pauseBtn.addEventListener('click', showPauseMenu, true);
-    pauseBtn.onclick = function(ev){ showPauseMenu(ev); };
-  }
-  function bind(){
-    ensureOverlay();
-    bindPauseButton();
-  }
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind, {once:true});
-  else bind();
-  window.addEventListener('load', bind, {once:true});
-  setTimeout(bind, 300);
-  setTimeout(bind, 1200);
-  document.addEventListener('click', function(){ setTimeout(bind, 0); }, true);
-  document.addEventListener('keydown', function(e){
-    if(e.repeat || e.code !== 'Space' || !isBattleVisible() || !window.S || S.gameOver) return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    showPauseMenu(e);
-  }, true);
-  window.PauseDecisionMenuV27 = {show:showPauseMenu, hide:hidePauseMenu, resume:resumeBattle, quit:quitBattle};
-})();
-
 /* ===== v229-reliable-pause-decision-modal-script ===== */
 (function(){
   'use strict';
@@ -2329,6 +1983,10 @@
     safe(function(){ selected = -1; dragging = null; });
   }
   function goPreviousStagePage(){
+    if(window.PRD_FORCE_STAGE_MAP_FROM_BATTLE_V21){
+      safe(function(){ window.PRD_FORCE_STAGE_MAP_FROM_BATTLE_V21(); });
+      return;
+    }
     document.body.classList.remove('prd-combat-ui-active','prd-battle-active','prd-pause-v29-open','prd-pause-menu-open');
     document.body.classList.add('prd-map-ui-active');
     if(typeof showStageMap === 'function'){
@@ -4102,4 +3760,127 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
   }
   setTimeout(function(){ relayout('late-120'); }, 120);
   setTimeout(function(){ relayout('late-800'); }, 800);
+})();
+
+/* ===== v19-combat-map-leak-ui-restore-script ===== */
+(function(){
+  'use strict';
+  if(window.PRD_V19_COMBAT_MAP_LEAK_UI_RESTORE) return;
+  window.PRD_V19_COMBAT_MAP_LEAK_UI_RESTORE = true;
+
+  var MAP_LAYER_IDS = [
+    'menu',
+    'galaxyMap',
+    'stageMap',
+    'v274GalaxyActionDock',
+    'v274StageActionDock',
+    'v274MapInfoOverlay'
+  ];
+  var COMBAT_LAYER_IDS = [
+    'combatHudOverlay',
+    'combatHudTopLine',
+    'combatHudCommands',
+    'battleHud'
+  ];
+
+  function byId(id){ return document.getElementById(id); }
+  function safe(fn){ try{ return fn && fn(); }catch(err){ console.warn('[v19 combat ui restore]', err); } }
+  function computedVisible(el){
+    if(!el || !window.getComputedStyle) return false;
+    var cs = getComputedStyle(el);
+    if(cs.display === 'none' || cs.visibility === 'hidden' || Number(cs.opacity || 1) <= 0.01) return false;
+    var r = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+    return !!(r && r.width > 3 && r.height > 3);
+  }
+  function battleVisible(){
+    var game = byId('game');
+    var field = byId('field');
+    var canvas = byId('canvas');
+    return computedVisible(game) && computedVisible(field) && computedVisible(canvas);
+  }
+  function saveAndHide(el){
+    if(!el) return;
+    if(el.dataset.v19CombatHidden !== '1'){
+      el.dataset.v19CombatHidden = '1';
+      el.dataset.v19PrevDisplay = el.style.getPropertyValue('display') || '';
+      el.dataset.v19PrevDisplayPriority = el.style.getPropertyPriority('display') || '';
+      el.dataset.v19PrevVisibility = el.style.getPropertyValue('visibility') || '';
+      el.dataset.v19PrevVisibilityPriority = el.style.getPropertyPriority('visibility') || '';
+      el.dataset.v19PrevOpacity = el.style.getPropertyValue('opacity') || '';
+      el.dataset.v19PrevOpacityPriority = el.style.getPropertyPriority('opacity') || '';
+      el.dataset.v19PrevPointerEvents = el.style.getPropertyValue('pointer-events') || '';
+      el.dataset.v19PrevPointerEventsPriority = el.style.getPropertyPriority('pointer-events') || '';
+    }
+    el.style.setProperty('display', 'none', 'important');
+    el.style.setProperty('visibility', 'hidden', 'important');
+    el.style.setProperty('opacity', '0', 'important');
+    el.style.setProperty('pointer-events', 'none', 'important');
+  }
+  function restore(el){
+    if(!el || el.dataset.v19CombatHidden !== '1') return;
+    function restoreProp(prop, valueKey, priorityKey){
+      var val = el.dataset[valueKey] || '';
+      var pri = el.dataset[priorityKey] || '';
+      if(val) el.style.setProperty(prop, val, pri);
+      else el.style.removeProperty(prop);
+    }
+    restoreProp('display', 'v19PrevDisplay', 'v19PrevDisplayPriority');
+    restoreProp('visibility', 'v19PrevVisibility', 'v19PrevVisibilityPriority');
+    restoreProp('opacity', 'v19PrevOpacity', 'v19PrevOpacityPriority');
+    restoreProp('pointer-events', 'v19PrevPointerEvents', 'v19PrevPointerEventsPriority');
+    delete el.dataset.v19CombatHidden;
+    delete el.dataset.v19PrevDisplay;
+    delete el.dataset.v19PrevDisplayPriority;
+    delete el.dataset.v19PrevVisibility;
+    delete el.dataset.v19PrevVisibilityPriority;
+    delete el.dataset.v19PrevOpacity;
+    delete el.dataset.v19PrevOpacityPriority;
+    delete el.dataset.v19PrevPointerEvents;
+    delete el.dataset.v19PrevPointerEventsPriority;
+  }
+  function showCombatChrome(){
+    COMBAT_LAYER_IDS.forEach(function(id){
+      var el = byId(id);
+      if(!el) return;
+      if(el.dataset.v77Hidden === '1'){
+        el.style.removeProperty('display');
+        el.style.removeProperty('visibility');
+        el.style.removeProperty('opacity');
+        el.style.removeProperty('pointer-events');
+        delete el.dataset.v77Hidden;
+      }
+    });
+  }
+  function sync(){
+    var active = battleVisible();
+    var body = document.body;
+    if(body && body.classList){
+      body.classList.toggle('prd-combat-ui-active', active);
+      body.classList.toggle('prd-battle-active', active);
+      body.classList.toggle('prd-combat-screen-active', active);
+      if(active) body.classList.remove('prd-map-ui-active');
+    }
+    MAP_LAYER_IDS.forEach(function(id){
+      var el = byId(id);
+      if(!el) return;
+      if(active) saveAndHide(el);
+      else restore(el);
+    });
+    if(active) showCombatChrome();
+  }
+  var raf = 0;
+  function schedule(){
+    if(raf) return;
+    raf = requestAnimationFrame(function(){ raf = 0; sync(); });
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sync, {once:true});
+  else sync();
+  window.addEventListener('load', function(){ sync(); setTimeout(sync, 120); setTimeout(sync, 600); }, {once:true});
+  ['click','pointerdown','touchstart','keyup','resize','orientationchange','pageshow'].forEach(function(ev){
+    window.addEventListener(ev, function(){ schedule(); setTimeout(sync, 160); }, {capture:true, passive:true});
+  });
+  document.addEventListener('visibilitychange', schedule, {passive:true});
+  setInterval(function(){ if(!document.hidden) sync(); }, 700);
+  safe(function(){ window.PRD_COMBAT_UI_RESTORE_V19 = {sync:sync}; });
 })();
