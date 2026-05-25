@@ -1662,19 +1662,18 @@ const AUDIO_URLS = {
     boss:'audio/bgm_boss_beneath_the_iron_crust.ogg',
     clear:'audio/bgm_result_sanctuary_restored.ogg',
     gameover:'audio/bgm_result_core_collapse.ogg',
+    // v32: use the existing lightweight stage loops for normal battle BGM.
+    // The previous config reused the 148kbps battle track for every stage.
+    // These stage loops are about 47-49kbps, so background music stays on while
+    // reducing continuous decode pressure during combat.
     stages:[
-      'audio/bgm_battle_sentinels_of_the_ember.ogg',
-      'audio/bgm_battle_sentinels_of_the_ember.ogg',
-      'audio/bgm_battle_sentinels_of_the_ember.ogg',
-      'audio/bgm_battle_sentinels_of_the_ember.ogg',
-      'audio/bgm_battle_sentinels_of_the_ember.ogg',
-      'audio/bgm_battle_sentinels_of_the_ember.ogg',
-      'audio/bgm_battle_sentinels_of_the_ember.ogg',
-      'audio/bgm_battle_sentinels_of_the_ember.ogg',
-      'audio/bgm_battle_sentinels_of_the_ember.ogg',
-      'audio/bgm_battle_sentinels_of_the_ember.ogg',
-      'audio/bgm_battle_sentinels_of_the_ember.ogg',
-      'audio/bgm_battle_sentinels_of_the_ember.ogg'
+      'audio/bgm_stage_01_cosmic_void.ogg',
+      'audio/bgm_stage_02_frost_expanse.ogg',
+      'audio/bgm_stage_03_lava_nebula.ogg',
+      'audio/bgm_stage_04_jungle_core.ogg',
+      'audio/bgm_stage_05_smog_wasteland.ogg',
+      'audio/bgm_stage_06_crystal_nebula.ogg',
+      'audio/bgm_stage_07_machine_core.ogg'
     ]
   },
   sfx: {
@@ -2257,6 +2256,30 @@ const activeOneShotAudio = new Set();
 const soundLimiter = {};
 const SOUND_IMPORTANT_TYPES = new Set(['boss','core','clear','gameover','summon','merge','unlock','level','treasure']);
 const SOUND_MIN_GAP = {shot:240, beam:280, hit:260, kill:320, boss:900, core:520, summon:180, merge:220, treasure:360, level:420, clear:1000, gameover:1000, unlock:600};
+const AUDIO_PERF_POLICY = {
+  // v32: BGM must not enable hundreds of tiny attack sounds during combat.
+  // Keeping normal battle BGM but suppressing high-frequency combat SFX avoids
+  // AudioContext/HTMLAudio churn when many towers fire at once.
+  combatBgmSafeMode:true,
+  maxActiveOneShots:6,
+  maxOneShotAgeMs:2600
+};
+let lastOneShotPruneAt = 0;
+function isCombatAudioSafeMode(){
+  return !!(audio && audio.on && AUDIO_PERF_POLICY.combatBgmSafeMode && S && S.active && !S.gameOver);
+}
+function pruneActiveOneShotAudio(force=false){
+  const now = performance.now();
+  if(!force && now - lastOneShotPruneAt < 350) return;
+  lastOneShotPruneAt = now;
+  activeOneShotAudio.forEach(a => {
+    try{
+      if(!a || a.ended || a.paused || (Number.isFinite(a.duration) && a.currentTime > Math.min(a.duration, AUDIO_PERF_POLICY.maxOneShotAgeMs / 1000))){
+        activeOneShotAudio.delete(a);
+      }
+    }catch(_){ activeOneShotAudio.delete(a); }
+  });
+}
 function isLowPowerAudioMode(){
   return window.matchMedia?.('(max-width: 768px)').matches || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
 }
@@ -6870,7 +6893,8 @@ window.addEventListener('touchend',onUp,{passive:false});
 function initAudio(){
   if(audio)return;
   audio = {on:true, bgm:null, bgmSrc:null, unlocked:true, perfMode:isLowPowerAudioMode()};
-  ensureAudioContext();
+  // v32: do not create/resume AudioContext just to play BGM.
+  // WebAudio is kept lazy and only used for rare important cues.
   // 브라우저 자동재생 정책 때문에 사용자가 BGM 버튼을 누른 뒤부터 재생됩니다.
   playStageBgm();
 }
@@ -6919,10 +6943,13 @@ function synthShot(kind='solar', intensity=1){
 }
 
 function playTowerSfx(kind='solar', intensity=1){
-  if(audio?.perfMode && kind !== 'boss') return;
+  // v32: the visible slowdown was triggered when BGM enabled all high-frequency
+  // tower attack synth sounds. Normal attack SFX are cosmetic, so combat keeps
+  // BGM and important cues while skipping repeated synth creation.
+  if((audio?.perfMode || isCombatAudioSafeMode()) && kind !== 'boss') return;
   const stamp = performance.now();
   const last = towerSfxLimiter[kind] || 0;
-  const gap = audio?.perfMode ? 360 : 135;
+  const gap = (audio?.perfMode || isCombatAudioSafeMode()) ? 420 : 180;
   if(stamp - last < gap) return;
   towerSfxLimiter[kind] = stamp;
   synthShot(kind, Math.min(1, intensity));
@@ -6973,6 +7000,15 @@ function stopStageBgm(){
 
 function trackOneShotAudio(a){
   if(!a) return a;
+  pruneActiveOneShotAudio(true);
+  if(activeOneShotAudio.size >= AUDIO_PERF_POLICY.maxActiveOneShots){
+    // Drop the oldest cosmetic sound clone instead of letting audio nodes pile up.
+    const first = activeOneShotAudio.values().next().value;
+    if(first){
+      try{ first.pause(); first.currentTime = 0; }catch(_){}
+      activeOneShotAudio.delete(first);
+    }
+  }
   activeOneShotAudio.add(a);
   const cleanup = () => activeOneShotAudio.delete(a);
   a.addEventListener('ended', cleanup, {once:true});
@@ -7012,7 +7048,8 @@ function sound(type, opts={}){
   if(!audio || !audio.on)return;
   const now = performance.now();
   const minGap = SOUND_MIN_GAP[type] || 260;
-  if(audio.perfMode && !SOUND_IMPORTANT_TYPES.has(type)) return;
+  pruneActiveOneShotAudio();
+  if((audio.perfMode || isCombatAudioSafeMode()) && !SOUND_IMPORTANT_TYPES.has(type)) return;
   if(now - (soundLimiter[type] || 0) < minGap) return;
   soundLimiter[type] = now;
   if(type === 'boss'){

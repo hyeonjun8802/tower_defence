@@ -3941,3 +3941,75 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
   setInterval(function(){ if(!document.hidden) sync(); }, 700);
   safe(function(){ window.PRD_COMBAT_UI_RESTORE_V19 = {sync:sync}; });
 })();
+
+/* ===== v33-landscape-command-notch-clearance =====
+   Keep the game map/canvas untouched. Only move and shrink the 4 landscape
+   command buttons so they do not collide with the notch/right-side HUD zone. */
+(function(){
+  'use strict';
+  var STYLE_ID = 'v33-landscape-command-notch-clearance-style';
+  if (document.getElementById(STYLE_ID)) return;
+  var st = document.createElement('style');
+  st.id = STYLE_ID;
+  st.textContent = `
+:root{
+  --v33-command-notch-shift:44px;
+  --v33-command-landscape-width:min(110px, calc(100vw - 96px));
+}
+@media (orientation:landscape){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
+    left:auto!important;
+    top:auto!important;
+    right:calc(10px + env(safe-area-inset-right,0px) + var(--v33-command-notch-shift))!important;
+    bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
+    width:var(--v33-command-landscape-width)!important;
+    min-width:0!important;
+    max-width:var(--v33-command-landscape-width)!important;
+    transform:none!important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+    padding:10px!important;
+    border-radius:22px!important;
+    box-sizing:border-box!important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:46px!important;
+    min-height:46px!important;
+    max-height:46px!important;
+    padding:0 8px!important;
+    font-size:11px!important;
+    box-sizing:border-box!important;
+  }
+}
+@media (orientation:landscape) and (max-height:430px){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+    gap:7px!important;
+    padding:9px!important;
+    border-radius:20px!important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
+    height:42px!important;
+    min-height:42px!important;
+    max-height:42px!important;
+    font-size:10px!important;
+  }
+}
+`;
+  (document.head || document.documentElement).appendChild(st);
+})();
