@@ -6420,8 +6420,23 @@ function loop(now){
   }
 
   ctx.save();
-  if(shake>0){ctx.translate(rand(-shake,shake),rand(-shake,shake));shake*=.88;if(shake<.3)shake=0}
+  // v25: clear the full logical frame before applying the stage shake transform.
+  // Clearing after translate only cleared the shifted rectangle, so thin strips on
+  // the opposite edges could keep pixels from the previous frame during shake.
   ctx.clearRect(0,0,W,H);
+  if(shake>0){
+    // Paint a cheap unshifted backdrop behind the shaking world. This prevents
+    // transparent edge gaps while preserving the existing full-map shake effect.
+    drawCoverImage(STAGE_BGS[S.theme]);
+    ctx.fillStyle='rgba(2,6,23,.10)';
+    ctx.fillRect(0,0,W,H);
+    ctx.globalAlpha=1;
+    ctx.shadowBlur=0;
+    ctx.setLineDash([]);
+    ctx.translate(rand(-shake,shake),rand(-shake,shake));
+    shake*=.88;
+    if(shake<.3)shake=0;
+  }
 
   drawBackground(raw);drawStageFx();drawDustClouds();drawRoute();drawTerrain();drawCore();
 
