@@ -5390,6 +5390,33 @@ function findFocusedMergeStep(){
   return findBestMergePair(anchor.type, anchor.level - 1, anchorIdx, -1);
 }
 let mergeAutoRunId = 0;
+const MERGE_VISUAL_COMBO_CAP = 3;
+const MERGE_FX_BURST_CAP = 34;
+const MERGE_LABEL_EVERY = 4;
+const MERGE_UI_REFRESH_INTERVAL_MS = 130;
+const MERGE_SOUND_INTERVAL_MS = 120;
+let mergeUiRefreshTimer = null;
+let mergeLastUiRefreshAt = 0;
+let mergeLastSoundAt = 0;
+function nowForMergeMs(){ return (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now(); }
+function flushMergeUiRefresh(){
+  mergeUiRefreshTimer = null;
+  mergeLastUiRefreshAt = nowForMergeMs();
+  updateSelected();
+  updateUI();
+}
+function requestMergeUiRefresh(force=false){
+  const now = nowForMergeMs();
+  const elapsed = now - mergeLastUiRefreshAt;
+  if(force || elapsed >= MERGE_UI_REFRESH_INTERVAL_MS){
+    if(mergeUiRefreshTimer){ clearTimeout(mergeUiRefreshTimer); mergeUiRefreshTimer = null; }
+    flushMergeUiRefresh();
+    return;
+  }
+  if(!mergeUiRefreshTimer){
+    mergeUiRefreshTimer = setTimeout(flushMergeUiRefresh, Math.max(16, MERGE_UI_REFRESH_INTERVAL_MS - elapsed));
+  }
+}
 function autoMerge(continueSession=false, runId=null){
   // onclick handlers pass a MouseEvent as the first argument. Treat only the
   // internal recursive call `autoMerge(true, runId)` as a continuation; every
@@ -5439,7 +5466,7 @@ function autoMerge(continueSession=false, runId=null){
   selected = mergeFocusSession?.anchor ?? pair.anchor;
   triggerMergeImpact(pair.anchor,a.def.color,a.level+1);
   S.runMerges = (S.runMerges || 0) + 1;
-  updateSelected();updateUI();
+  requestMergeUiRefresh(!continueSession);
   setTimeout(()=>autoMerge(true, runId),80);
 }
 
@@ -6577,20 +6604,39 @@ function triggerMergeImpact(idx,color,level){
   if(!S.mergeCombo) S.mergeCombo={count:0,timer:0};
   S.mergeCombo.count = (S.mergeCombo.timer>0 ? S.mergeCombo.count : 0) + 1;
   S.mergeCombo.timer = 165;
+  const combo = S.mergeCombo.count;
+  const visualCombo = Math.min(MERGE_VISUAL_COMBO_CAP, combo);
   const p = center(idx);
-  burst(p.x,p.y,color,20 + S.mergeCombo.count*5,30 + S.mergeCombo.count*3);
-  ring(p.x,p.y,42 + level*3 + S.mergeCombo.count*3,color);
-  ring(p.x,p.y,20 + S.mergeCombo.count*3,'#ffffff');
-  impactLabel(p.x,p.y-38,S.mergeCombo.count>=2?`MERGE x${fmt2(S.mergeCombo.count)}`:'MERGE',color,16+Math.min(5,S.mergeCombo.count*1.4),66);
-  if(S.mergeCombo.count>=3){
-    const bonus=Math.min(60,8*S.mergeCombo.count);
-    S.gold+=bonus;
-    impactLabel(p.x,p.y-56,`+${fmt2(bonus)} CRYSTAL`,'#fde68a',13,62);
-    log(`병합 콤보: x${fmt2(S.mergeCombo.count)} / 수정 +${fmt2(bonus)}`);
+
+  // v22: rapid auto-merge can fire every 80ms.  Keep the same merge reward and
+  // feedback, but cap the visual burst/labels so floating texts and particles do
+  // not pile up across dozens of merges and stall mobile browsers.
+  burst(p.x,p.y,color,Math.min(MERGE_FX_BURST_CAP, 18 + visualCombo*5),28 + visualCombo*3);
+  ring(p.x,p.y,42 + level*3 + visualCombo*3,color);
+  ring(p.x,p.y,20 + visualCombo*3,'#ffffff');
+
+  const showMergeLabel = combo <= 2 || combo % MERGE_LABEL_EVERY === 0;
+  if(showMergeLabel){
+    impactLabel(p.x,p.y-38,combo>=2?`MERGE x${fmt2(combo)}`:'MERGE',color,15+Math.min(4,visualCombo*1.2),48);
   }
-  shake=Math.max(shake,6 + Math.min(10,S.mergeCombo.count*2));
-  flash=Math.max(flash,.055);
-  sound('merge');
+
+  if(combo>=3){
+    const bonus=Math.min(60,8*combo);
+    S.gold+=bonus;
+    if(showMergeLabel){
+      impactLabel(p.x,p.y-56,`+${fmt2(bonus)} CRYSTAL`,'#fde68a',12,48);
+    }
+    if(combo === 3 || combo % 5 === 0){
+      log(`병합 콤보: x${fmt2(combo)} / 수정 +${fmt2(bonus)}`);
+    }
+  }
+  shake=Math.max(shake,6 + Math.min(10,visualCombo*2));
+  flash=Math.max(flash,.045);
+  const now = nowForMergeMs();
+  if(now - mergeLastSoundAt >= MERGE_SOUND_INTERVAL_MS){
+    mergeLastSoundAt = now;
+    sound('merge');
+  }
 }
 function triggerTreasureImpact(enemy){
   burst(enemy.x,enemy.y,'#facc15',30,42);
