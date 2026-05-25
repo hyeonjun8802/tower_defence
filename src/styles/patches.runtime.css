@@ -18527,3 +18527,382 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
     transform:translateY(-34px) !important;
   }
 }
+
+
+/* ===== v30-html-source-matched-battle-buttons-from-v26 =====
+   Restarted from v26. No new image assets. Reuse existing HTML button looks:
+   - summon: stage/v274 ENTER SANCTUARY gradient pill
+   - merge: armory upgrade/commonResearchBuy blue sci-fi button, rounded
+   - speed/pause: v274 INFO dark rounded button
+   Preserve the v26 command button footprint. */
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn::before,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn::before,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn::before,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn::before,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn::before,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn::before{
+  content:none !important;
+  display:none !important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn{
+  position:relative !important;
+  isolation:isolate !important;
+  overflow:hidden !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:0 !important;
+  text-align:center !important;
+  box-sizing:border-box !important;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  font-family:'Orbitron','Noto Sans KR',Pretendard,system-ui,sans-serif !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+  text-transform:none !important;
+  clip-path:none !important;
+  user-select:none !important;
+  -webkit-user-select:none !important;
+  -webkit-tap-highlight-color:transparent !important;
+  cursor:pointer !important;
+  transition:transform .12s ease, filter .16s ease, box-shadow .16s ease, border-color .16s ease !important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn::after{
+  content:'' !important;
+  position:absolute !important;
+  inset:1px !important;
+  border-radius:inherit !important;
+  pointer-events:none !important;
+  z-index:-1 !important;
+}
+/* summon = ENTER SANCTUARY gradient pill */
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn[data-action="summon"],
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn[data-action="summon"]{
+  border-radius:999px !important;
+  border:1px solid rgba(157,241,255,.38) !important;
+  background:linear-gradient(90deg, rgba(70,220,235,.96) 0%, rgba(112,116,246,.95) 54%, rgba(186,76,245,.96) 100%) !important;
+  color:#f4fbff !important;
+  box-shadow:0 14px 34px rgba(29,196,255,.14), inset 0 0 0 1px rgba(255,255,255,.10) !important;
+  text-shadow:0 1px 0 rgba(0,0,0,.26), 0 0 12px rgba(255,255,255,.18) !important;
+  letter-spacing:.08em !important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn[data-action="summon"]::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn[data-action="summon"]::after{
+  background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,0) 42%), radial-gradient(circle at 10% 50%, rgba(155,255,255,.20), transparent 38%) !important;
+}
+/* merge = armory upgrade button, rounded */
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn[data-action="merge"],
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn[data-action="merge"]{
+  border-radius:18px !important;
+  border:1px solid rgba(80,214,255,.38) !important;
+  background:linear-gradient(180deg,#0f5a80 0%, #092e46 100%) !important;
+  color:#effcff !important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.05) inset, 0 10px 26px rgba(6,42,78,.22), 0 0 18px rgba(80,210,255,.10) !important;
+  text-shadow:0 1px 0 rgba(0,0,0,.35), 0 0 12px rgba(69,230,255,.24) !important;
+  letter-spacing:-.03em !important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn[data-action="merge"]::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn[data-action="merge"]::after{
+  background:linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,0) 34%), linear-gradient(120deg, rgba(102,220,255,.12), transparent 44%, rgba(102,220,255,.08)) !important;
+}
+/* speed / pause = INFO dark rounded button */
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn[data-action="speed"],
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn[data-action="pause"],
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn[data-action="speed"],
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn[data-action="pause"]{
+  border-radius:999px !important;
+  border:1px solid rgba(67,215,255,.32) !important;
+  background:rgba(2,10,24,.76) !important;
+  color:#b9f6ff !important;
+  box-shadow:inset 0 0 0 1px rgba(119,245,255,.04), 0 0 18px rgba(6,182,255,.09) !important;
+  text-shadow:0 0 12px rgba(103,232,249,.22) !important;
+  letter-spacing:.03em !important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn[data-action="speed"]::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn[data-action="pause"]::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn[data-action="speed"]::after,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn[data-action="pause"]::after{
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 44%) !important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button:hover,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn:hover,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn:hover{
+  transform:translateY(-1px) !important;
+  filter:brightness(1.06) !important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button:active,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn:active,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn:active{
+  transform:translateY(1px) scale(.99) !important;
+  filter:brightness(.98) !important;
+}
+/* v26 footprint: keep button sizes/layout stable while changing only surface style. */
+@media (orientation:landscape){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
+    right:calc(10px + env(safe-area-inset-right,0px)) !important;
+    bottom:calc(10px + env(safe-area-inset-bottom,0px)) !important;
+    width:clamp(136px, 12vw, 154px) !important;
+  }
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
+    right:calc(10px + env(safe-area-inset-right,0px)) !important;
+    bottom:calc(10px + env(safe-area-inset-bottom,0px)) !important;
+    width:clamp(136px, 12vw, 154px) !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+    grid-template-columns:1fr !important;
+    gap:10px !important;
+    padding:12px !important;
+    border-radius:26px !important;
+    background:linear-gradient(180deg,rgba(8,18,34,.78),rgba(3,8,20,.72)) !important;
+    border:1px solid rgba(103,232,249,.16) !important;
+    box-shadow:0 14px 34px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.06) !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:52px !important;
+    min-height:52px !important;
+    max-height:52px !important;
+    padding:0 14px !important;
+    font-size:12px !important;
+  }
+}
+@media (orientation:portrait){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
+  body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
+    left:clamp(10px, 2.4vw, 16px) !important;
+    right:clamp(10px, 2.4vw, 16px) !important;
+    bottom:clamp(8px, 1.2vh, 16px) !important;
+    top:auto !important;
+    width:auto !important;
+    transform:none !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:9px !important;
+    padding:11px 11px calc(11px + env(safe-area-inset-bottom,0px)) !important;
+    border-radius:24px !important;
+    background:linear-gradient(180deg,rgba(8,18,34,.78),rgba(3,8,20,.72)) !important;
+    border:1px solid rgba(103,232,249,.16) !important;
+    box-shadow:0 14px 34px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.06) !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:50px !important;
+    min-height:50px !important;
+    max-height:50px !important;
+    padding:0 13px !important;
+    font-size:12px !important;
+  }
+}
+@media (orientation:portrait) and (max-width:520px){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+    gap:8px !important;
+    padding:10px 10px calc(10px + env(safe-area-inset-bottom,0px)) !important;
+    border-radius:22px !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
+    height:47px !important;
+    min-height:47px !important;
+    max-height:47px !important;
+    font-size:11px !important;
+  }
+}
+
+
+/* ===== v31-native-pause-dialog-html-matched-buttons =====
+   Based on v30-from-v26. No new image assets. Keep pause dialog layout/function,
+   but map native pause popup buttons to the same existing HTML button families:
+   - continue: ENTER SANCTUARY gradient pill
+   - previous page: INFO dark rounded secondary
+*/
+#pauseDecisionOverlayNative{
+  background:
+    radial-gradient(circle at 50% 34%, rgba(52,211,235,.16), rgba(8,15,35,.76) 42%, rgba(0,0,0,.90) 100%) !important;
+  backdrop-filter:blur(8px) saturate(1.05) !important;
+  -webkit-backdrop-filter:blur(8px) saturate(1.05) !important;
+}
+#pauseDecisionOverlayNative .nativePauseCard{
+  width:min(420px, calc(100vw - 32px)) !important;
+  border-radius:28px !important;
+  padding:28px 22px 22px !important;
+  border:1px solid rgba(103,232,249,.34) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,0) 30%),
+    linear-gradient(180deg, rgba(10,22,42,.94), rgba(2,7,20,.96)) !important;
+  box-shadow:
+    0 28px 90px rgba(0,0,0,.58),
+    0 0 38px rgba(34,211,238,.16),
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 0 0 1px rgba(255,255,255,.035) !important;
+}
+#pauseDecisionOverlayNative .nativePauseCard > div:first-child{
+  font-family:'Orbitron', Pretendard, system-ui, sans-serif !important;
+  color:#9df6ff !important;
+  letter-spacing:.28em !important;
+  text-shadow:0 0 12px rgba(103,232,249,.58) !important;
+}
+#pauseDecisionOverlayNative #nativePauseTitle{
+  color:#ffffff !important;
+  text-shadow:0 1px 0 rgba(0,0,0,.35), 0 0 20px rgba(148,233,255,.10) !important;
+}
+#pauseDecisionOverlayNative .nativePauseCard p{
+  color:#d6e4f5 !important;
+}
+#pauseDecisionOverlayNative .nativePauseCard > div:last-child{
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:12px !important;
+  margin-top:18px !important;
+}
+#pauseDecisionOverlayNative #pauseExitBtnNative,
+#pauseDecisionOverlayNative #pauseResumeBtnNative{
+  position:relative !important;
+  isolation:isolate !important;
+  overflow:hidden !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  height:50px !important;
+  min-height:50px !important;
+  max-height:50px !important;
+  padding:0 16px !important;
+  border-radius:999px !important;
+  border:1px solid rgba(67,215,255,.32) !important;
+  cursor:pointer !important;
+  box-sizing:border-box !important;
+  font-family:'Orbitron','Noto Sans KR',Pretendard,system-ui,sans-serif !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  letter-spacing:.03em !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+  clip-path:none !important;
+  -webkit-tap-highlight-color:transparent !important;
+  transition:transform .12s ease, filter .16s ease, box-shadow .16s ease, border-color .16s ease !important;
+}
+#pauseDecisionOverlayNative #pauseExitBtnNative::after,
+#pauseDecisionOverlayNative #pauseResumeBtnNative::after{
+  content:'' !important;
+  position:absolute !important;
+  inset:1px !important;
+  border-radius:inherit !important;
+  pointer-events:none !important;
+  z-index:-1 !important;
+}
+/* previous page = INFO dark rounded style */
+#pauseDecisionOverlayNative #pauseExitBtnNative{
+  background:rgba(2,10,24,.78) !important;
+  color:#b9f6ff !important;
+  border-color:rgba(67,215,255,.34) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(119,245,255,.045),
+    0 0 18px rgba(6,182,255,.10),
+    0 10px 24px rgba(0,0,0,.22) !important;
+  text-shadow:0 0 12px rgba(103,232,249,.22) !important;
+}
+#pauseDecisionOverlayNative #pauseExitBtnNative::after{
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 44%) !important;
+}
+/* continue = ENTER SANCTUARY gradient pill style */
+#pauseDecisionOverlayNative #pauseResumeBtnNative{
+  background:linear-gradient(90deg, rgba(70,220,235,.96) 0%, rgba(112,116,246,.95) 54%, rgba(186,76,245,.96) 100%) !important;
+  color:#f4fbff !important;
+  border-color:rgba(157,241,255,.38) !important;
+  box-shadow:
+    0 14px 34px rgba(29,196,255,.14),
+    0 10px 24px rgba(0,0,0,.18),
+    inset 0 0 0 1px rgba(255,255,255,.10) !important;
+  text-shadow:0 1px 0 rgba(0,0,0,.26), 0 0 12px rgba(255,255,255,.18) !important;
+  letter-spacing:.08em !important;
+}
+#pauseDecisionOverlayNative #pauseResumeBtnNative::after{
+  background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,0) 42%), radial-gradient(circle at 10% 50%, rgba(155,255,255,.20), transparent 38%) !important;
+}
+#pauseDecisionOverlayNative #pauseExitBtnNative:hover,
+#pauseDecisionOverlayNative #pauseResumeBtnNative:hover{
+  transform:translateY(-1px) !important;
+  filter:brightness(1.06) !important;
+}
+#pauseDecisionOverlayNative #pauseExitBtnNative:active,
+#pauseDecisionOverlayNative #pauseResumeBtnNative:active{
+  transform:translateY(1px) scale(.99) !important;
+  filter:brightness(.98) !important;
+}
+@media (orientation:portrait) and (max-width:520px){
+  #pauseDecisionOverlayNative .nativePauseCard{
+    width:min(360px, calc(100vw - 28px)) !important;
+    padding:22px 18px 18px !important;
+    border-radius:24px !important;
+  }
+  #pauseDecisionOverlayNative .nativePauseCard > div:last-child{
+    gap:10px !important;
+  }
+  #pauseDecisionOverlayNative #pauseExitBtnNative,
+  #pauseDecisionOverlayNative #pauseResumeBtnNative{
+    height:47px !important;
+    min-height:47px !important;
+    max-height:47px !important;
+    font-size:11px !important;
+  }
+}
+/* Keep legacy pause overlays visually consistent if they ever appear instead of native. */
+#pauseDecisionOverlayV29 #pauseExitBtnV29,
+#pauseDecisionOverlayV27 #pauseQuitBtnV27,
+#pauseDecisionOverlay #pauseQuitBtn{
+  border-radius:999px !important;
+  border:1px solid rgba(67,215,255,.34) !important;
+  background:rgba(2,10,24,.78) !important;
+  color:#b9f6ff !important;
+  box-shadow:inset 0 0 0 1px rgba(119,245,255,.045),0 0 18px rgba(6,182,255,.10),0 10px 24px rgba(0,0,0,.22) !important;
+  text-shadow:0 0 12px rgba(103,232,249,.22) !important;
+}
+#pauseDecisionOverlayV29 #pauseResumeBtnV29,
+#pauseDecisionOverlayV27 #pauseResumeBtnV27,
+#pauseDecisionOverlay #pauseResumeBtn{
+  border-radius:999px !important;
+  border:1px solid rgba(157,241,255,.38) !important;
+  background:linear-gradient(90deg, rgba(70,220,235,.96) 0%, rgba(112,116,246,.95) 54%, rgba(186,76,245,.96) 100%) !important;
+  color:#f4fbff !important;
+  box-shadow:0 14px 34px rgba(29,196,255,.14), inset 0 0 0 1px rgba(255,255,255,.10) !important;
+  text-shadow:0 1px 0 rgba(0,0,0,.26),0 0 12px rgba(255,255,255,.18) !important;
+}
