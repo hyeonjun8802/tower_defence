@@ -296,14 +296,6 @@ function drawScreenStarfield(sf){
 function screenStarLoop(now){
   const dt = Math.min((now - screenStarLast) / 1000, 0.05);
   screenStarLast = now;
-<<<<<<< HEAD
-  for(const sf of screenStarFields){
-    const el = sf.canvas;
-    if(!el || !el.isConnected) continue;
-    const st = getComputedStyle(el);
-    if(st.display === 'none' || st.visibility === 'hidden') continue;
-    if(!resizeScreenStarfield(sf)) continue;
-=======
   for(let i=0;i<screenStarFields.length;i++){
     const sf = screenStarFields[i];
     const el = sf.canvas;
@@ -316,7 +308,6 @@ function screenStarLoop(now){
       if(st.display === 'none' || st.visibility === 'hidden') continue;
     }
     if(!resizeScreenStarfield(sf, rect)) continue;
->>>>>>> b95f30a (메모리 최적화)
     updateScreenStarfield(sf, dt);
     drawScreenStarfield(sf);
   }
@@ -1304,10 +1295,7 @@ function saveStageMapProgress(){
 function resetBattleUnitsForStageMap(){
   grid = Array(GRID_COLS*GRID_ROWS).fill(null);
   terrain = Array(GRID_COLS*GRID_ROWS).fill('empty');
-<<<<<<< HEAD
-=======
   invalidateTerrainRenderCache();
->>>>>>> b95f30a (메모리 최적화)
   recycleAllEnemies();
   recycleAllBullets();
   enemies = [];
@@ -2091,9 +2079,6 @@ const PERF_BEAM_POOL_MAX = 220;
 let perfTrailParticlesThisFrame = 0;
 let perfBurstParticlesThisFrame = 0;
 let perfFrameId = 0;
-<<<<<<< HEAD
-let perfActiveTowerCount = 0;
-=======
 let chainHitStamp = 1;
 let enemyDrawSortLastFrame = -1;
 let visualNowMs = 0;
@@ -2104,7 +2089,6 @@ let perfActiveTowerCountDirty = true;
 let hiddenPlanetCheckDirty = true;
 let hiddenPlanetCheckLastFrame = -9999;
 const HIDDEN_PLANET_CHECK_INTERVAL_FRAMES = 18;
->>>>>>> b95f30a (메모리 최적화)
 let globalUpgradeStatsCache = null;
 let globalUpgradeStatsCacheOwner = null;
 let globalUpgradeStatsRevision = 0;
@@ -2115,11 +2099,6 @@ const particlePool = [];
 const floatPool = [];
 const beamPool = [];
 function countActiveTowersFast(){
-<<<<<<< HEAD
-  if(!Array.isArray(grid)) return 0;
-  let count = 0;
-  for(let i=0;i<grid.length;i++) if(grid[i]) count++;
-=======
   if(!Array.isArray(grid)){
     perfActiveTowerCountCached = 0;
     perfActiveTowerCountDirty = false;
@@ -2132,7 +2111,6 @@ function countActiveTowersFast(){
   for(let i=0;i<grid.length;i++) if(grid[i]) count++;
   perfActiveTowerCountCached = count;
   perfActiveTowerCountDirty = false;
->>>>>>> b95f30a (메모리 최적화)
   return count;
 }
 function invalidateGlobalUpgradeStatsCache(){
@@ -2187,10 +2165,7 @@ function acquireEnemy(entry){
 function recycleEnemy(e){
   if(!e) return;
   e.dead = true;
-<<<<<<< HEAD
-=======
   e._chainHitStamp = 0;
->>>>>>> b95f30a (메모리 최적화)
   if(enemyPool.length < PERF_ENEMY_POOL_MAX) enemyPool.push(e);
 }
 function recycleAllEnemies(){
@@ -2233,13 +2208,6 @@ function pushParticle(x,y,vx,vy,r,life,maxLife,color,kind='burst', extra=null){
   particles.push(p);
   return true;
 }
-<<<<<<< HEAD
-function addParticle(item, kind='burst'){
-  if(!item) return false;
-  return pushParticle(item.x,item.y,item.vx,item.vy,item.r,item.life,item.maxLife,item.color,kind,item);
-}
-=======
->>>>>>> b95f30a (메모리 최적화)
 function pushFloat(x,y,text,color='#fff',size=12,life=54,vy=-.52){
   if(!Array.isArray(floats)) floats = [];
   if(floats.length >= PERF_MAX_FLOATS) return false;
@@ -2249,13 +2217,6 @@ function pushFloat(x,y,text,color='#fff',size=12,life=54,vy=-.52){
   floats.push(f);
   return true;
 }
-<<<<<<< HEAD
-function addFloat(item){
-  if(!item) return false;
-  return pushFloat(item.x,item.y,item.text,item.color,item.size,item.life,item.vy);
-}
-=======
->>>>>>> b95f30a (메모리 최적화)
 function pushBeam(x1,y1,x2,y2,color,life,style='',width=0){
   if(!Array.isArray(beams)) beams = [];
   if(beams.length >= PERF_MAX_BEAMS) return false;
@@ -2265,13 +2226,6 @@ function pushBeam(x1,y1,x2,y2,color,life,style='',width=0){
   beams.push(b);
   return true;
 }
-<<<<<<< HEAD
-function addBeam(item){
-  if(!item) return false;
-  return pushBeam(item.x1,item.y1,item.x2,item.y2,item.color,item.life,item.style,item.width);
-}
-=======
->>>>>>> b95f30a (메모리 최적화)
 function trimVisualFxBuffers(){
   trimFxArray(particles, PERF_MAX_PARTICLES);
   trimFxArray(floats, PERF_MAX_FLOATS);
@@ -3704,11 +3658,7 @@ const NEAREST_ROUTE_HIT = {x:0,y:0,t:0,dist:0,seg:0,score:0};
 function nearestRoutePoint(px, py, preferredSeg=0){
   const start = Math.max(0, preferredSeg - 1);
   const end = Math.min(route.length - 2, preferredSeg + 1);
-<<<<<<< HEAD
-  let bestScore = Infinity, bestX = px, bestY = py, bestT = 0, bestDist = 0, bestSeg = preferredSeg;
-=======
   let bestScore = Infinity, bestX = px, bestY = py, bestT = 0, bestDistSq = 0, bestSeg = preferredSeg;
->>>>>>> b95f30a (메모리 최적화)
   for(let seg=start; seg<=end; seg++){
     const a = route[seg], b = route[seg+1];
     const dx = b.x - a.x, dy = b.y - a.y;
@@ -3717,31 +3667,17 @@ function nearestRoutePoint(px, py, preferredSeg=0){
     const x = a.x + dx * t;
     const y = a.y + dy * t;
     const ddx = px - x, ddy = py - y;
-<<<<<<< HEAD
-    const distVal = Math.sqrt(ddx*ddx + ddy*ddy);
-    // 코너에서는 이전 segment와 현재 segment의 거리가 동시에 0이 될 수 있다.
-    // 이때 이전 segment를 고르면 적이 첫 꺾임 지점에서 되돌아가는 것처럼 멈춘다.
-    // 따라서 현재 진행 segment를 우선하고, 동일 거리에서는 뒤쪽 segment보다 현재/앞쪽 segment를 우선한다.
-    const tiePenalty = Math.abs(seg - preferredSeg) * .001 + (seg < preferredSeg ? .002 : 0);
-    const score = distVal + tiePenalty;
-    if(score < bestScore){ bestScore = score; bestX = x; bestY = y; bestT = t; bestDist = distVal; bestSeg = seg; }
-=======
     const distSqVal = ddx*ddx + ddy*ddy;
     // v11: compare squared distance in the hot path and take sqrt once only for the winning segment.
     // Tiny tie penalty keeps the original corner preference without paying sqrt for every candidate.
     const tiePenalty = Math.abs(seg - preferredSeg) * .000001 + (seg < preferredSeg ? .000002 : 0);
     const score = distSqVal + tiePenalty;
     if(score < bestScore){ bestScore = score; bestX = x; bestY = y; bestT = t; bestDistSq = distSqVal; bestSeg = seg; }
->>>>>>> b95f30a (메모리 최적화)
   }
   NEAREST_ROUTE_HIT.x = bestX;
   NEAREST_ROUTE_HIT.y = bestY;
   NEAREST_ROUTE_HIT.t = bestT;
-<<<<<<< HEAD
-  NEAREST_ROUTE_HIT.dist = bestDist;
-=======
   NEAREST_ROUTE_HIT.dist = Math.sqrt(bestDistSq);
->>>>>>> b95f30a (메모리 최적화)
   NEAREST_ROUTE_HIT.seg = bestSeg;
   NEAREST_ROUTE_HIT.score = bestScore;
   return NEAREST_ROUTE_HIT;
@@ -4238,8 +4174,6 @@ const TERRAIN_BONUS_BY_KEY = {
   rift:{dmg:1.82,cd:1.10,range:8,gold:0,over:true,plate:true}
 };
 
-<<<<<<< HEAD
-=======
 const PLANET_CORE_GLOW_RENDER_CACHE = new Map();
 const PLANET_CORE_GLOW_RENDER_CACHE_MAX = 128;
 const PLANET_CORE_GLOW_RENDER_CACHE_MAX_PIXELS = 1250000;
@@ -4322,7 +4256,6 @@ function trimAllRenderCachesForPressure(force=false){
   trimRenderCache(PLANET_CORE_GLOW_RENDER_CACHE, scaleEntries(PLANET_CORE_GLOW_RENDER_CACHE_MAX), scalePixels(PLANET_CORE_GLOW_RENDER_CACHE_MAX_PIXELS));
 }
 
->>>>>>> b95f30a (메모리 최적화)
 class Planet{
   constructor(type,level,idx){
     this.type=type;this.level=level;this.idx=idx;this.cool=rand(0,20);this.phase=Math.random()*TAU;this.frozen=0;this.uid=nextPlanetUid++;this.aug=defaultAug();this.skillLevels={};syncTowerSkillUnlocks(this);
@@ -4335,14 +4268,7 @@ class Planet{
     return TERRAIN_BONUS_BY_KEY[terrain[this.idx]] || TERRAIN_BONUS_DEFAULT;
   }
   stats(){
-<<<<<<< HEAD
-    if(this._statsCache && this._statsFrame === perfFrameId && this._statsRevision === globalUpgradeStatsRevision){
-      return this._statsCache;
-    }
-    const b=this.terrainBonus();
-=======
     const terrainKey = terrain ? terrain[this.idx] : 'empty';
->>>>>>> b95f30a (메모리 최적화)
     const a=ensureAug(this);
     const augRevision = this._augRevision || 0;
     const cooldownPenalty = S.globalCooldownPenalty || 0;
@@ -4362,13 +4288,8 @@ class Planet{
     const b=TERRAIN_BONUS_BY_KEY[terrainKey] || TERRAIN_BONUS_DEFAULT;
     const g=getGlobalUpgradeStats();
     const d=this.def;
-<<<<<<< HEAD
-    const p=this.pos;
-    const ambient = getDustCloudPenalty(p.x, p.y);
-=======
     const pos = DUST_CLOUDS_ACTIVE ? this.pos : null;
     const ambient = DUST_CLOUDS_ACTIVE ? getDustCloudPenalty(pos.x, pos.y) : DUST_NO_PENALTY;
->>>>>>> b95f30a (메모리 최적화)
     const affinityMatched = isPlateAffinityMatched(this);
     const plateDamage = b.plate ? g.plateDamage + (affinityMatched ? PLATE_AFFINITY_DAMAGE_BONUS : 0) : 0;
     const plateFireRate = b.plate ? g.plateFireRate + (affinityMatched ? PLATE_AFFINITY_FIRE_RATE_BONUS : 0) : 0;
@@ -4388,10 +4309,6 @@ class Planet{
       dustPenalty: ambient.alpha
     };
     this._statsCache = stats;
-<<<<<<< HEAD
-    this._statsFrame = perfFrameId;
-    this._statsRevision = globalUpgradeStatsRevision;
-=======
     this._statsType = this.type;
     this._statsLevel = this.level;
     this._statsTerrainKey = terrainKey;
@@ -4400,7 +4317,6 @@ class Planet{
     this._statsTacticalBoost = tacticalBoost;
     this._statsAugRevision = augRevision;
     this._statsDustSig = dustSig;
->>>>>>> b95f30a (메모리 최적화)
     return stats;
   }
   target(stOverride=null){
@@ -4552,8 +4468,6 @@ class Planet{
 
 }
 
-<<<<<<< HEAD
-=======
 const ENEMY_BODY_RENDER_CACHE = new Map();
 const ENEMY_BODY_RENDER_CACHE_MAX = 64;
 const ENEMY_BODY_RENDER_CACHE_MAX_PIXELS = 360000;
@@ -4616,7 +4530,6 @@ function drawCachedEnemyBody(enemy, color){
   return true;
 }
 
->>>>>>> b95f30a (메모리 최적화)
 const ENEMY_BASE_MAP = {
   grunt:{hp:1.62,spd:1.08,size:13,color:'#e2e8f0',reward:.50,exp:3,armor:0,regen:false,treasure:false,boss:false},
   runner:{hp:1.05,spd:1.82,size:11,color:'#7dd3fc',reward:.50,exp:3,armor:0,regen:false,treasure:false,boss:false},
@@ -4670,11 +4583,7 @@ class Enemy{
     const bossRunEase = this.stageBoss ? (this.bossTier === 'final' ? .72 : .80) : 1;
     this.maxHp=Math.floor(295*hpBase*(1+S.ogge*.30+S.theme*.38) * hpScale * bossRunEase);
     this.hp=this.maxHp;
-<<<<<<< HEAD
-    this.dead=false;this.slow=0;this.freeze=0;this.dot=0;this.dotTime=0;this.mark=0;
-=======
     this.dead=false;this.slow=0;this.freeze=0;this.dot=0;this.dotTime=0;this.mark=0;this._chainHitStamp=0;
->>>>>>> b95f30a (메모리 최적화)
     return this;
   }
   update(dt){
@@ -5329,17 +5238,6 @@ function areaDamage(x,y,r,dmg,source,color){
 }
 function chain(start,dmg,count,color,markAmp=0){
   let cur=start;
-<<<<<<< HEAD
-  const hit=new Set();
-  const maxChainDistSq = 115 * 115;
-  for(let i=0;i<count;i++){
-    if(!cur||hit.has(cur))break;
-    hit.add(cur);cur.damage(dmg*(1-i*.16)*(1+markAmp),'storm',color);cur.slow=Math.max(cur.slow,25);
-    let next=null,best=maxChainDistSq;
-    for(let j=0;j<enemies.length;j++){
-      const e = enemies[j];
-      if(e.dead||hit.has(e))continue;
-=======
   const stamp = ++chainHitStamp;
   if(chainHitStamp > 1000000000) chainHitStamp = 1;
   const maxChainDistSq = 115 * 115;
@@ -5350,7 +5248,6 @@ function chain(start,dmg,count,color,markAmp=0){
     for(let j=0;j<enemies.length;j++){
       const e = enemies[j];
       if(e.dead||e._chainHitStamp===stamp)continue;
->>>>>>> b95f30a (메모리 최적화)
       const d=distSq(e.x,e.y,cur.x,cur.y);
       if(d<best){best=d;next=e}
     }
@@ -5372,77 +5269,6 @@ function gainExp(v){
 }
 
 
-<<<<<<< HEAD
-function liveTowers(){
-  return grid.map((t,idx)=>t?{t,idx}:null).filter(Boolean);
-}
-function rollSkillRarity(rare=false){
-  const r = Math.random();
-  if(rare) return r < .22 ? 'legendary' : 'epic';
-  if(r < .055) return 'epic';
-  if(r < .22) return 'rare';
-  return 'common';
-}
-function rarityLabel(r){
-  return ({common:'COMMON',rare:'RARE',epic:'EPIC',legendary:'LEGENDARY'})[r] || 'COMMON';
-}
-function rarityApplyCount(c){
-  if(c.rarity === 'legendary') return 3;
-  if(c.rarity === 'epic' || c.rarity === 'rare' || c.rare) return 2;
-  return 1;
-}
-function makeGlobalUpgradeCandidate(rare=false, usedIds=new Set()){
-  const pool = GLOBAL_UPGRADE_CATALOG.filter(u => !usedIds.has(u.id) && globalUpgradeLevel(u.id) < GLOBAL_UPGRADE_MAX_LEVEL);
-  if(!pool.length) return null;
-  const upgrade = pool[Math.floor(Math.random()*pool.length)];
-  const current = globalUpgradeLevel(upgrade.id);
-  const rarity = rollSkillRarity(rare);
-  const rawStep = rarity === 'legendary' ? 3 : (rarity === 'epic' || rarity === 'rare' || rare ? 2 : 1);
-  const step = Math.max(1, Math.min(rawStep, GLOBAL_UPGRADE_MAX_LEVEL - current));
-  return {
-    upgrade,
-    key:upgrade.id,
-    currentLevel:current,
-    nextLevel:current + step,
-    rare,
-    rarity,
-    color:upgrade.color || '#67e8f9'
-  };
-}
-function applyGlobalUpgradeCandidate(c){
-  if(!c || !c.upgrade) return false;
-  const levels = ensureGlobalUpgrades();
-  const prev = Math.max(0, Number(levels[c.upgrade.id] || 0));
-  const count = Math.max(1, Math.min(GLOBAL_UPGRADE_MAX_LEVEL - prev, Number(c.nextLevel || prev + rarityApplyCount(c)) - prev));
-  if(count <= 0) return false;
-  levels[c.upgrade.id] = prev + count;
-  invalidateGlobalUpgradeStatsCache();
-  const color = c.upgrade.color || '#67e8f9';
-  for(const t of grid){
-    if(!t) continue;
-    const p = t.pos;
-    burst(p.x,p.y,color,12 + count*5,22 + count*5);
-  }
-  ring(CORE.x, CORE.y, 72 + count*8, color);
-  impactLabel(CORE.x, CORE.y - 58, `${rarityLabel(c.rarity)} GLOBAL`, color, 16 + count, 82);
-  shake = Math.max(shake, 4 + count*2);
-  return true;
-}
-function applyUnitSkillCandidate(c){
-  return applyGlobalUpgradeCandidate(c);
-}
-function openSkillChoice(rare){
-  // RELEASE CLEANUP: 전투 중 랜덤/일반 스킬 선택 모달은 최종 UX에서 제거되었습니다.
-  // 일반 스킬은 성역 지도에서만 관리하고, 전투 화면에서는 전역 효과 한 줄만 표시합니다.
-  if(S){
-    S.skillModalOpen = false;
-    S.skillQueue = 0;
-    S.paused = false;
-  }
-  return false;
-}
-=======
->>>>>>> b95f30a (메모리 최적화)
 
 function updateTacticalCooldowns(dt){
   const cd = S.tacticalCd;
@@ -5453,79 +5279,6 @@ function updateTacticalCooldowns(dt){
   }
   if(S.tacticalBoost>0) S.tacticalBoost=Math.max(0,S.tacticalBoost-.004*dt);
 }
-<<<<<<< HEAD
-function canUseTactical(type,cost){
-  if(S.exp<cost){toast('EXP가 부족합니다');return false}
-  if((S.tacticalCd?.[type]||0)>0){toast('전술판 재충전 중입니다');return false}
-  S.exp-=cost;
-  S.tacticalCd[type]=Math.floor((TACTICAL_COOLDOWN_MAX[type]||700) * (S.offline?.cooldownScale || 1));
-  return true;
-}
-function leadingEnemy(){
-  let best = null, bestProgress = -Infinity;
-  for(let i=0;i<enemies.length;i++){
-    const e = enemies[i];
-    if(!e || e.dead) continue;
-    if(e.progress > bestProgress){ best = e; bestProgress = e.progress; }
-  }
-  return best;
-}
-function leadingEnemies(limit=5){
-  const out = [];
-  for(let i=0;i<enemies.length;i++){
-    const e = enemies[i];
-    if(!e || e.dead) continue;
-    let pos = out.length;
-    while(pos > 0 && out[pos - 1].progress < e.progress) pos--;
-    if(pos < limit){
-      out.splice(pos, 0, e);
-      if(out.length > limit) out.length = limit;
-    }
-  }
-  return out;
-}
-function useSkill(type){
-  if(type==='blackhole'){
-    if(!canUseTactical('blackhole',70))return;
-    const target=leadingEnemy() || {x:W/2,y:H/2};
-    const x=target.x,y=target.y,r=230;
-    anomalies.push({x,y,target:null,kind:'tactical',radius:210,damage:28,pull:2.1,color:'#c084fc',life:130,maxLife:130,tick:0});
-    const rr = r * r;
-    for(let i=0;i<enemies.length;i++){
-      const e = enemies[i];
-      if(distSq(e.x,e.y,x,y)<rr){
-        e.x+=(x-e.x)*.36;e.y+=(y-e.y)*.36;
-        confineEnemyToRoute(e, e.stageBoss ? 24 : 18);
-        e.slow=210;e.mark=240;e.damage(180,'skill','#c084fc');
-      }
-    }
-    ring(x,y,r,'#c084fc');shake=24;toast('균열 포획 — 선두 적군을 강제 구속');sound('blackhole');
-  }
-  if(type==='nova'){
-    if(!canUseTactical('nova',75))return;
-    const targets=leadingEnemies(5);
-    if(!targets.length){toast('포격 대상이 없습니다');S.exp+=75;S.tacticalCd.nova=0;return}
-    targets.forEach((e,i)=>{
-      setTimeout(()=>{
-        areaDamage(e.x,e.y,86,230+S.ogge*12,'orbital','#fb923c');
-        burst(e.x,e.y,'#fb923c',30,46);
-        ring(e.x,e.y,92,'#f97316');
-      },i*90);
-    });
-    flash=.22;shake=28;toast('궤도 포격 — 위험 목표 연속 타격');sound('nova');
-  }
-  if(type==='repair'){
-    if(!canUseTactical('repair',65))return;
-    S.hp=Math.min(S.maxHp,S.hp+3);
-    S.tacticalBoost=Math.max(S.tacticalBoost,.28);
-    grid.forEach(t=>{ if(t){ const p=t.pos; burst(p.x,p.y,t.def.color,10,22); } });
-    burst(CORE.x,CORE.y,'#22c55e',34,52);
-    toast('코어 과충전 — 소량 수리 + 행성 공격속도 일시 증가');sound('level');
-  }
-  updateUI();
-}
-=======
->>>>>>> b95f30a (메모리 최적화)
 
 function summon(typeOverride=null){
   if(S.gameOver) return;
@@ -5692,22 +5445,6 @@ function autoMerge(continueSession=false, runId=null){
 
 
 function tryCreateHiddenPlanet(){
-<<<<<<< HEAD
-  for(let i=0;i<grid.length;i++){
-    const t = grid[i];
-    if(t && t.type === HIDDEN_PLANET_TYPE) return false;
-  }
-  const recipe = [];
-  for(let type=0; type<BASE_PLANET_COUNT; type++) {
-    let idx = -1;
-    for(let i=0;i<grid.length;i++){
-      const t = grid[i];
-      if(t && t.type === type && t.level >= 5){ idx = i; break; }
-    }
-    if(idx < 0) return false;
-    recipe.push(idx);
-  }
-=======
   // v14 safety-pass: keep the exact hidden-planet recipe, but avoid scanning the
   // full grid once per base type. This only runs after board changes / fallback.
   if(S?.hiddenUnlocked) return false;
@@ -5729,7 +5466,6 @@ function tryCreateHiddenPlanet(){
   }
   if(matched < BASE_PLANET_COUNT) return false;
 
->>>>>>> b95f30a (메모리 최적화)
   let sumX = 0, sumY = 0;
   for(let i=0;i<recipe.length;i++){ const c = center(recipe[i]); sumX += c.x; sumY += c.y; }
   const avgX = sumX / recipe.length, avgY = sumY / recipe.length;
@@ -6449,10 +6185,6 @@ function drawParticles(dt){
     const p=particles[i];
     p.life-=dt;
     if(p.life<=0){ recycleFxItem(p, particles); continue; }
-<<<<<<< HEAD
-    ctx.save();
-=======
->>>>>>> b95f30a (메모리 최적화)
     if(p.ring){
       p.r+=(p.max-p.r)*.12+dt*.4;
       ctx.globalAlpha=clamp(p.life/(p.maxLife||26),0,1);
@@ -6461,12 +6193,6 @@ function drawParticles(dt){
       particles[write++] = p;
       continue;
     }
-<<<<<<< HEAD
-    ctx.restore();
-    particles[write++] = p;
-  }
-  particles.length = write;
-=======
     p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.98;p.vy*=.98;
     p.rot = (p.rot || 0) + (p.spin || 0) * dt;
     const alpha = clamp(p.life/(p.maxLife||40),0,1);
@@ -6517,7 +6243,6 @@ function drawParticles(dt){
   particles.length = write;
   ctx.globalAlpha = 1;
   ctx.shadowBlur = 0;
->>>>>>> b95f30a (메모리 최적화)
 }
 
 const ELECTRIC_ARC_CHAIN_OPTIONS = { amplitude: 12, segments: 10, alpha: 1, glow: '#fde047', main: '#fefce8', outerWidth: 4.2, innerWidth: 2.0, blur: 22 };
@@ -6527,11 +6252,7 @@ function drawBeams(dt){
   for(let i=0;i<beams.length;i++){
     const b=beams[i];b.life-=dt;
     if(b.life<=0){ recycleFxItem(b, beams); continue; }
-<<<<<<< HEAD
-    ctx.save();
-=======
     // v13: beam rendering sets all state it needs; avoid save/restore per beam.
->>>>>>> b95f30a (메모리 최적화)
     const alpha = clamp(b.life/18,0,1);
     if(b.style==='laser'){
       const beamWidth = b.width || 4;
@@ -6564,31 +6285,21 @@ function drawBeams(dt){
       ctx.strokeStyle=b.color;ctx.lineWidth=b.style==='void'?3.4:4;ctx.shadowColor=b.color;ctx.shadowBlur=18;
       ctx.beginPath();ctx.moveTo(b.x1,b.y1);ctx.lineTo(b.x2,b.y2);ctx.stroke();
     }
-<<<<<<< HEAD
-    ctx.restore();
-    beams[write++] = b;
-  }
-  beams.length = write;
-=======
     beams[write++] = b;
   }
   beams.length = write;
   ctx.globalAlpha = 1;
   ctx.shadowBlur = 0;
   ctx.setLineDash([]);
->>>>>>> b95f30a (메모리 최적화)
 }
 
 function drawFloats(dt){
   trimFxArray(floats, PERF_MAX_FLOATS);
   let write = 0;
-<<<<<<< HEAD
-=======
   ctx.textAlign='center';
   ctx.strokeStyle='rgba(0,0,0,.72)';
   ctx.shadowColor='rgba(0,0,0,.18)';
   ctx.shadowBlur=4;
->>>>>>> b95f30a (메모리 최적화)
   for(let i=0;i<floats.length;i++){
     const f=floats[i];f.life-=dt;f.y+=f.vy*dt;
     if(f.life<=0){ recycleFxItem(f, floats); continue; }
@@ -6600,18 +6311,11 @@ function drawFloats(dt){
     ctx.fillStyle=f.color;ctx.lineWidth=Math.max(2.2, size*.18);
     ctx.font=`900 ${size}px Orbitron`;
     ctx.strokeText(f.text,f.x,f.y);ctx.fillText(f.text,f.x,f.y);
-<<<<<<< HEAD
-    ctx.restore();
-    floats[write++] = f;
-  }
-  floats.length = write;
-=======
     floats[write++] = f;
   }
   floats.length = write;
   ctx.globalAlpha = 1;
   ctx.shadowBlur = 0;
->>>>>>> b95f30a (메모리 최적화)
 }
 function drawDragging(){
   if(!dragging)return;
@@ -6697,11 +6401,6 @@ function loop(now){
 
   updateHangarVisuals();
   trimVisualFxBuffers();
-<<<<<<< HEAD
-  drawAnomalies();
-  for(let i=0;i<grid.length;i++){ const t = grid[i]; if(t) t.draw(); }
-  if(enemies.length > 1) enemies.sort(ENEMY_DRAW_SORT_BY_Y);
-=======
   trimAllRenderCachesForPressure(false);
   drawAnomalies();
   for(let i=0;i<grid.length;i++){ const t = grid[i]; if(t) t.draw(); }
@@ -6712,7 +6411,6 @@ function loop(now){
       enemyDrawSortLastFrame = perfFrameId;
     }
   }
->>>>>>> b95f30a (메모리 최적화)
   for(let i=0;i<enemies.length;i++) enemies[i].draw();
   drawBossTelegraphs();
   for(let i=0;i<bullets.length;i++) bullets[i].draw();
@@ -7706,10 +7404,7 @@ function returnToStageMapFromBattleV21(){
     S.gameOverOverlayShown = false;
     S.runEnded = true;
   }
-<<<<<<< HEAD
-=======
   try{ removeGameOverOverlay(); }catch(err){}
->>>>>>> b95f30a (메모리 최적화)
   try{ recycleAllEnemies(); recycleAllBullets(); enemies = []; bullets = []; beams = []; particles = []; floats = []; }catch(err){}
   try{ stopAllGameAudio(); }catch(err){}
   try{ reset(); }catch(err){ console.warn('pause exit reset failed', err); }
