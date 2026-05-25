@@ -2255,6 +2255,8 @@ const towerSfxLimiter = {};
 const htmlAudioCache = {};
 const activeOneShotAudio = new Set();
 const soundLimiter = {};
+const SOUND_IMPORTANT_TYPES = new Set(['boss','core','clear','gameover','summon','merge','unlock','level','treasure']);
+const SOUND_MIN_GAP = {shot:240, beam:280, hit:260, kill:320, boss:900, core:520, summon:180, merge:220, treasure:360, level:420, clear:1000, gameover:1000, unlock:600};
 function isLowPowerAudioMode(){
   return window.matchMedia?.('(max-width: 768px)').matches || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
 }
@@ -5280,6 +5282,8 @@ function updateTacticalCooldowns(dt){
   if(S.tacticalBoost>0) S.tacticalBoost=Math.max(0,S.tacticalBoost-.004*dt);
 }
 
+let summonLastFxAt = 0;
+const SUMMON_RAPID_FX_GAP_MS = 260;
 function summon(typeOverride=null){
   if(S.gameOver) return;
   const pool = availableSummonTypes();
@@ -5287,18 +5291,35 @@ function summon(typeOverride=null){
   const type = pool.includes(preferred) ? preferred : pool[Math.floor(Math.random()*pool.length)];
   const cost = currentSummonCost();
   if(S.gold<cost)return toast('수정이 부족합니다');
-  const free=[];
-  for(let i=0;i<grid.length;i++) if(!grid[i]&&canBuild(i)) free.push(i);
-  if(!free.length)return toast('배치 가능한 장판이 없습니다');
-  const idx=free[Math.floor(Math.random()*free.length)];
+
+  // v23: rapid tapping the summon button used to allocate a temporary `free[]`
+  // array and immediately refresh the side UI every tap.  Pick a random free
+  // slot with two cheap scans instead, and batch UI refreshes below.
+  let freeCount = 0;
+  for(let i=0;i<grid.length;i++) if(!grid[i]&&canBuild(i)) freeCount++;
+  if(!freeCount)return toast('배치 가능한 장판이 없습니다');
+  let pick = Math.floor(Math.random()*freeCount);
+  let idx = -1;
+  for(let i=0;i<grid.length;i++){
+    if(!grid[i]&&canBuild(i)){
+      if(pick-- === 0){ idx = i; break; }
+    }
+  }
+  if(idx < 0)return toast('배치 가능한 장판이 없습니다');
+
   grid[idx]=new Planet(type,1,idx);
   invalidateTerrainRenderCache();
   S.runSummons = (S.runSummons || 0) + 1;
   S.gold-=cost;selected=idx;
-  burst(center(idx).x,center(idx).y,PLANETS[type].color,24,42);
+
+  const p = center(idx);
+  const now = nowForMergeMs();
+  const rapid = now - summonLastFxAt < SUMMON_RAPID_FX_GAP_MS;
+  summonLastFxAt = now;
+  burst(p.x,p.y,PLANETS[type].color,rapid ? 14 : 24,rapid ? 30 : 42);
   toast(`랜덤 소환 — ${PLANETS[type].name} 착지 완료`);
   sound('summon');
-  updateSelected();updateUI();
+  requestMergeUiRefresh(false);
 }
 const MERGE_TERRAIN_PRIORITY = {
   rift:60, amp:52, coil:46, lens:42, mine:34, empty:20, blocked:-100, path:-100
@@ -5390,6 +5411,7 @@ function findFocusedMergeStep(){
   return findBestMergePair(anchor.type, anchor.level - 1, anchorIdx, -1);
 }
 let mergeAutoRunId = 0;
+let mergeAutoRunActive = false;
 const MERGE_VISUAL_COMBO_CAP = 3;
 const MERGE_FX_BURST_CAP = 34;
 const MERGE_LABEL_EVERY = 4;
@@ -5422,13 +5444,19 @@ function autoMerge(continueSession=false, runId=null){
   // internal recursive call `autoMerge(true, runId)` as a continuation; every
   // user click must start a fresh merge focus session.
   continueSession = continueSession === true;
-  if(S.gameOver) return;
+  if(S.gameOver){ if(!continueSession) mergeAutoRunActive = false; return; }
 
   if(!continueSession){
+    // v23: while the 80ms auto-merge chain is already running, extra rapid taps
+    // should not cancel/restart the chain and rescan the whole board.  Absorb
+    // those duplicate inputs; the current chain will keep merging normally.
+    if(mergeAutoRunActive) return;
+    mergeAutoRunActive = true;
     mergeAutoRunId++;
     runId = mergeAutoRunId;
     mergeFocusSession = chooseMergeFocusAnchor();
     if(!mergeFocusSession){
+      mergeAutoRunActive = false;
       toast('병합 가능한 행성이 없습니다');
       return;
     }
@@ -5445,12 +5473,14 @@ function autoMerge(continueSession=false, runId=null){
   while(!pair){
     mergeFocusSession = chooseMergeFocusAnchor();
     if(!mergeFocusSession){
+      mergeAutoRunActive = false;
       if(!continueSession) toast('병합 가능한 행성이 없습니다');
       return;
     }
     pair = findFocusedMergeStep();
     if(!pair){
       mergeFocusSession = null;
+      mergeAutoRunActive = false;
       if(!continueSession) toast('병합 가능한 행성이 없습니다');
       return;
     }
@@ -5458,7 +5488,7 @@ function autoMerge(continueSession=false, runId=null){
 
   const a = grid[pair.anchor];
   const b = grid[pair.consume];
-  if(!a || !b){ mergeFocusSession = null; return; }
+  if(!a || !b){ mergeFocusSession = null; mergeAutoRunActive = false; return; }
 
   grid[pair.anchor] = createMergedPlanet(a,b,pair.anchor);
   grid[pair.consume] = null;
@@ -6966,9 +6996,8 @@ function stopAllGameAudio(){
 function sound(type, opts={}){
   if(!audio || !audio.on)return;
   const now = performance.now();
-  const important = new Set(['boss','core','clear','gameover','summon','merge','unlock','level','treasure']);
-  const minGap = {shot:240, beam:280, hit:260, kill:320, boss:900, core:520, summon:180, merge:220, treasure:360, level:420, clear:1000, gameover:1000, unlock:600}[type] || 260;
-  if(audio.perfMode && !important.has(type)) return;
+  const minGap = SOUND_MIN_GAP[type] || 260;
+  if(audio.perfMode && !SOUND_IMPORTANT_TYPES.has(type)) return;
   if(now - (soundLimiter[type] || 0) < minGap) return;
   soundLimiter[type] = now;
   if(type === 'boss'){

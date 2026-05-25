@@ -3307,6 +3307,8 @@
   var lastAction = '';
   var lastAt = 0;
   var raf = 0;
+  var commandHitCache = null;
+  var commandHitCacheAt = 0;
 
   function byId(id){ return document.getElementById(id); }
   function safe(fn, fallback){ try{ return fn(); }catch(err){ console.warn('[v96]', err); return fallback; } }
@@ -3374,6 +3376,7 @@
     return vp;
   }
   function scheduleViewport(reason){
+    commandHitCache = null;
     if(raf) cancelAnimationFrame(raf);
     raf = requestAnimationFrame(function(){
       raf = 0;
@@ -3457,25 +3460,51 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
     (document.head || document.documentElement).appendChild(st);
   }
 
-  function commandFromPoint(p){
-    if(!p) return null;
-    // Prefer real buttons.  Proxy docks are intentionally hidden by v96, but keep
-    // them as fallback while the DOM is still settling during the first frame.
-    var selectors = [
-      ['summon','#summonBtn,#hudProxy_landscape_summon,#hudProxy_portrait_summon,[data-action="summon"]'],
-      ['merge', '#mergeBtn,#hudProxy_landscape_merge,#hudProxy_portrait_merge,[data-action="merge"]'],
-      ['speed', '#speedBtn,#hudProxy_landscape_speed,#hudProxy_portrait_speed,[data-action="speed"]'],
-      ['pause', '#pauseBtn,#hudProxy_landscape_pause,#hudProxy_portrait_pause,[data-action="pause"]']
-    ];
-    for(var i=0;i<selectors.length;i++){
-      var action = selectors[i][0];
-      var nodes = [];
-      try{ nodes = Array.prototype.slice.call(document.querySelectorAll(selectors[i][1])); }catch(_e){}
+  function collectCommandNodes(cmd){
+    var out = [];
+    var seen = [];
+    function add(el){
+      if(!el || seen.indexOf(el) >= 0) return;
+      seen.push(el);
+      out.push(el);
+    }
+    add(byId(cmd.id));
+    add(byId('hudProxy_landscape_' + cmd.action));
+    add(byId('hudProxy_portrait_' + cmd.action));
+    try{
+      var dataNodes = document.querySelectorAll('[data-action="' + cmd.action + '"]');
+      for(var i=0;i<dataNodes.length;i++) add(dataNodes[i]);
+    }catch(_e){}
+    return out;
+  }
+  function getCommandHitCache(){
+    var now = Date.now();
+    if(commandHitCache && now - commandHitCacheAt < 140) return commandHitCache;
+    var rows = [];
+    for(var i=0;i<COMMANDS.length;i++){
+      var cmd = COMMANDS[i];
+      var nodes = collectCommandNodes(cmd);
       for(var j=nodes.length-1;j>=0;j--){
         var el = nodes[j];
         if(!visible(el)) continue;
-        if(inside(rect(el), p, Math.max(6, Math.min(12, (rect(el).height || 40) * .18)))) return {action:action, el:el};
+        var r = rect(el);
+        if(!r) continue;
+        rows.push({action:cmd.action, el:el, rect:r, pad:Math.max(6, Math.min(12, (r.height || 40) * .18))});
       }
+    }
+    commandHitCache = rows;
+    commandHitCacheAt = now;
+    return rows;
+  }
+  function commandFromPoint(p){
+    if(!p) return null;
+    // v23: this runs for pointer/touch/mouse/click capture events.  Avoid
+    // querySelectorAll + getBoundingClientRect on every rapid button tap by
+    // caching command hit rects briefly; layout changes explicitly clear it.
+    var rows = getCommandHitCache();
+    for(var i=rows.length-1;i>=0;i--){
+      var row = rows[i];
+      if(inside(row.rect, p, row.pad)) return {action:row.action, el:row.el};
     }
     return null;
   }
@@ -3508,6 +3537,7 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
     runCommand(hit.action, ev);
   }
   function bindRealButtons(){
+    commandHitCache = null;
     COMMANDS.forEach(function(cmd){
       var btn = byId(cmd.id);
       if(!btn || btn.dataset.v96Bound === '1') return;

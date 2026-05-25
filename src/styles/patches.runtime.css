@@ -18512,3 +18512,18 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
   visibility:visible !important;
   opacity:1 !important;
 }
+
+/* ===== v243-portrait-top-hud-lift ===== */
+/* v243: Portrait only. Move the small stage/resource HUD and the tower/BGM button
+   stack upward by one utility-button height. The wave clear notice keeps its
+   current position, so only the edge HUD alignment changes. */
+@media (orientation:portrait){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #mjTopMiniHud{
+    transform:translateY(-34px) !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #field .fieldTopControls,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay .fieldTopControls,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls{
+    transform:translateY(-34px) !important;
+  }
+}
