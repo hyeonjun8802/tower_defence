@@ -4013,3 +4013,154 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
 `;
   (document.head || document.documentElement).appendChild(st);
 })();
+
+
+/* ===== v34-landscape-command-notch-dynamic-fix =====
+   v33 only relied on CSS env()/fixed values and did not cover the proxy dock in
+   every runtime path. This keeps the game map/canvas untouched and adjusts only
+   the 4 landscape command buttons using dynamic safe/notch clearance. */
+(function(){
+  'use strict';
+  var STYLE_ID = 'v34-landscape-command-notch-dynamic-style';
+  var PROBE_ID = 'v34-safe-area-right-probe';
+  function ensureStyle(){
+    if(document.getElementById(STYLE_ID)) return;
+    var st=document.createElement('style');
+    st.id=STYLE_ID;
+    st.textContent = `
+:root{
+  --v34-command-safe:48px;
+  --v34-command-width:106px;
+  --v34-command-button-height:44px;
+}
+@media (orientation:landscape){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock{
+    left:auto!important;
+    top:auto!important;
+    right:calc(8px + env(safe-area-inset-right,0px) + var(--v34-command-safe,48px))!important;
+    bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
+    width:var(--v34-command-width,106px)!important;
+    min-width:0!important;
+    max-width:var(--v34-command-width,106px)!important;
+    transform:none!important;
+    box-sizing:border-box!important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyGrid,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyGrid{
+    grid-template-columns:1fr!important;
+    gap:7px!important;
+    padding:9px!important;
+    border-radius:20px!important;
+    box-sizing:border-box!important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:var(--v34-command-button-height,44px)!important;
+    min-height:var(--v34-command-button-height,44px)!important;
+    max-height:var(--v34-command-button-height,44px)!important;
+    padding:0 7px!important;
+    font-size:10px!important;
+    line-height:1.05!important;
+    text-align:center!important;
+    justify-content:center!important;
+    box-sizing:border-box!important;
+    white-space:nowrap!important;
+  }
+}
+@media (orientation:landscape) and (max-height:430px){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyGrid,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyGrid{
+    gap:6px!important;
+    padding:8px!important;
+    border-radius:18px!important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn{
+    height:40px!important;
+    min-height:40px!important;
+    max-height:40px!important;
+    font-size:9px!important;
+  }
+}
+`;
+    (document.head||document.documentElement).appendChild(st);
+  }
+  function readEnvRight(){
+    var probe=document.getElementById(PROBE_ID);
+    if(!probe){
+      probe=document.createElement('div');
+      probe.id=PROBE_ID;
+      probe.style.cssText='position:fixed;right:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding-right:env(safe-area-inset-right,0px);';
+      (document.body||document.documentElement).appendChild(probe);
+    }
+    var value=0;
+    try{ value=parseFloat(getComputedStyle(probe).paddingRight)||0; }catch(_){ value=0; }
+    return value;
+  }
+  function sync(){
+    ensureStyle();
+    var root=document.documentElement;
+    var vw=window.innerWidth||0;
+    var vh=window.innerHeight||0;
+    var vv=window.visualViewport||null;
+    var isLandscape=vw>vh;
+    if(!isLandscape){
+      root.style.removeProperty('--v34-command-safe');
+      root.style.removeProperty('--v34-command-width');
+      root.style.removeProperty('--v34-command-button-height');
+      return;
+    }
+    var envRight=readEnvRight();
+    var visualRight=0;
+    try{
+      if(vv){ visualRight=Math.max(0, vw - (vv.width + vv.offsetLeft)); }
+    }catch(_){ visualRight=0; }
+    var coarse=false;
+    try{ coarse=!!(window.matchMedia && window.matchMedia('(pointer:coarse)').matches); }catch(_){ coarse=false; }
+    var phoneLike=coarse && Math.max(vw,vh) <= 1100 && (Math.max(vw,vh)/Math.max(1,Math.min(vw,vh))) > 1.45;
+
+    // Some iPhone/Expo WebViews return 0 for env(safe-area-inset-right) in
+    // landscape even though the camera/notch area still occupies the edge.
+    // Keep a tower-button-sized fallback only on phone-like landscape screens.
+    var fallback=phoneLike ? 48 : 0;
+    var clearance=Math.ceil(Math.max(envRight, visualRight, fallback));
+    clearance=Math.max(0, Math.min(76, clearance));
+    var width=Math.max(96, Math.min(126, 154 - clearance));
+    var height=(vh<=430) ? 40 : 44;
+
+    root.style.setProperty('--v34-command-safe', clearance + 'px');
+    root.style.setProperty('--v34-command-width', width + 'px');
+    root.style.setProperty('--v34-command-button-height', height + 'px');
+  }
+  ensureStyle();
+  sync();
+  window.addEventListener('resize', sync, {passive:true});
+  window.addEventListener('orientationchange', function(){ setTimeout(sync, 60); setTimeout(sync, 240); }, {passive:true});
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', sync, {passive:true});
+    window.visualViewport.addEventListener('scroll', sync, {passive:true});
+  }
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) sync(); }, {passive:true});
+  setTimeout(sync, 80);
+  setTimeout(sync, 500);
+})();
