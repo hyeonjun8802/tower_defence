@@ -4655,7 +4655,10 @@ class Enemy{
     if(this.boss || this.stageBoss) final*=1+(g.bossDamage||0);
     if(this.mark>0) final*=1.22;
     this.hp-=final;
-    if(final>18)floatText(this.x+rand(-5,5),this.y-this.size-rand(0,4),final,color||'#fff', Math.min(15, 10 + final * .05), 50);
+    // v35: hide enemy damage number labels.
+    // Damage calculation and HP reduction stay unchanged; only the floating numeric text is suppressed.
+    // This also avoids extra float objects during heavy combat/audio playback.
+    // if(final>18)floatText(this.x+rand(-5,5),this.y-this.size-rand(0,4),final,color||'#fff', Math.min(15, 10 + final * .05), 50);
   }
   kill(){
     if(this.dead)return;
@@ -6658,8 +6661,7 @@ function registerKillCombo(enemy){
   S.combo.timer = 120;
   S.combo.best = Math.max(S.combo.best||0, S.combo.kills);
   if(S.combo.kills >= 3){
-    const color = S.combo.kills >= 12 ? '#fde68a' : S.combo.kills >= 7 ? '#d8b4fe' : '#7dd3fc';
-    impactLabel(enemy.x, enemy.y-enemy.size-18, `KILL x${fmt2(S.combo.kills)}`, color, Math.min(21, 13 + S.combo.kills*.55), 62);
+    // v36: hide the floating `KILL xN` combo text. Combo tracking/rewards remain unchanged.
     if(S.combo.kills % 5 === 0){
       const bonus = Math.min(38, 5 + Math.floor(S.combo.kills * 1.35));
       S.gold += bonus;
