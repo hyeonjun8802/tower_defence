@@ -4165,7 +4165,7 @@ function updateAnomalies(dt){
           confineEnemyToRoute(e, e.stageBoss ? 22 : 16);
           e.slow = Math.max(e.slow, 45);
           e.mark = Math.max(e.mark, 70);
-          e.damage(a.damage, 'void', a.color);
+          e.damage(a.damage, 'void', a.color, a.rewardBonus || 0);
         }
       }
     }
@@ -4239,13 +4239,13 @@ function drawAnomalies(){
   }
 }
 
-const TERRAIN_BONUS_DEFAULT = {dmg:.86,cd:1.06,range:0,gold:0,over:false,plate:false};
+const TERRAIN_BONUS_DEFAULT = {dmg:.86,cd:1.06,range:0,gold:0,over:false,overChance:0,plate:false};
 const TERRAIN_BONUS_BY_KEY = {
-  amp:{dmg:1.38,cd:.96,range:0,gold:0,over:false,plate:true},
-  coil:{dmg:1.00,cd:.70,range:0,gold:0,over:false,plate:true},
-  lens:{dmg:.94,cd:.98,range:38,gold:0,over:false,plate:true},
-  mine:{dmg:.92,cd:1.02,range:0,gold:.16,over:false,plate:true},
-  rift:{dmg:1.62,cd:1.06,range:8,gold:0,over:true,plate:true}
+  amp:{dmg:1.38,cd:.96,range:0,gold:0,over:false,overChance:0,plate:true},
+  coil:{dmg:1.00,cd:.70,range:0,gold:0,over:false,overChance:0,plate:true},
+  lens:{dmg:.94,cd:.98,range:38,gold:0,over:false,overChance:0,plate:true},
+  mine:{dmg:.92,cd:1.02,range:0,gold:.16,over:false,overChance:0,plate:true},
+  rift:{dmg:1.62,cd:1.06,range:8,gold:0,over:true,overChance:.06,plate:true}
 };
 
 const PLANET_CORE_GLOW_RENDER_CACHE = new Map();
@@ -4372,7 +4372,7 @@ class Planet{
       dmg:(d.dmg+this.level*15)*b.dmg*(1+a.damage+g.damage+plateDamage+globalCritExpected) * ambient.damageMul,
       range:Math.max(70,d.range+this.level*8+b.range+a.range+g.range),
       cd:Math.max(8,(d.cd-this.level*1.7)*b.cd*(1+S.globalCooldownPenalty) * ambient.cooldownMul/(1+a.fireRate+g.fireRate+plateFireRate+S.tacticalBoost)),
-      gold:b.gold, over:b.over, plateMatched: affinityMatched,
+      gold:b.gold, over:b.over, overChance:b.overChance || 0, plateMatched: affinityMatched,
       critChance:(d.critChance||0)+a.critChance+g.critChance,
       critMul:(d.critMul||1.8)+a.critMul+g.critMul,
       area:a.area, dot:a.dot, freeze:a.freeze, freezeChance:a.freezeChance,
@@ -4415,7 +4415,7 @@ class Planet{
     const target=this.target(st);
     if(!target)return;
     this.cool=st.cd;
-    if(st.over && Math.random()<.08){this.cool+=24;floatText(this.pos.x,this.pos.y-30,'과열','#fb7185')}
+    if(st.over && Math.random() < (st.overChance || .06)){this.cool+=24;floatText(this.pos.x,this.pos.y-30,'과열','#fb7185')}
     if(this.def.kind==='beam') fireBeam(this,target,st);
     else if(this.def.kind==='gravity') blackholePulse(this,target,st);
     else addBullet(this,target,st);
@@ -4624,7 +4624,7 @@ class Enemy{
     const type = payload ? (payload.type || 'grunt') : (entry || 'grunt');
     this.type=type;
     this.stageBoss=false;this.bossTier='';this.bossName='';this.bossKo='';this.abilityName='';this.bossTitle='';this.bossDesc='';this.auraColor='';
-    this.hpScale=1;this.coreDamage=0;this.bossEffect='';this.skillInterval=0;this.skillCd=0;
+    this.hpScale=1;this.coreDamage=0;this.bossEffect='';this.skillInterval=0;this.skillCd=0;this.rewardBonus=0;
     const base = ENEMY_BASE_MAP[type] || ENEMY_BASE_MAP.grunt;
     let hpBase = base.hp, spd = base.spd, size = base.size, color = base.color;
     let reward = base.reward, exp = base.exp, armor = base.armor || 0;
@@ -4701,7 +4701,8 @@ class Enemy{
     this.progress += step;
     confineEnemyToRoute(this, this.stageBoss ? 18 : 12);
   }
-  damage(v,source,color){
+  damage(v,source,color,rewardBonus=0){
+    this.rewardBonus = Math.max(0, Number(rewardBonus || 0));
     const g = getGlobalUpgradeStats();
     const armorValue = Math.max(0, (this.armor||0) + S.stageArmorBonus - (g.armorBreak||0));
     let final=v*(1-clamp(armorValue,0,.72));
@@ -4719,7 +4720,8 @@ class Enemy{
     S.runKills = (S.runKills || 0) + 1;
     const g = getGlobalUpgradeStats();
     const stageBalance = getCommercialStageBalance(S.stageNo || StageMapState.current || 1);
-    const reward=Math.max(1,Math.floor((6+S.ogge*.9)*this.reward*Number(stageBalance.reward_multiplier || 1)*(1+S.mods.reward+(g.reward||0))));
+    const rewardBonus = Math.max(0, Number(this.rewardBonus || 0));
+    const reward=Math.max(1,Math.floor((6+S.ogge*.9)*this.reward*Number(stageBalance.reward_multiplier || 1)*(1+S.mods.reward+(g.reward||0)+rewardBonus)));
     S.gold+=reward;
     gainExp(this.exp);
     burst(this.x,this.y,this.color,22,38);
@@ -4894,7 +4896,7 @@ function triggerPrismLink(tower, target, st, baseDamage){
     const e = enemies[i];
     if(e.dead) continue;
     if(pointSegSq(e.x,e.y,p.x,p.y,endX,endY) < widthSq){
-      e.damage(baseDamage * (.18 + st.prismLink * .055), 'prism_link', '#d8b4fe');
+      e.damage(baseDamage * (.18 + st.prismLink * .055), 'prism_link', '#d8b4fe', st.gold);
       e.mark = Math.max(e.mark, 34 + st.prismLink * 12);
       hits++;
     }
@@ -4921,7 +4923,7 @@ function triggerMechaSatellite(tower, target, st, baseDamage){
   const sy = p.y + Math.sin(angle) * 22;
   const alt = nearestEnemyExcept(target, p.x, p.y, st.range + 52) || target;
   pushBeam(sx,sy,alt.x,alt.y,'#60a5fa',18,'satellite',2.2);
-  alt.damage(baseDamage * (.24 + st.satelliteForge * .24), 'satellite', '#93c5fd');
+  alt.damage(baseDamage * (.24 + st.satelliteForge * .24), 'satellite', '#93c5fd', st.gold);
   burst(sx, sy, '#60a5fa', 7, 15);
 }
 function applyEmergencyBarrier(tower, target, st){
@@ -4960,7 +4962,7 @@ class Bullet{
     const id=this.tower.def.id,dmg=this.st.dmg;
     if(id==='solar'){
       const tx=this.target.x, ty=this.target.y;
-      areaDamage(tx,ty,(58+this.tower.level*3)*(1+this.st.area),dmg,'solar',this.color);
+      areaDamage(tx,ty,(58+this.tower.level*3)*(1+this.st.area),dmg,'solar',this.color,this.st.gold);
       const dotRadius=70*(1+this.st.area), dotRadiusSq=dotRadius*dotRadius;
       for(let i=0;i<enemies.length;i++){
         const e = enemies[i];
@@ -4968,15 +4970,15 @@ class Bullet{
       }
       if(signatureChance(this.tower,.10,.016)) triggerSolarNova(this.tower,this.target,this.st,dmg);
     }else if(id==='frost'){
-      this.target.damage(dmg,'frost',this.color);this.target.slow=120*(1+this.st.freeze);
+      this.target.damage(dmg,'frost',this.color,this.st.gold);this.target.slow=120*(1+this.st.freeze);
       if(Math.random()<.18+this.tower.level*.015+this.st.freezeChance)this.target.freeze=42*(1+this.st.freeze);
       if(this.target.freeze>0 && signatureChance(this.tower,.12,.014)) triggerFrostShatter(this.tower,this.target,this.st,dmg);
     }else if(id==='storm'){
       const chainCount = 2+Math.floor(this.tower.level/4)+Math.floor(this.st.chain);
-      chain(this.target,dmg,chainCount,this.color,this.st.markAmp);
+      chain(this.target,dmg,chainCount,this.color,this.st.markAmp,this.st.gold);
       if(signatureChance(this.tower,.11,.014)) triggerStormOverload(this.tower,this.target,this.st,dmg,chainCount);
     }else if(id==='toxic'){
-      this.target.damage(dmg*.75,'toxic',this.color);
+      this.target.damage(dmg*.75,'toxic',this.color,this.st.gold);
       this.target.dot+=(.9+this.tower.level*.16)*(1+this.st.dot);
       this.target.dotTime=190;
       if(this.st.poisonSlow>0)this.target.slow=Math.max(this.target.slow,60+this.st.poisonSlow*25);
@@ -4987,7 +4989,7 @@ class Bullet{
       this.tower.crystalCharge = Math.max(0, charge - release);
       const before = this.target.hp;
       const finalDmg = dmg * .92 + release;
-      this.target.damage(finalDmg, 'crystal', this.color);
+      this.target.damage(finalDmg, 'crystal', this.color, this.st.gold);
       const over = Math.max(0, finalDmg - before);
       if(this.st.crystalCharge > 0 && over > 0){
         const cap = dmg * (1.1 + this.tower.level * .10 + this.st.crystalCharge * 2.2);
@@ -5008,13 +5010,13 @@ class Bullet{
         finalDmg *= 1 + dismantle * 2.8;
         impactLabel(this.target.x, this.target.y - this.target.size - 20, `실드 해체 +${fmt2(gain)}`, '#bfdbfe', 12, 58);
       }
-      this.target.damage(finalDmg, 'mecha', this.color);
+      this.target.damage(finalDmg, 'mecha', this.color, this.st.gold);
       triggerMechaSatellite(this.tower, this.target, this.st, dmg);
       applyEmergencyBarrier(this.tower, this.target, this.st);
       burst(this.target.x, this.target.y, '#60a5fa', 10, 20);
     }else if(id==='smog'){
       const fieldRadius = (48 + this.tower.level * 2.8) * (1 + this.st.area);
-      this.target.damage(dmg * .64, 'smog', this.color);
+      this.target.damage(dmg * .64, 'smog', this.color, this.st.gold);
       let reversed = false;
       const fieldRadiusSq = fieldRadius * fieldRadius;
       for(let i=0;i<enemies.length;i++){
@@ -5026,7 +5028,7 @@ class Bullet{
           e.dot += (.34 + this.tower.level * .07) * (1 + this.st.dot);
           e.dotTime = Math.max(e.dotTime, 138 + this.st.dot * 60);
         }
-        e.damage(dmg * (.13 + this.st.markAmp * .32), 'smog_field', this.color);
+        e.damage(dmg * (.13 + this.st.markAmp * .32), 'smog_field', this.color, this.st.gold);
         const reverseChance = clamp(.045 + this.tower.level * .006 + this.st.burstChance, 0, .42);
         if(Math.random() < reverseChance){
           if(pushEnemyBack(e, 18 + this.tower.level * 2.6)){
@@ -5048,7 +5050,7 @@ class Bullet{
       const crit = Math.random() < critChance;
       const bossMul = this.target.stageBoss ? (this.tower.def.bossMul || 1.35) : 1;
       const finalDmg = (crit ? dmg * this.st.critMul : dmg) * bossMul;
-      this.target.damage(finalDmg,'starengine',this.color);
+      this.target.damage(finalDmg,'starengine',this.color,this.st.gold);
       if(crit){
         floatText(this.target.x, this.target.y - this.target.size - 10, this.target.stageBoss ? '치명타' : '치명타', '#fef3c7');
         ring(this.target.x, this.target.y, 50 + this.tower.level * 3, '#f8fafc');
@@ -5057,7 +5059,7 @@ class Bullet{
       const explodeChance = clamp((this.tower.def.explodeChance || 0.1) + this.st.burstChance + this.tower.level * 0.015, 0, 0.72);
       if(Math.random() < explodeChance){
         const blast = dmg * (this.target.stageBoss ? 4.8 : 3.8);
-        areaDamage(this.target.x, this.target.y, this.tower.def.explodeRadius || 126, blast, 'starengine_burst', '#fff8dc');
+        areaDamage(this.target.x, this.target.y, this.tower.def.explodeRadius || 126, blast, 'starengine_burst', '#fff8dc', this.st.gold);
         burst(this.target.x, this.target.y, '#fff8dc', 56, 76);
         ring(this.target.x, this.target.y, this.tower.def.explodeRadius || 126, '#fff8dc');
         impactLabel(this.target.x, this.target.y - this.target.size - 24, this.target.stageBoss ? '보스 폭발' : '성흔 폭발', '#fff7cc', 20, 88);
@@ -5065,7 +5067,7 @@ class Bullet{
         flash = Math.max(flash, .16);
       }
     }else{
-      this.target.damage(dmg,id,this.color);
+      this.target.damage(dmg,id,this.color,this.st.gold);
     }
     impactEffect(id,this.target.x,this.target.y,this.color,this.tower.level);
     playTowerSfx(id, id==='starengine' ? 1.08 : 1);
@@ -5083,7 +5085,7 @@ function fireBeam(tower,target,st){
   const beamDamage = st.dmg * (overcharge ? 1.34 : 1);
   for(let i=0;i<enemies.length;i++){
     const e = enemies[i];
-    if(!e.dead && pointSegSq(e.x,e.y,p.x,p.y,target.x,target.y)<widthSq) e.damage(beamDamage,'laser',color);
+    if(!e.dead && pointSegSq(e.x,e.y,p.x,p.y,target.x,target.y)<widthSq) e.damage(beamDamage,'laser',color,st.gold);
   }
   burst(target.x,target.y,color,overcharge?22:10,overcharge?44:25);
   if(overcharge){
@@ -5301,7 +5303,8 @@ function blackholePulse(tower,target,st){
     color,
     life: 21,
     maxLife: 21,
-    tick: 0
+    tick: 0,
+    rewardBonus: st.gold || 0
   });
   pushBeam(p.x,p.y,mx,my,color,9,'voidShot',1.15);
   ring(hx,hy,28 + tower.level * 1.8,color);
@@ -5310,22 +5313,22 @@ function blackholePulse(tower,target,st){
   playTowerSfx('void', .82);
 }
 
-function areaDamage(x,y,r,dmg,source,color){
+function areaDamage(x,y,r,dmg,source,color,rewardBonus=0){
   const rr = r * r;
   for(let i=0;i<enemies.length;i++){
     const e = enemies[i];
-    if(!e.dead && distSq(e.x,e.y,x,y)<=rr) e.damage(dmg,source,color);
+    if(!e.dead && distSq(e.x,e.y,x,y)<=rr) e.damage(dmg,source,color,rewardBonus);
   }
   ring(x,y,r,color);
 }
-function chain(start,dmg,count,color,markAmp=0){
+function chain(start,dmg,count,color,markAmp=0,rewardBonus=0){
   let cur=start;
   const stamp = ++chainHitStamp;
   if(chainHitStamp > 1000000000) chainHitStamp = 1;
   const maxChainDistSq = 115 * 115;
   for(let i=0;i<count;i++){
     if(!cur||cur._chainHitStamp===stamp)break;
-    cur._chainHitStamp=stamp;cur.damage(dmg*(1-i*.16)*(1+markAmp),'storm',color);cur.slow=Math.max(cur.slow,25);
+    cur._chainHitStamp=stamp;cur.damage(dmg*(1-i*.16)*(1+markAmp),'storm',color,rewardBonus);cur.slow=Math.max(cur.slow,25);
     let next=null,best=maxChainDistSq;
     for(let j=0;j<enemies.length;j++){
       const e = enemies[j];
@@ -6772,20 +6775,20 @@ function triggerTreasureImpact(enemy){
 }
 function triggerSolarNova(tower,target,st,dmg){
   const r=(76+tower.level*4)*(1+st.area);
-  areaDamage(target.x,target.y,r,dmg*.55,'solar_nova','#fb923c');
+  areaDamage(target.x,target.y,r,dmg*.55,'solar_nova','#fb923c',st.gold);
   burst(target.x,target.y,'#fb923c',9,18);
   spawnImpactSparks(target.x,target.y,'#fdba74',10,1.15);
   impactLabel(target.x,target.y-target.size-16,'NOVA SPLASH','#fed7aa',15,62);
   shake=Math.max(shake,6);
 }
 function triggerFrostShatter(tower,target,st,dmg){
-  areaDamage(target.x,target.y,42+tower.level*2.0,dmg*.42,'frost_shatter','#bfdbfe');
+  areaDamage(target.x,target.y,42+tower.level*2.0,dmg*.42,'frost_shatter','#bfdbfe',st.gold);
   burst(target.x,target.y,'#bfdbfe',7,12); spawnImpactShards(target.x,target.y,'#dbeafe',9);
   impactLabel(target.x,target.y-target.size-16,'SHATTER','#dbeafe',14,60);
   flash=Math.max(flash,.045);
 }
 function triggerStormOverload(tower,target,st,dmg,chainCount){
-  chain(target,dmg*.52,Math.max(2,Math.floor(chainCount*.7)),tower.def.color,st.markAmp);
+  chain(target,dmg*.52,Math.max(2,Math.floor(chainCount*.7)),tower.def.color,st.markAmp,st.gold);
   ring(target.x,target.y,34+tower.level*1.0,tower.def.color);
   spawnImpactSparks(target.x,target.y,'#fde047',11,1.1);
   impactLabel(target.x,target.y-target.size-16,'OVERLOAD','#fde047',14,60);
@@ -6809,7 +6812,7 @@ function triggerSporeCloud(tower,target,st,dmg){
 }
 function triggerVoidCollapse(tower,x,y,st){
   const r=58+tower.level*2.2;
-  areaDamage(x,y,r,st.dmg*.48,'void_collapse',tower.def.color);
+  areaDamage(x,y,r,st.dmg*.48,'void_collapse',tower.def.color,st.gold);
   burst(x,y,tower.def.color,18,34);
   ring(x,y,r,tower.def.color);
   impactLabel(x,y-18,'COLLAPSE','#d8b4fe',14,62);
