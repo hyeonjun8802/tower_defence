@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "basis": "runtime_ENEMY_BASE_MAP_plus_stage_severity",
+  "base_formula": "max_hp = floor(295 * base_hp * (1 + wave * 0.30 + theme * 0.38) * hp_scale)",
+  "speed_formula": "runtime_speed = base_speed * stage_speed_multiplier * (1 + wave * 0.032 + theme * 0.028)",
+  "stage_boss_formula": "boss_hp_scale = stage_boss_def.hpMul * commercial_boss_ease * stage_boss_multiplier",
+  "base_enemies": {
+    "grunt": {"base_hp": 1.62, "base_speed": 1.08, "size": 13, "reward": 0.50, "exp": 3, "armor": 0.00},
+    "runner": {"base_hp": 1.05, "base_speed": 1.82, "size": 11, "reward": 0.50, "exp": 3, "armor": 0.00},
+    "brute": {"base_hp": 4.10, "base_speed": 0.84, "size": 18, "reward": 0.90, "exp": 5, "armor": 0.23},
+    "regen": {"base_hp": 2.65, "base_speed": 0.98, "size": 15, "reward": 0.80, "exp": 5, "armor": 0.00},
+    "treasure": {"base_hp": 3.75, "base_speed": 1.00, "size": 18, "reward": 2.20, "exp": 8, "armor": 0.00},
+    "boss": {"base_hp": 16.00, "base_speed": 0.58, "size": 30, "reward": 3.50, "exp": 18, "armor": 0.18},
+    "midboss": {"base_hp": 21.00, "base_speed": 0.62, "size": 34, "reward": 5.00, "exp": 26, "armor": 0.22},
+    "finalboss": {"base_hp": 28.00, "base_speed": 0.64, "size": 41, "reward": 8.00, "exp": 38, "armor": 0.26}
+  },
+  "commercial_boss_balance": {
+    "stage_12_final_example": "295 * 28 * (1 + 10 * 0.30 + 6 * 0.38) * 1.288 * 1.56",
+    "stage_12_final_base_def_hp_mul": 3.70,
+    "stage_12_final_commercial_ease": 0.348,
+    "stage_12_final_pre_stage_hp_mul": 1.288,
+    "stage_12_final_stage_boss_multiplier": 1.56
+  }
+}

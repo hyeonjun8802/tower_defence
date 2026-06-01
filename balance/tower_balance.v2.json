@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "basis": "runtime_PLANETS_10_towers",
+  "first_clear_excludes_hidden_starengine": true,
+  "towers": [
+    {"type": 0, "id": "solar", "name": "Solar", "role": "aoe_boss_burn", "base_damage": 46, "base_cooldown": 34, "base_range": 132, "unlock": "stage_3_clear"},
+    {"type": 1, "id": "frost", "name": "Frost", "role": "slow_freeze", "base_damage": 29, "base_cooldown": 30, "base_range": 145, "unlock": "stage_2_clear"},
+    {"type": 2, "id": "storm", "name": "Storm", "role": "chain_clear", "base_damage": 35, "base_cooldown": 32, "base_range": 128, "unlock": "starter"},
+    {"type": 3, "id": "toxic", "name": "Bio", "role": "dot_regen_cut", "base_damage": 26, "base_cooldown": 27, "base_range": 126, "unlock": "stage_4_clear"},
+    {"type": 4, "id": "void", "name": "Blackhole", "role": "crowd_control", "base_damage": 21, "base_cooldown": 46, "base_range": 122, "unlock": "stage_1_clear"},
+    {"type": 5, "id": "laser", "name": "Photon", "role": "piercing_line", "base_damage": 56, "base_cooldown": 44, "base_range": 162, "unlock": "starter"},
+    {"type": 6, "id": "smog", "name": "Smog", "role": "weaken_reverse", "base_damage": 30, "base_cooldown": 31, "base_range": 138, "unlock": "stage_5_clear"},
+    {"type": 7, "id": "crystal", "name": "Crystal", "role": "charge_resonance", "base_damage": 33, "base_cooldown": 33, "base_range": 144, "unlock": "stage_6_clear"},
+    {"type": 8, "id": "mecha", "name": "Mecha", "role": "shield_dismantle", "base_damage": 41, "base_cooldown": 38, "base_range": 136, "unlock": "stage_7_clear"},
+    {"type": 9, "id": "starengine", "name": "Star Engine", "role": "hidden_finisher", "base_damage": 205, "base_cooldown": 20, "base_range": 220, "unlock": "all_base_towers_level_5_fusion"}
+  ],
+  "validation_metrics": ["single_dps", "effective_dps", "control_value", "boss_value", "plate_dependency", "research_dependency", "unlock_efficiency", "power_creep", "selection_monopoly"]
+}

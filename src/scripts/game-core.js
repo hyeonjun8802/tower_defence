@@ -340,6 +340,25 @@ const STAGE_MAP_DEFS = [
   {stage:12, key:'throne', name:'RIFT THRONE', ko:'균열 왕좌', theme:6, color:'#ef4444', constellation:'draco', mood:'은하 중심핵 전초전 · 최종 패턴 복합전'}
 ];
 
+
+
+const COMMERCIAL_STAGE_BALANCE = [{"stage":1,"key":"cosmic","name":"COSMIC VOID","concept":"intro_damage","general_hp_multiplier":0.72,"general_speed_multiplier":0.99,"wave_count_multiplier":0.64,"boss_multiplier":0.92,"reward_multiplier":1.06,"plate_budget":{"amp":1,"coil":1,"lens":0,"mine":0,"rift":0},"forbidden_budget":0,"minimum_usable_placements":24,"target_winrate":0.88},{"stage":2,"key":"frost","name":"FROST EXPANSE","concept":"speed_control","general_hp_multiplier":0.82,"general_speed_multiplier":1.0,"wave_count_multiplier":0.7,"boss_multiplier":0.98,"reward_multiplier":1.1,"plate_budget":{"amp":0,"coil":1,"lens":1,"mine":0,"rift":0},"forbidden_budget":1,"minimum_usable_placements":23,"target_winrate":0.83},{"stage":3,"key":"lava","name":"LAVA NEBULA","concept":"armor_break","general_hp_multiplier":0.96,"general_speed_multiplier":1.01,"wave_count_multiplier":0.78,"boss_multiplier":1.05,"reward_multiplier":1.14,"plate_budget":{"amp":2,"coil":0,"lens":0,"mine":0,"rift":1},"forbidden_budget":1,"minimum_usable_placements":22,"target_winrate":0.76},{"stage":4,"key":"jungle","name":"JUNGLE CORE","concept":"regen_cut","general_hp_multiplier":1.08,"general_speed_multiplier":1.02,"wave_count_multiplier":0.84,"boss_multiplier":1.1,"reward_multiplier":1.18,"plate_budget":{"amp":1,"coil":1,"lens":0,"mine":1,"rift":0},"forbidden_budget":2,"minimum_usable_placements":21,"target_winrate":0.7},{"stage":5,"key":"smog","name":"SMOG WASTELAND","concept":"stealth_weaken","general_hp_multiplier":1.24,"general_speed_multiplier":1.03,"wave_count_multiplier":0.88,"boss_multiplier":1.16,"reward_multiplier":1.24,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":1,"rift":0},"forbidden_budget":2,"minimum_usable_placements":20,"target_winrate":0.65},{"stage":6,"key":"crystal","name":"CRYSTAL NEBULA","concept":"resonance_charge","general_hp_multiplier":1.4,"general_speed_multiplier":1.04,"wave_count_multiplier":0.92,"boss_multiplier":1.22,"reward_multiplier":1.3,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":1,"rift":1},"forbidden_budget":2,"minimum_usable_placements":20,"target_winrate":0.6},{"stage":7,"key":"machine","name":"MACHINE CORE","concept":"shield_dismantle","general_hp_multiplier":1.58,"general_speed_multiplier":1.05,"wave_count_multiplier":0.96,"boss_multiplier":1.26,"reward_multiplier":1.38,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":0,"rift":1},"forbidden_budget":3,"minimum_usable_placements":19,"target_winrate":0.56},{"stage":8,"key":"gravity","name":"GRAVITY MAUSOLEUM","concept":"crowd_control","general_hp_multiplier":2.02,"general_speed_multiplier":1.07,"wave_count_multiplier":1.02,"boss_multiplier":1.36,"reward_multiplier":1.48,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":0,"rift":1},"forbidden_budget":3,"minimum_usable_placements":18,"target_winrate":0.5},{"stage":9,"key":"thunder","name":"THUNDER CORRIDOR","concept":"speed_pressure","general_hp_multiplier":2.14,"general_speed_multiplier":1.08,"wave_count_multiplier":1.05,"boss_multiplier":1.42,"reward_multiplier":1.58,"plate_budget":{"amp":1,"coil":2,"lens":1,"mine":0,"rift":1},"forbidden_budget":3,"minimum_usable_placements":18,"target_winrate":0.46},{"stage":10,"key":"time","name":"TIME SHARDS","concept":"echo_split","general_hp_multiplier":2.22,"general_speed_multiplier":1.09,"wave_count_multiplier":1.08,"boss_multiplier":1.46,"reward_multiplier":1.68,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":0,"rift":2},"forbidden_budget":4,"minimum_usable_placements":17,"target_winrate":0.42},{"stage":11,"key":"silent","name":"SILENT CONSTELLATION","concept":"limited_info","general_hp_multiplier":2.28,"general_speed_multiplier":1.1,"wave_count_multiplier":1.1,"boss_multiplier":1.5,"reward_multiplier":1.8,"plate_budget":{"amp":1,"coil":1,"lens":2,"mine":0,"rift":1},"forbidden_budget":4,"minimum_usable_placements":17,"target_winrate":0.38},{"stage":12,"key":"throne","name":"RIFT THRONE","concept":"final_hybrid","general_hp_multiplier":2.36,"general_speed_multiplier":1.11,"wave_count_multiplier":1.12,"boss_multiplier":1.56,"reward_multiplier":1.92,"plate_budget":{"amp":2,"coil":1,"lens":1,"mine":0,"rift":2},"forbidden_budget":5,"minimum_usable_placements":16,"target_winrate":0.34}];
+const COMMERCIAL_STAGE_BALANCE_BY_STAGE = Object.freeze(Object.fromEntries(COMMERCIAL_STAGE_BALANCE.map(row => [Number(row.stage), Object.freeze(row)])));
+const COMMERCIAL_STAGE_BALANCE_DEFAULT = Object.freeze({
+  general_hp_multiplier:1,
+  general_speed_multiplier:1,
+  wave_count_multiplier:1,
+  boss_multiplier:1,
+  reward_multiplier:1,
+  plate_budget:{amp:1,coil:1,lens:1,mine:0,rift:0},
+  forbidden_budget:0,
+  minimum_usable_placements:18
+});
+function getCommercialStageBalance(stageNo){
+  const n = clamp(Number(stageNo || 1), 1, STAGE_MAP_DEFS.length);
+  return COMMERCIAL_STAGE_BALANCE_BY_STAGE[n] || COMMERCIAL_STAGE_BALANCE_DEFAULT;
+}
+
 const STAGE_PRESENTATION = {
   1:{risk:'LOW', tags:['AURORA','VOID MARK','ENTRY'], note:'기본 화력을 익히며 첫 균열을 정화합니다.'},
   2:{risk:'MEDIUM', tags:['BLIZZARD','FREEZE','CONTROL'], note:'감속과 제어를 익히며 빠른 적에 대응합니다.'},
@@ -439,85 +458,19 @@ const STAGE_BOSS_DEFS = {
   }
 };
 
-const LATE_STAGE_BOSS_BALANCE = {
-  /* v209 boss balance pass
-     - Final bosses were too punishing because HP, armor, core damage, and skill cadence all stacked.
-     - Normal waves are untouched. Mid bosses get only a light late-stage trim.
-     - Final bosses get a clearer reduction curve, especially stages 8-12. */
-  1: {
-    mid:   { hp:.96, armor:-.01, speed:.995, interval:1.04, core:0 },
-    final: { hp:.90, armor:-.03, speed:.98,  interval:1.10, core:-1 }
-  },
-  2: {
-    mid:   { hp:.94, armor:-.015, speed:.99, interval:1.06, core:0 },
-    final: { hp:.88, armor:-.035, speed:.975, interval:1.12, core:-1 }
-  },
-  3: {
-    mid:   { hp:.92, armor:-.02, speed:.99, interval:1.08, core:0 },
-    final: { hp:.86, armor:-.045, speed:.965, interval:1.14, core:-1 }
-  },
-  4: {
-    mid:   { hp:.90, armor:-.025, speed:.985, interval:1.10, core:0 },
-    final: { hp:.84, armor:-.05,  speed:.96,  interval:1.16, core:-1 }
-  },
-  5: {
-    mid:   { hp:.88, armor:-.03, speed:.98, interval:1.12, core:-1 },
-    final: { hp:.80, armor:-.06, speed:.955, interval:1.20, core:-1 }
-  },
-  6: {
-    mid:   { hp:.84, armor:-.04, speed:.98, interval:1.14, core:-1 },
-    final: { hp:.76, armor:-.07, speed:.95,  interval:1.22, core:-1 }
-  },
-  7: {
-    mid:   { hp:.80, armor:-.06, speed:.97, interval:1.16, core:-1 },
-    final: { hp:.72, armor:-.09, speed:.945, interval:1.26, core:-2 }
-  },
-  8: {
-    mid:   { hp:.80, armor:-.06, speed:.97, interval:1.18, core:-1 },
-    final: { hp:.68, armor:-.10, speed:.94, interval:1.28, core:-2 }
-  },
-  9: {
-    mid:   { hp:.78, armor:-.065, speed:.965, interval:1.20, core:-1 },
-    final: { hp:.66, armor:-.11,  speed:.935, interval:1.30, core:-2 }
-  },
-  10: {
-    mid:   { hp:.76, armor:-.07, speed:.965, interval:1.22, core:-1 },
-    final: { hp:.64, armor:-.12, speed:.93,  interval:1.32, core:-2 }
-  },
-  11: {
-    mid:   { hp:.74, armor:-.08, speed:.96, interval:1.24, core:-1 },
-    final: { hp:.62, armor:-.13, speed:.925, interval:1.34, core:-3 }
-  },
-  12: {
-    mid:   { hp:.72, armor:-.09, speed:.955, interval:1.26, core:-1 },
-    final: { hp:.60, armor:-.15, speed:.92,  interval:1.38, core:-3 }
-  }
-};
-const BOSS_GLOBAL_EASE_V210 = {
-  /* v210: user feedback — boss difficulty is still too high.
-     Apply a broad boss-only reduction after the existing stage table.
-     Normal enemies, tower stats, income, and wave rules are untouched. */
-  mid:   { hp:.72, armor:-.055, speed:.94, interval:1.28, core:-1 },
-  final: { hp:.58, armor:-.115, speed:.90, interval:1.48, core:-2 }
-};
+
+const COMMERCIAL_BOSS_BALANCE = Object.freeze({
+  /* Single-axis boss easing from balance_package_v1.
+     Base stage boss definitions stay concept-specific; only HP scale is eased here.
+     Stage pressure is applied later through COMMERCIAL_STAGE_BALANCE.boss_multiplier. */
+  hpEase: 0.348
+});
 
 function applyLateStageBossBalance(stageNo, tier, boss){
-  const stage = Number(stageNo) || 1;
-  const key = tier === 'final' ? 'final' : 'mid';
-  const tune = LATE_STAGE_BOSS_BALANCE[stage]?.[key] || {hp:1, armor:0, speed:1, interval:1, core:0};
-  const global = BOSS_GLOBAL_EASE_V210[key] || BOSS_GLOBAL_EASE_V210.mid;
-  const hpFactor = tune.hp * global.hp;
-  const speedFactor = tune.speed * global.speed;
-  const intervalFactor = tune.interval * global.interval;
-  const armorDelta = tune.armor + global.armor;
-  const coreDelta = tune.core + global.core;
+  const baseHpMul = Number(boss?.hpMul || 1);
   return {
     ...boss,
-    hpMul: Math.max(.72, Number((boss.hpMul * hpFactor).toFixed(3))),
-    speedMul: Number((boss.speedMul * speedFactor).toFixed(3)),
-    armor: Math.max(0, Number(((boss.armor || 0) + armorDelta).toFixed(3))),
-    interval: Math.round((boss.interval || 140) * intervalFactor),
-    coreDamage: Math.max(1, Math.round((boss.coreDamage || 1) + coreDelta))
+    hpMul: Math.max(.34, Number((baseHpMul * COMMERCIAL_BOSS_BALANCE.hpEase).toFixed(3)))
   };
 }
 
@@ -1837,28 +1790,28 @@ function updateAndDrawFieldStars(raw){
 
 
 const PLANETS = [
-  {id:'solar', name:'솔라 행성', role:'보스 딜러 / 광역 연소', identity:'합류점에 쌓인 적을 태우고 보스에게 폭발 피해를 누적하는 화력 핵심입니다.', color:'#fb923c', range:132, dmg:48, cd:34, kind:'splash', cost:90, card:'광역 폭발 · 연소', tags:['광역','연소','합류점']},
-  {id:'frost', name:'프로스트 행성', role:'감속 / 제어', identity:'빠른 적과 보스의 진행을 늦춰 다른 행성이 오래 공격할 시간을 벌어줍니다.', color:'#67e8f9', range:145, dmg:30, cd:30, kind:'slow', cost:95, card:'빙결 감속 · 제어', tags:['감속','빙결','제어']},
-  {id:'storm', name:'스톰 행성', role:'연쇄 딜러 / 다중 타깃', identity:'적이 이어져 들어오는 라인에서 번개가 튕기며 웨이브 정리에 강합니다.', color:'#facc15', range:128, dmg:36, cd:32, kind:'chain', cost:100, card:'연쇄 번개 · 장갑 파괴', tags:['연쇄','장갑파괴','다중경로']},
-  {id:'toxic', name:'바이오 행성', role:'지속 피해 / 회복 억제', identity:'체력이 높은 적에게 독성 피해를 누적해 장기전과 보스전 안정성을 올립니다.', color:'#22c55e', range:126, dmg:24, cd:27, kind:'poison', cost:100, card:'독성 침식 · 지속 피해', tags:['독','지속피해','보스']},
-  {id:'void', name:'블랙홀 행성', role:'몰이 / 군중 제어', identity:'적을 끌어당겨 광역 타워의 효율을 높이고 코어 접근 시간을 늦춥니다.', color:'#c084fc', range:122, dmg:22, cd:48, kind:'gravity', cost:110, card:'소형 블랙홀 · 구속', tags:['끌어당김','디버프','군중제어']},
-  {id:'laser', name:'광자 행성', role:'관통 저격 / 직선 화력', identity:'긴 직선 경로에서 여러 적을 한 번에 관통해 후방 화력을 담당합니다.', color:'#a78bfa', range:165, dmg:58, cd:44, kind:'beam', cost:120, card:'고출력 광자 빔', tags:['관통','저격','직선']},
-  {id:'smog', name:'스모그 행성', role:'약화 / 장판 제어', identity:'매연 장막으로 적을 약화시키고 둔화시켜 후반 압박을 안정적으로 낮춥니다.', color:'#9cab62', range:138, dmg:28, cd:31, kind:'poison', cost:115, card:'정화 장막 · 응축/역류', tags:['정화','장판제어','역류']},
-  {id:'crystal', name:'크리스탈 행성', role:'축전 / 공명 설계', identity:'초과 피해를 저장하고 장판 공명을 만들어 배치 설계의 보상을 키웁니다.', color:'#c084fc', range:142, dmg:34, cd:33, kind:'crystal', cost:125, card:'축전 · 프리즘 링크', tags:['축전','장판설계','공명']},
-  {id:'mecha', name:'메카 행성', role:'실드 해체 / 후반 안정성', identity:'장갑과 실드를 해체하고 위성포/방벽으로 최종 성역 압박을 버팁니다.', color:'#60a5fa', range:134, dmg:42, cd:39, kind:'mecha', cost:135, card:'실드 해체 · 방어망', tags:['실드해체','위성','방벽']},
-  {id:'starengine', name:'히든 스타 엔진', role:'최종 융합 병기', identity:'기본 9종의 고레벨 융합으로 열리는 초고출력 치명타 코어입니다.', color:'#f8fafc', range:230, dmg:220, cd:18, cost:0, kind:'crit', card:'히든 · 초고출력 크리티컬 코어', tags:['히든','치명타','융합','최종병기'], critChance:.68, critMul:3.6, explodeChance:.26, explodeRadius:126, bossMul:1.35}
+  {id:'solar', name:'솔라 행성', role:'보스 딜러 / 광역 연소', identity:'합류점에 쌓인 적을 태우고 보스에게 폭발 피해를 누적하는 화력 핵심입니다.', color:'#fb923c', range:132, dmg:46, cd:34, kind:'splash', cost:90, card:'광역 폭발 · 연소', tags:['광역','연소','합류점']},
+  {id:'frost', name:'프로스트 행성', role:'감속 / 제어', identity:'빠른 적과 보스의 진행을 늦춰 다른 행성이 오래 공격할 시간을 벌어줍니다.', color:'#67e8f9', range:145, dmg:29, cd:30, kind:'slow', cost:95, card:'빙결 감속 · 제어', tags:['감속','빙결','제어']},
+  {id:'storm', name:'스톰 행성', role:'연쇄 딜러 / 다중 타깃', identity:'적이 이어져 들어오는 라인에서 번개가 튕기며 웨이브 정리에 강합니다.', color:'#facc15', range:128, dmg:35, cd:32, kind:'chain', cost:100, card:'연쇄 번개 · 장갑 파괴', tags:['연쇄','장갑파괴','다중경로']},
+  {id:'toxic', name:'바이오 행성', role:'지속 피해 / 회복 억제', identity:'체력이 높은 적에게 독성 피해를 누적해 장기전과 보스전 안정성을 올립니다.', color:'#22c55e', range:126, dmg:26, cd:27, kind:'poison', cost:100, card:'독성 침식 · 지속 피해', tags:['독','지속피해','보스']},
+  {id:'void', name:'블랙홀 행성', role:'몰이 / 군중 제어', identity:'적을 끌어당겨 광역 타워의 효율을 높이고 코어 접근 시간을 늦춥니다.', color:'#c084fc', range:122, dmg:21, cd:46, kind:'gravity', cost:110, card:'소형 블랙홀 · 구속', tags:['끌어당김','디버프','군중제어']},
+  {id:'laser', name:'광자 행성', role:'관통 저격 / 직선 화력', identity:'긴 직선 경로에서 여러 적을 한 번에 관통해 후방 화력을 담당합니다.', color:'#a78bfa', range:162, dmg:56, cd:44, kind:'beam', cost:120, card:'고출력 광자 빔', tags:['관통','저격','직선']},
+  {id:'smog', name:'스모그 행성', role:'약화 / 장판 제어', identity:'매연 장막으로 적을 약화시키고 둔화시켜 후반 압박을 안정적으로 낮춥니다.', color:'#9cab62', range:138, dmg:30, cd:31, kind:'poison', cost:115, card:'정화 장막 · 응축/역류', tags:['정화','장판제어','역류']},
+  {id:'crystal', name:'크리스탈 행성', role:'축전 / 공명 설계', identity:'초과 피해를 저장하고 장판 공명을 만들어 배치 설계의 보상을 키웁니다.', color:'#c084fc', range:144, dmg:33, cd:33, kind:'crystal', cost:125, card:'축전 · 프리즘 링크', tags:['축전','장판설계','공명']},
+  {id:'mecha', name:'메카 행성', role:'실드 해체 / 후반 안정성', identity:'장갑과 실드를 해체하고 위성포/방벽으로 최종 성역 압박을 버팁니다.', color:'#60a5fa', range:136, dmg:41, cd:38, kind:'mecha', cost:135, card:'실드 해체 · 방어망', tags:['실드해체','위성','방벽']},
+  {id:'starengine', name:'히든 스타 엔진', role:'최종 융합 병기', identity:'기본 9종의 고레벨 융합으로 열리는 초고출력 치명타 코어입니다.', color:'#f8fafc', range:220, dmg:205, cd:20, cost:0, kind:'crit', card:'히든 · 초고출력 크리티컬 코어', tags:['히든','치명타','융합','최종병기'], critChance:.68, critMul:3.6, explodeChance:.26, explodeRadius:126, bossMul:1.35}
 ];
 
 
 const TERRAIN = {
-  empty:{name:'공허판', desc:'출력 손실: 피해 -38%, 공속 저하', color:'rgba(148,163,184,.055)'},
+  empty:{name:'공허판', desc:'출력 손실: 피해 -14%, 공격 주기 +6%', color:'rgba(148,163,184,.055)'},
   path:{name:'균열항로', desc:'적 이동 경로. 배치 불가', color:'rgba(56,189,248,.08)'},
   blocked:{name:'운석폐허', desc:'배치 불가', color:'rgba(15,23,42,.70)'},
-  amp:{name:'증폭성운', desc:'핵심 장판: 피해 +65%', color:'rgba(251,191,36,.22)'},
-  coil:{name:'가속궤도', desc:'핵심 장판: 공격속도 대폭 증가', color:'rgba(56,189,248,.21)'},
-  lens:{name:'중력렌즈', desc:'핵심 장판: 사거리 +50', color:'rgba(125,211,252,.21)'},
-  mine:{name:'수정광맥', desc:'보상 장판: 소량 추가 보상', color:'rgba(34,197,94,.18)'},
-  rift:{name:'불안정균열', desc:'위험 장판: 피해 +95%, 과열', color:'rgba(244,114,182,.20)'}
+  amp:{name:'증폭성운', desc:'핵심 장판: 피해 +38%', color:'rgba(251,191,36,.22)'},
+  coil:{name:'가속궤도', desc:'핵심 장판: 공격 주기 -30%', color:'rgba(56,189,248,.21)'},
+  lens:{name:'중력렌즈', desc:'핵심 장판: 사거리 +38', color:'rgba(125,211,252,.21)'},
+  mine:{name:'수정광맥', desc:'보상 장판: 보상 +16%', color:'rgba(34,197,94,.18)'},
+  rift:{name:'불안정균열', desc:'위험 장판: 피해 +62%, 과열', color:'rgba(244,114,182,.20)'}
 };
 
 function randomPlateAffinityType(){
@@ -1985,41 +1938,54 @@ function towerSkillCompactText(t){
 }
 
 const GLOBAL_UPGRADE_MAX_LEVEL = 15;
+const COMMERCIAL_RESEARCH_CURVES = {"global_damage":{"unlock_stage":1,"max":12,"damage_curve":[0.06,0.06,0.06,0.05,0.05,0.05,0.04,0.04,0.04,0.03,0.03,0.03]},"global_crit":{"unlock_stage":2,"max":10,"crit_chance_curve":[0.015,0.015,0.015,0.015,0.01,0.01,0.01,0.01,0.008,0.008],"crit_multiplier_curve":[0.04,0.04,0.04,0.04,0.03,0.03,0.03,0.03,0.025,0.025]},"global_speed":{"unlock_stage":3,"max":10,"fire_rate_curve":[0.04,0.04,0.03,0.03,0.03,0.02,0.02,0.02,0.02,0.01]},"global_boss":{"unlock_stage":4,"max":10,"boss_damage_curve":[0.05,0.05,0.05,0.05,0.04,0.04,0.04,0.04,0.03,0.03],"armor_break_curve":[0.012,0.012,0.012,0.012,0.008,0.008,0.008,0.008,0.006,0.006]},"global_range":{"unlock_stage":5,"max":8,"range_curve":[5,5,5,5,4,4,4,4]},"global_plate":{"unlock_stage":6,"max":8,"plate_damage_curve":[0.05,0.05,0.05,0.04,0.04,0.04,0.03,0.03],"plate_fire_rate_curve":[0.03,0.03,0.03,0.02,0.02,0.02,0.015,0.015]},"global_economy":{"unlock_stage":7,"max":8,"reward_curve":[0.04,0.04,0.04,0.04,0.03,0.03,0.03,0.03]}};
+function sumCommercialCurve(curve, level){
+  const n = Math.max(0, Math.floor(Number(level || 0)));
+  if(!Array.isArray(curve) || n <= 0) return 0;
+  let total = 0;
+  const max = Math.min(n, curve.length);
+  for(let i=0;i<max;i++) total += Number(curve[i] || 0);
+  return total;
+}
+function commercialResearchValue(id, field, level){
+  const row = COMMERCIAL_RESEARCH_CURVES[id];
+  return row ? sumCommercialCurve(row[field], level) : 0;
+}
 const GLOBAL_UPGRADE_CATALOG = [
   {
     id:'global_damage', name:'공통 화력 증폭', type:'화력', color:'#fb923c', icon:'global_damage',
     desc:'배치된 모든 행성과 앞으로 소환될 행성의 기본 피해를 올립니다. 어느 조합에서도 가장 안정적인 선택입니다.',
-    text:l=>`모든 행성 공격력 +${fmtPct2(.10*l)}`
+    text:l=>`모든 행성 공격력 +${fmtPct2(commercialResearchValue('global_damage','damage_curve',l))}`
   },
   {
     id:'global_speed', name:'공격속도 동기화', type:'속도', color:'#67e8f9', icon:'global_speed',
     desc:'모든 행성의 공격 주기를 줄입니다. 감속/독/연쇄처럼 자주 때릴수록 강한 조합에서 효율이 큽니다.',
-    text:l=>`모든 행성 공격속도 +${fmtPct2(.08*l)}`
+    text:l=>`모든 행성 공격속도 +${fmtPct2(commercialResearchValue('global_speed','fire_rate_curve',l))}`
   },
   {
     id:'global_crit', name:'치명타 매트릭스', type:'폭발력', color:'#fde68a', icon:'global_crit',
     desc:'전체 화력에 치명타 기대값을 추가합니다. 보스 체력이 두꺼워지는 중후반에 가치가 커집니다.',
-    text:l=>`치명 확률 +${fmtPct2(.035*l)} · 치명 배율 +${fmtPct2(.08*l)}`
+    text:l=>`치명 확률 +${fmtPct2(commercialResearchValue('global_crit','crit_chance_curve',l))} · 치명 배율 +${fmtPct2(commercialResearchValue('global_crit','crit_multiplier_curve',l))}`
   },
   {
     id:'global_range', name:'사거리 네트워크', type:'배치', color:'#a78bfa', icon:'global_range',
     desc:'모든 행성의 사거리를 늘려 같은 타워가 더 오래 공격하게 만듭니다. 배치 실수 보정과 병목 커버에 좋습니다.',
-    text:l=>`모든 행성 사거리 +${fmt2(8*l)}`
+    text:l=>`모든 행성 사거리 +${fmt2(commercialResearchValue('global_range','range_curve',l))}`
   },
   {
     id:'global_plate', name:'장판 증폭 회로', type:'장판', color:'#22c55e', icon:'global_plate',
     desc:'증폭성운, 가속궤도, 중력렌즈, 수정광맥, 균열 장판 위 행성을 추가 강화합니다. 이 게임의 핵심 전략 업그레이드입니다.',
-    text:l=>`장판 위 피해 +${fmtPct2(.08*l)} · 장판 위 공격속도 +${fmtPct2(.05*l)}`
+    text:l=>`장판 위 피해 +${fmtPct2(commercialResearchValue('global_plate','plate_damage_curve',l))} · 장판 위 공격속도 +${fmtPct2(commercialResearchValue('global_plate','plate_fire_rate_curve',l))}`
   },
   {
     id:'global_boss', name:'보스 해체 프로토콜', type:'보스', color:'#f87171', icon:'global_boss',
     desc:'보스와 장갑 적에게 들어가는 실제 피해를 올립니다. 5성역 이후 보스전이 막힐 때 우선순위가 높습니다.',
-    text:l=>`보스 피해 +${fmtPct2(.09*l)} · 방어 관통 +${fmtPct2(.02*l)}`
+    text:l=>`보스 피해 +${fmtPct2(commercialResearchValue('global_boss','boss_damage_curve',l))} · 방어 관통 +${fmtPct2(commercialResearchValue('global_boss','armor_break_curve',l))}`
   },
   {
     id:'global_economy', name:'전장 회수 시스템', type:'경제', color:'#facc15', icon:'global_economy',
     desc:'처치 보상을 늘려 소환과 합성 속도를 빠르게 합니다. 초중반에 집으면 후반 성장 곡선이 좋아집니다.',
-    text:l=>`처치 보상 +${fmtPct2(.06*l)}`
+    text:l=>`처치 보상 +${fmtPct2(commercialResearchValue('global_economy','reward_curve',l))}`
   }
 ];
 
@@ -2039,16 +2005,16 @@ function getGlobalUpgradeStats(){
   const bossLv = Math.max(0, Number(levels.global_boss || 0));
   const economyLv = Math.max(0, Number(levels.global_economy || 0));
   globalUpgradeStatsCache = {
-    damage: damageLv * .10,
-    fireRate: speedLv * .08,
-    critChance: critLv * .035,
-    critMul: critLv * .08,
-    range: rangeLv * 8,
-    plateDamage: plateLv * .08,
-    plateFireRate: plateLv * .05,
-    bossDamage: bossLv * .09,
-    armorBreak: bossLv * .02,
-    reward: economyLv * .06
+    damage: commercialResearchValue('global_damage','damage_curve',damageLv),
+    fireRate: commercialResearchValue('global_speed','fire_rate_curve',speedLv),
+    critChance: commercialResearchValue('global_crit','crit_chance_curve',critLv),
+    critMul: commercialResearchValue('global_crit','crit_multiplier_curve',critLv),
+    range: commercialResearchValue('global_range','range_curve',rangeLv),
+    plateDamage: commercialResearchValue('global_plate','plate_damage_curve',plateLv),
+    plateFireRate: commercialResearchValue('global_plate','plate_fire_rate_curve',plateLv),
+    bossDamage: commercialResearchValue('global_boss','boss_damage_curve',bossLv),
+    armorBreak: commercialResearchValue('global_boss','armor_break_curve',bossLv),
+    reward: commercialResearchValue('global_economy','reward_curve',economyLv)
   };
   globalUpgradeStatsCacheOwner = levels;
   globalUpgradeStatsCacheRevision = globalUpgradeStatsRevision;
@@ -2241,8 +2207,8 @@ let hangarVisualLastCheckAt = 0;
 let dragHoverTargetIdx = -1;
 let dragHoverTargetStartedAt = 0;
 let plateAffinity = {};
-const PLATE_AFFINITY_DAMAGE_BONUS = 0.30;
-const PLATE_AFFINITY_FIRE_RATE_BONUS = 0.08;
+const PLATE_AFFINITY_DAMAGE_BONUS = 0.12;
+const PLATE_AFFINITY_FIRE_RATE_BONUS = 0.04;
 let raf = 0, last = performance.now(), spawnTimer = 0, shake = 0, flash = 0;
 let hangarFrame = -1;
 let nextPlanetUid = 1;
@@ -3243,9 +3209,79 @@ function makeRoute(){
   invalidateTerrainRenderCache();
 }
 
+
+function commercialCellHash(idx, salt){
+  let h = 2166136261;
+  h = Math.imul(h ^ (Number(idx) + 101), 16777619);
+  h = Math.imul(h ^ (Number(S?.stageNo || StageMapState?.current || 1) * 1009), 16777619);
+  h = Math.imul(h ^ (Number(S?.ogge || 1) * 9176), 16777619);
+  h = Math.imul(h ^ Number(salt || 0), 16777619);
+  return h >>> 0;
+}
+function commercialOrderedCells(cells, salt){
+  return cells.slice().sort((a,b)=>commercialCellHash(a,salt)-commercialCellHash(b,salt));
+}
+function commercialNeighborIndexes(idx){
+  const col = idx % GRID_COLS;
+  const row = Math.floor(idx / GRID_COLS);
+  const out = [];
+  if(col > 0) out.push(idx - 1);
+  if(col < GRID_COLS - 1) out.push(idx + 1);
+  if(row > 0) out.push(idx - GRID_COLS);
+  if(row < GRID_ROWS - 1) out.push(idx + GRID_COLS);
+  return out;
+}
+function commercialHasAdjacentSamePlate(idx, key){
+  const list = commercialNeighborIndexes(idx);
+  for(let i=0;i<list.length;i++) if(terrain[list[i]] === key) return true;
+  return false;
+}
+function commercialPathDistanceBuckets(){
+  const pathCells = [];
+  const buckets = {r1:[], r2:[], fallback:[]};
+  for(let i=0;i<terrain.length;i++){
+    if(terrain[i] === 'path') pathCells.push({c:i % GRID_COLS, r:Math.floor(i / GRID_COLS)});
+  }
+  for(let i=0;i<terrain.length;i++){
+    if(terrain[i] !== 'empty') continue;
+    const c = i % GRID_COLS;
+    const r = Math.floor(i / GRID_COLS);
+    let best = 999;
+    for(let p=0;p<pathCells.length;p++){
+      const d = Math.abs(c - pathCells[p].c) + Math.abs(r - pathCells[p].r);
+      if(d < best) best = d;
+      if(best <= 1) break;
+    }
+    if(best === 1) buckets.r1.push(i);
+    else if(best === 2) buckets.r2.push(i);
+    else buckets.fallback.push(i);
+  }
+  return buckets;
+}
+function commercialPickCell(candidates, key, salt){
+  const ordered = commercialOrderedCells(candidates, salt);
+  for(let i=0;i<ordered.length;i++){
+    const idx = ordered[i];
+    if(terrain[idx] === 'empty' && !commercialHasAdjacentSamePlate(idx, key)) return idx;
+  }
+  return -1;
+}
+function commercialAffinityTypeForPlate(idx, salt){
+  const pool = availableSummonTypes ? availableSummonTypes().filter(type => type >= 0 && type < BASE_PLANET_COUNT) : [];
+  const fallback = Array.from({length: BASE_PLANET_COUNT}, (_, i) => i);
+  const list = pool.length ? pool : fallback;
+  const pick = commercialCellHash(idx, salt) % list.length;
+  return list[pick] ?? 0;
+}
+function commercialUsablePlacementCount(){
+  let count = 0;
+  for(let i=0;i<terrain.length;i++) if(terrain[i] !== 'path' && terrain[i] !== 'blocked') count++;
+  return count;
+}
 function makeTerrain(){
   terrain.fill('empty');
   plateAffinity = {};
+  const stageBalance = getCommercialStageBalance(S?.stageNo || StageMapState?.current || 1);
   const pathWidth = CELL * .38;
   for(let i=0;i<terrain.length;i++){
     const c=center(i);
@@ -3253,28 +3289,39 @@ function makeTerrain(){
       if(pointSeg(c.x,c.y,route[j].x,route[j].y,route[j+1].x,route[j+1].y)<pathWidth) terrain[i]='path';
     }
   }
-  const pool = [];
-  for(let i=0;i<terrain.length;i++) if(terrain[i]==='empty') pool.push(i);
-  const blockedCount = Math.min(6, Math.floor(pool.length * .12));
-  for(let n=0;n<blockedCount;n++){
-    const k=pool.splice(Math.floor(Math.random()*pool.length),1)[0];
-    if(k!==undefined) terrain[k]='blocked';
+
+  const buckets = commercialPathDistanceBuckets();
+  const blockedPlaced = [];
+  const forbiddenBudget = Math.max(0, Math.floor(Number(stageBalance.forbidden_budget || 0)));
+  for(let n=0;n<forbiddenBudget;n++){
+    const candidates = n % 2 === 0 ? buckets.r1.concat(buckets.r2) : buckets.r2.concat(buckets.r1);
+    const pick = commercialPickCell(candidates, 'blocked', 7000 + n);
+    if(pick < 0) break;
+    terrain[pick] = 'blocked';
+    blockedPlaced.push(pick);
   }
-  const specialPlateOrder = ['amp','coil','lens','mine','rift','amp','coil','lens','mine','amp'];
+
+  const plateBudget = stageBalance.plate_budget || COMMERCIAL_STAGE_BALANCE_DEFAULT.plate_budget;
+  const specialPlateOrder = [];
+  ['amp','coil','lens','mine','rift'].forEach(key=>{
+    const count = Math.max(0, Math.floor(Number(plateBudget[key] || 0)));
+    for(let i=0;i<count;i++) specialPlateOrder.push(key);
+  });
   for(let n=0;n<specialPlateOrder.length;n++){
-    if(!pool.length) break;
-    const pidx = Math.floor(Math.random()*pool.length);
-    const pick = pool[pidx];
-    if(pick === undefined || terrain[pick] !== 'empty'){
-      pool.splice(pidx,1);
-      n--;
-      continue;
-    }
-    const t = specialPlateOrder[n];
-    terrain[pick]=t;
-    const affinityType = randomPlateAffinityType();
+    const key = specialPlateOrder[n];
+    let pick = commercialPickCell(buckets.r1, key, 11000 + n * 17);
+    if(pick < 0) pick = commercialPickCell(buckets.r2, key, 12000 + n * 17);
+    if(pick < 0) pick = commercialPickCell(buckets.fallback, key, 13000 + n * 17);
+    if(pick < 0) continue;
+    terrain[pick] = key;
+    const affinityType = commercialAffinityTypeForPlate(pick, 14000 + n * 19);
     plateAffinity[pick] = {type: affinityType, color: PLANETS[affinityType]?.color || '#67e8f9'};
-    pool.splice(pidx,1);
+  }
+
+  const minimumUsable = Math.max(0, Math.floor(Number(stageBalance.minimum_usable_placements || 0)));
+  while(blockedPlaced.length && commercialUsablePlacementCount() < minimumUsable){
+    const idx = blockedPlaced.pop();
+    if(terrain[idx] === 'blocked') terrain[idx] = 'empty';
   }
   invalidateTerrainRenderCache();
 }
@@ -3385,7 +3432,9 @@ function prepareWave(){
   S.hazardTimer=150;
   buildDustClouds();
   S.queue.length=0;
-  const count = 28 + S.ogge*6 + S.theme*6;
+  const stageBalance = getCommercialStageBalance(S.stageNo || StageMapState.current || 1);
+  const baseCount = 28 + S.ogge*6 + S.theme*6;
+  const count = Math.max(10, Math.round(baseCount * Number(stageBalance.wave_count_multiplier || 1)));
   for(let i=0;i<count;i++){
     let type='grunt';
     if(i%4===1) type='runner';
@@ -4190,13 +4239,13 @@ function drawAnomalies(){
   }
 }
 
-const TERRAIN_BONUS_DEFAULT = {dmg:.72,cd:1.16,range:-3,gold:0,over:false,plate:false};
+const TERRAIN_BONUS_DEFAULT = {dmg:.86,cd:1.06,range:0,gold:0,over:false,plate:false};
 const TERRAIN_BONUS_BY_KEY = {
-  amp:{dmg:1.55,cd:.96,range:0,gold:0,over:false,plate:true},
-  coil:{dmg:1.02,cd:.62,range:4,gold:0,over:false,plate:true},
-  lens:{dmg:.92,cd:.96,range:50,gold:0,over:false,plate:true},
-  mine:{dmg:.82,cd:1.08,range:0,gold:1,over:false,plate:true},
-  rift:{dmg:1.82,cd:1.10,range:8,gold:0,over:true,plate:true}
+  amp:{dmg:1.38,cd:.96,range:0,gold:0,over:false,plate:true},
+  coil:{dmg:1.00,cd:.70,range:0,gold:0,over:false,plate:true},
+  lens:{dmg:.94,cd:.98,range:38,gold:0,over:false,plate:true},
+  mine:{dmg:.92,cd:1.02,range:0,gold:.16,over:false,plate:true},
+  rift:{dmg:1.62,cd:1.06,range:8,gold:0,over:true,plate:true}
 };
 
 const PLANET_CORE_GLOW_RENDER_CACHE = new Map();
@@ -4605,8 +4654,11 @@ class Enemy{
     this.spd=spd;this.size=size;this.color=color;this.reward=reward;this.exp=exp;this.armor=armor;
     this.x=route[0].x;this.y=route[0].y;this.seg=0;this.progress=0;
     const hpScale = this.hpScale || 1;
-    const bossRunEase = this.stageBoss ? (this.bossTier === 'final' ? .72 : .80) : 1;
-    this.maxHp=Math.floor(295*hpBase*(1+S.ogge*.30+S.theme*.38) * hpScale * bossRunEase);
+    const stageBalance = getCommercialStageBalance(S.stageNo || StageMapState.current || 1);
+    const stageHpMultiplier = (this.boss || this.stageBoss)
+      ? Number(stageBalance.boss_multiplier || 1)
+      : Number(stageBalance.general_hp_multiplier || 1);
+    this.maxHp=Math.floor(295*hpBase*(1+S.ogge*.30+S.theme*.38) * hpScale * stageHpMultiplier);
     this.hp=this.maxHp;
     this.dead=false;this.slow=0;this.freeze=0;this.dot=0;this.dotTime=0;this.mark=0;this._chainHitStamp=0;
     return this;
@@ -4625,7 +4677,8 @@ class Enemy{
       }
     }
     if(this.hp<=0){this.kill();return}
-    let speed=this.spd*(1+S.ogge*.032+S.theme*.028);
+    const stageBalance = getCommercialStageBalance(S.stageNo || StageMapState.current || 1);
+    let speed=this.spd*Number(stageBalance.general_speed_multiplier || 1)*(1+S.ogge*.032+S.theme*.028);
     if(this.slow>0)speed*=.55;
     if(this.freeze>0)speed*=.12;
     const to=route[this.seg+1];
@@ -4665,7 +4718,8 @@ class Enemy{
     this.dead=true;
     S.runKills = (S.runKills || 0) + 1;
     const g = getGlobalUpgradeStats();
-    const reward=Math.max(1,Math.floor((6+S.ogge*.9)*this.reward*(1+S.mods.reward+(g.reward||0))));
+    const stageBalance = getCommercialStageBalance(S.stageNo || StageMapState.current || 1);
+    const reward=Math.max(1,Math.floor((6+S.ogge*.9)*this.reward*Number(stageBalance.reward_multiplier || 1)*(1+S.mods.reward+(g.reward||0))));
     S.gold+=reward;
     gainExp(this.exp);
     burst(this.x,this.y,this.color,22,38);
@@ -5650,7 +5704,8 @@ function drawStageFx(){
 
 function waveDone(){
   S.active=false;
-  const bonus=150+S.ogge*24+S.theme*55;
+  const stageBalance = getCommercialStageBalance(S.stageNo || StageMapState.current || 1);
+  const bonus=Math.floor((150+S.ogge*24+S.theme*55)*Number(stageBalance.reward_multiplier || 1));
   S.gold+=bonus;
   S.hp=Math.min(S.maxHp,S.hp+S.mods.repair);
   toast(`웨이브 클리어! 수정 +${fmt2(bonus)}`);

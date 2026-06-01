@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "basis": "runtime_GLOBAL_UPGRADE_CURVES",
+  "research": {
+    "global_damage": {"unlock_stage": 1, "max": 12, "damage_curve": [0.06, 0.06, 0.06, 0.05, 0.05, 0.05, 0.04, 0.04, 0.04, 0.03, 0.03, 0.03]},
+    "global_crit": {"unlock_stage": 2, "max": 10, "crit_chance_curve": [0.015, 0.015, 0.015, 0.015, 0.010, 0.010, 0.010, 0.010, 0.008, 0.008], "crit_multiplier_curve": [0.04, 0.04, 0.04, 0.04, 0.03, 0.03, 0.03, 0.03, 0.025, 0.025]},
+    "global_speed": {"unlock_stage": 3, "max": 10, "fire_rate_curve": [0.04, 0.04, 0.03, 0.03, 0.03, 0.02, 0.02, 0.02, 0.02, 0.01]},
+    "global_boss": {"unlock_stage": 4, "max": 10, "boss_damage_curve": [0.05, 0.05, 0.05, 0.05, 0.04, 0.04, 0.04, 0.04, 0.03, 0.03], "armor_break_curve": [0.012, 0.012, 0.012, 0.012, 0.008, 0.008, 0.008, 0.008, 0.006, 0.006]},
+    "global_range": {"unlock_stage": 5, "max": 8, "range_curve": [5, 5, 5, 5, 4, 4, 4, 4]},
+    "global_plate": {"unlock_stage": 6, "max": 8, "plate_damage_curve": [0.05, 0.05, 0.05, 0.04, 0.04, 0.04, 0.03, 0.03], "plate_fire_rate_curve": [0.03, 0.03, 0.03, 0.02, 0.02, 0.02, 0.015, 0.015]},
+    "global_economy": {"unlock_stage": 7, "max": 8, "reward_curve": [0.04, 0.04, 0.04, 0.04, 0.03, 0.03, 0.03, 0.03]}
+  },
+  "conflict_checks": ["damage_x_crit_x_plate", "speed_x_coil", "range_x_lens", "boss_x_amp", "plate_x_affinity", "starengine_x_rift"]
+}
