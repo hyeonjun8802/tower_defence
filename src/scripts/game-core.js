@@ -3743,21 +3743,23 @@ function stagePressurePlateContext(){
 function dynamicBlockedPlateTarget(stageNo=null, waveNo=null){
   const stage = economyStageNo(stageNo);
   const wave = economyWaveNo(waveNo);
-  if(wave < 4) return 0;
-  const base = Math.floor(Math.max(0, stage - 1) * 1.2) + Math.floor(Math.max(0, wave - 3) * 2.4);
-  const stageBonus = (stage >= 4 ? 2 : 0) + (stage >= 7 ? 1 : 0);
-  return Math.max(0, Math.min(24, base + stageBonus));
+  // v-stage-pressure-carry: only the absolute tutorial steps 1-1~1-3 are free.
+  // After that, pressure is based on cumulative main-stage progress so 2-1,
+  // 3-1, 5-1... do not reset back to an empty board.
+  if(stage <= 1 && wave < 4) return 0;
+  const mainCarry = Math.floor(Math.max(0, stage - 1) * 1.6)
+    + (stage >= 2 ? 2 : 0)
+    + (stage >= 4 ? 2 : 0)
+    + (stage >= 7 ? 1 : 0);
+  const subRamp = wave >= 4 ? Math.floor(Math.max(0, wave - 3) * 2.2) : 0;
+  return Math.max(0, Math.min(24, mainCarry + subRamp));
 }
 function dynamicHazardClusterPlan(stageNo=null, waveNo=null){
   const stage = economyStageNo(stageNo);
   const wave = economyWaveNo(waveNo);
-  // Red hazard pressure is now staged by footprint size rather than raw count.
-  // - Early/intro waves: no hazard pressure.
-  // - First hazard pressure: one compact 2x2 set.
-  // - Mid pressure: one 3x3 set.
-  // - Hard pressure: one 3x3 set plus one 2x2 set.
-  // This keeps the screen readable while making a single 3x3 zone less trivial.
-  if(wave < 4) return [];
+  // v-stage-pressure-carry: hazard pressure also carries across main stages.
+  // 1-1~1-6 remain readable for onboarding, but from 2-1 onward each main
+  // stage keeps its baseline pressure instead of resetting on sub-stage 1.
   if(stage <= 1 && wave < 7) return [];
   if(stage >= 4 && wave >= 7) return [{size:3, offset:0}, {size:2, offset:1}];
   if(stage >= 4 || (stage >= 3 && wave >= 8)) return [{size:3, offset:0}];
