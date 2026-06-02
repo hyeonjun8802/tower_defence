@@ -1841,6 +1841,162 @@ const AUDIO_URLS = {
   }
 };
 
+/* v242-native-audio-bridge: Expo WebView에서는 HTMLAudio/WebAudio를 직접 재생하지 않고
+   React Native(expo-audio) 쪽으로 오디오 요청만 전달한다. UI/밸런스/전투 로직은 변경하지 않는다. */
+const NATIVE_AUDIO_BGM_KEY_BY_SRC = {
+  'audio/public_bgm.ogg':'public_bgm',
+  'audio/bgm_stage_01_cosmic_void.ogg':'bgm_stage_01_cosmic_void',
+  'audio/bgm_stage_02_frost_expanse.ogg':'bgm_stage_02_frost_expanse',
+  'audio/bgm_stage_03_lava_nebula.ogg':'bgm_stage_03_lava_nebula',
+  'audio/bgm_stage_04_jungle_core.ogg':'bgm_stage_04_jungle_core',
+  'audio/bgm_stage_05_smog_wasteland.ogg':'bgm_stage_05_smog_wasteland',
+  'audio/bgm_stage_06_crystal_nebula.ogg':'bgm_stage_06_crystal_nebula',
+  'audio/bgm_stage_07_machine_core.ogg':'bgm_stage_07_machine_core',
+  'audio/bgm_battle_sentinels_of_the_ember.ogg':'bgm_battle_sentinels_of_the_ember',
+  'audio/bgm_boss_beneath_the_iron_crust.ogg':'bgm_boss_beneath_the_iron_crust',
+  'audio/bgm_general_glass_horizon.ogg':'bgm_general_glass_horizon',
+  'audio/bgm_result_core_collapse.ogg':'bgm_result_core_collapse',
+  'audio/bgm_result_sanctuary_restored.ogg':'bgm_result_sanctuary_restored'
+};
+const NATIVE_AUDIO_SFX_KEY_BY_TYPE = {
+  shot:'sfx_shot',
+  beam:'sfx_beam',
+  blackhole:'sfx_blackhole',
+  nova:'sfx_nova',
+  hit:'sfx_hit',
+  kill:'sfx_kill',
+  treasure:'sfx_treasure',
+  level:'sfx_level',
+  summon:'sfx_summon',
+  merge:'sfx_merge',
+  boss:'sfx_boss_warning',
+  clear:'sfx_stage_clear',
+  gameover:'sfx_core_collapse',
+  core:'sfx_core_damage',
+  unlock:'sfx_unlock'
+};
+const NATIVE_AUDIO_PRIORITY_BY_TYPE = {
+  shot:'low',
+  beam:'low',
+  hit:'low',
+  kill:'low',
+  blackhole:'normal',
+  nova:'normal',
+  treasure:'normal',
+  level:'normal',
+  summon:'normal',
+  merge:'normal',
+  unlock:'normal',
+  boss:'high',
+  clear:'high',
+  gameover:'high',
+  core:'high'
+};
+const NATIVE_AUDIO_VOLUME_BY_TYPE = {shot:.16, beam:.16, blackhole:.34, nova:.38, treasure:.38, level:.34, hit:.18, kill:.16, summon:.22, merge:.26, clear:.42, gameover:.42, core:.38, unlock:.36, boss:.34};
+const NATIVE_AUDIO_PRELOAD_KEYS = Array.from(new Set([
+  ...Object.values(NATIVE_AUDIO_BGM_KEY_BY_SRC),
+  ...Object.values(NATIVE_AUDIO_SFX_KEY_BY_TYPE)
+]));
+function nativeAudioBridgeAvailable(){
+  return !!(window.ReactNativeWebView && typeof window.ReactNativeWebView.postMessage === 'function');
+}
+function nativeAudioPost(payload){
+  if(!nativeAudioBridgeAvailable()) return false;
+  try{
+    window.ReactNativeWebView.postMessage(JSON.stringify(payload));
+    return true;
+  }catch(err){
+    if(window.__DEV_NATIVE_AUDIO_LOG__) console.warn('[NativeAudioBridge] post failed', err);
+    return false;
+  }
+}
+window.NativeAudioBridge = Object.assign(window.NativeAudioBridge || {}, {
+  isAvailable: nativeAudioBridgeAvailable,
+  post: nativeAudioPost,
+  preload(keys){ return nativeAudioPost({type:'AUDIO_PRELOAD', keys:Array.isArray(keys) ? keys : NATIVE_AUDIO_PRELOAD_KEYS}); },
+  play(key, options={}){
+    return nativeAudioPost({
+      type:'AUDIO_PLAY',
+      key,
+      category:options.category || 'sfx',
+      loop:!!options.loop,
+      volume:options.volume,
+      priority:options.priority || 'normal'
+    });
+  },
+  stop(key, options={}){ return nativeAudioPost({type:'AUDIO_STOP', key, category:options.category}); },
+  pause(key, options={}){ return nativeAudioPost({type:'AUDIO_PAUSE', key, category:options.category}); },
+  resume(key, options={}){ return nativeAudioPost({type:'AUDIO_RESUME', key, category:options.category}); },
+  setMuted(muted){ return nativeAudioPost({type:'AUDIO_SET_MUTED', muted:!!muted}); },
+  setVolume(category, volume){ return nativeAudioPost({type:'AUDIO_SET_VOLUME', category, volume}); }
+});
+window.__NATIVE_AUDIO_ON_MESSAGE__ = window.__NATIVE_AUDIO_ON_MESSAGE__ || function(payload){
+  try{
+    if(payload && payload.type === 'AUDIO_READY' && window.NativeAudioBridge?.isAvailable?.()){
+      window.NativeAudioBridge.preload(NATIVE_AUDIO_PRELOAD_KEYS);
+      if(audio) window.NativeAudioBridge.setMuted(!audio.on);
+    }
+  }catch(err){
+    if(window.__DEV_NATIVE_AUDIO_LOG__) console.warn('[NativeAudioBridge] message failed', err);
+  }
+};
+function requestNativeAudioReady(){
+  if(!nativeAudioBridgeAvailable()) return false;
+  return nativeAudioPost({type:'AUDIO_READY_REQUEST'});
+}
+function nativeBgmKeyFromSrc(src){
+  return NATIVE_AUDIO_BGM_KEY_BY_SRC[String(src || '')] || '';
+}
+function stopHtmlAudioOnly(){
+  try{
+    if(audio && audio.bgm && typeof audio.bgm.pause === 'function'){
+      audio.bgm.pause();
+      try{ audio.bgm.currentTime = 0; }catch(_){ }
+    }
+    Object.values(htmlAudioCache || {}).forEach(a => {
+      if(!a || typeof a.pause !== 'function') return;
+      try{ a.pause(); }catch(_){ }
+      try{ a.currentTime = 0; }catch(_){ }
+    });
+    activeOneShotAudio.forEach(a => {
+      try{ a.pause(); }catch(_){ }
+      try{ a.currentTime = 0; }catch(_){ }
+    });
+    activeOneShotAudio.clear();
+  }catch(err){
+    if(window.__DEV_NATIVE_AUDIO_LOG__) console.warn('[NativeAudioBridge] stop html fallback failed', err);
+  }
+}
+function playNativeBgmBySrc(src, volume=.30){
+  const key = nativeBgmKeyFromSrc(src);
+  if(!key || !window.NativeAudioBridge?.isAvailable?.()) return false;
+  stopHtmlAudioOnly();
+  if(audio){
+    audio.bgm = null;
+    audio.bgmSrc = src;
+  }
+  window.NativeAudioBridge.setMuted(!(audio && audio.on));
+  return window.NativeAudioBridge.play(key, {category:'bgm', loop:true, volume});
+}
+function playNativeSfx(type, opts={}){
+  const key = NATIVE_AUDIO_SFX_KEY_BY_TYPE[type];
+  if(!key || !window.NativeAudioBridge?.isAvailable?.()) return false;
+  const baseVolume = NATIVE_AUDIO_VOLUME_BY_TYPE[type] || .22;
+  const volumeMul = Number.isFinite(Number(opts.volumeMul)) ? Number(opts.volumeMul) : 1;
+  const intensity = Number.isFinite(Number(opts.intensity)) ? Number(opts.intensity) : 1;
+  const volume = Math.max(0, Math.min(1, baseVolume * volumeMul * intensity));
+  return window.NativeAudioBridge.play(key, {
+    category:'sfx',
+    volume,
+    priority:opts.priority || NATIVE_AUDIO_PRIORITY_BY_TYPE[type] || 'normal'
+  });
+}
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', requestNativeAudioReady, {once:true});
+}else{
+  requestNativeAudioReady();
+}
+
 let fieldStars = [];
 
 /* v207: battle starfield now matches the galaxy / stage map direction too.
@@ -7584,6 +7740,11 @@ window.addEventListener('touchend',onUp,{passive:false});
 function initAudio(){
   if(audio)return;
   audio = {on:true, bgm:null, bgmSrc:null, unlocked:true, perfMode:isLowPowerAudioMode()};
+  if(window.NativeAudioBridge?.isAvailable?.()){
+    requestNativeAudioReady();
+    window.NativeAudioBridge.preload(NATIVE_AUDIO_PRELOAD_KEYS);
+    window.NativeAudioBridge.setMuted(false);
+  }
   // v32: do not create/resume AudioContext just to play BGM.
   // WebAudio is kept lazy and only used for rare important cues.
   // 브라우저 자동재생 정책 때문에 사용자가 BGM 버튼을 누른 뒤부터 재생됩니다.
@@ -7599,6 +7760,7 @@ function ensureAudioContext(){
 }
 
 function synthShot(kind='solar', intensity=1){
+  if(window.NativeAudioBridge?.isAvailable?.()) return;
   if(!audio || !audio.on) return;
   const ctx = ensureAudioContext();
   if(!ctx) return;
@@ -7634,6 +7796,8 @@ function synthShot(kind='solar', intensity=1){
 }
 
 function playTowerSfx(kind='solar', intensity=1){
+  // Expo WebView에서는 tower synth(WebAudio) 생성 자체를 막고, 호출부의 sound('shot'/'beam'/'boss')가 native SFX로 전달되게 둔다.
+  if(window.NativeAudioBridge?.isAvailable?.()) return;
   // v32: the visible slowdown was triggered when BGM enabled all high-frequency
   // tower attack synth sounds. Normal attack SFX are cosmetic, so combat keeps
   // BGM and important cues while skipping repeated synth creation.
@@ -7648,6 +7812,7 @@ function playTowerSfx(kind='solar', intensity=1){
 
 function playBgmSrc(src, volume=.30){
   if(!audio || !audio.on || !src) return;
+  if(playNativeBgmBySrc(src, volume)) return;
   if(audio.bgm && audio.bgmSrc === src){
     audio.bgm.volume = volume;
     audio.bgm.play().catch(()=>{});
@@ -7686,6 +7851,7 @@ function playResultBgm(kind){
 }
 
 function stopStageBgm(){
+  if(window.NativeAudioBridge?.isAvailable?.()) window.NativeAudioBridge.pause(undefined, {category:'bgm'});
   if(audio && audio.bgm) audio.bgm.pause();
 }
 
@@ -7711,6 +7877,7 @@ function trackOneShotAudio(a){
 
 function stopAllGameAudio(){
   try{
+    if(window.NativeAudioBridge?.isAvailable?.()) window.NativeAudioBridge.stop(undefined, {category:'all'});
     if(audio && audio.bgm){
       audio.bgm.pause();
       try{ audio.bgm.currentTime = 0; }catch(_){}
@@ -7740,9 +7907,10 @@ function sound(type, opts={}){
   const now = performance.now();
   const minGap = SOUND_MIN_GAP[type] || 260;
   pruneActiveOneShotAudio();
-  if((audio.perfMode || isCombatAudioSafeMode()) && !SOUND_IMPORTANT_TYPES.has(type)) return;
   if(now - (soundLimiter[type] || 0) < minGap) return;
   soundLimiter[type] = now;
+  if(playNativeSfx(type, opts)) return;
+  if((audio.perfMode || isCombatAudioSafeMode()) && !SOUND_IMPORTANT_TYPES.has(type)) return;
   if(type === 'boss'){
     const srcBoss = AUDIO_URLS.sfx?.boss;
     if(srcBoss){
@@ -8285,6 +8453,7 @@ function syncAudioControl(){
   const btn = $('audioBtn');
   if(!btn) return;
   const on = !!(audio && audio.on);
+  if(window.NativeAudioBridge?.isAvailable?.()) window.NativeAudioBridge.setMuted(!on);
   btn.classList.toggle('is-off', !on);
   btn.setAttribute('aria-pressed', on ? 'true' : 'false');
   btn.setAttribute('aria-label', on ? 'BGM 끄기' : 'BGM 켜기');
