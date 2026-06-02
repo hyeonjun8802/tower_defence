@@ -19001,3 +19001,282 @@ body.stage-result-armory-stack-open .stageResultOverlay--underArmory .stageResul
   transform:translateY(1px) scale(.99) !important;
   filter:brightness(.98) !important;
 }
+
+/* v-monster-system: centered first-appearance enemy scan popup. Monster-only UI. */
+.monsterIntroPopup{
+  position:fixed;
+  inset:0;
+  z-index:2147483400;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+  background:rgba(2,6,23,.36);
+  backdrop-filter:blur(4px) saturate(1.08);
+  pointer-events:auto;
+}
+.monsterIntroCard{
+  width:min(430px, calc(100vw - 40px));
+  max-width:100%;
+  padding:18px 18px 16px;
+  border:1px solid rgba(125,211,252,.42);
+  border-radius:22px;
+  background:linear-gradient(145deg, rgba(2,6,23,.96), rgba(15,23,42,.94) 48%, rgba(30,41,59,.90));
+  box-shadow:0 24px 56px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.13), 0 0 28px rgba(56,189,248,.18);
+  color:#e0f2fe;
+  font-family:'Pretendard','Noto Sans KR',system-ui,sans-serif;
+  animation:monsterIntroIn .18s ease-out both;
+}
+.monsterIntroBossPopup .monsterIntroCard{
+  border-color:rgba(248,113,113,.38);
+  background:linear-gradient(145deg, rgba(2,6,23,.97), rgba(18,24,43,.95) 46%, rgba(45,18,32,.88));
+  box-shadow:0 26px 62px rgba(0,0,0,.56), inset 0 1px 0 rgba(255,255,255,.14), 0 0 32px rgba(248,113,113,.16);
+}
+.monsterIntroBossPopup .monsterIntroKicker{
+  color:#fca5a5;
+}
+.monsterIntroBossPopup .monsterIntroMeta span{
+  background:rgba(248,113,113,.12);
+  border-color:rgba(248,113,113,.26);
+}
+.monsterIntroKicker{
+  font:800 11px/1.2 'Orbitron','Pretendard',sans-serif;
+  letter-spacing:.14em;
+  color:#67e8f9;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.monsterIntroTitle{
+  font-size:26px;
+  line-height:1.18;
+  font-weight:900;
+  color:#f8fafc;
+  text-shadow:0 0 16px rgba(125,211,252,.32);
+}
+.monsterIntroMeta{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin:8px 0 8px;
+}
+.monsterIntroMeta span{
+  display:inline-flex;
+  align-items:center;
+  min-height:26px;
+  padding:4px 10px;
+  border-radius:999px;
+  background:rgba(14,165,233,.14);
+  border:1px solid rgba(125,211,252,.25);
+  color:#dbeafe;
+  font-size:12px;
+  font-weight:800;
+}
+.monsterIntroBody{
+  display:grid;
+  grid-template-columns:110px minmax(0, 1fr);
+  gap:14px;
+  align-items:center;
+  margin-top:12px;
+}
+.monsterIntroText{
+  min-width:0;
+}
+.monsterIntroPreview{
+  position:relative;
+  width:110px;
+  height:110px;
+  border-radius:20px;
+  overflow:hidden;
+  background:linear-gradient(180deg, rgba(10,18,34,.95), rgba(7,18,33,.98));
+  border:1px solid rgba(125,211,252,.25);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10), 0 12px 24px rgba(0,0,0,.24);
+}
+.monsterIntroPreviewCanvas{
+  display:block;
+  width:100%;
+  height:100%;
+}
+.monsterIntroPopup p{
+  margin:0 0 12px;
+  color:#cbd5e1;
+  font-size:15px;
+  line-height:1.52;
+  word-break:keep-all;
+}
+.monsterIntroClose{
+  width:100%;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:14px;
+  padding:11px 12px;
+  color:#f8fafc;
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:.02em;
+  background:linear-gradient(135deg, #38bdf8, #6366f1 52%, #a855f7);
+  box-shadow:0 10px 24px rgba(56,189,248,.20), inset 0 1px 0 rgba(255,255,255,.24);
+}
+@keyframes monsterIntroIn{
+  from{ transform:translateY(8px) scale(.985); opacity:0; }
+  to{ transform:translateY(0) scale(1); opacity:1; }
+}
+@media (orientation:landscape) and (max-height:540px){
+  .monsterIntroCard{ width:min(460px, calc(100vw - 32px)); padding:15px 16px 14px; }
+  .monsterIntroTitle{ font-size:22px; }
+  .monsterIntroBody{ grid-template-columns:96px minmax(0, 1fr); gap:12px; margin-top:10px; }
+  .monsterIntroPreview{ width:96px; height:96px; border-radius:18px; }
+  .monsterIntroPopup p{ font-size:13px; line-height:1.42; margin-bottom:10px; }
+  .monsterIntroClose{ padding:9px 10px; }
+}
+@media (max-width:380px){
+  .monsterIntroCard{ width:min(100%, calc(100vw - 24px)); padding:15px 14px 14px; }
+  .monsterIntroTitle{ font-size:22px; }
+  .monsterIntroBody{ grid-template-columns:88px minmax(0, 1fr); gap:11px; }
+  .monsterIntroPreview{ width:88px; height:88px; border-radius:18px; }
+  .monsterIntroPopup p{ font-size:13px; }
+}
+
+/* ===== v-monster-ui-fix-stage-result-landscape-wallet-width =====
+   Scope-limited UI fixes only:
+   1) Compact stage result popup in short landscape viewports so the 3 action buttons are not clipped.
+   2) Widen the armory shard wallet chip so the shard number is not masked/truncated.
+*/
+@media (orientation:landscape) and (max-height:520px){
+  .stageResultOverlay{
+    align-items:center !important;
+    justify-content:center !important;
+    padding:8px max(12px, env(safe-area-inset-right, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px)) !important;
+    overflow:hidden !important;
+  }
+  .stageResultCard{
+    width:min(760px, calc(100vw - 24px)) !important;
+    max-height:calc(100dvh - 16px) !important;
+    padding:14px 16px 12px !important;
+    border-radius:20px !important;
+    overflow:auto !important;
+  }
+  .stageResultBgLabel{
+    top:12px !important;
+    right:16px !important;
+    max-width:40% !important;
+    font-size:9px !important;
+  }
+  .stageResultKicker{
+    padding:5px 9px !important;
+    font-size:9px !important;
+    letter-spacing:.18em !important;
+  }
+  .stageResultCard h2{
+    margin:8px 0 5px !important;
+    font-size:22px !important;
+    line-height:1.08 !important;
+  }
+  .stageResultBody{
+    font-size:12px !important;
+    line-height:1.45 !important;
+    display:-webkit-box !important;
+    -webkit-line-clamp:2 !important;
+    -webkit-box-orient:vertical !important;
+    overflow:hidden !important;
+  }
+  .stageResultStats{
+    grid-template-columns:repeat(4, minmax(0, 1fr)) !important;
+    gap:7px !important;
+    margin:10px 0 8px !important;
+  }
+  .stageResultStat{
+    min-height:48px !important;
+    padding:7px 9px !important;
+    border-radius:14px !important;
+  }
+  .stageResultStat span{
+    font-size:8px !important;
+    letter-spacing:.12em !important;
+  }
+  .stageResultStat b{
+    margin-top:3px !important;
+    font-size:14px !important;
+  }
+  .stageResultNext{
+    margin-top:7px !important;
+    padding:9px 11px !important;
+    border-radius:14px !important;
+  }
+  .stageResultNext span{
+    margin-bottom:3px !important;
+    font-size:8px !important;
+    letter-spacing:.14em !important;
+  }
+  .stageResultNext b{
+    font-size:11.5px !important;
+    line-height:1.38 !important;
+    display:-webkit-box !important;
+    -webkit-line-clamp:2 !important;
+    -webkit-box-orient:vertical !important;
+    overflow:hidden !important;
+  }
+  .stageResultMastery,
+  .stageResultReward{
+    margin-top:7px !important;
+    padding:8px 10px !important;
+    border-radius:13px !important;
+    font-size:11.5px !important;
+    line-height:1.34 !important;
+  }
+  .stageResultMastery{
+    grid-template-columns:1fr auto auto !important;
+    gap:6px !important;
+  }
+  .stageResultActions{
+    grid-template-columns:1.12fr 1fr 1fr !important;
+    gap:8px !important;
+    margin-top:10px !important;
+  }
+  .stageResultActions button{
+    min-height:38px !important;
+    padding:8px 10px !important;
+    font-size:12px !important;
+    line-height:1.1 !important;
+  }
+}
+@media (orientation:landscape) and (max-height:360px){
+  .stageResultBgLabel{display:none !important;}
+  .stageResultCard{
+    padding:11px 14px 10px !important;
+    max-height:calc(100dvh - 10px) !important;
+  }
+  .stageResultCard h2{font-size:20px !important;}
+  .stageResultStats{margin:8px 0 6px !important;}
+  .stageResultNext{padding:7px 10px !important;}
+  .stageResultMastery,
+  .stageResultReward{padding:7px 9px !important;}
+  .stageResultActions{margin-top:8px !important;}
+  .stageResultActions button{min-height:36px !important;font-size:11.5px !important;}
+}
+#towerPopup .towerPopupWallet .towerWalletItem.shard,
+#towerPopup .towerWalletItem.shard{
+  min-width:176px !important;
+  padding-right:22px !important;
+  grid-template-columns:auto minmax(84px, auto) !important;
+}
+#towerPopup .towerPopupWallet .towerWalletItem.shard b,
+#towerPopup .towerWalletItem.shard b,
+#towerPopup #towerPopupWallet > b{
+  min-width:78px !important;
+  text-align:right !important;
+  white-space:nowrap !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+}
+@media (max-width:640px){
+  #towerPopup .towerPopupWallet .towerWalletItem.shard,
+  #towerPopup .towerWalletItem.shard{
+    min-width:158px !important;
+    padding-right:18px !important;
+    grid-template-columns:auto minmax(72px, auto) !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup .towerWalletItem.shard b,
+  #towerPopup #towerPopupWallet > b{
+    min-width:66px !important;
+  }
+}

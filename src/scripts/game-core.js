@@ -377,18 +377,18 @@ const STAGE_PRESENTATION = {
 
 
 const STAGE_DESCRIPTION_COPY = {
-  1:{summary:'첫 번째 공허 성역입니다. 기본 행성 배치, 장판 활용, 병합 타이밍을 익히는 입문 전장입니다.', enemy:'공허 균열 적은 능력치가 균형형이라 초반 화력 곡선을 확인하기 좋습니다.', strategy:'레이저·블랙홀 계열로 길목을 안정화하고, 3웨이브부터 병합 준비를 시작하세요.', battle:'공허 성역 방어 · 기본 화력 학습'},
-  2:{summary:'빙결 외곽은 빠른 적이 섞여 들어오는 제어형 전장입니다. 적을 늦추는 배치가 핵심입니다.', enemy:'빙결 선봉대는 속도 변화가 크고, 후반에는 감속 저항 적이 섞입니다.', strategy:'냉각·감속 장판 근처에 타워를 모아 빠른 적의 돌파를 막으세요.', battle:'빙결 외곽 방어 · 감속 제어전'},
-  3:{summary:'용암 성운은 장갑형 적이 본격적으로 등장하는 화력 검증 스테이지입니다.', enemy:'용암 장갑 적은 단일 저레벨 화력을 오래 버티며 코어로 밀고 들어옵니다.', strategy:'광역 피해와 장갑 돌파 타워를 우선 병합하고, 화력 부족 구간을 장판으로 보완하세요.', battle:'용암 성운 방어 · 장갑 돌파전'},
-  4:{summary:'생체 정글은 적이 회복과 증식을 반복하는 장기전 스테이지입니다.', enemy:'포자 군체는 주변 적을 회복시키기 때문에 처치 순서가 중요합니다.', strategy:'재생을 끊는 집중 화력과 지속 피해를 확보해 전선이 밀리지 않게 운영하세요.', battle:'생체 정글 방어 · 재생 차단전'},
-  5:{summary:'매연 폐역은 시야와 방어 효율을 동시에 흔드는 디버프형 전장입니다.', enemy:'매연 은폐 적은 방어선을 흐트러뜨리고 장갑으로 피해를 흡수합니다.', strategy:'감속, 방어 약화, 지속 피해를 겹쳐 은폐 장갑 적을 빠르게 노출시키세요.', battle:'매연 폐역 방어 · 은폐 약화전'},
-  6:{summary:'수정 성운은 피해가 저장되고 굴절되는 공명형 스테이지입니다.', enemy:'수정 공명체는 초과 피해와 장판 효과를 흔들어 배치 판단을 어렵게 만듭니다.', strategy:'공명 장판과 고레벨 타워를 연결해 한 번에 큰 피해를 넣는 구간을 만드세요.', battle:'수정 성운 방어 · 프리즘 공명전'},
-  7:{summary:'기계 핵성은 실드와 수리 드론이 전선을 굳히는 방어망 스테이지입니다.', enemy:'기계 실드 유닛은 수리 드론과 함께 등장해 처치 시간을 크게 늘립니다.', strategy:'실드 해체 타워와 집중 화력을 먼저 확보하고, 보스 전에는 병합 레벨을 끌어올리세요.', battle:'기계 핵성 방어 · 실드 해체전'},
-  8:{summary:'중력 무덤은 죽은 행성의 궤도가 적을 밀집시키고 전장을 왜곡하는 제어 스테이지입니다.', enemy:'중력 왜곡 적은 몰려오거나 갑자기 가속해 방어선의 빈틈을 찌릅니다.', strategy:'군중 제어와 범위 화력을 겹쳐 몰려오는 적을 한 번에 정리하세요.', battle:'중력 무덤 방어 · 군중 제어전'},
-  9:{summary:'번개 회랑은 고속 적과 연쇄 충격이 이어지는 속도 압박 스테이지입니다.', enemy:'과전류 고속 적은 짧은 시간에 코어 근처까지 도달할 수 있습니다.', strategy:'초반부터 공격 속도와 연쇄 화력을 확보하고, 길목 앞쪽에 화력을 집중하세요.', battle:'번개 회랑 방어 · 고속 대응전'},
-  10:{summary:'시간 잔해는 과거 웨이브의 잔상이 겹쳐 화력이 분산되는 반복 전장입니다.', enemy:'시간 잔상 적은 같은 구간에 반복 등장해 타워 타겟팅을 흔듭니다.', strategy:'잔상 처리용 범위 화력과 보스 집중 화력을 분리해서 배치하세요.', battle:'시간 잔해 방어 · 잔상 처리전'},
-  11:{summary:'침묵 성단은 감응 신호가 끊겨 적 특성 파악이 늦어지는 암흑 스테이지입니다.', enemy:'침묵 잠행 적은 반응을 늦추고 암흑 장갑으로 초반 피해를 줄입니다.', strategy:'안정적인 중앙 배치와 범용 화력을 먼저 완성해 정보 제한 구간을 버티세요.', battle:'침묵 성단 방어 · 신호 차단전'},
-  12:{summary:'균열 왕좌는 이전 성역의 패턴이 모두 합쳐지는 시즌 1 최종 복합전입니다.', enemy:'균열 왕좌 혼합군은 장갑, 재생, 실드, 고속, 잔상 패턴을 순차적으로 압박합니다.', strategy:'핵심 타워를 빠르게 고레벨로 병합하고, 장판·전역 스킬을 모두 활용해야 합니다.', battle:'균열 왕좌 방어 · 최종 복합전'}
+  1:{summary:'첫 번째 공허 성역입니다. 기본 행성 배치, 장판 활용, 병합 타이밍을 익히는 입문 전장입니다.', enemy:'공허 파수병은 능력치가 균형형이라 초반 화력 곡선을 확인하기 좋습니다.', strategy:'레이저·블랙홀 계열로 길목을 안정화하고, 3웨이브부터 병합 준비를 시작하세요.', battle:'공허 성역 방어 · 기본 화력 학습'},
+  2:{summary:'빙결 외곽은 빠른 적이 섞여 들어오는 제어형 전장입니다. 적을 늦추는 배치가 핵심입니다.', enemy:'유성 돌격체가 빠르게 파고들며, 후반에는 보호막형 수정 방벽체가 섞입니다.', strategy:'냉각·감속 장판 근처에 타워를 모아 빠른 적의 돌파를 막으세요.', battle:'빙결 외곽 방어 · 감속 제어전'},
+  3:{summary:'용암 성운은 장갑형 적이 본격적으로 등장하는 화력 검증 스테이지입니다.', enemy:'철갑 수호체는 장갑으로 피해를 줄여 받으며, 후반에는 코어 폭주체가 섞입니다.', strategy:'광역 피해와 장갑 돌파 타워를 우선 병합하고, 화력 부족 구간을 장판으로 보완하세요.', battle:'용암 성운 방어 · 장갑 돌파전'},
+  4:{summary:'생체 정글은 적이 회복과 증식을 반복하는 장기전 스테이지입니다.', enemy:'성흔 운반체와 분열형 적이 섞여 보상 욕심과 처치 순서 판단이 중요합니다.', strategy:'재생을 끊는 집중 화력과 지속 피해를 확보해 전선이 밀리지 않게 운영하세요.', battle:'생체 정글 방어 · 재생 차단전'},
+  5:{summary:'매연 폐역은 시야와 방어 효율을 동시에 흔드는 디버프형 전장입니다.', enemy:'차원 유령체가 일부 공격을 회피하고, 장갑형 적이 방어선을 흔듭니다.', strategy:'감속, 방어 약화, 지속 피해를 겹쳐 은폐 장갑 적을 빠르게 노출시키세요.', battle:'매연 폐역 방어 · 은폐 약화전'},
+  6:{summary:'수정 성운은 피해가 저장되고 굴절되는 공명형 스테이지입니다.', enemy:'수정 방벽체가 보호막으로 초반 화력을 버티며, 분열형 적이 후반 마무리를 요구합니다.', strategy:'공명 장판과 고레벨 타워를 연결해 한 번에 큰 피해를 넣는 구간을 만드세요.', battle:'수정 성운 방어 · 프리즘 공명전'},
+  7:{summary:'기계 핵성은 실드와 수리 드론이 전선을 굳히는 방어망 스테이지입니다.', enemy:'수정 방벽체와 철갑 수호체가 함께 등장해 실드 해체와 장갑 돌파를 요구합니다.', strategy:'실드 해체 타워와 집중 화력을 먼저 확보하고, 보스 전에는 병합 레벨을 끌어올리세요.', battle:'기계 핵성 방어 · 실드 해체전'},
+  8:{summary:'중력 무덤은 죽은 행성의 궤도가 적을 밀집시키고 전장을 왜곡하는 제어 스테이지입니다.', enemy:'코어 폭주체와 공허 거신이 느리지만 강하게 밀고 들어와 누수 관리가 중요합니다.', strategy:'군중 제어와 범위 화력을 겹쳐 몰려오는 적을 한 번에 정리하세요.', battle:'중력 무덤 방어 · 군중 제어전'},
+  9:{summary:'번개 회랑은 고속 적과 연쇄 충격이 이어지는 속도 압박 스테이지입니다.', enemy:'유성 돌격체와 코어 폭주체가 동시에 압박해 전방 화력과 빠른 대응이 중요합니다.', strategy:'초반부터 공격 속도와 연쇄 화력을 확보하고, 길목 앞쪽에 화력을 집중하세요.', battle:'번개 회랑 방어 · 고속 대응전'},
+  10:{summary:'시간 잔해는 과거 웨이브의 잔상이 겹쳐 화력이 분산되는 반복 전장입니다.', enemy:'균열 분열체가 처치 후 파편으로 나뉘어 후방 마무리 화력을 시험합니다.', strategy:'잔상 처리용 범위 화력과 보스 집중 화력을 분리해서 배치하세요.', battle:'시간 잔해 방어 · 잔상 처리전'},
+  11:{summary:'침묵 성단은 감응 신호가 끊겨 적 특성 파악이 늦어지는 암흑 스테이지입니다.', enemy:'심연 기사와 차원 유령체가 섞여 정예 장갑과 회피 대응을 동시에 요구합니다.', strategy:'안정적인 중앙 배치와 범용 화력을 먼저 완성해 정보 제한 구간을 버티세요.', battle:'침묵 성단 방어 · 신호 차단전'},
+  12:{summary:'균열 왕좌는 이전 성역의 패턴이 모두 합쳐지는 시즌 1 최종 복합전입니다.', enemy:'균열 왕좌 혼합군은 장갑, 보호막, 고속, 분열, 코어 피해 패턴을 순차적으로 압박합니다.', strategy:'핵심 타워를 빠르게 고레벨로 병합하고, 장판·전역 스킬을 모두 활용해야 합니다.', battle:'균열 왕좌 방어 · 최종 복합전'}
 };
 function getStageDescriptionCopy(stageNo){
   const n = clamp(Number(stageNo || 1), 1, STAGE_MAP_DEFS.length);
@@ -3495,18 +3495,18 @@ const STAGE_BATTLE_DESCRIPTIONS = Object.fromEntries(
   Object.entries(STAGE_DESCRIPTION_COPY).map(([stage, copy]) => [Number(stage), copy.battle])
 );
 const STAGE_WAVE_LINES = {
-  1:'공허 균열 적',
-  2:'빙결 선봉대',
-  3:'용암 장갑 적',
-  4:'재생 포자 군체',
-  5:'매연 은폐 적',
-  6:'수정 공명체',
-  7:'기계 실드 유닛',
-  8:'중력 왜곡 적',
-  9:'과전류 고속 적',
-  10:'시간 잔상 적',
-  11:'침묵 잠행 적',
-  12:'균열 왕좌 혼합군'
+  1:'공허 파수병 중심 웨이브',
+  2:'유성 돌격체 고속 웨이브',
+  3:'철갑 수호체 장갑 웨이브',
+  4:'성흔 운반체 보상 웨이브',
+  5:'차원 유령체 회피 웨이브',
+  6:'수정 방벽체 보호막 웨이브',
+  7:'기계 장갑·방벽 복합 웨이브',
+  8:'코어 폭주체 위험 웨이브',
+  9:'유성·폭주 고속 압박 웨이브',
+  10:'균열 분열체 반복 웨이브',
+  11:'심연 기사 정예 웨이브',
+  12:'균열 왕좌 최종 혼합군'
 };
 const STAGE_WAVE_TIPS = {
   1:'균형 배치',
@@ -3571,9 +3571,10 @@ function getWavePreviewInfo(waveNo, stageNo){
     tips.push(stageTip);
     if(wave >= 3) tips.push('병합 준비');
   }
+  const monsters = monsterPoolSummary(stage, wave);
   const result = {
     title: parts.join(' · '),
-    detail: `추천: ${tips.filter(Boolean).join(' / ')}`
+    detail: `등장: ${monsters} · 추천: ${tips.filter(Boolean).join(' / ')}`
   };
   wavePreviewInfoCacheKey = cacheKey;
   wavePreviewInfoCacheValue = result;
@@ -3599,15 +3600,12 @@ function prepareWave(){
   const stageBalance = getCommercialStageBalance(S.stageNo || StageMapState.current || 1);
   const baseCount = 28 + S.ogge*6 + S.theme*6;
   const count = Math.max(10, Math.round(baseCount * Number(stageBalance.wave_count_multiplier || 1)));
+  const monsterPool = getStageMonsterPool(S.stageNo || StageMapState.current || 1, S.ogge || 1);
   for(let i=0;i<count;i++){
-    let type='grunt';
-    if(i%4===1) type='runner';
-    if(i%6===3) type='brute';
-    if(S.ogge>=2 && i%8===5) type='regen';
-    if(S.ogge>=3 && i%5===0) type='brute';
-    if(S.ogge>=6 && i%7===2) type='regen';
-    if(Math.random()<.02+S.mods.treasure) type='treasure';
-    S.queue.push(type);
+    let type = pickWeightedMonster(monsterPool);
+    // Reward monsters remain rare and intentional; use the new SF id instead of the old treasure id.
+    if(Math.random()<.018+S.mods.treasure) type='stigma_carrier';
+    S.queue.push({type, monsterWave:S.ogge || 1, monsterStage:S.stageNo || StageMapState.current || 1});
   }
   S.currentBossInfo = null;
   if(S.ogge===5){
@@ -3641,7 +3639,7 @@ function prepareWave(){
     log(`시나리오: ${getOfflineStoryLog(S.stageNo || StageMapState.current || 1, storyPhase)}`);
   }
   const preview = getWavePreviewInfo(S.ogge, S.stageNo || StageMapState.current || 1);
-  log(`웨이브 ${S.ogge}: ${theme().ko} / 장판 없이 방어 어려움 / 적 ${S.total}체 접근`);
+  log(`웨이브 ${S.ogge}: ${theme().ko} / 몬스터 구성 ${monsterPoolSummary(S.stageNo || StageMapState.current || 1, S.ogge)} / 적 ${S.total}체 접근`);
   toast(`웨이브 ${S.ogge} · ${preview.title} · ${preview.detail}`, S.currentBossInfo ? 'important' : 'normal');
   updateUI();
 }
@@ -4771,15 +4769,242 @@ function drawCachedEnemyBody(enemy, color){
 }
 
 const ENEMY_BASE_MAP = {
-  grunt:{hp:1.62,spd:1.08,size:13,color:'#e2e8f0',reward:.50,exp:3,armor:0,regen:false,treasure:false,boss:false},
-  runner:{hp:1.05,spd:1.82,size:11,color:'#7dd3fc',reward:.50,exp:3,armor:0,regen:false,treasure:false,boss:false},
-  brute:{hp:4.10,spd:.84,size:18,color:'#fbbf24',reward:.90,exp:5,armor:.23,regen:false,treasure:false,boss:false},
-  regen:{hp:2.65,spd:.98,size:15,color:'#22c55e',reward:.80,exp:5,armor:0,regen:true,treasure:false,boss:false},
-  treasure:{hp:3.75,spd:1.00,size:18,color:'#facc15',reward:2.2,exp:8,armor:0,regen:false,treasure:true,boss:false},
-  boss:{hp:16,spd:.58,size:30,color:'#fb7185',reward:3.5,exp:18,armor:.18,regen:false,treasure:false,boss:true},
-  midboss:{hp:21,spd:.62,size:34,color:'#f8fafc',reward:5.0,exp:26,armor:.22,regen:false,treasure:false,boss:true},
-  finalboss:{hp:28,spd:.64,size:41,color:'#f8fafc',reward:8.0,exp:38,armor:.26,regen:false,treasure:false,boss:true}
+  // Legacy ids remain for save/test compatibility. New stage waves use the SF monster ids below.
+  grunt:{hp:1.62,spd:1.08,size:13,color:'#e2e8f0',reward:.50,exp:3,armor:0,regen:false,treasure:false,boss:false, displayName:'공허 파수병'},
+  runner:{hp:1.05,spd:1.82,size:11,color:'#7dd3fc',reward:.50,exp:3,armor:0,regen:false,treasure:false,boss:false, displayName:'유성 돌격체'},
+  brute:{hp:4.10,spd:.84,size:18,color:'#fbbf24',reward:.90,exp:5,armor:.23,regen:false,treasure:false,boss:false, displayName:'철갑 수호체'},
+  regen:{hp:2.65,spd:.98,size:15,color:'#22c55e',reward:.80,exp:5,armor:0,regen:true,treasure:false,boss:false, displayName:'성흔 운반체'},
+  treasure:{hp:3.75,spd:1.00,size:18,color:'#facc15',reward:2.2,exp:8,armor:0,regen:false,treasure:true,boss:false, displayName:'성흔 운반체'},
+
+  void_sentry:{hp:1.62,spd:1.08,size:13,color:'#dbeafe',reward:.50,exp:3,armor:0,regen:false,treasure:false,boss:false, displayName:'공허 파수병', role:'기본형', skillName:'없음', intro:'가장 기본적인 침입자입니다. 체력과 속도가 모두 평범해서 초반 방어 흐름을 익히기 좋습니다.'},
+  meteor_charger:{hp:1.22,spd:1.54,size:11,color:'#67e8f9',reward:.47,exp:3,armor:0,regen:false,treasure:false,boss:false, displayName:'유성 돌격체', role:'속도형', skillName:'고속 돌파', intro:'체력은 낮지만 빠르게 코어로 돌진합니다. 경로 앞쪽에 타워를 배치해 일찍 공격하는 것이 좋습니다.'},
+  iron_guardian:{hp:2.35,spd:.84,size:17,color:'#fbbf24',reward:.58,exp:5,armor:.20,regen:false,treasure:false,boss:false, displayName:'철갑 수호체', role:'방어형', skillName:'철갑 장갑', intro:'두꺼운 장갑으로 피해를 줄여 받습니다. 느리지만 오래 버티기 때문에 집중 화력이 필요합니다.'},
+  stigma_carrier:{hp:1.94,spd:.97,size:16,color:'#facc15',reward:.82,exp:7,armor:0,regen:false,treasure:true,boss:false, displayName:'성흔 운반체', role:'보상형', skillName:'성흔 보급', intro:'처치하면 일반 적보다 보상이 큽니다. 보이면 놓치지 말고 우선적으로 잡는 것이 좋습니다.'},
+  crystal_barrier:{hp:1.78,spd:.92,size:16,color:'#a78bfa',reward:.62,exp:6,armor:.04,regen:false,treasure:false,boss:false, shieldRatio:.35, displayName:'수정 방벽체', role:'보호막형', skillName:'수정 보호막', intro:'수정 보호막을 두르고 접근합니다. 보호막을 먼저 부숴야 본체 체력을 빠르게 깎을 수 있습니다.'},
+  rift_splitter:{hp:2.10,spd:.89,size:16,color:'#fb7185',reward:.64,exp:6,armor:0,regen:false,treasure:false,boss:false, splitId:'rift_shard', splitCount:2, displayName:'균열 분열체', role:'분열형', skillName:'균열 분열', intro:'처치되면 작은 분열체로 나뉩니다. 경로 후반에도 마무리 화력이 있어야 안전합니다.'},
+  rift_shard:{hp:.56,spd:1.30,size:9,color:'#fda4af',reward:.18,exp:1,armor:0,regen:false,treasure:false,boss:false, splitChild:true, displayName:'균열 파편', role:'분열체', skillName:'분열 잔해', intro:''},
+  core_overdrive:{hp:2.43,spd:.81,size:17,color:'#f97316',reward:.68,exp:6,armor:.03,regen:false,treasure:false,boss:false, coreDamage:2, displayName:'코어 폭주체', role:'위험형', skillName:'코어 과부하', intro:'코어에 도달하면 일반 몬스터보다 큰 피해를 줍니다. 느리지만 반드시 도착 전에 처치해야 합니다.'},
+  phase_ghost:{hp:1.54,spd:1.24,size:13,color:'#c4b5fd',reward:.63,exp:5,armor:0,regen:false,treasure:false,boss:false, dodgeChance:.12, displayName:'차원 유령체', role:'회피형', skillName:'차원 회피', intro:'차원 사이를 흔들리며 일부 공격을 회피합니다. 여러 타워로 공격 횟수를 늘리면 안정적으로 막을 수 있습니다.'},
+  abyss_knight:{hp:3.55,spd:.74,size:19,color:'#94a3b8',reward:1.05,exp:9,armor:.15,regen:false,treasure:false,boss:false, displayName:'심연 기사', role:'정예형', skillName:'심연 장갑', intro:'체력과 방어력이 모두 높은 정예 몬스터입니다. 보스 전 화력 검증용 위협으로 등장합니다.'},
+  void_colossus:{hp:4.65,spd:.60,size:22,color:'#e0f2fe',reward:1.28,exp:12,armor:.05,regen:false,treasure:false,boss:false, displayName:'공허 거신', role:'대형형', skillName:'거신 육체', intro:'매우 느리지만 체력이 압도적으로 높습니다. 경로 전체에서 오래 공격할 수 있게 배치해야 합니다.'},
+
+  boss:{hp:16,spd:.58,size:30,color:'#fb7185',reward:3.5,exp:18,armor:.18,regen:false,treasure:false,boss:true, displayName:'균열 감시자'},
+  midboss:{hp:21,spd:.62,size:34,color:'#f8fafc',reward:5.0,exp:26,armor:.22,regen:false,treasure:false,boss:true, displayName:'수정 심장체'},
+  finalboss:{hp:28,spd:.64,size:41,color:'#f8fafc',reward:8.0,exp:38,armor:.26,regen:false,treasure:false,boss:true, displayName:'코어 포식자'}
 };
+
+const STAGE_MONSTER_POOLS = {
+  1:{theme:'공허 성역', intro:'공허 파수병으로 기본 방어를 학습하는 입문 전장', early:[['void_sentry',100]], mid:[['void_sentry',88],['meteor_charger',12]], late:[['void_sentry',78],['meteor_charger',14],['stigma_carrier',8]]},
+  2:{theme:'빙결 외곽', intro:'빠른 침입자를 감속과 전방 배치로 막는 전장', early:[['void_sentry',68],['meteor_charger',32]], mid:[['void_sentry',55],['meteor_charger',35],['stigma_carrier',10]], late:[['void_sentry',48],['meteor_charger',38],['crystal_barrier',14]]},
+  3:{theme:'용암 성운', intro:'장갑형 몬스터로 화력 집중을 시험하는 전장', early:[['void_sentry',56],['iron_guardian',30],['meteor_charger',14]], mid:[['iron_guardian',42],['void_sentry',34],['meteor_charger',16],['stigma_carrier',8]], late:[['iron_guardian',48],['core_overdrive',14],['meteor_charger',18],['void_sentry',20]]},
+  4:{theme:'생체 정글', intro:'보상형과 재생 압박으로 처치 우선순위를 익히는 전장', early:[['void_sentry',46],['stigma_carrier',18],['iron_guardian',18],['meteor_charger',18]], mid:[['stigma_carrier',22],['iron_guardian',24],['crystal_barrier',18],['void_sentry',36]], late:[['stigma_carrier',18],['rift_splitter',16],['crystal_barrier',24],['iron_guardian',24],['void_sentry',18]]},
+  5:{theme:'매연 폐역', intro:'흐릿하게 접근하는 회피형과 장갑형이 섞이는 전장', early:[['phase_ghost',24],['void_sentry',40],['iron_guardian',22],['meteor_charger',14]], mid:[['phase_ghost',30],['iron_guardian',26],['crystal_barrier',20],['void_sentry',24]], late:[['phase_ghost',34],['core_overdrive',12],['iron_guardian',26],['crystal_barrier',18],['stigma_carrier',10]]},
+  6:{theme:'수정 성운', intro:'보호막과 공명 압박으로 지속 화력을 요구하는 전장', early:[['crystal_barrier',38],['void_sentry',28],['iron_guardian',20],['stigma_carrier',14]], mid:[['crystal_barrier',44],['phase_ghost',16],['iron_guardian',24],['stigma_carrier',16]], late:[['crystal_barrier',42],['rift_splitter',18],['phase_ghost',18],['iron_guardian',22]]},
+  7:{theme:'기계 핵성', intro:'방벽과 장갑을 해체해야 하는 방어망 전장', early:[['crystal_barrier',34],['iron_guardian',34],['void_sentry',20],['meteor_charger',12]], mid:[['crystal_barrier',36],['iron_guardian',32],['abyss_knight',8],['phase_ghost',12],['stigma_carrier',12]], late:[['crystal_barrier',32],['iron_guardian',28],['abyss_knight',14],['core_overdrive',14],['phase_ghost',12]]},
+  8:{theme:'중력 무덤', intro:'대형 적과 위험형 적이 전선을 밀어붙이는 전장', early:[['core_overdrive',24],['iron_guardian',24],['crystal_barrier',24],['void_sentry',28]], mid:[['core_overdrive',28],['void_colossus',10],['iron_guardian',24],['phase_ghost',18],['crystal_barrier',20]], late:[['core_overdrive',30],['void_colossus',14],['abyss_knight',14],['rift_splitter',16],['crystal_barrier',26]]},
+  9:{theme:'번개 회랑', intro:'빠른 돌격체와 위험형이 동시에 압박하는 고속 전장', early:[['meteor_charger',38],['phase_ghost',18],['core_overdrive',18],['void_sentry',26]], mid:[['meteor_charger',42],['core_overdrive',22],['phase_ghost',20],['iron_guardian',16]], late:[['meteor_charger',38],['core_overdrive',24],['abyss_knight',12],['phase_ghost',18],['rift_splitter',8]]},
+  10:{theme:'시간 잔해', intro:'분열체가 전장을 되감듯 늘어나는 반복 전장', early:[['rift_splitter',28],['phase_ghost',20],['void_sentry',28],['iron_guardian',24]], mid:[['rift_splitter',34],['phase_ghost',22],['core_overdrive',18],['crystal_barrier',26]], late:[['rift_splitter',38],['abyss_knight',14],['phase_ghost',20],['void_colossus',10],['core_overdrive',18]]},
+  11:{theme:'침묵 성단', intro:'정예와 회피형이 정보 없는 압박을 주는 심연 전장', early:[['abyss_knight',24],['phase_ghost',24],['iron_guardian',24],['void_sentry',28]], mid:[['abyss_knight',30],['phase_ghost',24],['core_overdrive',18],['crystal_barrier',18],['rift_splitter',10]], late:[['abyss_knight',34],['phase_ghost',22],['void_colossus',12],['core_overdrive',20],['rift_splitter',12]]},
+  12:{theme:'균열 왕좌', intro:'모든 몬스터 역할이 합쳐지는 최종 복합 전장', early:[['abyss_knight',22],['crystal_barrier',22],['meteor_charger',18],['core_overdrive',18],['phase_ghost',20]], mid:[['abyss_knight',26],['rift_splitter',18],['core_overdrive',20],['void_colossus',12],['crystal_barrier',24]], late:[['abyss_knight',26],['void_colossus',16],['rift_splitter',20],['core_overdrive',22],['phase_ghost',16]]}
+};
+
+const MONSTER_INTRO_SHOWN = new Set();
+const MONSTER_INTRO_PAUSE_STATE = {active:false, wasPaused:false, token:0};
+function monsterDef(id){ return ENEMY_BASE_MAP[id] || ENEMY_BASE_MAP.void_sentry || ENEMY_BASE_MAP.grunt; }
+function monsterWaveBand(wave){ return wave < 4 ? 'early' : (wave < 8 ? 'mid' : 'late'); }
+function sanitizeMonsterCssValue(value, fallback){
+  const raw = String(value || fallback || '').trim();
+  const safe = raw.replace(/[^#(),.%a-zA-Z0-9\s-]/g, '');
+  return safe || String(fallback || '#67e8f9');
+}
+function sanitizeMonsterClass(value){
+  return String(value || 'unknown').replace(/[^a-zA-Z0-9_-]/g, '_');
+}
+function monsterIntroPreviewMarkup(id, def){
+  const cls = sanitizeMonsterClass(id);
+  const role = sanitizeMonsterClass(def?.role || 'basic');
+  return `<div class="monsterIntroPreview monsterIntroType_${cls} monsterIntroRole_${role}" aria-hidden="true">
+    <canvas class="monsterIntroPreviewCanvas" width="200" height="200"></canvas>
+  </div>`;
+}
+function renderMonsterIntroPreviewCanvas(canvas, id, def){
+  if(!canvas || !def) return;
+  try{
+    const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+    const rect = canvas.getBoundingClientRect();
+    const cssW = Math.max(96, Math.round(rect.width || 104));
+    const cssH = Math.max(96, Math.round(rect.height || 104));
+    const pxW = Math.max(120, Math.round(cssW * dpr));
+    const pxH = Math.max(120, Math.round(cssH * dpr));
+    if(canvas.width !== pxW) canvas.width = pxW;
+    if(canvas.height !== pxH) canvas.height = pxH;
+    const pctx = canvas.getContext('2d');
+    if(!pctx) return;
+    pctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    pctx.clearRect(0, 0, cssW, cssH);
+
+    const laneY = Math.round(cssH * 0.73);
+    const cx = cssW * 0.5;
+    const cy = cssH * 0.46;
+    const size = Math.max(10, Math.min(28, Number(def.size || 14) * 1.08));
+    const enemy = {
+      x: cx,
+      y: cy,
+      size,
+      color: def.color || '#dbeafe',
+      boss: !!def.boss,
+      treasure: !!def.treasure,
+      shield: def.shieldRatio > 0 ? 100 : 0,
+      maxShield: def.shieldRatio > 0 ? 100 : 0,
+      dodgeChance: Math.max(0, Number(def.dodgeChance || 0)),
+      stageBoss: !!def.stageBoss,
+      auraColor: def.aura || def.color || '#dbeafe',
+      hp: 1,
+      maxHp: 1,
+      mark: 0,
+      freeze: 0,
+      dotTime: 0,
+      bossKo: def.displayName || ''
+    };
+
+    pctx.fillStyle = 'rgba(7, 18, 33, 0.96)';
+    pctx.fillRect(0, 0, cssW, cssH);
+
+    pctx.strokeStyle = 'rgba(125,211,252,0.12)';
+    pctx.lineWidth = 1;
+    for(let x = 8; x < cssW - 7; x += 16){
+      pctx.beginPath();
+      pctx.moveTo(x + 0.5, 8);
+      pctx.lineTo(x + 0.5, cssH - 8);
+      pctx.stroke();
+    }
+    for(let y = 8; y < cssH - 7; y += 16){
+      pctx.beginPath();
+      pctx.moveTo(8, y + 0.5);
+      pctx.lineTo(cssW - 8, y + 0.5);
+      pctx.stroke();
+    }
+
+    pctx.fillStyle = 'rgba(18, 74, 107, 0.26)';
+    pctx.strokeStyle = 'rgba(103,232,249,0.35)';
+    pctx.lineWidth = 1.2;
+    const laneX = 10;
+    const laneW = cssW - 20;
+    const laneH = Math.max(10, Math.round(cssH * 0.12));
+    const laneR = laneH * 0.5;
+    pctx.beginPath();
+    pctx.moveTo(laneX + laneR, laneY);
+    pctx.arcTo(laneX + laneW, laneY, laneX + laneW, laneY + laneH, laneR);
+    pctx.arcTo(laneX + laneW, laneY + laneH, laneX, laneY + laneH, laneR);
+    pctx.arcTo(laneX, laneY + laneH, laneX, laneY, laneR);
+    pctx.arcTo(laneX, laneY, laneX + laneW, laneY, laneR);
+    pctx.closePath();
+    pctx.fill();
+    pctx.stroke();
+    pctx.shadowColor = 'rgba(34,211,238,0.28)';
+    pctx.shadowBlur = 12;
+    pctx.strokeStyle = 'rgba(34,211,238,0.22)';
+    pctx.stroke();
+    pctx.shadowBlur = 0;
+
+    const body = getCachedEnemyBodySprite(enemy.color, enemy.size, !!enemy.boss);
+    if(body){
+      pctx.drawImage(body.canvas, enemy.x - body.cx, enemy.y - body.cy, body.w, body.h);
+    }else{
+      pctx.fillStyle = enemy.color;
+      pctx.beginPath();
+      pctx.arc(enemy.x, enemy.y, enemy.size, 0, Math.PI * 2);
+      pctx.fill();
+    }
+
+    if(enemy.stageBoss){
+      pctx.strokeStyle = enemy.auraColor || enemy.color;
+      pctx.lineWidth = 2.2;
+      pctx.globalAlpha = .9;
+      pctx.beginPath();
+      pctx.arc(enemy.x, enemy.y, enemy.size + 9, 0, Math.PI * 2);
+      pctx.stroke();
+      pctx.globalAlpha = 1;
+    }
+    if(enemy.treasure){
+      pctx.strokeStyle = '#fde68a';
+      pctx.lineWidth = 2.5;
+      pctx.beginPath();
+      pctx.arc(enemy.x, enemy.y, enemy.size + 5, 0, Math.PI * 2);
+      pctx.stroke();
+    }
+    if(enemy.maxShield > 0 && enemy.shield > 0){
+      pctx.strokeStyle = 'rgba(191,219,254,.92)';
+      pctx.lineWidth = 2;
+      pctx.globalAlpha = .9;
+      pctx.beginPath();
+      pctx.arc(enemy.x, enemy.y, enemy.size + 5, 0, Math.PI * 2);
+      pctx.stroke();
+      pctx.globalAlpha = 1;
+    }
+    if(enemy.dodgeChance > 0){
+      pctx.strokeStyle = 'rgba(196,181,253,.76)';
+      pctx.lineWidth = 1.5;
+      pctx.globalAlpha = .78;
+      pctx.beginPath();
+      pctx.arc(enemy.x, enemy.y, enemy.size + 4, 0, Math.PI * 2);
+      pctx.stroke();
+      pctx.globalAlpha = 1;
+    }
+
+    const barW = enemy.boss ? 54 : 44;
+    const barX = enemy.x - barW / 2;
+    const barY = enemy.y - enemy.size - 16;
+    pctx.fillStyle = 'rgba(2,6,23,.92)';
+    pctx.fillRect(barX, barY, barW, 6);
+    pctx.fillStyle = '#22c55e';
+    pctx.fillRect(barX, barY, barW, 6);
+    if(enemy.maxShield > 0 && enemy.shield > 0){
+      pctx.fillStyle = '#93c5fd';
+      pctx.fillRect(barX, barY - 5, barW, 3);
+    }
+  }catch(err){
+    console.warn('monster intro preview render failed', err);
+  }
+}
+function pauseForMonsterIntro(){
+  if(!S || !S.active || S.gameOver) return;
+  MONSTER_INTRO_PAUSE_STATE.token += 1;
+  MONSTER_INTRO_PAUSE_STATE.active = true;
+  MONSTER_INTRO_PAUSE_STATE.wasPaused = !!S.paused;
+  S.paused = true;
+  try{ document.body.classList.add('monster-intro-open'); }catch(_){ }
+  try{ updateUI(); }catch(err){ console.warn('monster intro pause ui failed', err); }
+}
+function resumeFromMonsterIntro(){
+  if(!MONSTER_INTRO_PAUSE_STATE.active) return;
+  const shouldResume = !MONSTER_INTRO_PAUSE_STATE.wasPaused;
+  MONSTER_INTRO_PAUSE_STATE.active = false;
+  try{ document.body.classList.remove('monster-intro-open'); }catch(_){ }
+  if(S && S.active && !S.gameOver && shouldResume) S.paused = false;
+  try{ updateUI(); }catch(err){ console.warn('monster intro resume ui failed', err); }
+}
+function getStageMonsterPool(stageNo, waveNo){
+  const stage = clamp(Number(stageNo || 1), 1, 12);
+  const wave = Math.max(1, Number(waveNo || 1));
+  const cfg = STAGE_MONSTER_POOLS[stage] || STAGE_MONSTER_POOLS[1];
+  return cfg[monsterWaveBand(wave)] || cfg.early || [['void_sentry', 100]];
+}
+function pickWeightedMonster(pool){
+  let total = 0;
+  for(let i=0;i<pool.length;i++) total += Math.max(0, Number(pool[i][1] || 0));
+  if(total <= 0) return 'void_sentry';
+  let r = Math.random() * total;
+  for(let i=0;i<pool.length;i++){
+    r -= Math.max(0, Number(pool[i][1] || 0));
+    if(r <= 0) return pool[i][0];
+  }
+  return pool[pool.length - 1][0] || 'void_sentry';
+}
+function monsterPoolSummary(stageNo, waveNo){
+  const pool = getStageMonsterPool(stageNo, waveNo);
+  return pool.slice(0, 4).map(([id]) => monsterDef(id).displayName || id).join(' / ');
+}
 
 class Enemy{
   constructor(entry){
@@ -4794,13 +5019,25 @@ class Enemy{
     const base = ENEMY_BASE_MAP[type] || ENEMY_BASE_MAP.grunt;
     let hpBase = base.hp, spd = base.spd, size = base.size, color = base.color;
     let reward = base.reward, exp = base.exp, armor = base.armor || 0;
+    this.displayName = base.displayName || type;
+    this.monsterRole = base.role || '';
+    this.skillName = base.skillName || '';
+    this.intro = base.intro || '';
+    this.dodgeChance = Math.max(0, Number(base.dodgeChance || 0));
+    this.shieldRatio = Math.max(0, Number(base.shieldRatio || 0));
+    this.shield = 0; this.maxShield = 0;
+    this.splitId = base.splitId || '';
+    this.splitCount = Math.max(0, Number(base.splitCount || 0));
+    this.splitChild = !!(base.splitChild || payload?.splitChild);
     this.regen=!!base.regen;this.treasure=!!base.treasure;this.boss=!!base.boss;
+    this.coreDamage = base.coreDamage || 0;
     const bossData = payload?.bossData || null;
     if(bossData){
       this.stageBoss = true;
       this.bossTier = payload.bossTier || (type === 'finalboss' ? 'final' : 'mid');
       this.bossName = bossData.name;
       this.bossKo = bossData.ko;
+      this.displayName = bossData.ko || bossData.name || this.displayName;
       this.abilityName = bossData.ability;
       this.bossTitle = bossData.title;
       this.bossDesc = bossData.desc;
@@ -4819,6 +5056,11 @@ class Enemy{
     }
     this.spd=spd;this.size=size;this.color=color;this.reward=reward;this.exp=exp;this.armor=armor;
     this.x=route[0].x;this.y=route[0].y;this.seg=0;this.progress=0;
+    if(payload && Number.isFinite(payload.x) && Number.isFinite(payload.y)){
+      this.x = payload.x; this.y = payload.y;
+      this.seg = Math.max(0, Number(payload.seg || 0));
+      this.progress = Math.max(0, Number(payload.progress || 0));
+    }
     const hpScale = this.hpScale || 1;
     const stageBalance = getCommercialStageBalance(S.stageNo || StageMapState.current || 1);
     const stageHpMultiplier = (this.boss || this.stageBoss)
@@ -4826,6 +5068,10 @@ class Enemy{
       : Number(stageBalance.general_hp_multiplier || 1);
     this.maxHp=Math.floor(295*hpBase*(1+S.ogge*.30+S.theme*.38) * hpScale * stageHpMultiplier);
     this.hp=this.maxHp;
+    if(this.shieldRatio > 0){
+      this.maxShield = Math.max(1, Math.floor(this.maxHp * this.shieldRatio));
+      this.shield = this.maxShield;
+    }
     this.dead=false;this.slow=0;this.freeze=0;this.dot=0;this.dotTime=0;this.mark=0;this._chainHitStamp=0;
     return this;
   }
@@ -4869,12 +5115,22 @@ class Enemy{
   }
   damage(v,source,color,rewardBonus=0){
     this.rewardBonus = Math.max(0, Number(rewardBonus || 0));
+    if(this.dodgeChance > 0 && Math.random() < this.dodgeChance){
+      if(Math.random() < .20) impactLabel(this.x, this.y - this.size - 20, 'EVADE', this.color || '#c4b5fd', 11, 34);
+      return;
+    }
     const g = getGlobalUpgradeStats();
     const armorValue = Math.max(0, (this.armor||0) + S.stageArmorBonus - (g.armorBreak||0));
     let final=v*(1-clamp(armorValue,0,.72));
     if(this.boss || this.stageBoss) final*=1+(g.bossDamage||0);
     if(this.mark>0) final*=1.22;
-    this.hp-=final;
+    if(this.shield > 0){
+      const block = Math.min(this.shield, final);
+      this.shield -= block;
+      final -= block;
+      if(block > 20 && Math.random() < .14) impactLabel(this.x, this.y - this.size - 24, 'SHIELD', '#bfdbfe', 11, 36);
+    }
+    if(final > 0) this.hp-=final;
     // v35: hide enemy damage number labels.
     // Damage calculation and HP reduction stay unchanged; only the floating numeric text is suppressed.
     // This also avoids extra float objects during heavy combat/audio playback.
@@ -4892,18 +5148,22 @@ class Enemy{
     gainExp(this.exp);
     burst(this.x,this.y,this.color,22,38);
     registerKillCombo(this);
+    if(this.splitId && this.splitCount > 0 && !this.splitChild){
+      spawnSplitChildren(this);
+    }
     if(this.treasure){
+      const treasureName = this.displayName || '성흔 운반체';
       triggerTreasureImpact(this);
       if(Math.random()<.55){
         const bonus=45+S.ogge*8;
         S.gold+=bonus;
-        toast(`황금 보물성 파괴! 수정 +${fmt2(bonus)}`);
+        toast(`${treasureName} 파괴! 수정 +${fmt2(bonus)}`);
         impactLabel(this.x,this.y-this.size-34,`+${fmt2(bonus)} CRYSTAL`,'#fde68a',18,78);
         sound('treasure');
       }else{
         const shardBonus = Math.max(2, Math.floor(2 + S.ogge / 3));
         if(META){ META.shards += shardBonus; saveOfflineMeta(); renderOfflineMetaPanel(); }
-        toast(`황금 보물성 파괴! 성흔 조각 +${fmt2(shardBonus)}`);
+        toast(`${treasureName} 파괴! 성흔 조각 +${fmt2(shardBonus)}`);
         impactLabel(this.x,this.y-this.size-34,`+${fmt2(shardBonus)} SHARD`,'#fde68a',18,78);
         sound('treasure');
       }
@@ -4961,6 +5221,16 @@ class Enemy{
       ctx.strokeStyle='#fde68a';ctx.lineWidth=3;
       ctx.beginPath();ctx.arc(this.x,this.y,this.size+6,0,TAU);ctx.stroke();
     }
+    if(this.shield > 0){
+      ctx.strokeStyle='rgba(191,219,254,.92)';ctx.lineWidth=2.2;ctx.globalAlpha=.86;
+      ctx.beginPath();ctx.arc(this.x,this.y,this.size+5+Math.sin((visualNowMs || 0)/150)*1.5,0,TAU);ctx.stroke();
+      ctx.globalAlpha=1;
+    }
+    if(this.dodgeChance > 0){
+      ctx.strokeStyle='rgba(196,181,253,.70)';ctx.lineWidth=1.5;ctx.globalAlpha=.72;
+      ctx.beginPath();ctx.arc(this.x,this.y,this.size+4,0,TAU);ctx.stroke();
+      ctx.globalAlpha=1;
+    }
     if(this.stageBoss){
       ctx.strokeStyle=this.auraColor || this.color;ctx.lineWidth=2.4;ctx.globalAlpha=.9;
       ctx.beginPath();ctx.arc(this.x,this.y,this.size+9+Math.sin((visualNowMs || 0)/180)*2,0,TAU);ctx.stroke();
@@ -4972,6 +5242,11 @@ class Enemy{
     ctx.fillRect(this.x-20,this.y-this.size-14,40,5);
     ctx.fillStyle=r>.45?'#22c55e':'#fb7185';
     ctx.fillRect(this.x-20,this.y-this.size-14,40*r,5);
+    if(this.maxShield > 0 && this.shield > 0){
+      const sr = clamp(this.shield / this.maxShield, 0, 1);
+      ctx.fillStyle='#93c5fd';
+      ctx.fillRect(this.x-20,this.y-this.size-19,40*sr,3);
+    }
     if(this.mark>0){
       ctx.strokeStyle='#60a5fa';ctx.lineWidth=2;
       ctx.beginPath();ctx.arc(this.x,this.y,this.size+7,0,TAU);ctx.stroke();
@@ -4985,6 +5260,27 @@ class Enemy{
   }
 }
 
+
+
+function spawnSplitChildren(source){
+  if(!source || !source.splitId || !Array.isArray(enemies)) return;
+  const count = Math.max(0, Math.min(4, Number(source.splitCount || 0)));
+  for(let i=0;i<count;i++){
+    const child = acquireEnemy({
+      type: source.splitId,
+      splitChild: true,
+      x: source.x + rand(-7, 7),
+      y: source.y + rand(-7, 7),
+      seg: source.seg,
+      progress: source.progress
+    });
+    child.slow = Math.max(child.slow || 0, 6 + i * 2);
+    enemies.push(child);
+    S.total = Number(S.total || 0) + 1;
+    S.spawned = Number(S.spawned || 0) + 1;
+  }
+  impactLabel(source.x, source.y - source.size - 28, 'SPLIT', source.color || '#fb7185', 12, 48);
+}
 
 function pushEnemyBack(enemy, amount){
   if(!enemy || enemy.dead || !Array.isArray(route) || route.length < 2) return false;
@@ -5799,9 +6095,126 @@ function tryCreateHiddenPlanet(){
   return true;
 }
 
+
+function buildEnemyIntroPresentation(enemy){
+  if(!enemy || enemy.splitChild) return null;
+  const id = enemy.type || '';
+  const base = monsterDef(id);
+  const stageNo = Number(S?.stageNo || StageMapState.current || 1);
+  if(enemy.stageBoss){
+    const tierKo = enemy.bossTier === 'final' ? '최종 보스' : '중간 보스';
+    const name = enemy.bossKo || enemy.bossName || base.displayName || '보스';
+    const skill = bossSkillKo(enemy.abilityName || base.skillName || '보스 스킬');
+    const desc = enemy.bossDesc || base.intro || '일반 몬스터보다 체력과 방어력이 높은 강력한 적입니다. 방어선을 길게 활용해 집중 공격해야 합니다.';
+    const title = enemy.bossTitle ? `${enemy.bossTitle}입니다. ` : '';
+    return {
+      key: `stageBoss:${stageNo}:${enemy.bossTier || id}:${name}`,
+      id,
+      title: `${name} 등장`,
+      displayName: name,
+      role: tierKo,
+      skillName: skill,
+      intro: `${title}${desc}`,
+      def: {
+        color: enemy.auraColor || enemy.color || base.color || '#f8fafc',
+        aura: enemy.auraColor || enemy.color || base.color || '#f8fafc',
+        size: Math.max(30, Number(enemy.size || base.size || 34)),
+        boss: true,
+        stageBoss: true,
+        treasure: false,
+        shieldRatio: enemy.maxShield > 0 ? .25 : 0,
+        dodgeChance: 0,
+        displayName: name
+      }
+    };
+  }
+  if(enemy.boss || base.boss){
+    const name = enemy.displayName || base.displayName || '균열 감시자';
+    return {
+      key: `boss:${id}:${name}`,
+      id,
+      title: `${name} 등장`,
+      displayName: name,
+      role: base.role || '보스형',
+      skillName: base.skillName || '강화 장갑',
+      intro: base.intro || '일반 몬스터보다 체력과 방어력이 높은 보스입니다. 경로 전체에서 오래 공격할 수 있도록 타워를 배치해야 합니다.',
+      def: {
+        color: enemy.auraColor || enemy.color || base.color || '#fb7185',
+        aura: enemy.auraColor || enemy.color || base.color || '#fb7185',
+        size: Math.max(28, Number(enemy.size || base.size || 30)),
+        boss: true,
+        stageBoss: false,
+        treasure: !!enemy.treasure,
+        shieldRatio: enemy.maxShield > 0 ? .25 : 0,
+        dodgeChance: Math.max(0, Number(enemy.dodgeChance || base.dodgeChance || 0)),
+        displayName: name
+      }
+    };
+  }
+  const def = base;
+  if(!def || !def.intro) return null;
+  return {
+    key: `monster:${id}`,
+    id,
+    title: `${def.displayName || id} 등장`,
+    displayName: def.displayName || id,
+    role: def.role || '특수형',
+    skillName: def.skillName || '특성 없음',
+    intro: def.intro,
+    def
+  };
+}
+
+function showMonsterIntroOnce(enemy){
+  const intro = buildEnemyIntroPresentation(enemy);
+  if(!intro || !intro.intro || MONSTER_INTRO_SHOWN.has(intro.key)) return;
+  MONSTER_INTRO_SHOWN.add(intro.key);
+  try{
+    const old = document.getElementById('monsterIntroPopup');
+    if(old) old.remove();
+    const stageNo = Number(S?.stageNo || StageMapState.current || 1);
+    const stageCfg = STAGE_MONSTER_POOLS[stageNo] || STAGE_MONSTER_POOLS[1];
+    const popup = document.createElement('div');
+    popup.id = 'monsterIntroPopup';
+    popup.className = intro.def?.stageBoss ? 'monsterIntroPopup monsterIntroBossPopup' : 'monsterIntroPopup';
+    popup.setAttribute('role', 'dialog');
+    popup.setAttribute('aria-modal', 'true');
+    popup.setAttribute('aria-label', `${intro.displayName || intro.id} 설명`);
+    popup.innerHTML = `<div class="monsterIntroCard">
+      <div class="monsterIntroKicker">${intro.def?.stageBoss ? 'BOSS SCAN' : 'ENEMY SCAN'} · ${escapeHtml(stageCfg.theme || '성역')}</div>
+      <div class="monsterIntroTitle">${escapeHtml(intro.title || `${intro.displayName || intro.id} 등장`)}</div>
+      <div class="monsterIntroBody">
+        ${monsterIntroPreviewMarkup(intro.id, intro.def)}
+        <div class="monsterIntroText">
+          <div class="monsterIntroMeta"><span>${escapeHtml(intro.role || '특수형')}</span><span>${escapeHtml(intro.skillName || '특성 없음')}</span></div>
+          <p>${escapeHtml(intro.intro)}</p>
+        </div>
+      </div>
+      <button type="button" class="monsterIntroClose" aria-label="몬스터 설명 확인 후 전투 재개">확인</button>
+    </div>`;
+    document.body.appendChild(popup);
+    const previewCanvas = popup.querySelector('.monsterIntroPreviewCanvas');
+    if(previewCanvas) renderMonsterIntroPreviewCanvas(previewCanvas, intro.id, intro.def);
+    pauseForMonsterIntro();
+    const close = () => {
+      if(popup && popup.parentNode) popup.remove();
+      resumeFromMonsterIntro();
+    };
+    const btn = popup.querySelector('.monsterIntroClose');
+    if(btn){
+      btn.onclick = close;
+      setTimeout(() => { try{ btn.focus({preventScroll:true}); }catch(_){ try{ btn.focus(); }catch(__){} } }, 0);
+    }
+  }catch(err){
+    try{ resumeFromMonsterIntro(); }catch(_){ }
+    console.warn('monster intro popup failed', err);
+  }
+}
+
 function spawn(entry){
   const enemy = acquireEnemy(entry);
   enemies.push(enemy);
+  showMonsterIntroOnce(enemy);
   if(enemy.stageBoss){
     impactLabel(enemy.x + 56, enemy.y - 26, enemy.bossTier === 'final' ? 'FINAL BOSS' : 'MID BOSS', enemy.auraColor || enemy.color, 16, 120);
     toast(`${enemy.bossKo || enemy.bossName} 출현`, 'important');
@@ -8472,18 +8885,18 @@ try { renderHangar(); } catch(err) { console.error('renderHangar failed during i
    ========================================================= */
 (function(){
   const STAGE_UI_COPY = {
-    1:{name:'COSMIC VOID',ko:'공허 성역',arc:'오리온 외곽 성좌',risk:'LOW',tags:['AURORA','VOID','ENTRY'],summary:'첫 번째 공허 성역입니다. 기본 행성 배치, 장판 활용, 병합 타이밍을 익히는 입문 전장입니다.',enemy:'공허 균열 적은 능력치가 균형형이라 초반 화력 곡선을 확인하기 좋습니다.',strategy:'레이저·블랙홀 계열로 길목을 안정화하고, 3웨이브부터 병합 준비를 시작하세요.',battle:'공허 성역 방어 · 기본 화력 학습',reward:'블랙홀 행성 해금'},
-    2:{name:'FROST EXPANSE',ko:'빙결 외곽',arc:'오리온 외곽 성좌',risk:'MEDIUM',tags:['BLIZZARD','FREEZE','CONTROL'],summary:'빙결 외곽은 빠른 적이 섞여 들어오는 제어형 전장입니다. 적을 늦추는 배치가 핵심입니다.',enemy:'빙결 선봉대는 속도 변화가 크고, 후반에는 감속 저항 적이 섞입니다.',strategy:'냉각·감속 장판 근처에 타워를 모아 빠른 적의 돌파를 막으세요.',battle:'빙결 외곽 방어 · 감속 제어전',reward:'서리 행성 해금'},
-    3:{name:'LAVA NEBULA',ko:'용암 성운',arc:'오리온 외곽 성좌',risk:'HIGH',tags:['SOLAR','ARMOR','BURN'],summary:'용암 성운은 장갑형 적이 본격적으로 등장하는 화력 검증 스테이지입니다.',enemy:'용암 장갑 적은 단일 저레벨 화력을 오래 버티며 코어로 밀고 들어옵니다.',strategy:'광역 피해와 장갑 돌파 타워를 우선 병합하고, 화력 부족 구간을 장판으로 보완하세요.',battle:'용암 성운 방어 · 장갑 돌파전',reward:'태양 행성 해금'},
-    4:{name:'JUNGLE CORE',ko:'생체 정글',arc:'오리온 외곽 성좌',risk:'VERY HIGH',tags:['SPORE','HEAL','DECAY'],summary:'생체 정글은 적이 회복과 증식을 반복하는 장기전 스테이지입니다.',enemy:'포자 군체는 주변 적을 회복시키기 때문에 처치 순서가 중요합니다.',strategy:'재생을 끊는 집중 화력과 지속 피해를 확보해 전선이 밀리지 않게 운영하세요.',battle:'생체 정글 방어 · 재생 차단전',reward:'독성 행성 해금'},
-    5:{name:'SMOG WASTELAND',ko:'매연 폐역',arc:'오리온 외곽 성좌',risk:'EXTREME',tags:['SMOG','ARMOR','HAZE'],summary:'매연 폐역은 시야와 방어 효율을 동시에 흔드는 디버프형 전장입니다.',enemy:'매연 은폐 적은 방어선을 흐트러뜨리고 장갑으로 피해를 흡수합니다.',strategy:'감속, 방어 약화, 지속 피해를 겹쳐 은폐 장갑 적을 빠르게 노출시키세요.',battle:'매연 폐역 방어 · 은폐 약화전',reward:'스모그 행성 해금'},
-    6:{name:'CRYSTAL NEBULA',ko:'수정 성운',arc:'오리온 외곽 성좌',risk:'EXTREME',tags:['PRISM','CHARGE','RESONANCE'],summary:'수정 성운은 피해가 저장되고 굴절되는 공명형 스테이지입니다.',enemy:'수정 공명체는 초과 피해와 장판 효과를 흔들어 배치 판단을 어렵게 만듭니다.',strategy:'공명 장판과 고레벨 타워를 연결해 한 번에 큰 피해를 넣는 구간을 만드세요.',battle:'수정 성운 방어 · 프리즘 공명전',reward:'수정 행성 해금'},
-    7:{name:'MACHINE CORE',ko:'기계 핵성',arc:'오리온 외곽 성좌',risk:'EXTREME+',tags:['MACHINE','SHIELD','REPAIR'],summary:'기계 핵성은 실드와 수리 드론이 전선을 굳히는 방어망 스테이지입니다.',enemy:'기계 실드 유닛은 수리 드론과 함께 등장해 처치 시간을 크게 늘립니다.',strategy:'실드 해체 타워와 집중 화력을 먼저 확보하고, 보스 전에는 병합 레벨을 끌어올리세요.',battle:'기계 핵성 방어 · 실드 해체전',reward:'기계 행성 해금'},
-    8:{name:'GRAVITY MAUSOLEUM',ko:'중력 무덤',arc:'백조 균열 성좌',risk:'NIGHTMARE',tags:['GRAVITY','PULL','CONTROL'],summary:'중력 무덤은 죽은 행성의 궤도가 적을 밀집시키고 전장을 왜곡하는 제어 스테이지입니다.',enemy:'중력 왜곡 적은 몰려오거나 갑자기 가속해 방어선의 빈틈을 찌릅니다.',strategy:'군중 제어와 범위 화력을 겹쳐 몰려오는 적을 한 번에 정리하세요.',battle:'중력 무덤 방어 · 군중 제어전',reward:'중력 제어 숙련'},
-    9:{name:'THUNDER CORRIDOR',ko:'번개 회랑',arc:'백조 균열 성좌',risk:'NIGHTMARE',tags:['THUNDER','CHAIN','SPEED'],summary:'번개 회랑은 고속 적과 연쇄 충격이 이어지는 속도 압박 스테이지입니다.',enemy:'과전류 고속 적은 짧은 시간에 코어 근처까지 도달할 수 있습니다.',strategy:'초반부터 공격 속도와 연쇄 화력을 확보하고, 길목 앞쪽에 화력을 집중하세요.',battle:'번개 회랑 방어 · 고속 대응전',reward:'과전류 대응 숙련'},
-    10:{name:'TIME SHARDS',ko:'시간 잔해',arc:'백조 균열 성좌',risk:'NIGHTMARE+',tags:['TIME','ECHO','REWIND'],summary:'시간 잔해는 과거 웨이브의 잔상이 겹쳐 화력이 분산되는 반복 전장입니다.',enemy:'시간 잔상 적은 같은 구간에 반복 등장해 타워 타겟팅을 흔듭니다.',strategy:'잔상 처리용 범위 화력과 보스 집중 화력을 분리해서 배치하세요.',battle:'시간 잔해 방어 · 잔상 처리전',reward:'시간 역류 대응'},
-    11:{name:'SILENT CONSTELLATION',ko:'침묵 성단',arc:'용자리 심연 성좌',risk:'ABYSS',tags:['SILENCE','NULL','STEALTH'],summary:'침묵 성단은 감응 신호가 끊겨 적 특성 파악이 늦어지는 암흑 스테이지입니다.',enemy:'침묵 잠행 적은 반응을 늦추고 암흑 장갑으로 초반 피해를 줄입니다.',strategy:'안정적인 중앙 배치와 범용 화력을 먼저 완성해 정보 제한 구간을 버티세요.',battle:'침묵 성단 방어 · 신호 차단전',reward:'신호 차단 대응'},
-    12:{name:'RIFT THRONE',ko:'균열 왕좌',arc:'용자리 심연 성좌',risk:'FINAL',tags:['RIFT KING','HYBRID','ENDGAME'],summary:'균열 왕좌는 이전 성역의 패턴이 모두 합쳐지는 시즌 1 최종 복합전입니다.',enemy:'균열 왕좌 혼합군은 장갑, 재생, 실드, 고속, 잔상 패턴을 순차적으로 압박합니다.',strategy:'핵심 타워를 빠르게 고레벨로 병합하고, 장판·전역 스킬을 모두 활용해야 합니다.',battle:'균열 왕좌 방어 · 최종 복합전',reward:'시즌 1 최종 정화'}
+    1:{name:'COSMIC VOID',ko:'공허 성역',arc:'오리온 외곽 성좌',risk:'LOW',tags:['AURORA','VOID','ENTRY'],summary:'첫 번째 공허 성역입니다. 기본 행성 배치, 장판 활용, 병합 타이밍을 익히는 입문 전장입니다.',enemy:'공허 파수병은 능력치가 균형형이라 초반 화력 곡선을 확인하기 좋습니다.',strategy:'레이저·블랙홀 계열로 길목을 안정화하고, 3웨이브부터 병합 준비를 시작하세요.',battle:'공허 성역 방어 · 기본 화력 학습',reward:'블랙홀 행성 해금'},
+    2:{name:'FROST EXPANSE',ko:'빙결 외곽',arc:'오리온 외곽 성좌',risk:'MEDIUM',tags:['BLIZZARD','FREEZE','CONTROL'],summary:'빙결 외곽은 빠른 적이 섞여 들어오는 제어형 전장입니다. 적을 늦추는 배치가 핵심입니다.',enemy:'유성 돌격체가 빠르게 파고들며, 후반에는 보호막형 수정 방벽체가 섞입니다.',strategy:'냉각·감속 장판 근처에 타워를 모아 빠른 적의 돌파를 막으세요.',battle:'빙결 외곽 방어 · 감속 제어전',reward:'서리 행성 해금'},
+    3:{name:'LAVA NEBULA',ko:'용암 성운',arc:'오리온 외곽 성좌',risk:'HIGH',tags:['SOLAR','ARMOR','BURN'],summary:'용암 성운은 장갑형 적이 본격적으로 등장하는 화력 검증 스테이지입니다.',enemy:'철갑 수호체는 장갑으로 피해를 줄여 받으며, 후반에는 코어 폭주체가 섞입니다.',strategy:'광역 피해와 장갑 돌파 타워를 우선 병합하고, 화력 부족 구간을 장판으로 보완하세요.',battle:'용암 성운 방어 · 장갑 돌파전',reward:'태양 행성 해금'},
+    4:{name:'JUNGLE CORE',ko:'생체 정글',arc:'오리온 외곽 성좌',risk:'VERY HIGH',tags:['SPORE','HEAL','DECAY'],summary:'생체 정글은 적이 회복과 증식을 반복하는 장기전 스테이지입니다.',enemy:'성흔 운반체와 분열형 적이 섞여 보상 욕심과 처치 순서 판단이 중요합니다.',strategy:'재생을 끊는 집중 화력과 지속 피해를 확보해 전선이 밀리지 않게 운영하세요.',battle:'생체 정글 방어 · 재생 차단전',reward:'독성 행성 해금'},
+    5:{name:'SMOG WASTELAND',ko:'매연 폐역',arc:'오리온 외곽 성좌',risk:'EXTREME',tags:['SMOG','ARMOR','HAZE'],summary:'매연 폐역은 시야와 방어 효율을 동시에 흔드는 디버프형 전장입니다.',enemy:'차원 유령체가 일부 공격을 회피하고, 장갑형 적이 방어선을 흔듭니다.',strategy:'감속, 방어 약화, 지속 피해를 겹쳐 은폐 장갑 적을 빠르게 노출시키세요.',battle:'매연 폐역 방어 · 은폐 약화전',reward:'스모그 행성 해금'},
+    6:{name:'CRYSTAL NEBULA',ko:'수정 성운',arc:'오리온 외곽 성좌',risk:'EXTREME',tags:['PRISM','CHARGE','RESONANCE'],summary:'수정 성운은 피해가 저장되고 굴절되는 공명형 스테이지입니다.',enemy:'수정 방벽체가 보호막으로 초반 화력을 버티며, 분열형 적이 후반 마무리를 요구합니다.',strategy:'공명 장판과 고레벨 타워를 연결해 한 번에 큰 피해를 넣는 구간을 만드세요.',battle:'수정 성운 방어 · 프리즘 공명전',reward:'수정 행성 해금'},
+    7:{name:'MACHINE CORE',ko:'기계 핵성',arc:'오리온 외곽 성좌',risk:'EXTREME+',tags:['MACHINE','SHIELD','REPAIR'],summary:'기계 핵성은 실드와 수리 드론이 전선을 굳히는 방어망 스테이지입니다.',enemy:'수정 방벽체와 철갑 수호체가 함께 등장해 실드 해체와 장갑 돌파를 요구합니다.',strategy:'실드 해체 타워와 집중 화력을 먼저 확보하고, 보스 전에는 병합 레벨을 끌어올리세요.',battle:'기계 핵성 방어 · 실드 해체전',reward:'기계 행성 해금'},
+    8:{name:'GRAVITY MAUSOLEUM',ko:'중력 무덤',arc:'백조 균열 성좌',risk:'NIGHTMARE',tags:['GRAVITY','PULL','CONTROL'],summary:'중력 무덤은 죽은 행성의 궤도가 적을 밀집시키고 전장을 왜곡하는 제어 스테이지입니다.',enemy:'코어 폭주체와 공허 거신이 느리지만 강하게 밀고 들어와 누수 관리가 중요합니다.',strategy:'군중 제어와 범위 화력을 겹쳐 몰려오는 적을 한 번에 정리하세요.',battle:'중력 무덤 방어 · 군중 제어전',reward:'중력 제어 숙련'},
+    9:{name:'THUNDER CORRIDOR',ko:'번개 회랑',arc:'백조 균열 성좌',risk:'NIGHTMARE',tags:['THUNDER','CHAIN','SPEED'],summary:'번개 회랑은 고속 적과 연쇄 충격이 이어지는 속도 압박 스테이지입니다.',enemy:'유성 돌격체와 코어 폭주체가 동시에 압박해 전방 화력과 빠른 대응이 중요합니다.',strategy:'초반부터 공격 속도와 연쇄 화력을 확보하고, 길목 앞쪽에 화력을 집중하세요.',battle:'번개 회랑 방어 · 고속 대응전',reward:'과전류 대응 숙련'},
+    10:{name:'TIME SHARDS',ko:'시간 잔해',arc:'백조 균열 성좌',risk:'NIGHTMARE+',tags:['TIME','ECHO','REWIND'],summary:'시간 잔해는 과거 웨이브의 잔상이 겹쳐 화력이 분산되는 반복 전장입니다.',enemy:'균열 분열체가 처치 후 파편으로 나뉘어 후방 마무리 화력을 시험합니다.',strategy:'잔상 처리용 범위 화력과 보스 집중 화력을 분리해서 배치하세요.',battle:'시간 잔해 방어 · 잔상 처리전',reward:'시간 역류 대응'},
+    11:{name:'SILENT CONSTELLATION',ko:'침묵 성단',arc:'용자리 심연 성좌',risk:'ABYSS',tags:['SILENCE','NULL','STEALTH'],summary:'침묵 성단은 감응 신호가 끊겨 적 특성 파악이 늦어지는 암흑 스테이지입니다.',enemy:'심연 기사와 차원 유령체가 섞여 정예 장갑과 회피 대응을 동시에 요구합니다.',strategy:'안정적인 중앙 배치와 범용 화력을 먼저 완성해 정보 제한 구간을 버티세요.',battle:'침묵 성단 방어 · 신호 차단전',reward:'신호 차단 대응'},
+    12:{name:'RIFT THRONE',ko:'균열 왕좌',arc:'용자리 심연 성좌',risk:'FINAL',tags:['RIFT KING','HYBRID','ENDGAME'],summary:'균열 왕좌는 이전 성역의 패턴이 모두 합쳐지는 시즌 1 최종 복합전입니다.',enemy:'균열 왕좌 혼합군은 장갑, 보호막, 고속, 분열, 코어 피해 패턴을 순차적으로 압박합니다.',strategy:'핵심 타워를 빠르게 고레벨로 병합하고, 장판·전역 스킬을 모두 활용해야 합니다.',battle:'균열 왕좌 방어 · 최종 복합전',reward:'시즌 1 최종 정화'}
   };
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? '').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
