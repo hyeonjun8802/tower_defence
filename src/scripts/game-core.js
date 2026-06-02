@@ -934,21 +934,23 @@ function currentSummonCost(){
   return Math.max(100, Math.round(raw / 5) * 5);
 }
 
-// v-wave-defense-balance: sub-stage 4+ durability tuning.
-// Purpose: keep the 1~3 tutorial waves intact, then prevent Lv.1 tower swarms
-// from clearing mid/late sub-stages by quantity alone.
-const WAVE_DEFENSE_ARMOR_BONUS = Object.freeze([0, 0, 0, .035, .055, .075, .095, .115, .135, .155]);
-const WAVE_DEFENSE_HP_MULTIPLIER = Object.freeze([1, 1, 1, 1.04, 1.07, 1.10, 1.13, 1.16, 1.20, 1.24]);
+// v-wave-defense-balance-v3: sub-stage 4+ durability tuning.
+// Scope: monster durability only. Economy, terrain pressure, tower numbers and UI stay unchanged.
+// The previous v2 curve still allowed Lv.1 tower swarms to clear mid/late waves too easily,
+// so v3 adds a moderate armor-first bump while keeping the 1~3 tutorial waves intact.
+const WAVE_DEFENSE_ARMOR_BONUS = Object.freeze([0, 0, 0, .100, .135, .170, .205, .240, .275, .310]);
+const WAVE_DEFENSE_HP_MULTIPLIER = Object.freeze([1, 1, 1, 1.18, 1.30, 1.43, 1.57, 1.73, 1.90, 2.10]);
 function waveDefenseTuning(stageNo=null, waveNo=null, isBoss=false){
   const stage = economyStageNo(stageNo);
   const wave = economyWaveNo(waveNo);
   if(wave < 4) return {armor:0, hpMul:1};
   const idx = Math.max(0, Math.min(WAVE_DEFENSE_ARMOR_BONUS.length - 1, wave - 1));
   const stagePressure = Math.max(0, stage - 1);
-  const bossArmorScale = isBoss ? .55 : 1;
-  const bossHpScale = isBoss ? .55 : 1;
-  const armor = Math.min(.26, (Number(WAVE_DEFENSE_ARMOR_BONUS[idx] || 0) + stagePressure * .007) * bossArmorScale);
-  const hpMul = 1 + ((Number(WAVE_DEFENSE_HP_MULTIPLIER[idx] || 1) - 1) + stagePressure * .006) * bossHpScale;
+  const bossArmorScale = isBoss ? .45 : 1;
+  const bossHpScale = isBoss ? .45 : 1;
+  const armorCap = isBoss ? .26 : .52;
+  const armor = Math.min(armorCap, (Number(WAVE_DEFENSE_ARMOR_BONUS[idx] || 0) + stagePressure * .012) * bossArmorScale);
+  const hpMul = 1 + ((Number(WAVE_DEFENSE_HP_MULTIPLIER[idx] || 1) - 1) + stagePressure * .020) * bossHpScale;
   return {armor, hpMul};
 }
 function applyOfflineMetaToRun(resetHp=true){
@@ -1304,6 +1306,7 @@ function saveStageMapProgress(){
 function resetBattleUnitsForStageMap(){
   grid = Array(GRID_COLS*GRID_ROWS).fill(null);
   terrain = Array(GRID_COLS*GRID_ROWS).fill('empty');
+  terrainHazards = Array(GRID_COLS*GRID_ROWS).fill('');
   invalidateTerrainRenderCache();
   recycleAllEnemies();
   recycleAllBullets();
@@ -2239,12 +2242,16 @@ const PLANETS = [
 const TERRAIN = {
   empty:{name:'공허판', desc:'출력 손실: 피해 -14%, 공격 주기 +6%', color:'rgba(148,163,184,.055)'},
   path:{name:'균열항로', desc:'적 이동 경로. 배치 불가', color:'rgba(56,189,248,.08)'},
-  blocked:{name:'운석폐허', desc:'배치 불가', color:'rgba(15,23,42,.70)'},
+  blocked:{name:'균열 봉쇄 장판', desc:'배치 불가. 경로 주변의 좋은 자리를 봉쇄합니다.', color:'rgba(15,23,42,.70)'},
   amp:{name:'증폭성운', desc:'핵심 장판: 피해 +38%', color:'rgba(251,191,36,.22)'},
   coil:{name:'가속궤도', desc:'핵심 장판: 공격 주기 -30%', color:'rgba(56,189,248,.21)'},
   lens:{name:'중력렌즈', desc:'핵심 장판: 사거리 +38', color:'rgba(125,211,252,.21)'},
   mine:{name:'수정광맥', desc:'보상 장판: 보상 +16%', color:'rgba(34,197,94,.18)'},
-  rift:{name:'불안정균열', desc:'위험 장판: 피해 +62%, 과열', color:'rgba(244,114,182,.20)'}
+  rift:{name:'불안정균열', desc:'위험 장판: 피해 +62%, 과열', color:'rgba(244,114,182,.20)'},
+  hazard_overheat:{name:'과열 균열', desc:'3x3 위험 구역: 배치 가능 · 공격 주기 +18%', color:'rgba(239,68,68,.13)'},
+  hazard_weaken:{name:'약화 균열', desc:'3x3 위험 구역: 배치 가능 · 공격력 -18%', color:'rgba(248,113,113,.13)'},
+  hazard_disrupt:{name:'교란 균열', desc:'3x3 위험 구역: 배치 가능 · 사거리 -14%', color:'rgba(251,146,60,.13)'},
+  hazard_unstable:{name:'불안정 위험 균열', desc:'3x3 위험 구역: 배치 가능 · 특수/치명 확률 -25%', color:'rgba(244,63,94,.13)'}
 };
 
 function randomPlateAffinityType(){
@@ -2254,7 +2261,23 @@ function randomPlateAffinityType(){
   return list[Math.floor(Math.random() * list.length)] ?? 0;
 }
 const SPECIAL_PLATE_KEY_SET = new Set(['amp','coil','lens','mine','rift']);
+const HAZARD_PLATE_KEYS = ['hazard_overheat','hazard_weaken','hazard_disrupt','hazard_unstable'];
+const HAZARD_PLATE_KEY_SET = new Set(HAZARD_PLATE_KEYS);
 function isSpecialPlateKey(key){ return SPECIAL_PLATE_KEY_SET.has(key); }
+function isHazardPlateKey(key){ return HAZARD_PLATE_KEY_SET.has(key); }
+function ensureTerrainHazards(){
+  const size = GRID_COLS * GRID_ROWS;
+  if(!Array.isArray(terrainHazards) || terrainHazards.length !== size) terrainHazards = Array(size).fill('');
+  return terrainHazards;
+}
+function getTerrainHazardKey(idx){
+  if(!Array.isArray(terrainHazards) || idx < 0 || idx >= terrainHazards.length) return '';
+  return isHazardPlateKey(terrainHazards[idx]) ? terrainHazards[idx] : '';
+}
+function effectiveTerrainKey(idx){
+  const hazardKey = getTerrainHazardKey(idx);
+  return hazardKey || (terrain && terrain[idx]) || 'empty';
+}
 function getPlateAffinity(idx){
   const a = plateAffinity && plateAffinity[idx];
   if(!a || !PLANETS[a.type]) return null;
@@ -2460,7 +2483,7 @@ function globalUpgradeText(upgrade, level){
 
 
 
-let S, grid, terrain, enemies, bullets, particles, beams, floats, anomalies, route, selected, dragging;
+let S, grid, terrain, terrainHazards, enemies, bullets, particles, beams, floats, anomalies, route, selected, dragging;
 
 // v004-perf-memory: gameplay state is left intact, but purely visual FX arrays are
 // bounded and pooled so tower-heavy battles do not allocate thousands of short-lived objects.
@@ -3426,6 +3449,7 @@ function reset(){
   invalidateGlobalUpgradeStatsCache();
   grid = Array(GRID_COLS*GRID_ROWS).fill(null);
   terrain = Array(GRID_COLS*GRID_ROWS).fill('empty');
+  terrainHazards = Array(GRID_COLS*GRID_ROWS).fill('');
   invalidateTerrainRenderCache();
   enemies = [];
   bullets = [];
@@ -3711,8 +3735,209 @@ function commercialUsablePlacementCount(){
   for(let i=0;i<terrain.length;i++) if(terrain[i] !== 'path' && terrain[i] !== 'blocked') count++;
   return count;
 }
+function stagePressurePlateContext(){
+  const stage = economyStageNo(S?.stageNo || StageMapState?.current || 1);
+  const wave = economyWaveNo(S?.ogge || 1);
+  return {stage, wave};
+}
+function dynamicBlockedPlateTarget(stageNo=null, waveNo=null){
+  const stage = economyStageNo(stageNo);
+  const wave = economyWaveNo(waveNo);
+  if(wave < 4) return 0;
+  const base = Math.floor(Math.max(0, stage - 1) * 1.2) + Math.floor(Math.max(0, wave - 3) * 2.4);
+  const stageBonus = (stage >= 4 ? 2 : 0) + (stage >= 7 ? 1 : 0);
+  return Math.max(0, Math.min(24, base + stageBonus));
+}
+function dynamicHazardClusterPlan(stageNo=null, waveNo=null){
+  const stage = economyStageNo(stageNo);
+  const wave = economyWaveNo(waveNo);
+  // Red hazard pressure is now staged by footprint size rather than raw count.
+  // - Early/intro waves: no hazard pressure.
+  // - First hazard pressure: one compact 2x2 set.
+  // - Mid pressure: one 3x3 set.
+  // - Hard pressure: one 3x3 set plus one 2x2 set.
+  // This keeps the screen readable while making a single 3x3 zone less trivial.
+  if(wave < 4) return [];
+  if(stage <= 1 && wave < 7) return [];
+  if(stage >= 4 && wave >= 7) return [{size:3, offset:0}, {size:2, offset:1}];
+  if(stage >= 4 || (stage >= 3 && wave >= 8)) return [{size:3, offset:0}];
+  if(stage >= 2 || wave >= 7) return [{size:2, offset:0}];
+  return [];
+}
+function dynamicHazardPlateTarget(stageNo=null, waveNo=null){
+  return dynamicHazardClusterPlan(stageNo, waveNo).length;
+}
+function hazardPlateKeyForStage(stageNo=null, waveNo=null, offset=0){
+  const stage = economyStageNo(stageNo);
+  const wave = economyWaveNo(waveNo);
+  const idx = Math.abs((stage * 3 + wave + Number(offset || 0))) % HAZARD_PLATE_KEYS.length;
+  return HAZARD_PLATE_KEYS[idx] || HAZARD_PLATE_KEYS[0];
+}
+function minimumPlacementForPressure(stageNo=null, waveNo=null){
+  const stage = economyStageNo(stageNo);
+  const wave = economyWaveNo(waveNo);
+  return stage >= 10 && wave >= 8 ? 38 : 42;
+}
+function commercialHazardClusterIndexes(anchorIdx, size=3){
+  const clusterSize = Math.max(2, Math.min(3, Math.floor(Number(size || 3))));
+  const col = anchorIdx % GRID_COLS;
+  const row = Math.floor(anchorIdx / GRID_COLS);
+  const out = [];
+  if(clusterSize === 2){
+    // 2x2 clusters use the anchor as the top-left cell.
+    if(col < 0 || col >= GRID_COLS - 1 || row < 0 || row >= GRID_ROWS - 1) return null;
+    for(let dy=0; dy<2; dy++){
+      for(let dx=0; dx<2; dx++) out.push((row + dy) * GRID_COLS + (col + dx));
+    }
+    return out;
+  }
+  // 3x3 clusters use the anchor as the center cell.
+  if(col <= 0 || col >= GRID_COLS - 1 || row <= 0 || row >= GRID_ROWS - 1) return null;
+  for(let dy=-1; dy<=1; dy++){
+    for(let dx=-1; dx<=1; dx++) out.push((row + dy) * GRID_COLS + (col + dx));
+  }
+  return out;
+}
+function commercialHazardClusterHasNearbyHazard(indexes){
+  if(!indexes || !indexes.length) return false;
+  const set = new Set(indexes);
+  for(let i=0;i<indexes.length;i++){
+    const idx = indexes[i];
+    const col = idx % GRID_COLS;
+    const row = Math.floor(idx / GRID_COLS);
+    for(let dy=-1; dy<=1; dy++){
+      for(let dx=-1; dx<=1; dx++){
+        if(dx === 0 && dy === 0) continue;
+        const nc = col + dx;
+        const nr = row + dy;
+        if(nc < 0 || nc >= GRID_COLS || nr < 0 || nr >= GRID_ROWS) continue;
+        const ni = nr * GRID_COLS + nc;
+        if(set.has(ni)) continue;
+        if(isHazardPlateKey(getTerrainHazardKey(ni))) return true;
+      }
+    }
+  }
+  return false;
+}
+function commercialCanPlaceHazardCluster(centerIdx, size=3){
+  const indexes = commercialHazardClusterIndexes(centerIdx, size);
+  if(!indexes) return null;
+  ensureTerrainHazards();
+  for(let i=0;i<indexes.length;i++){
+    const idx = indexes[i];
+    const baseKey = terrain[idx] || 'empty';
+    // Hazard zones are allowed to run across monster routes and X/blocked plates,
+    // but they must not cover positive special plates or another hazard cluster.
+    if(isSpecialPlateKey(baseKey)) return null;
+    if(isHazardPlateKey(getTerrainHazardKey(idx))) return null;
+  }
+  return indexes;
+}
+function commercialHazardPressureCandidates(){
+  const out = [];
+  for(let i=0;i<terrain.length;i++){
+    const key = terrain[i] || 'empty';
+    if(isSpecialPlateKey(key)) continue;
+    out.push(i);
+  }
+  return out;
+}
+function commercialHazardClusterRoutePressureScore(indexes, salt){
+  if(!indexes || !indexes.length) return -Infinity;
+  const pathCells = [];
+  for(let i=0;i<terrain.length;i++){
+    if(terrain[i] === 'path') pathCells.push({c:i % GRID_COLS, r:Math.floor(i / GRID_COLS)});
+  }
+  let near1 = 0, near2 = 0, near3 = 0, bestTotal = 0;
+  for(let i=0;i<indexes.length;i++){
+    const c = indexes[i] % GRID_COLS;
+    const r = Math.floor(indexes[i] / GRID_COLS);
+    let best = 999;
+    for(let p=0;p<pathCells.length;p++){
+      const d = Math.abs(c - pathCells[p].c) + Math.abs(r - pathCells[p].r);
+      if(d < best) best = d;
+      if(best <= 1) break;
+    }
+    if(best === 1) near1++;
+    else if(best === 2) near2++;
+    else if(best === 3) near3++;
+    bestTotal += Math.max(0, 6 - Math.min(best, 6));
+  }
+  // Large 3x3 hazards should pressure high-value tower seats: cells directly beside
+  // the monster route are weighted highest, then route-distance 2 and 3.
+  // The hash is only a tiny deterministic tie-breaker so repeated layouts stay stable.
+  const tie = (commercialCellHash(indexes[Math.floor(indexes.length / 2)] || 0, salt) % 997) / 997;
+  return near1 * 120 + near2 * 42 + near3 * 10 + bestTotal * 2 + tie;
+}
+function commercialPickHazardCluster(candidates, salt, size=3){
+  const ordered = commercialOrderedCells(candidates, salt);
+  for(let pass=0; pass<2; pass++){
+    let bestCluster = null;
+    let bestScore = -Infinity;
+    for(let i=0;i<ordered.length;i++){
+      const indexes = commercialCanPlaceHazardCluster(ordered[i], size);
+      if(!indexes) continue;
+      if(pass === 0 && commercialHazardClusterHasNearbyHazard(indexes)) continue;
+      const score = commercialHazardClusterRoutePressureScore(indexes, salt + i * 31);
+      if(score > bestScore){
+        bestScore = score;
+        bestCluster = indexes;
+      }
+    }
+    if(bestCluster) return bestCluster;
+  }
+  return null;
+}
+function hazardClusterCenterForCell(idx, key){
+  if(!isHazardPlateKey(key)) return -1;
+  const col = idx % GRID_COLS;
+  const row = Math.floor(idx / GRID_COLS);
+  const sizes = [3, 2];
+  for(let s=0; s<sizes.length; s++){
+    const size = sizes[s];
+    if(size === 3){
+      for(let dy=-1; dy<=1; dy++){
+        for(let dx=-1; dx<=1; dx++){
+          const cc = col - dx;
+          const rr = row - dy;
+          if(cc <= 0 || cc >= GRID_COLS - 1 || rr <= 0 || rr >= GRID_ROWS - 1) continue;
+          const centerIdx = rr * GRID_COLS + cc;
+          const indexes = commercialHazardClusterIndexes(centerIdx, 3);
+          if(!indexes || !indexes.includes(idx)) continue;
+          let same = true;
+          for(let i=0;i<indexes.length;i++){
+            if(getTerrainHazardKey(indexes[i]) !== key){ same = false; break; }
+          }
+          if(same) return centerIdx;
+        }
+      }
+    }else{
+      for(let dy=0; dy<=1; dy++){
+        for(let dx=0; dx<=1; dx++){
+          const cc = col - dx;
+          const rr = row - dy;
+          if(cc < 0 || cc >= GRID_COLS - 1 || rr < 0 || rr >= GRID_ROWS - 1) continue;
+          const anchorIdx = rr * GRID_COLS + cc;
+          const indexes = commercialHazardClusterIndexes(anchorIdx, 2);
+          if(!indexes || !indexes.includes(idx)) continue;
+          let same = true;
+          for(let i=0;i<indexes.length;i++){
+            if(getTerrainHazardKey(indexes[i]) !== key){ same = false; break; }
+          }
+          if(same) return anchorIdx;
+        }
+      }
+    }
+  }
+  return idx;
+}
+function isHazardClusterLabelCell(idx, key){
+  if(!isHazardPlateKey(key)) return false;
+  return hazardClusterCenterForCell(idx, key) === idx;
+}
 function makeTerrain(){
   terrain.fill('empty');
+  ensureTerrainHazards().fill('');
   plateAffinity = {};
   const stageBalance = getCommercialStageBalance(S?.stageNo || StageMapState?.current || 1);
   const pathWidth = CELL * .38;
@@ -3725,8 +3950,11 @@ function makeTerrain(){
 
   const buckets = commercialPathDistanceBuckets();
   const blockedPlaced = [];
+  const {stage:pressureStage, wave:pressureWave} = stagePressurePlateContext();
   const forbiddenBudget = Math.max(0, Math.floor(Number(stageBalance.forbidden_budget || 0)));
-  for(let n=0;n<forbiddenBudget;n++){
+  const dynamicBlockedTarget = dynamicBlockedPlateTarget(pressureStage, pressureWave);
+  const totalBlockedTarget = Math.max(forbiddenBudget, dynamicBlockedTarget);
+  for(let n=0;n<totalBlockedTarget;n++){
     const candidates = n % 2 === 0 ? buckets.r1.concat(buckets.r2) : buckets.r2.concat(buckets.r1);
     const pick = commercialPickCell(candidates, 'blocked', 7000 + n);
     if(pick < 0) break;
@@ -3751,7 +3979,22 @@ function makeTerrain(){
     plateAffinity[pick] = {type: affinityType, color: PLANETS[affinityType]?.color || '#67e8f9'};
   }
 
-  const minimumUsable = Math.max(0, Math.floor(Number(stageBalance.minimum_usable_placements || 0)));
+  const hazardPlan = dynamicHazardClusterPlan(pressureStage, pressureWave);
+  const hazardRoutePressureCandidates = commercialHazardPressureCandidates();
+  for(let n=0;n<hazardPlan.length;n++){
+    const plan = hazardPlan[n] || {size:3, offset:n};
+    const size = Math.max(2, Math.min(3, Math.floor(Number(plan.size || 3))));
+    const key = hazardPlateKeyForStage(pressureStage, pressureWave, plan.offset ?? n);
+    let cluster = commercialPickHazardCluster(hazardRoutePressureCandidates, 16000 + n * 37, size);
+    if(!cluster) cluster = commercialPickHazardCluster(buckets.fallback, 17000 + n * 37, size);
+    if(!cluster) continue;
+    for(let i=0;i<cluster.length;i++) terrainHazards[cluster[i]] = key;
+  }
+
+  const minimumUsable = Math.max(
+    Math.floor(Number(stageBalance.minimum_usable_placements || 0)),
+    minimumPlacementForPressure(pressureStage, pressureWave)
+  );
   while(blockedPlaced.length && commercialUsablePlacementCount() < minimumUsable){
     const idx = blockedPlaced.pop();
     if(terrain[idx] === 'blocked') terrain[idx] = 'empty';
@@ -4531,6 +4774,104 @@ function drawTowerPedestalFx(tower, x, y, size){
   ctx.restore();
 }
 
+
+function hazardTowerFxPalette(hazardKey){
+  switch(hazardKey){
+    case 'hazard_weaken':
+      return { tint:'rgba(127,29,29,.50)', glow:'rgba(248,113,113,.34)', ring:'rgba(252,165,165,.78)', mote:'rgba(254,202,202,.88)' };
+    case 'hazard_disrupt':
+      return { tint:'rgba(120,22,22,.48)', glow:'rgba(251,113,133,.30)', ring:'rgba(253,164,175,.76)', mote:'rgba(254,205,211,.86)' };
+    case 'hazard_unstable':
+      return { tint:'rgba(136,19,55,.52)', glow:'rgba(244,63,94,.30)', ring:'rgba(251,113,133,.78)', mote:'rgba(254,205,211,.90)' };
+    case 'hazard_overheat':
+    default:
+      return { tint:'rgba(127,29,29,.52)', glow:'rgba(239,68,68,.34)', ring:'rgba(248,113,113,.80)', mote:'rgba(254,202,202,.88)' };
+  }
+}
+
+function drawTowerHazardCorruptionFx(tower, x, y, size, hazardKey){
+  if(!isHazardPlateKey(hazardKey)) return;
+  const palette = hazardTowerFxPalette(hazardKey);
+  const t = visualNowSec || ((performance.now ? performance.now() : Date.now()) * .001);
+  const pulse = .5 + .5 * Math.sin(t * 2.8 + tower.phase * 1.7 + tower.level * .2);
+  const coreR = Math.max(15, size * .34);
+  const auraR = Math.max(26, size * .56);
+  const ringR = auraR * (0.92 + pulse * .04);
+
+  ctx.save();
+
+  // cursed halo around the planet so hazard-mounted towers never look healthy.
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = .18 + pulse * .12;
+  let halo = ctx.createRadialGradient(x - 3, y - 4, 2, x, y, auraR * 1.45);
+  halo.addColorStop(0, 'rgba(255,255,255,.20)');
+  halo.addColorStop(.18, palette.glow);
+  halo.addColorStop(.56, 'rgba(127,29,29,.18)');
+  halo.addColorStop(1, 'rgba(127,29,29,0)');
+  ctx.fillStyle = halo;
+  ctx.beginPath();
+  ctx.arc(x, y, auraR * 1.24, 0, TAU);
+  ctx.fill();
+
+  // red poisoned tint on the planet body itself.
+  ctx.globalCompositeOperation = 'multiply';
+  ctx.globalAlpha = .36;
+  ctx.fillStyle = palette.tint;
+  ctx.beginPath();
+  ctx.arc(x, y, coreR * 1.24, 0, TAU);
+  ctx.fill();
+
+  // soft cursed sheen so the body feels infected, not just darkened.
+  ctx.globalCompositeOperation = 'screen';
+  ctx.globalAlpha = .14 + pulse * .08;
+  let stain = ctx.createRadialGradient(x - coreR * .26, y - coreR * .34, 1, x, y, coreR * 1.48);
+  stain.addColorStop(0, 'rgba(254,202,202,.42)');
+  stain.addColorStop(.35, palette.glow);
+  stain.addColorStop(1, 'rgba(239,68,68,0)');
+  ctx.fillStyle = stain;
+  ctx.beginPath();
+  ctx.arc(x, y, coreR * 1.34, 0, TAU);
+  ctx.fill();
+
+  // ominous red ring + broken arc to signal debuff clearly.
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.globalAlpha = .42 + pulse * .14;
+  ctx.strokeStyle = palette.ring;
+  ctx.shadowColor = palette.glow;
+  ctx.shadowBlur = 11;
+  ctx.lineWidth = 1.7;
+  ctx.beginPath();
+  ctx.arc(x, y, ringR, 0, TAU);
+  ctx.stroke();
+  ctx.globalAlpha = .62;
+  ctx.lineWidth = 1.15;
+  ctx.beginPath();
+  ctx.arc(x, y, ringR * 1.10, .42 + tower.phase * .18, 2.55 + tower.phase * .18);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // poison-like motes floating around the orbit.
+  ctx.globalCompositeOperation = 'lighter';
+  for(let i=0;i<5;i++){
+    const a = t * (1.2 + i * .06) + tower.phase * .9 + i * TAU / 5;
+    const rr = ringR * (.88 + (i % 2) * .08);
+    const px = x + Math.cos(a) * rr;
+    const py = y + Math.sin(a) * (ringR * .44) - 1.4;
+    const pr = 2.1 + (i % 3) * .45;
+    const mote = ctx.createRadialGradient(px - .4, py - .4, .4, px, py, pr * 2.8);
+    mote.addColorStop(0, palette.mote);
+    mote.addColorStop(.38, palette.glow);
+    mote.addColorStop(1, 'rgba(239,68,68,0)');
+    ctx.globalAlpha = .22 + ((i % 2) ? .10 : .04) + pulse * .08;
+    ctx.fillStyle = mote;
+    ctx.beginPath();
+    ctx.arc(px, py, pr * 1.9, 0, TAU);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
 function drawProceduralPlanetBody(tower, x, y){
   const d = tower.def;
   ctx.save();
@@ -4672,13 +5013,17 @@ function drawAnomalies(){
   }
 }
 
-const TERRAIN_BONUS_DEFAULT = {dmg:.86,cd:1.06,range:0,gold:0,over:false,overChance:0,plate:false};
+const TERRAIN_BONUS_DEFAULT = {dmg:.86,cd:1.06,range:0,rangeMul:1,gold:0,over:false,overChance:0,plate:false,specialChanceMul:1};
 const TERRAIN_BONUS_BY_KEY = {
-  amp:{dmg:1.38,cd:.96,range:0,gold:0,over:false,overChance:0,plate:true},
-  coil:{dmg:1.00,cd:.70,range:0,gold:0,over:false,overChance:0,plate:true},
-  lens:{dmg:.94,cd:.98,range:38,gold:0,over:false,overChance:0,plate:true},
-  mine:{dmg:.92,cd:1.02,range:0,gold:.16,over:false,overChance:0,plate:true},
-  rift:{dmg:1.62,cd:1.06,range:8,gold:0,over:true,overChance:.06,plate:true}
+  amp:{dmg:1.38,cd:.96,range:0,rangeMul:1,gold:0,over:false,overChance:0,plate:true,specialChanceMul:1},
+  coil:{dmg:1.00,cd:.70,range:0,rangeMul:1,gold:0,over:false,overChance:0,plate:true,specialChanceMul:1},
+  lens:{dmg:.94,cd:.98,range:38,rangeMul:1,gold:0,over:false,overChance:0,plate:true,specialChanceMul:1},
+  mine:{dmg:.92,cd:1.02,range:0,rangeMul:1,gold:.16,over:false,overChance:0,plate:true,specialChanceMul:1},
+  rift:{dmg:1.62,cd:1.06,range:8,rangeMul:1,gold:0,over:true,overChance:.06,plate:true,specialChanceMul:1},
+  hazard_overheat:{dmg:1.00,cd:1.18,range:0,rangeMul:1,gold:0,over:false,overChance:0,plate:false,hazard:true,specialChanceMul:1},
+  hazard_weaken:{dmg:.82,cd:1.00,range:0,rangeMul:1,gold:0,over:false,overChance:0,plate:false,hazard:true,specialChanceMul:1},
+  hazard_disrupt:{dmg:.96,cd:1.02,range:0,rangeMul:.86,gold:0,over:false,overChance:0,plate:false,hazard:true,specialChanceMul:1},
+  hazard_unstable:{dmg:.98,cd:1.02,range:0,rangeMul:1,gold:0,over:false,overChance:0,plate:false,hazard:true,specialChanceMul:.75}
 };
 
 const PLANET_CORE_GLOW_RENDER_CACHE = new Map();
@@ -4772,10 +5117,10 @@ class Planet{
     return center(this.idx);
   }
   terrainBonus(){
-    return TERRAIN_BONUS_BY_KEY[terrain[this.idx]] || TERRAIN_BONUS_DEFAULT;
+    return TERRAIN_BONUS_BY_KEY[effectiveTerrainKey(this.idx)] || TERRAIN_BONUS_DEFAULT;
   }
   stats(){
-    const terrainKey = terrain ? terrain[this.idx] : 'empty';
+    const terrainKey = terrain ? effectiveTerrainKey(this.idx) : 'empty';
     const a=ensureAug(this);
     const augRevision = this._augRevision || 0;
     const cooldownPenalty = S.globalCooldownPenalty || 0;
@@ -4801,16 +5146,19 @@ class Planet{
     const plateDamage = b.plate ? g.plateDamage + (affinityMatched ? PLATE_AFFINITY_DAMAGE_BONUS : 0) : 0;
     const plateFireRate = b.plate ? g.plateFireRate + (affinityMatched ? PLATE_AFFINITY_FIRE_RATE_BONUS : 0) : 0;
     const globalCritExpected = g.critChance * Math.max(0, (1.8 + g.critMul) - 1);
+    const rangeMul = Number(b.rangeMul || 1) || 1;
+    const specialChanceMul = Number(b.specialChanceMul || 1) || 1;
+    const baseRange = Math.max(70,d.range+this.level*8+b.range+a.range+g.range);
     const stats = {
       dmg:(d.dmg+this.level*15)*b.dmg*(1+a.damage+g.damage+plateDamage+globalCritExpected) * ambient.damageMul,
-      range:Math.max(70,d.range+this.level*8+b.range+a.range+g.range),
+      range:Math.max(70,baseRange * rangeMul),
       cd:Math.max(8,(d.cd-this.level*1.7)*b.cd*(1+S.globalCooldownPenalty) * ambient.cooldownMul/(1+a.fireRate+g.fireRate+plateFireRate+S.tacticalBoost)),
-      gold:b.gold, over:b.over, overChance:b.overChance || 0, plateMatched: affinityMatched,
-      critChance:(d.critChance||0)+a.critChance+g.critChance,
+      gold:b.gold, over:b.over, overChance:(b.overChance || 0) * specialChanceMul, plateMatched: affinityMatched, specialChanceMul,
+      critChance:((d.critChance||0)+a.critChance+g.critChance) * specialChanceMul,
       critMul:(d.critMul||1.8)+a.critMul+g.critMul,
-      area:a.area, dot:a.dot, freeze:a.freeze, freezeChance:a.freezeChance,
+      area:a.area, dot:a.dot, freeze:a.freeze, freezeChance:a.freezeChance * specialChanceMul,
       chain:a.chain, gravity:a.gravity, beamWidth:a.beamWidth, markAmp:a.markAmp,
-      poisonSlow:a.poisonSlow, burstChance:a.burstChance,
+      poisonSlow:a.poisonSlow, burstChance:a.burstChance * specialChanceMul,
       crystalCharge:a.crystalCharge, prismLink:a.prismLink, resonancePlate:a.resonancePlate,
       shieldDismantle:a.shieldDismantle, satelliteForge:a.satelliteForge, emergencyBarrier:a.emergencyBarrier,
       dustPenalty: ambient.alpha
@@ -4876,6 +5224,7 @@ class Planet{
     const rx = p.x + bobX, ry = p.y + bobY;
     const selectedTower = selected===this.idx;
     const st = selectedTower ? this.stats() : null;
+    const hazardKey = getTerrainHazardKey(this.idx);
     ctx.save();
     if(isDragTarget){
       ctx.globalAlpha = .62 + .18 * (1 - targetEase);
@@ -4912,6 +5261,7 @@ class Planet{
     const ok = drawPlanetSprite(this.type, rx, ry, baseSize, frameIndex, this.level);
     if(!ok) drawProceduralPlanetBody(this, rx, ry);
     drawPlanetEvolutionFx(this, rx, ry);
+    if(hazardKey) drawTowerHazardCorruptionFx(this, rx, ry, baseSize, hazardKey);
     ctx.globalAlpha = 1;
     ctx.strokeStyle = d.color;
     ctx.lineWidth = 2.4 + tier * .3;
@@ -5077,7 +5427,29 @@ const STAGE_MONSTER_POOLS = {
   12:{theme:'균열 왕좌', intro:'모든 몬스터 역할이 합쳐지는 최종 복합 전장', early:[['abyss_knight',22],['crystal_barrier',22],['meteor_charger',18],['core_overdrive',18],['phase_ghost',20]], mid:[['abyss_knight',26],['rift_splitter',18],['core_overdrive',20],['void_colossus',12],['crystal_barrier',24]], late:[['abyss_knight',26],['void_colossus',16],['rift_splitter',20],['core_overdrive',22],['phase_ghost',16]]}
 };
 
-const MONSTER_INTRO_SHOWN = new Set();
+const MONSTER_INTRO_STORAGE_KEY = 'planetRiftMonsterIntroSeenV1';
+function loadMonsterIntroShownSet(){
+  try{
+    const raw = localStorage.getItem(MONSTER_INTRO_STORAGE_KEY);
+    const arr = JSON.parse(raw || '[]');
+    if(Array.isArray(arr)) return new Set(arr.filter(x => typeof x === 'string' && x.length > 0));
+  }catch(_err){}
+  return new Set();
+}
+const MONSTER_INTRO_SHOWN = loadMonsterIntroShownSet();
+function saveMonsterIntroShownSet(){
+  try{
+    localStorage.setItem(MONSTER_INTRO_STORAGE_KEY, JSON.stringify(Array.from(MONSTER_INTRO_SHOWN).slice(-96)));
+  }catch(_err){}
+}
+function hasMonsterIntroShown(key){
+  return !!key && MONSTER_INTRO_SHOWN.has(String(key));
+}
+function markMonsterIntroShown(key){
+  if(!key) return;
+  MONSTER_INTRO_SHOWN.add(String(key));
+  saveMonsterIntroShownSet();
+}
 const MONSTER_INTRO_PAUSE_STATE = {active:false, wasPaused:false, token:0};
 function monsterDef(id){ return ENEMY_BASE_MAP[id] || ENEMY_BASE_MAP.void_sentry || ENEMY_BASE_MAP.grunt; }
 function monsterWaveBand(wave){ return wave < 4 ? 'early' : (wave < 8 ? 'mid' : 'late'); }
@@ -5318,7 +5690,9 @@ class Enemy{
       exp *= bossData.expMul || 1;
       armor += bossData.armor || 0;
       this.hpScale = bossData.hpMul || 1;
-      this.coreDamage = bossData.coreDamage || (type === 'finalboss' ? 5 : 2);
+      // Boss core damage is normalized for clarity and predictable balance:
+      // mid boss = -3 core, final boss = -5 core.
+      this.coreDamage = this.bossTier === 'final' ? 5 : 3;
       this.bossEffect = bossData.effect;
       this.skillInterval = bossData.interval || 128;
       this.skillCd = this.skillInterval * .75;
@@ -6143,13 +6517,15 @@ function summon(typeOverride=null){
   return true;
 }
 const MERGE_TERRAIN_PRIORITY = {
-  rift:60, amp:52, coil:46, lens:42, mine:34, empty:20, blocked:-100, path:-100
+  rift:60, amp:52, coil:46, lens:42, mine:34, empty:20,
+  hazard_overheat:-12, hazard_weaken:-14, hazard_disrupt:-10, hazard_unstable:-10,
+  blocked:-100, path:-100
 };
 let mergeFocusSession = null;
 function mergeAnchorScore(idx, tower){
   if(!tower) return -Infinity;
   const selectedBonus = idx === selected ? 120 : 0;
-  const terrainBonus = MERGE_TERRAIN_PRIORITY[terrain[idx] || 'empty'] ?? 20;
+  const terrainBonus = MERGE_TERRAIN_PRIORITY[effectiveTerrainKey(idx)] ?? 20;
   return tower.level * 1000 + selectedBonus + terrainBonus;
 }
 function canEventuallyFeedAnchor(anchorIdx){
@@ -6442,8 +6818,8 @@ function buildEnemyIntroPresentation(enemy){
 
 function showMonsterIntroOnce(enemy){
   const intro = buildEnemyIntroPresentation(enemy);
-  if(!intro || !intro.intro || MONSTER_INTRO_SHOWN.has(intro.key)) return;
-  MONSTER_INTRO_SHOWN.add(intro.key);
+  if(!intro || !intro.intro || hasMonsterIntroShown(intro.key)) return;
+  markMonsterIntroShown(intro.key);
   try{
     const old = document.getElementById('monsterIntroPopup');
     if(old) old.remove();
@@ -6988,14 +7364,16 @@ function drawPremiumTileBase(c, i, key){
   const h = CELL - pad*2;
   const cut = Math.max(7, CELL * .105);
   const special = isSpecialPlateKey(key);
+  const hazard = isHazardPlateKey(key);
   const blocked = key === 'blocked';
   const path = key === 'path';
   const dragActive = !!dragging;
   const occupied = !!(grid && grid[i]);
-  if(!dragActive && !occupied && !special && !blocked && !path) return;
+  if(!dragActive && !occupied && !special && !hazard && !blocked && !path) return;
 
   const affinity = getPlateAffinity(i);
-  const rawAccent = special && affinity ? (affinity.color || theme().color) : (key === 'mine' ? '#86efac' : theme().color);
+  const hazardAccent = key === 'hazard_disrupt' ? '#fb923c' : (key === 'hazard_unstable' ? '#f43f5e' : '#ef4444');
+  const rawAccent = hazard ? hazardAccent : (special && affinity ? (affinity.color || theme().color) : (key === 'mine' ? '#86efac' : theme().color));
   const accent = special ? neonPlateAccent(rawAccent) : rawAccent;
 
   ctx.save();
@@ -7005,6 +7383,12 @@ function drawPremiumTileBase(c, i, key){
     ctx.fillStyle = dragActive ? 'rgba(14,165,233,.070)' : 'rgba(14,165,233,.025)';
   }else if(blocked){
     ctx.fillStyle = 'rgba(2,6,23,.72)';
+  }else if(hazard){
+    const g = ctx.createLinearGradient(x, y, x+w, y+h);
+    g.addColorStop(0, plateColorWithAlpha(rawAccent, .12));
+    g.addColorStop(.45, 'rgba(24,8,13,.50)');
+    g.addColorStop(1, 'rgba(7,10,24,.68)');
+    ctx.fillStyle = g;
   }else if(special){
     // v88: skill plates keep their rule color, but visually move from heavy solid fill
     // to a dimmer monster-route-like neon frame so the board looks cleaner.
@@ -7021,21 +7405,21 @@ function drawPremiumTileBase(c, i, key){
 
   // v87: crisp plate frame. Avoid heavy blur/diagonal glass haze so plate text stays sharp.
   drawPlateShapePath(x + .5, y + .5, w - 1, h - 1, Math.max(5, cut - 1));
-  ctx.lineWidth = special ? Math.max(1.1, CELL * .015) : (dragActive ? 1 : .6);
-  ctx.strokeStyle = special ? plateColorWithAlpha(accent, .58) : (blocked ? 'rgba(148,163,184,.16)' : 'rgba(125,211,252,.10)');
-  ctx.shadowColor = special ? plateColorWithAlpha(accent, .30) : 'rgba(0,0,0,0)';
-  ctx.shadowBlur = special ? 8 : 0;
+  ctx.lineWidth = (special || hazard) ? Math.max(1.1, CELL * .015) : (dragActive ? 1 : .6);
+  ctx.strokeStyle = (special || hazard) ? plateColorWithAlpha(accent, hazard ? .46 : .58) : (blocked ? 'rgba(148,163,184,.16)' : 'rgba(125,211,252,.10)');
+  ctx.shadowColor = (special || hazard) ? plateColorWithAlpha(accent, hazard ? .15 : .30) : 'rgba(0,0,0,0)';
+  ctx.shadowBlur = hazard ? 3 : ((special || hazard) ? 8 : 0);
   ctx.stroke();
   ctx.shadowBlur = 0;
 
   // inner neon route-like line for clarity without changing the rule color.
-  if(special){
+  if(special || hazard){
     drawPlateShapePath(x + CELL*.08, y + CELL*.08, w - CELL*.16, h - CELL*.16, Math.max(4, cut*.72));
     ctx.lineWidth = Math.max(.85, CELL*.010);
-    ctx.strokeStyle = plateColorWithAlpha(accent, .34);
+    ctx.strokeStyle = plateColorWithAlpha(accent, hazard ? .24 : .34);
     ctx.stroke();
-    ctx.globalAlpha = .36;
-    ctx.strokeStyle = 'rgba(190,247,255,.46)';
+    ctx.globalAlpha = hazard ? .22 : .36;
+    ctx.strokeStyle = hazard ? plateColorWithAlpha('#fecaca', .25) : 'rgba(190,247,255,.46)';
     ctx.setLineDash([Math.max(4,CELL*.08), Math.max(7,CELL*.13)]);
     drawPlateShapePath(x + CELL*.14, y + CELL*.14, w - CELL*.28, h - CELL*.28, Math.max(3, cut*.52));
     ctx.stroke();
@@ -7059,6 +7443,20 @@ function drawPremiumTileBase(c, i, key){
     ctx.shadowBlur=3;
     if(label) ctx.fillText(label, c.x, c.y + CELL*.17);
     ctx.shadowBlur=0;
+  }else if(hazard){
+    const symbol = {hazard_overheat:'SPD',hazard_weaken:'DMG',hazard_disrupt:'RNG',hazard_unstable:'CRT'}[key] || '!';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.font=`800 ${Math.max(9.2, CELL*.118)}px Orbitron`;
+    ctx.fillStyle=plateColorWithAlpha('#fecaca', .58);
+    ctx.shadowColor=plateColorWithAlpha(accent, .18);
+    ctx.shadowBlur=3;
+    ctx.fillText(symbol, c.x, c.y - CELL*.055);
+    ctx.font=`800 ${Math.max(7.1, CELL*.076)}px Orbitron`;
+    ctx.fillStyle='rgba(254,202,202,.48)';
+    ctx.shadowBlur=3;
+    ctx.fillText('위험', c.x, c.y + CELL*.18);
+    ctx.shadowBlur=0;
   }else if(blocked){
     ctx.fillStyle='rgba(148,163,184,.42)';
     ctx.font=`900 ${Math.max(10, CELL*.14)}px Orbitron`;
@@ -7072,7 +7470,7 @@ let terrainRenderCacheCanvas = null;
 let terrainRenderCacheCtx = null;
 let terrainRenderCacheSig = -1;
 let terrainRenderCacheDirty = true;
-const TERRAIN_RENDER_KEY_HASH = {empty:1,path:2,blocked:3,amp:4,coil:5,lens:6,mine:7,rift:8};
+const TERRAIN_RENDER_KEY_HASH = {empty:1,path:2,blocked:3,amp:4,coil:5,lens:6,mine:7,rift:8,hazard_overheat:9,hazard_weaken:10,hazard_disrupt:11,hazard_unstable:12};
 function invalidateTerrainRenderCache(){
   terrainRenderCacheSig = -1;
   terrainRenderCacheDirty = true;
@@ -7094,6 +7492,10 @@ function getTerrainRenderSignature(){
   if(Array.isArray(terrain)){
     h = Math.imul(h ^ terrain.length, 16777619);
     for(let i=0;i<terrain.length;i++) h = Math.imul(h ^ (TERRAIN_RENDER_KEY_HASH[terrain[i]] || 0), 16777619);
+  }
+  if(Array.isArray(terrainHazards)){
+    h = Math.imul(h ^ terrainHazards.length, 16777619);
+    for(let i=0;i<terrainHazards.length;i++) h = Math.imul(h ^ ((TERRAIN_RENDER_KEY_HASH[terrainHazards[i]] || 0) + 31), 16777619);
   }
   if(Array.isArray(grid)){
     h = Math.imul(h ^ grid.length, 16777619);
@@ -7126,6 +7528,8 @@ function ensureTerrainRenderCache(){
     for(let i=0;i<terrain.length;i++){
       const c=center(i), key=terrain[i];
       drawPremiumTileBase(c, i, key);
+      const hz = getTerrainHazardKey(i);
+      if(hz) drawPremiumTileBase(c, i, hz);
     }
     ctx.restore();
     ctx = oldCtx;
@@ -7141,6 +7545,8 @@ function drawTerrain(){
     for(let i=0;i<terrain.length;i++){
       const c=center(i), key=terrain[i];
       drawPremiumTileBase(c, i, key);
+      const hz = getTerrainHazardKey(i);
+      if(hz) drawPremiumTileBase(c, i, hz);
     }
   }else{
     const cached = ensureTerrainRenderCache();
@@ -7498,7 +7904,8 @@ function updateSelected(){
     updateHangarState();
     return;
   }
-  const t=grid[selected], tr=TERRAIN[terrain[selected]];
+  const selectedTerrainKey = effectiveTerrainKey(selected);
+  const t=grid[selected], tr=TERRAIN[selectedTerrainKey] || TERRAIN.empty;
   if(!t){
     box.innerHTML=`<b>선택 장판</b> ${tr.name}<br><span class="compactHint">${canBuild(selected)?'배치 가능':'배치 불가'} · ${tr.desc}</span>`;
     updateHangarState();
@@ -7564,8 +7971,14 @@ function impactLabel(x,y,text,color='#fff',size=18,life=76){
   const adjustedLife = Math.round(life*.86);
   pushFloat(x,y,(typeof text === 'number' ? fmt2(text) : String(text)),color,Math.round(size*.92),adjustedLife,-.48);
 }
+function terrainSpecialChanceMultiplier(tower){
+  if(!tower || !terrain) return 1;
+  const b = TERRAIN_BONUS_BY_KEY[terrain[tower.idx]] || TERRAIN_BONUS_DEFAULT;
+  return Number(b.specialChanceMul || 1) || 1;
+}
 function signatureChance(tower,base=.10,perLevel=.012){
-  return Math.random() < Math.min(.38, base + tower.level * perLevel);
+  const specialMul = terrainSpecialChanceMultiplier(tower);
+  return Math.random() < Math.min(.38, (base + tower.level * perLevel) * specialMul);
 }
 function updateComboTimers(dt){
   if(!S.combo) S.combo={kills:0,timer:0,best:0};
