@@ -156,8 +156,18 @@
     var cs = getComputedStyle(o);
     return cs.display !== 'none' && cs.visibility !== 'hidden' && Number(cs.opacity || 1) !== 0;
   }
+  function stageResultIsBlockingEnter(){
+    if(hasActiveStageResult()) return true;
+    var pendingAt = Number(window.PRD_STAGE_RESULT_PENDING_AT || 0);
+    if(window.PRD_STAGE_RESULT_PENDING && pendingAt && Date.now() - pendingAt < 1200) return true;
+    if(window.PRD_STAGE_RESULT_PENDING){
+      window.PRD_STAGE_RESULT_PENDING = false;
+      window.PRD_STAGE_RESULT_PENDING_AT = 0;
+    }
+    return false;
+  }
   function canStartStageFromMap(){
-    if(window.PRD_STAGE_RESULT_PENDING || hasActiveStageResult()) return false;
+    if(stageResultIsBlockingEnter()) return false;
     var map = byId('stageMap');
     if(!map || !visible(map)) return false;
     var btn = byId('stageEnterBtn');

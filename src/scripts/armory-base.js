@@ -109,22 +109,30 @@
     if(lv === Number(u?.level || 0) + 1) return u?.nextEffect || '';
     return `${commonDisplayTitle(u)} Lv.${lv}`;
   }
-  function commonTimelineHtml(u){
+  function commonLevelText(u){
+    const max = Math.max(1, Number(u?.max || 1));
+    const level = Math.max(0, Number(u?.level || 0));
+    if(!u?.unlocked) return '잠금';
+    return `Lv.${Math.min(level, max)}`;
+  }
+  function commonTitleWithLevel(u){ return `<span class="armoryTitleText">${esc(commonDisplayTitle(u))}</span><span class="armoryTitleLevel">${esc(commonLevelText(u))}</span>`; }
+  function commonTimelineHtml(u, canBuy=false){
     const max = Math.max(1, Number(u?.max || 1));
     const current = Math.max(0, Number(u?.level || 0));
-    const activeLv = Math.min(max, current > 0 ? current : 1);
-    let start = Math.max(1, activeLv - 2);
-    start = Math.min(start, Math.max(1, max - 3));
     const rows = [];
-    for(let lv=start; lv<=Math.min(max, start+3); lv++){
+    for(let lv=1; lv<=max; lv++){
       const done = current >= lv;
-      const now = current === lv || (!current && lv === 1);
-      const next = current + 1 === lv;
-      const cls = done ? 'done' : (now || next ? 'current' : 'locked');
-      const state = done ? '완료' : (next || now ? (u?.unlocked ? '연구 가능' : '잠금') : '대기');
-      rows.push(`<div class="commonTimelineRow ${cls}"><b>Lv.${esc(lv)}</b><span>${esc(commonEffectFor(u, lv))}</span><em>${state}</em></div>`);
+      const next = !done && lv === current + 1;
+      const effect = commonEffectFor(u, lv);
+      if(done){
+        rows.push(`<div class="commonLevelStep commonLevelDone" role="listitem"><b>Lv.${esc(lv)}</b><span>${esc(effect)}</span><em>완료</em></div>`);
+      }else if(next){
+        rows.push(`<button class="commonLevelStep commonLevelCurrent ${canBuy ? 'canBuy' : 'notEnough'}" type="button" ${canBuy ? `data-common-research-buy="${esc(u.key)}"` : 'disabled'}><b>Lv.${esc(lv)}</b><span>${esc(effect)}</span><em>${canBuy ? '강화' : '조각 부족'}</em></button>`);
+      }else{
+        rows.push(`<button class="commonLevelStep commonLevelFuture" type="button" disabled><b>Lv.${esc(lv)}</b><span>${esc(effect)}</span><em>대기</em></button>`);
+      }
     }
-    return `<div class="commonTimeline"><h3 class="commonTimelineTitle">연구 단계</h3><div class="commonTimelineList">${rows.join('')}</div></div>`;
+    return `<div class="commonLevelListPanel commonSimpleLevelPanel" style="--skill-color:${esc(u?.color)}"><div class="commonSimpleLevelHeader"><small>LEVEL ROUTE</small><b>레벨 진행</b></div><div class="commonLevelStepList commonSimpleLevelList" role="list">${rows.join('')}</div></div>`;
   }
   function lockShell(inner, title, reason){
     return `<div class="armoryLockedShell"><div class="armoryMasked">${inner}</div><div class="armoryLockOverlay"><div class="armoryLockBox"><div class="armoryLockIcon">🔒</div><b>${esc(title)}</b><span>${esc(reason)}</span></div></div></div>`;
@@ -134,22 +142,12 @@
     const masked = `
       <div class="armoryTowerHero" style="--planet-color:#7dd3fc">
         <div class="armoryTowerThumb">${towerImg(t)}</div>
-        <div><h2 class="armoryTowerTitle">미개방 행성</h2><div class="armoryTowerRole">??? / ??? / ???</div><div class="armoryTags"><span class="tag">정보 잠금</span><span class="tag">성역 보상</span></div></div>
+        <div><h2 class="armoryTowerTitle">미개방 행성</h2><div class="armoryTowerRole">??? / ??? / ???</div></div>
       </div>
-      <div class="armoryStatGrid"><div class="armoryStat"><small>활성 조건</small><b>${esc(unlock)}</b></div><div class="armoryStat"><small>전투 역할</small><b>???</b></div><div class="armoryStat"><small>스킬 정보</small><b>???</b></div></div>
-      <div class="armorySection"><h3>스킬 정보</h3><p>성역을 클리어하기 전까지 이 행성의 상세 스킬 정보는 표시되지 않습니다.</p></div>`;
-    return lockShell(masked, '행성 정보 잠금', `${unlock} 달성 후 행성 스킬 정보가 공개됩니다.`);
+      <div class="armoryStatGrid"><div class="armoryStat"><small>활성 조건</small><b>${esc(unlock)}</b></div><div class="armoryStat"><small>전투 역할</small><b>???</b></div></div>`;
+    return lockShell(masked, '행성 정보 잠금', `${unlock} 달성 후 행성 정보가 공개됩니다.`);
   }
-  function towerSkillRows(t){
-    const skills = getTowerSkills(t.type);
-    if(!skills.length) return `<p>등록된 고유 스킬 정보가 없습니다.</p>`;
-    return `<div class="armorySkillList">${skills.map((skill, idx) => `
-      <div class="armorySkillRow">
-        <b>Lv.${esc(skill.unlockLevel)}</b>
-        <span class="skillIcon" style="color:${esc(t.color)};text-shadow:0 0 14px ${esc(t.color)}66">${SKILL_ICONS[idx] || '✦'}</span>
-        <div><strong>${esc(skill.name)}</strong><span>${esc(skill.text)} · 해금 스킬</span></div>
-      </div>`).join('')}</div>`;
-  }
+  function towerSkillRows(t){ return ``; }
   function renderTowerDetail(type){
     const t = getTower(type);
     if(!t){
@@ -169,7 +167,6 @@
         <div>
           <h2 class="armoryTowerTitle">${esc(t.name)}</h2>
           <div class="armoryTowerRole">${esc(t.role)} / ${esc(kindText(t.kind))}</div>
-          <div class="armoryTags">${tagsHtml(t.tags)}</div>
         </div>
       </div>
       <div class="armoryQuickGrid towerQuickGrid">
@@ -180,8 +177,7 @@
         <div class="armoryQuickCard"><small>사거리</small><b>${esc(fmt(t.range))}</b></div>
         <div class="armoryQuickCard"><small>주기/비용</small><b>${esc(fmt(t.cd))} / ${esc(fmt(t.cost))}</b></div>
       </div>
-      <div class="armorySection compact"><h3>역할과 운용</h3><p><b style="color:${esc(t.color)}">${esc(t.role)}</b> — ${esc(t.identity)}</p></div>
-      <div class="armorySection compact"><h3>타워별 고유 스킬</h3>${towerSkillRows(t)}</div>`;
+      <div class="armorySection compact"><h3>역할과 운용</h3><p><b style="color:${esc(t.color)}">${esc(t.role)}</b> — ${esc(t.identity)}</p></div>`;
   }
   function buildTowerList(){
     list.classList.remove('commonList');
@@ -217,8 +213,9 @@
     }
     if(!upgrades.some(u => u.key === selectedCommonKey)) selectedCommonKey = upgrades[0].key;
     list.innerHTML = upgrades.map(u => `
-      <button class="commonResearchItem ${u.key === selectedCommonKey ? 'active' : ''} ${u.unlocked ? '' : 'locked'} ${u.maxed ? 'maxed' : ''}" style="--skill-color:${esc(u.color)}" type="button" data-common-research-select="${esc(u.key)}" aria-label="${esc(u.unlocked ? commonDisplayTitle(u) : '미개방 공통 연구')}" title="${esc(u.unlocked ? commonDisplayTitle(u) : `${commonUnlockText(u)} 열림`)}">
+      <button class="commonResearchItem ${u.key === selectedCommonKey ? 'active' : ''} ${u.unlocked ? '' : 'locked'} ${u.maxed ? 'maxed' : ''}" style="--skill-color:${esc(u.color)}" type="button" data-common-research-select="${esc(u.key)}" aria-label="${esc(u.unlocked ? `${commonDisplayTitle(u)} ${commonLevelText(u)}` : '미개방 공통 연구')}" title="${esc(u.unlocked ? `${commonDisplayTitle(u)} · ${commonLevelText(u)}` : `${commonUnlockText(u)} 열림`)}">
         ${commonIconImg(u.icon)}
+        <span class="commonResearchLevelBadge">${esc(commonLevelText(u))}</span>
       </button>`).join('');
     const preferred = upgrades.find(u => u.key === selectedCommonKey) || upgrades.find(u => u.unlocked && !u.maxed) || upgrades.find(u => u.unlocked) || upgrades[0];
     renderCommonDetail(preferred.key);
@@ -239,7 +236,6 @@
             <div class="lockedResearchKicker">LOCKED COMMON RESEARCH</div>
             <h2 class="lockedResearchTitle">${esc(title)}</h2>
             <p class="lockedResearchDesc">${esc(unlockText)} 연구 정보와 업그레이드가 열립니다.</p>
-            <div class="armoryTags lockedResearchTags">${tagsHtml(tags)}</div>
           </div>
         </div>
         <div class="lockedResearchInfoGrid">
@@ -272,28 +268,15 @@
     const tags = commonTags(u);
     const costText = u.maxed ? 'MAX' : `${esc(cost.toLocaleString('ko-KR'))} 조각`;
     detail.innerHTML = `
-      <div class="armoryCommonHero v82Hero" style="--skill-color:${esc(u.color)}">
+      <div class="armoryCommonHero v82Hero commonSimpleHero" style="--skill-color:${esc(u.color)}">
         <div class="armoryCommonIcon">${commonIconImg(u.icon, 'hero')}</div>
         <div>
-          <h2 class="armoryCommonTitle">${esc(commonDisplayTitle(u))}</h2>
+          <h2 class="armoryCommonTitle">${commonTitleWithLevel(u)}</h2>
           <div class="armoryCommonSubtitle">${esc(commonSubtitle(u))}</div>
-          <div class="armoryTags">${tagsHtml(tags)}</div>
+          <p class="commonSimpleDesc">${esc(u.desc || '')}</p>
         </div>
       </div>
-      <div class="armoryUpgradeDock" style="--skill-color:${esc(u.color)}">
-        <div><small>NEXT UPGRADE</small><b>${u.maxed ? '최대 연구 완료' : esc(u.nextEffect)}</b><span>${u.maxed ? '해당 연구의 모든 보너스가 적용 중입니다.' : `비용 ${costText} · 보유 ${esc(shards.toLocaleString('ko-KR'))} 조각`}</span></div>
-        <button class="commonResearchBuy" type="button" data-common-research-buy="${esc(u.key)}" ${canBuy ? '' : 'disabled'}>${u.maxed ? 'MAX' : (canBuy ? `업그레이드` : `조각 부족`)}</button>
-      </div>
-      <div class="commonInfoPanel">
-        <div class="commonInfoGrid">
-          <div class="commonInfoItem highlight"><small>현재 레벨</small><b>Lv.${esc(u.level)}</b></div>
-          <div class="commonInfoItem"><small>현재 효과</small><b>${esc(u.level > 0 ? u.effect : '아직 연구 없음')}</b></div>
-          <div class="commonInfoItem"><small>다음 효과</small><b>${esc(u.maxed ? '최대 연구 완료' : u.nextEffect)}</b></div>
-          <div class="commonInfoItem"><small>업그레이드 비용</small><b>${costText}</b></div>
-        </div>
-      </div>
-      <div class="armorySection compact"><h3>스킬 정보</h3><p>${esc(u.desc)}</p></div>
-      ${commonTimelineHtml(u)}`;
+      ${commonTimelineHtml(u, canBuy)}`;
   }
   function setActiveTab(tab){
     renderWallet();

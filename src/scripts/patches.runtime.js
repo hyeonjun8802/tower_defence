@@ -1259,15 +1259,10 @@
       e.detail.innerHTML='<div class="armoryLockedShell"><div class="armoryLockOverlay" style="position:relative;min-height:220px"><div class="armoryLockBox"><div class="armoryLockIcon">🔒</div><b>행성 정보 잠금</b><span>'+esc(t.unlockText||'성역 클리어 후 공개')+'</span></div></div></div>';
       return;
     }
-    var skills=getSkills(t.type);
-    var skillHtml=skills.length?'<div class="towerDenseSkillList">'+skills.map(function(s,i){
-      return '<div class="towerDenseSkillRow"><b>Lv.'+esc(s.unlockLevel)+'</b><span class="skillIcon" style="color:'+esc(t.color)+'">'+(['☀','✹','♨'][i%3])+'</span><div><strong>'+esc(s.name)+'</strong><span>'+esc(s.text)+' · 해금 스킬</span></div></div>';
-    }).join('')+'</div>':'<p class="towerDenseEmpty">등록된 고유 스킬 정보가 없습니다.</p>';
     e.detail.className='towerPopupDetail towerDenseDetail';
     e.detail.innerHTML=''
       +'<div class="towerDenseHero" style="--planet-color:'+esc(t.color)+'">'
         +'<div class="towerDenseHeroTop"><div class="armoryTowerThumb">'+towerImg(t)+'</div><div><small>TOWER PROFILE</small><h2 class="armoryTowerTitle">'+esc(t.name)+'</h2><p>'+esc(t.role)+' / '+esc(kindText(t.kind))+'</p></div></div>'
-        +'<div class="towerDenseTags">'+tagsHtml(t.tags)+'</div>'
       +'</div>'
       +'<div class="towerDenseStats">'
         +'<div class="towerDenseHead"><small>COMBAT SUMMARY</small><b>핵심 전투 정보</b><span>'+esc(t.identity)+'</span></div>'
@@ -1283,17 +1278,16 @@
       +'<div class="towerDenseRole">'
         +'<small>ROLE & USAGE</small><h3>역할과 운용</h3>'
         +'<p><b style="color:'+esc(t.color)+'">'+esc(t.role)+'</b> — '+esc(t.identity)+'</p>'
-      +'</div>'
-      +'<div class="towerDenseSkills">'
-        +'<small>UNIQUE SKILLS</small><h3>타워별 고유 스킬</h3>'+skillHtml
       +'</div>';
     requestAnimationFrame(function(){e.detail.scrollLeft=0;});
   }
   function renderTowerList(){var e=els();e.list.classList.remove('commonList');var towers=getTowers();if(!towers.length){e.list.innerHTML='';e.detail.innerHTML='<div class="towerPopupEmpty">타워 데이터를 불러오지 못했습니다.</div>';return;}if(!towers.some(function(t){return Number(t.type)===Number(selectedTowerType);}))selectedTowerType=(towers.find(function(t){return t.unlocked;})||towers[0]).type;e.list.innerHTML=towers.map(function(t){var active=Number(t.type)===Number(selectedTowerType);return '<button class="towerPopupItem '+(active?'active ':'')+(t.unlocked?'':'locked')+'" type="button" data-v164-tower="'+esc(t.type)+'" aria-label="'+esc(t.unlocked?t.name:'미개방 행성')+'" title="'+esc(t.unlocked?t.name:(t.unlockText||'잠금'))+'"><div class="towerPopupThumb">'+towerImg(t)+'</div></button>';}).join('');renderTowerDetail(selectedTowerType);}
   function commonTitle(u){return commonNames[u&&u.key]||(u&&u.name)||'공통 연구';}
   function commonSubtitle(u){return commonSub[u&&u.key]||((u&&u.type)||'공통')+' 강화 / 공용 패시브';}
-  function renderCommonDetail(key){var e=els();var api=window.TowerDefenseGrowth;var ups=api&&api.getUpgrades?api.getUpgrades():[];var u=ups.find(function(x){return x.key===key;})||ups[0];if(!u){e.detail.innerHTML='<div class="towerPopupEmpty">공통 연구 데이터가 없습니다.</div>';return;}selectedCommonKey=u.key;e.list.querySelectorAll('[data-v164-common]').forEach(function(b){b.classList.toggle('active',b.dataset.v164Common===selectedCommonKey);});if(!u.unlocked){var stage=Math.max(1,Number(u.unlockStage||1));var unlock=stage<=1?'기본 연구':(stage-1)+'성역 클리어 후';e.detail.innerHTML='<div class="lockedResearchPolish" style="--skill-color:'+esc(u.color)+'"><div class="lockedResearchHero"><div class="lockedResearchIconWrap">'+iconImg(u.icon,'hero')+'<span class="lockedResearchLock">🔒</span></div><div class="lockedResearchCopy"><div class="lockedResearchKicker">LOCKED COMMON RESEARCH</div><h2 class="lockedResearchTitle">'+esc(commonTitle(u))+'</h2><p class="lockedResearchDesc">'+esc(unlock)+' 연구 정보와 업그레이드가 열립니다.</p><div class="armoryTags">'+tagsHtml(commonTags[u.key]||['공용'])+'</div></div></div></div>';return;}var shards=Number(api&&api.getShards?api.getShards():0)||0;var cost=Number(u.cost||0)||0;var canBuy=u.unlocked&&!u.maxed&&shards>=cost;var costText=u.maxed?'MAX':cost.toLocaleString('ko-KR')+' 조각';e.detail.innerHTML='<div class="armoryCommonHero v82Hero" style="--skill-color:'+esc(u.color)+'"><div class="armoryCommonIcon">'+iconImg(u.icon,'hero')+'</div><div><h2 class="armoryCommonTitle">'+esc(commonTitle(u))+'</h2><div class="armoryCommonSubtitle">'+esc(commonSubtitle(u))+'</div><div class="armoryTags">'+tagsHtml(commonTags[u.key]||['공용'])+'</div></div></div><div class="armoryUpgradeDock" style="--skill-color:'+esc(u.color)+'"><div><small>NEXT UPGRADE</small><b>'+(u.maxed?'최대 연구 완료':esc(u.nextEffect))+'</b><span>'+(u.maxed?'해당 연구의 모든 보너스가 적용 중입니다.':'비용 '+esc(costText)+' · 보유 '+esc(shards.toLocaleString('ko-KR'))+' 조각')+'</span></div><button class="commonResearchBuy" type="button" data-v164-buy="'+esc(u.key)+'" '+(canBuy?'':'disabled')+'>'+(u.maxed?'MAX':(canBuy?'업그레이드':'조각 부족'))+'</button></div><div class="armoryQuickGrid v164InfoGrid"><div class="armoryQuickCard highlight"><small>현재 레벨</small><b>Lv.'+esc(u.level)+'</b></div><div class="armoryQuickCard"><small>현재 효과</small><b>'+esc(u.level>0?u.effect:'아직 연구 없음')+'</b></div><div class="armoryQuickCard"><small>다음 효과</small><b>'+esc(u.maxed?'최대 연구 완료':u.nextEffect)+'</b></div><div class="armoryQuickCard"><small>업그레이드 비용</small><b>'+esc(costText)+'</b></div></div><div class="v164Section"><h3>스킬 정보</h3><p>'+esc(u.desc||'')+'</p></div>';}
-  function renderCommonList(){var e=els();e.list.classList.add('commonList');var api=window.TowerDefenseGrowth;var ups=api&&api.getUpgrades?api.getUpgrades():[];if(!ups.length){e.list.innerHTML='';e.detail.innerHTML='<div class="towerPopupEmpty">공통 연구 데이터가 없습니다.</div>';return;}if(!ups.some(function(u){return u.key===selectedCommonKey;}))selectedCommonKey=ups[0].key;e.list.innerHTML=ups.map(function(u){return '<button class="commonResearchItem '+(u.key===selectedCommonKey?'active ':'')+(u.unlocked?'':'locked')+(u.maxed?' maxed':'')+'" style="--skill-color:'+esc(u.color)+'" type="button" data-v164-common="'+esc(u.key)+'" aria-label="'+esc(commonTitle(u))+'" title="'+esc(commonTitle(u))+'">'+iconImg(u.icon)+'</button>';}).join('');renderCommonDetail(selectedCommonKey);}
+  function commonLevelLabel(u){var max=Math.max(1,Number(u&&u.max||1));var level=Math.max(0,Number(u&&u.level||0));if(!u||!u.unlocked)return '잠금';return 'Lv.'+Math.min(level,max);}
+  function commonTitleWithLevel(u){return '<span class="armoryTitleText">'+esc(commonTitle(u))+'</span><span class="armoryTitleLevel">'+esc(commonLevelLabel(u))+'</span>';}
+  function renderCommonDetail(key){var e=els();var api=window.TowerDefenseGrowth;var ups=api&&api.getUpgrades?api.getUpgrades():[];var u=ups.find(function(x){return x.key===key;})||ups[0];if(!u){e.detail.innerHTML='<div class="towerPopupEmpty">공통 연구 데이터가 없습니다.</div>';return;}selectedCommonKey=u.key;e.list.querySelectorAll('[data-v164-common]').forEach(function(b){b.classList.toggle('active',b.dataset.v164Common===selectedCommonKey);});if(!u.unlocked){var stage=Math.max(1,Number(u.unlockStage||1));var unlock=stage<=1?'기본 연구':(stage-1)+'성역 클리어 후';e.detail.innerHTML='<div class="lockedResearchPolish" style="--skill-color:'+esc(u.color)+'"><div class="lockedResearchHero"><div class="lockedResearchIconWrap">'+iconImg(u.icon,'hero')+'<span class="lockedResearchLock">🔒</span></div><div class="lockedResearchCopy"><div class="lockedResearchKicker">LOCKED COMMON RESEARCH</div><h2 class="lockedResearchTitle">'+esc(commonTitle(u))+'</h2><p class="lockedResearchDesc">'+esc(unlock)+' 연구 정보와 업그레이드가 열립니다.</p></div></div></div>';return;}var shards=Number(api&&api.getShards?api.getShards():0)||0;var cost=Number(u.cost||0)||0;var canBuy=u.unlocked&&!u.maxed&&shards>=cost;var costText=u.maxed?'MAX':cost.toLocaleString('ko-KR')+' 조각';e.detail.innerHTML='<div class="armoryCommonHero v82Hero" style="--skill-color:'+esc(u.color)+'"><div class="armoryCommonIcon">'+iconImg(u.icon,'hero')+'</div><div><h2 class="armoryCommonTitle">'+commonTitleWithLevel(u)+'</h2><div class="armoryCommonSubtitle">'+esc(commonSubtitle(u))+'</div></div></div><div class="armoryUpgradeDock" style="--skill-color:'+esc(u.color)+'"><div><small>NEXT UPGRADE</small><b>'+(u.maxed?'최대 연구 완료':esc(u.nextEffect))+'</b><span>'+(u.maxed?'해당 연구의 모든 보너스가 적용 중입니다.':'비용 '+esc(costText)+' · 보유 '+esc(shards.toLocaleString('ko-KR'))+' 조각')+'</span></div><button class="commonResearchBuy" type="button" data-v164-buy="'+esc(u.key)+'" '+(canBuy?'':'disabled')+'>'+(u.maxed?'MAX':(canBuy?'업그레이드':'조각 부족'))+'</button></div>';}
+  function renderCommonList(){var e=els();e.list.classList.add('commonList');var api=window.TowerDefenseGrowth;var ups=api&&api.getUpgrades?api.getUpgrades():[];if(!ups.length){e.list.innerHTML='';e.detail.innerHTML='<div class="towerPopupEmpty">공통 연구 데이터가 없습니다.</div>';return;}if(!ups.some(function(u){return u.key===selectedCommonKey;}))selectedCommonKey=ups[0].key;e.list.innerHTML=ups.map(function(u){var max=Math.max(1,Number(u&&u.max||1));var cur=Math.max(0,Number(u&&u.level||0));var lv=!u.unlocked?'잠금':'Lv.'+Math.min(cur,max);return '<button class="commonResearchItem '+(u.key===selectedCommonKey?'active ':'')+(u.unlocked?'':'locked')+(u.maxed?' maxed':'')+'" style="--skill-color:'+esc(u.color)+'" type="button" data-v164-common="'+esc(u.key)+'" aria-label="'+esc(commonTitle(u)+' '+lv)+'" title="'+esc(commonTitle(u)+' · '+lv)+'">'+iconImg(u.icon)+'<span class="commonResearchLevelBadge">'+esc(lv)+'</span></button>';}).join('');renderCommonDetail(selectedCommonKey);}
   function plateTile(p){return '<span class="v164PlateTile plate-'+esc(p.key)+'"><span class="v164PlateCode">'+esc(p.symbol)+'</span><span class="v164PlateLabel">'+esc(p.label)+'</span></span>';}
   function renderPlateDetail(key){var e=els();var p=plates[key]||plates.amp;selectedPlateKey=p.key;e.list.querySelectorAll('[data-v164-plate]').forEach(function(b){b.classList.toggle('active',b.dataset.v164Plate===selectedPlateKey);});e.detail.innerHTML='<div class="v164PlateHero"><div class="v164PlateHeroVisual">'+plateTile(p)+'</div><div><h2 class="armoryCommonTitle">'+esc(p.name)+'</h2><div class="armoryCommonSubtitle">'+esc(p.subtitle)+'</div><div class="armoryTags">'+tagsHtml(p.tags)+'</div></div></div><div class="armoryQuickGrid v164InfoGrid"><div class="armoryQuickCard highlight"><small>핵심 효과</small><b>'+esc(p.effect)+'</b></div><div class="armoryQuickCard"><small>추천 배치</small><b>'+esc(p.best)+'</b></div><div class="armoryQuickCard"><small>공명 보너스</small><b>같은 색상/계열 배치 시 피해 +12% · 공속 +4%</b></div><div class="armoryQuickCard"><small>주의 사항</small><b>'+esc(p.caution)+'</b></div></div><div class="v164Section"><h3>장판 설명</h3><p>'+esc(p.summary)+'</p></div><div class="v164Section"><h3>추천 운용</h3><p>'+esc(p.tips)+'</p></div><div class="v164Section"><h3>색상 매칭</h3><p>장판 색상은 타워 색상과 맞춰서 보면 됩니다. 금색 계열 장판은 금색 계열 타워와, 보라색 계열 장판은 보라색 계열 타워와 맞춰 배치하는 방식으로 이해하면 쉽습니다.</p></div><div class="v164Section"><h3>공명 규칙</h3><p>장판 중앙 약어와 보조 이름은 현재 공명 계열을 의미합니다. 같은 계열 행성을 그 장판 위에 배치하면 추가 공명 보너스가 적용됩니다.</p></div>';}
   function renderPlateList(){var e=els();e.list.classList.add('commonList');e.list.innerHTML=plateKeys.map(function(k){var p=plates[k];return '<button class="commonResearchItem plateInfoItem '+(k===selectedPlateKey?'active':'')+'" type="button" data-v164-plate="'+esc(k)+'" aria-label="'+esc(p.name)+'" title="'+esc(p.name)+'">'+plateTile(p)+'</button>';}).join('');renderPlateDetail(selectedPlateKey);}
@@ -2389,6 +2383,44 @@
   function statCell(label, value){ return '<div class="armoryInlineStat"><small>'+esc(label)+'</small><b>'+esc(value)+'</b></div>'; }
   function resetDetailScroll(){ var detail=document.getElementById('towerPopupDetail'); if(detail) detail.scrollLeft=0; }
   function rerenderAfterUpdate(){ requestAnimationFrame(function(){ requestAnimationFrame(resetDetailScroll); }); }
+  function commonLevelLabel(u){
+    var max=Math.max(1,Number(u&&u.max||1));
+    var level=Math.max(0,Number(u&&u.level||0));
+    if(!u||!u.unlocked) return '잠금';
+    return 'Lv.'+Math.min(level,max);
+  }
+  function commonTitleWithLevel(u){
+    return '<span class="armoryTitleText">'+esc(commonTitle(u))+'</span><span class="armoryTitleLevel">'+esc(commonLevelLabel(u))+'</span>';
+  }
+  function commonEffectAt(u, lv){
+    lv=Math.max(1,Number(lv||1));
+    try{
+      var catalog=window.TowerDefenseCatalog&&window.TowerDefenseCatalog.getGlobalUpgrade?window.TowerDefenseCatalog.getGlobalUpgrade((u&&u.key)||(u&&u.icon)):null;
+      if(catalog&&typeof catalog.text==='function') return catalog.text(lv);
+    }catch(_err){}
+    if(lv<=Number(u&&u.level||0)) return (u&&u.effect)||'';
+    if(lv===Number(u&&u.level||0)+1) return (u&&u.nextEffect)||'';
+    return commonTitle(u)+' Lv.'+lv;
+  }
+  function commonLevelList(u, shards, cost, canBuy){
+    var max=Math.max(1,Number(u&&u.max||1));
+    var current=Math.max(0,Number(u&&u.level||0));
+    var rows=[];
+    for(var lv=1; lv<=max; lv++){
+      var done=current>=lv;
+      var next=!done && lv===current+1;
+      var label=next?(canBuy?'강화':'조각 부족'):(done?'완료':'대기');
+      var effect=commonEffectAt(u,lv);
+      if(done){
+        rows.push('<div class="commonLevelStep commonLevelDone" role="listitem"><b>Lv.'+esc(lv)+'</b><span>'+esc(effect)+'</span><em>'+label+'</em></div>');
+      }else if(next){
+        rows.push('<button class="commonLevelStep commonLevelCurrent '+(canBuy?'canBuy':'notEnough')+'" type="button" '+(canBuy?'data-v164-buy="'+esc(u.key)+'"':'disabled')+'><b>Lv.'+esc(lv)+'</b><span>'+esc(effect)+'</span><em>'+label+'</em></button>');
+      }else{
+        rows.push('<button class="commonLevelStep commonLevelFuture" type="button" disabled><b>Lv.'+esc(lv)+'</b><span>'+esc(effect)+'</span><em>'+label+'</em></button>');
+      }
+    }
+    return '<div class="commonLevelListPanel commonSimpleLevelPanel" style="--skill-color:'+esc(u&&u.color)+'"><div class="commonSimpleLevelHeader"><small>LEVEL ROUTE</small><b>레벨 진행</b></div><div class="commonLevelStepList commonSimpleLevelList" role="list">'+rows.join('')+'</div></div>';
+  }
 
   renderCommonDetail=function(key){
     var e=els(); var api=window.TowerDefenseGrowth; var ups=api&&api.getUpgrades?api.getUpgrades():[]; var u=ups.find(function(x){return x.key===key;})||ups[0];
@@ -2405,17 +2437,8 @@
     var shards=Number(api&&api.getShards?api.getShards():0)||0; var cost=Number(u.cost||0)||0; var canBuy=u.unlocked&&!u.maxed&&shards>=cost; var costText=u.maxed?'MAX':cost.toLocaleString('ko-KR')+' 조각';
     e.detail.className='towerPopupDetail compactCombined';
     e.detail.innerHTML=''
-      +'<div class="armoryHeroPanel" style="--skill-color:'+esc(u.color)+'"><div class="armoryHeroHeader"><div class="armoryCommonIcon">'+iconImg(u.icon,'hero')+'</div><div><div class="armoryPanelTitle">Common Research</div><h2 class="armoryCommonTitle">'+esc(commonTitle(u))+'</h2><div class="armoryCommonSubtitle">'+esc(commonSubtitle(u))+'</div>'+pillTags(commonTags[u.key]||['공용'])+'</div></div></div>'
-      +'<div class="armoryComboPanel" style="--skill-color:'+esc(u.color)+'"><div class="upgradeSummaryTop"><div><div class="armoryPanelTitle">Next Upgrade</div><div class="armoryDenseList">'+infoRow('다음 업그레이드', (u.maxed?'최대 연구 완료':u.nextEffect), (u.maxed?'해당 연구의 모든 보너스가 적용 중입니다.':'보유 '+shards.toLocaleString('ko-KR')+' 조각'))+'</div></div><button class="commonResearchBuy" type="button" data-v164-buy="'+esc(u.key)+'" '+(canBuy?'':'disabled')+'>'+(u.maxed?'MAX':(canBuy?'업그레이드':'조각 부족'))+'</button></div><div class="armoryInlineStatGrid">'
-      +statCell('현재 레벨','Lv.'+u.level)+statCell('현재 효과',u.level>0?u.effect:'아직 연구 없음')+statCell('다음 효과',u.maxed?'최대 연구 완료':u.nextEffect)+statCell('비용',costText)
-      +'</div></div>'
-      +'<div class="armoryStackPanel">'
-      +infoRow('현재 레벨','Lv.'+u.level,null,true)
-      +infoRow('현재 효과',u.level>0?u.effect:'아직 연구 없음')
-      +infoRow('다음 효과',u.maxed?'최대 연구 완료':u.nextEffect)
-      +infoRow('업그레이드 비용',costText)
-      +'</div>'
-      +'<div class="armoryWidePanel"><div class="armoryPanelTitle">Skill Info</div><div class="armoryDenseList">'+infoRow('설명',u.desc||'')+'</div></div>';
+      +'<div class="armoryHeroPanel commonSimpleHero" style="--skill-color:'+esc(u.color)+'"><div class="armoryHeroHeader"><div class="armoryCommonIcon">'+iconImg(u.icon,'hero')+'</div><div><div class="armoryPanelTitle">Common Research</div><h2 class="armoryCommonTitle">'+commonTitleWithLevel(u)+'</h2><div class="armoryCommonSubtitle">'+esc(commonSubtitle(u))+'</div>'+'<p class="commonSimpleDesc">'+esc(u.desc||'')+'</p></div></div></div>'
+      +commonLevelList(u, shards, cost, canBuy);
     rerenderAfterUpdate();
   };
 
@@ -2425,16 +2448,13 @@
     selectedTowerType=Number(t.type);
     e.list.querySelectorAll('[data-v164-tower]').forEach(function(b){ b.classList.toggle('active', Number(b.dataset.v164Tower)===selectedTowerType); });
     if(!t.unlocked){e.detail.innerHTML='<div class="armoryLockedShell"><div class="armoryLockOverlay" style="position:relative;min-height:260px"><div class="armoryLockBox"><div class="armoryLockIcon">🔒</div><b>행성 정보 잠금</b><span>'+esc(t.unlockText||'성역 클리어 후 공개')+'</span></div></div></div>';return;}
-    var skills=getSkills(t.type);
-    var skillHtml=skills.length?'<div class="armorySkillList">'+skills.map(function(s,i){ return '<div class="armorySkillRow"><b>Lv.'+esc(s.unlockLevel)+'</b><span class="skillIcon" style="color:'+esc(t.color)+'">'+(['☀','✹','♨'][i%3])+'</span><div><strong>'+esc(s.name)+'</strong><span>'+esc(s.text)+' · 해금 스킬</span></div></div>'; }).join('')+'</div>':'<p>등록된 고유 스킬 정보가 없습니다.</p>';
     e.detail.className='towerPopupDetail compactCombined';
     e.detail.innerHTML=''
-      +'<div class="armoryHeroPanel" style="--planet-color:'+esc(t.color)+'"><div class="armoryHeroHeader"><div class="armoryTowerThumb">'+towerImg(t)+'</div><div><div class="armoryPanelTitle">Tower Profile</div><h2 class="armoryTowerTitle">'+esc(t.name)+'</h2><div class="armoryTowerRole">'+esc(t.role)+' / '+esc(kindText(t.kind))+'</div>'+pillTags(t.tags)+'</div></div></div>'
+      +'<div class="armoryHeroPanel" style="--planet-color:'+esc(t.color)+'"><div class="armoryHeroHeader"><div class="armoryTowerThumb">'+towerImg(t)+'</div><div><div class="armoryPanelTitle">Tower Profile</div><h2 class="armoryTowerTitle">'+esc(t.name)+'</h2><div class="armoryTowerRole">'+esc(t.role)+' / '+esc(kindText(t.kind))+'</div>'+'</div></div></div>'
       +'<div class="armoryComboPanel"><div class="armoryPanelTitle">Combat Summary</div><div class="armoryDenseList">'+infoRow('활성','활성화됨',null,true)+infoRow('조건',t.unlockText||'기본 지급')+'</div><div class="armoryInlineStatGrid">'
       +statCell('타입',kindText(t.kind))+statCell('공격',fmt(t.dmg))+statCell('사거리',fmt(t.range))+statCell('주기/비용',fmt(t.cd)+' / '+fmt(t.cost))+statCell('역할',t.role)+statCell('운용',t.identity)
       +'</div></div>'
-      +'<div class="armoryStackPanel"><div class="armoryPanelTitle">Role & Usage</div><div class="armoryDenseList">'+infoRow('핵심 역할',t.role)+infoRow('운용 포인트',t.identity)+'</div></div>'
-      +'<div class="armorySkillsPanel"><div class="armoryPanelTitle">Unique Skills</div>'+skillHtml+'</div>';
+      +'<div class="armoryStackPanel"><div class="armoryPanelTitle">Role & Usage</div><div class="armoryDenseList">'+infoRow('핵심 역할',t.role)+infoRow('운용 포인트',t.identity)+'</div></div>';
     rerenderAfterUpdate();
   };
 
@@ -2571,8 +2591,18 @@
     var cs = getComputedStyle(o);
     return cs.display !== 'none' && cs.visibility !== 'hidden' && Number(cs.opacity || 1) !== 0;
   }
+  function stageResultIsBlockingEnter(){
+    if(hasActiveStageResult()) return true;
+    var pendingAt = Number(window.PRD_STAGE_RESULT_PENDING_AT || 0);
+    if(window.PRD_STAGE_RESULT_PENDING && pendingAt && Date.now() - pendingAt < 1200) return true;
+    if(window.PRD_STAGE_RESULT_PENDING){
+      window.PRD_STAGE_RESULT_PENDING = false;
+      window.PRD_STAGE_RESULT_PENDING_AT = 0;
+    }
+    return false;
+  }
   function canStartStageFromMap(){
-    if(window.PRD_STAGE_RESULT_PENDING || hasActiveStageResult()) return false;
+    if(stageResultIsBlockingEnter()) return false;
     var stageMap = byId('stageMap');
     if(!stageMap || getComputedStyle(stageMap).display === 'none') return false;
     var realEnter = byId('stageEnterBtn');

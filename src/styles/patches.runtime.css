@@ -19368,3 +19368,934 @@ select,
   }
   .stageResultActions #stageResultMapBtn{font-size:12px !important;}
 }
+
+/* ===== v-armory-common-total-level-detail-fix =====
+   Scope: Common research panel only.
+   - Keep the left research icon list structure.
+   - Add visible current level text on each left item.
+   - Show every level in the detail timeline, not only nearby levels.
+*/
+#towerPopup[data-active-tab="common"] .towerPopupList.commonList .commonResearchItem{
+  overflow:visible !important;
+}
+#towerPopup[data-active-tab="common"] .towerPopupList.commonList .commonResearchItem .commonResearchLevelBadge{
+  position:absolute !important;
+  left:50% !important;
+  bottom:7px !important;
+  z-index:4 !important;
+  transform:translateX(-50%) !important;
+  min-width:54px !important;
+  max-width:calc(100% - 12px) !important;
+  height:18px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 6px !important;
+  border-radius:999px !important;
+  border:1px solid rgba(80,210,255,.32) !important;
+  background:linear-gradient(180deg,rgba(2,17,37,.94),rgba(3,9,22,.98)) !important;
+  color:#dffbff !important;
+  font-family:'Orbitron',Pretendard,'Noto Sans KR',sans-serif !important;
+  font-size:9px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  letter-spacing:-.02em !important;
+  white-space:nowrap !important;
+  box-shadow:0 0 12px rgba(34,231,255,.12), inset 0 1px 0 rgba(255,255,255,.05) !important;
+  pointer-events:none !important;
+}
+#towerPopup[data-active-tab="common"] .towerPopupList.commonList .commonResearchItem.active .commonResearchLevelBadge{
+  border-color:rgba(51,231,255,.74) !important;
+  color:#8dfcff !important;
+  box-shadow:0 0 16px rgba(51,231,255,.26), inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+#towerPopup[data-active-tab="common"] .towerPopupList.commonList .commonResearchItem.locked .commonResearchLevelBadge{
+  border-color:rgba(255,224,150,.28) !important;
+  color:#a9b5c4 !important;
+  background:linear-gradient(180deg,rgba(22,27,38,.94),rgba(3,9,22,.98)) !important;
+}
+#towerPopup[data-active-tab="common"] .towerPopupList.commonList .commonResearchItem img.commonResearchImg{
+  transform:translateY(-7px) !important;
+}
+#towerPopup .commonFullLevelTimeline{
+  margin-top:18px !important;
+  padding-top:16px !important;
+  border-top:1px solid rgba(148,211,255,.12) !important;
+}
+#towerPopup .commonFullLevelTimeline .commonTimelineTitle{
+  margin-bottom:10px !important;
+}
+#towerPopup .commonFullLevelTimeline .commonTimelineList{
+  max-height:min(44vh, 520px) !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding-right:6px !important;
+  scrollbar-width:thin !important;
+}
+#towerPopup .commonFullLevelTimeline .commonTimelineRow{
+  grid-template-columns:74px minmax(0,1fr) 86px !important;
+}
+#towerPopup .commonFullLevelTimeline .commonTimelineRow.done{
+  opacity:.86 !important;
+}
+#towerPopup .commonFullLevelTimeline .commonTimelineRow.current{
+  border-color:rgba(51,231,255,.72) !important;
+  background:linear-gradient(180deg,rgba(7,58,86,.90),rgba(2,13,30,.96)) !important;
+}
+#towerPopup .commonFullLevelTimeline .commonTimelineRow.locked{
+  opacity:.58 !important;
+}
+#towerPopup .commonFullLevelTimeline .commonTimelineRow em{
+  white-space:nowrap !important;
+}
+@media (orientation:landscape) and (max-height:540px){
+  #towerPopup[data-active-tab="common"] .towerPopupList.commonList .commonResearchItem .commonResearchLevelBadge{
+    bottom:5px !important;
+    min-width:48px !important;
+    height:16px !important;
+    font-size:8px !important;
+    padding:0 4px !important;
+  }
+  #towerPopup[data-active-tab="common"] .towerPopupList.commonList .commonResearchItem img.commonResearchImg{
+    transform:translateY(-6px) !important;
+  }
+  #towerPopup .commonFullLevelTimeline .commonTimelineList{
+    max-height:34vh !important;
+  }
+  #towerPopup .commonFullLevelTimeline .commonTimelineRow{
+    grid-template-columns:62px minmax(0,1fr) 72px !important;
+    min-height:48px !important;
+  }
+}
+@media (max-width:420px){
+  #towerPopup[data-active-tab="common"] .towerPopupList.commonList .commonResearchItem .commonResearchLevelBadge{
+    bottom:4px !important;
+    min-width:42px !important;
+    height:15px !important;
+    font-size:7.5px !important;
+    padding:0 4px !important;
+  }
+  #towerPopup[data-active-tab="common"] .towerPopupList.commonList .commonResearchItem img.commonResearchImg{
+    transform:translateY(-5px) !important;
+  }
+  #towerPopup .commonFullLevelTimeline .commonTimelineList{
+    max-height:42vh !important;
+  }
+  #towerPopup .commonFullLevelTimeline .commonTimelineRow{
+    grid-template-columns:58px minmax(0,1fr) 66px !important;
+  }
+}
+
+/* ===== v-common-research-level-button-list-fix =====
+   Scope: armory common research only.
+   - Keep left research list structure and show current level text.
+   - Right detail level route: completed rows are passive info, current upgrade row is the only active button, future rows are disabled. */
+#towerPopup[data-active-tab="common"] .commonResearchItem{
+  overflow:hidden !important;
+  padding:4px 4px 19px !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchItem .commonResearchImg{
+  transform:translateY(-5px) !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchItem .commonResearchLevelBadge{
+  position:absolute !important;
+  left:5px !important;
+  right:5px !important;
+  bottom:4px !important;
+  z-index:6 !important;
+  min-height:15px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:1px 3px !important;
+  border-radius:0 !important;
+  clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px) !important;
+  border:1px solid rgba(118,239,255,.28) !important;
+  background:rgba(2,10,24,.88) !important;
+  color:#dffbff !important;
+  font-family:'Orbitron','Pretendard',sans-serif !important;
+  font-size:8px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  letter-spacing:-.02em !important;
+  text-shadow:0 0 8px rgba(57,231,255,.35) !important;
+  white-space:nowrap !important;
+  pointer-events:none !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchItem.active .commonResearchLevelBadge{
+  border-color:rgba(57,231,255,.72) !important;
+  background:linear-gradient(180deg,rgba(10,54,82,.92),rgba(2,12,28,.96)) !important;
+  color:#76efff !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchItem.maxed .commonResearchLevelBadge{
+  color:#fde68a !important;
+  border-color:rgba(250,204,21,.45) !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchItem.locked .commonResearchLevelBadge{
+  color:#b4bfcc !important;
+  border-color:rgba(160,174,192,.20) !important;
+  background:rgba(2,8,18,.74) !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchItem.locked::after{
+  top:4px !important;
+  right:4px !important;
+  bottom:auto !important;
+  font-size:14px !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelListPanel{
+  margin:0 0 14px !important;
+  padding:16px 16px 18px !important;
+  border:1px solid color-mix(in srgb,var(--skill-color,#39e7ff) 36%,rgba(70,205,255,.18)) !important;
+  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px) !important;
+  background:radial-gradient(circle at 0 0,color-mix(in srgb,var(--skill-color,#39e7ff) 14%,transparent),transparent 42%),linear-gradient(180deg,rgba(5,19,40,.90),rgba(1,7,18,.96)) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),0 0 18px color-mix(in srgb,var(--skill-color,#39e7ff) 8%,transparent) !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelListTitle{
+  margin:3px 0 14px !important;
+  color:#f7fbff !important;
+  font-family:'Pretendard','Noto Sans KR',sans-serif !important;
+  font-size:22px !important;
+  line-height:1.18 !important;
+  font-weight:950 !important;
+  letter-spacing:-.05em !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelStepList{
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:9px !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelStep{
+  width:100% !important;
+  min-height:58px !important;
+  display:grid !important;
+  grid-template-columns:70px minmax(0,1fr) 86px !important;
+  align-items:center !important;
+  gap:11px !important;
+  margin:0 !important;
+  padding:0 14px !important;
+  border-radius:0 !important;
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px) !important;
+  font-family:'Pretendard','Noto Sans KR',sans-serif !important;
+  text-align:left !important;
+  user-select:none !important;
+  -webkit-user-select:none !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelStep b{
+  font-family:'Orbitron','Pretendard',sans-serif !important;
+  color:#7defff !important;
+  font-size:16px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  white-space:nowrap !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelStep span{
+  color:#f3f7ff !important;
+  font-size:14px !important;
+  line-height:1.32 !important;
+  font-weight:850 !important;
+  word-break:keep-all !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelStep em{
+  justify-self:end !important;
+  font-style:normal !important;
+  color:#c8f8ff !important;
+  font-size:12px !important;
+  line-height:1 !important;
+  font-weight:950 !important;
+  white-space:nowrap !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelDone{
+  border:1px solid rgba(118,239,255,.16) !important;
+  background:linear-gradient(180deg,rgba(7,22,43,.52),rgba(2,8,18,.74)) !important;
+  opacity:.82 !important;
+  cursor:default !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelDone em{color:#9fb7c8 !important;}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent{
+  border:1px solid color-mix(in srgb,var(--skill-color,#39e7ff) 72%,rgba(118,239,255,.22)) !important;
+  background:radial-gradient(circle at 0 50%,color-mix(in srgb,var(--skill-color,#39e7ff) 25%,transparent),transparent 44%),linear-gradient(180deg,rgba(9,54,78,.96),rgba(3,13,31,.98)) !important;
+  box-shadow:0 0 22px color-mix(in srgb,var(--skill-color,#39e7ff) 18%,transparent),inset 0 0 0 1px rgba(255,255,255,.04) !important;
+  cursor:pointer !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy::after{
+  content:'TAP' !important;
+  position:absolute !important;
+  right:11px !important;
+  top:7px !important;
+  color:#fff !important;
+  font-family:'Orbitron','Pretendard',sans-serif !important;
+  font-size:8px !important;
+  letter-spacing:.12em !important;
+  opacity:.78 !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy:hover,
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy:focus-visible{
+  filter:brightness(1.08) !important;
+  outline:1px solid rgba(118,239,255,.45) !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.notEnough{
+  cursor:not-allowed !important;
+  opacity:.72 !important;
+  border-color:rgba(255,210,120,.28) !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.notEnough em{color:#fbd38d !important;}
+#towerPopup[data-active-tab="common"] .commonLevelFuture{
+  border:1px solid rgba(130,151,177,.12) !important;
+  background:linear-gradient(180deg,rgba(6,16,32,.36),rgba(2,7,17,.62)) !important;
+  opacity:.45 !important;
+  cursor:not-allowed !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelFuture b,
+#towerPopup[data-active-tab="common"] .commonLevelFuture span,
+#towerPopup[data-active-tab="common"] .commonLevelFuture em{color:#7e8b9d !important;}
+#towerPopup[data-active-tab="common"] .commonLevelFuture:disabled,
+#towerPopup[data-active-tab="common"] .commonLevelCurrent:disabled{
+  pointer-events:none !important;
+}
+@media (orientation:landscape) and (max-height:640px){
+  #towerPopup[data-active-tab="common"] .commonLevelListPanel{padding:12px 13px 14px !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelListTitle{font-size:18px !important;margin-bottom:10px !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep{min-height:48px !important;grid-template-columns:54px minmax(0,1fr) 68px !important;gap:8px !important;padding:0 10px !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep b{font-size:13px !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep span{font-size:11px !important;line-height:1.25 !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep em{font-size:10px !important;}
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="common"] .commonResearchItem .commonResearchLevelBadge{left:3px !important;right:3px !important;bottom:3px !important;font-size:6.5px !important;min-height:12px !important;padding:0 2px !important;}
+  #towerPopup[data-active-tab="common"] .commonResearchItem .commonResearchImg{transform:translateY(-4px) !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelListPanel{padding:11px 10px 12px !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelListTitle{font-size:17px !important;margin-bottom:9px !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep{min-height:48px !important;grid-template-columns:44px minmax(0,1fr) 52px !important;gap:6px !important;padding:0 8px !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep b{font-size:12px !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep span{font-size:10px !important;line-height:1.24 !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep em{font-size:9px !important;}
+}
+
+/* ===== v-armory-common-simple-level-button-list-final =====
+   Scope: Common research detail only.
+   UX intent:
+   - Keep the left icon list as-is, but show only representative level text like Lv.12.
+   - Keep the top skill/title explanation simple.
+   - Replace the complex detail cards with one clear level button list.
+*/
+#towerPopup[data-active-tab="common"] .commonResearchItem .commonResearchLevelBadge{
+  color:#f8fbff !important;
+  border-color:rgba(180,245,255,.28) !important;
+  background:rgba(2,10,24,.86) !important;
+  text-shadow:0 0 8px rgba(125,239,255,.28) !important;
+  letter-spacing:0 !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchItem.active .commonResearchLevelBadge,
+#towerPopup[data-active-tab="common"] .commonResearchItem.maxed .commonResearchLevelBadge{
+  color:#f8fbff !important;
+  border-color:rgba(118,239,255,.62) !important;
+  background:linear-gradient(180deg,rgba(8,39,60,.94),rgba(2,12,28,.96)) !important;
+}
+#towerPopup[data-active-tab="common"] .commonResearchItem.locked .commonResearchLevelBadge{
+  color:#b7c3d1 !important;
+}
+#towerPopup[data-active-tab="common"] .commonSimpleHero{
+  margin-bottom:14px !important;
+}
+#towerPopup[data-active-tab="common"] .commonSimpleDesc{
+  margin:12px 0 0 !important;
+  color:#cbd5e1 !important;
+  font-size:15px !important;
+  line-height:1.5 !important;
+  font-weight:700 !important;
+  word-break:keep-all !important;
+}
+#towerPopup[data-active-tab="common"] .commonSimpleLevelPanel{
+  margin:0 !important;
+  padding:14px !important;
+  border:1px solid color-mix(in srgb,var(--skill-color,#39e7ff) 34%,rgba(70,205,255,.16)) !important;
+  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px) !important;
+  background:linear-gradient(180deg,rgba(3,15,33,.92),rgba(1,7,18,.96)) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),0 0 18px color-mix(in srgb,var(--skill-color,#39e7ff) 8%,transparent) !important;
+}
+#towerPopup[data-active-tab="common"] .commonSimpleLevelHeader{
+  display:flex !important;
+  align-items:end !important;
+  justify-content:space-between !important;
+  gap:12px !important;
+  margin:0 0 12px !important;
+  padding:0 2px 10px !important;
+  border-bottom:1px solid rgba(148,211,255,.12) !important;
+}
+#towerPopup[data-active-tab="common"] .commonSimpleLevelHeader small{
+  color:#67e8f9 !important;
+  font-family:'Orbitron','Pretendard',sans-serif !important;
+  font-size:10px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  letter-spacing:.16em !important;
+  text-transform:uppercase !important;
+}
+#towerPopup[data-active-tab="common"] .commonSimpleLevelHeader b{
+  color:#f8fbff !important;
+  font-size:20px !important;
+  line-height:1 !important;
+  font-weight:950 !important;
+  letter-spacing:-.05em !important;
+}
+#towerPopup[data-active-tab="common"] .commonSimpleLevelList{
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:8px !important;
+  max-height:min(52vh, 520px) !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding-right:4px !important;
+  scrollbar-width:thin !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelStep{
+  position:relative !important;
+  width:100% !important;
+  min-height:54px !important;
+  display:grid !important;
+  grid-template-columns:64px minmax(0,1fr) 74px !important;
+  align-items:center !important;
+  gap:10px !important;
+  margin:0 !important;
+  padding:0 12px !important;
+  border-radius:0 !important;
+  clip-path:polygon(11px 0,100% 0,100% calc(100% - 11px),calc(100% - 11px) 100%,0 100%,0 11px) !important;
+  font-family:'Pretendard','Noto Sans KR',sans-serif !important;
+  text-align:left !important;
+  user-select:none !important;
+  -webkit-user-select:none !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelStep b{
+  color:#f8fbff !important;
+  font-family:'Orbitron','Pretendard',sans-serif !important;
+  font-size:15px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  white-space:nowrap !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelStep span{
+  color:#eef6ff !important;
+  font-size:13px !important;
+  line-height:1.28 !important;
+  font-weight:850 !important;
+  word-break:keep-all !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelStep em{
+  justify-self:end !important;
+  color:#c8f8ff !important;
+  font-size:12px !important;
+  line-height:1 !important;
+  font-weight:950 !important;
+  font-style:normal !important;
+  white-space:nowrap !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelDone{
+  border:1px solid rgba(118,239,255,.14) !important;
+  background:linear-gradient(180deg,rgba(7,22,43,.44),rgba(2,8,18,.68)) !important;
+  opacity:.78 !important;
+  cursor:default !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelDone em{color:#9fb7c8 !important;}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent{
+  border:1px solid color-mix(in srgb,var(--skill-color,#39e7ff) 76%,rgba(118,239,255,.22)) !important;
+  background:radial-gradient(circle at 0 50%,color-mix(in srgb,var(--skill-color,#39e7ff) 24%,transparent),transparent 44%),linear-gradient(180deg,rgba(9,54,78,.96),rgba(3,13,31,.98)) !important;
+  box-shadow:0 0 20px color-mix(in srgb,var(--skill-color,#39e7ff) 17%,transparent),inset 0 0 0 1px rgba(255,255,255,.04) !important;
+  cursor:pointer !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy em{
+  color:#ffffff !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.notEnough{
+  cursor:not-allowed !important;
+  opacity:.72 !important;
+  border-color:rgba(255,210,120,.30) !important;
+  background:linear-gradient(180deg,rgba(56,42,15,.74),rgba(2,8,18,.76)) !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.notEnough em{color:#fbd38d !important;}
+#towerPopup[data-active-tab="common"] .commonLevelFuture{
+  border:1px solid rgba(130,151,177,.11) !important;
+  background:linear-gradient(180deg,rgba(6,16,32,.32),rgba(2,7,17,.58)) !important;
+  opacity:.42 !important;
+  cursor:not-allowed !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelFuture b,
+#towerPopup[data-active-tab="common"] .commonLevelFuture span,
+#towerPopup[data-active-tab="common"] .commonLevelFuture em{color:#7e8b9d !important;}
+#towerPopup[data-active-tab="common"] .commonLevelFuture:disabled,
+#towerPopup[data-active-tab="common"] .commonLevelCurrent:disabled{pointer-events:none !important;}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy:hover,
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy:focus-visible{
+  filter:brightness(1.08) !important;
+  outline:1px solid rgba(118,239,255,.45) !important;
+}
+@media (orientation:landscape) and (max-height:640px){
+  #towerPopup[data-active-tab="common"] .commonSimpleHero{margin-bottom:10px !important;}
+  #towerPopup[data-active-tab="common"] .commonSimpleDesc{font-size:12px !important;line-height:1.32 !important;margin-top:8px !important;}
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelPanel{padding:10px 11px 12px !important;}
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelHeader{margin-bottom:8px !important;padding-bottom:7px !important;}
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelHeader b{font-size:16px !important;}
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelHeader small{font-size:8px !important;}
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelList{gap:6px !important;max-height:38vh !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep{min-height:42px !important;grid-template-columns:50px minmax(0,1fr) 58px !important;gap:7px !important;padding:0 8px !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep b{font-size:12px !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep span{font-size:10px !important;line-height:1.22 !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep em{font-size:9px !important;}
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="common"] .commonSimpleDesc{font-size:12px !important;line-height:1.35 !important;}
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelPanel{padding:10px 10px 12px !important;}
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelHeader b{font-size:17px !important;}
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelList{max-height:44vh !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep{min-height:46px !important;grid-template-columns:44px minmax(0,1fr) 52px !important;gap:6px !important;padding:0 8px !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep b{font-size:12px !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep span{font-size:10px !important;line-height:1.24 !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep em{font-size:9px !important;}
+}
+
+/* ===== v-upgrade-button-shared-primary-fill =====
+   Scope-limited visual fix only:
+   - Fill Upgrade buttons with the same shared cosmic primary color used by ENTER SANCTUARY / Continue.
+   - Does not change click handlers, unlock rules, upgrade costs, or any battle logic. */
+.stageResultActions #stageResultUpgradeBtn,
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy,
+#towerPopup .commonResearchBuy:not(:disabled){
+  position:relative !important;
+  isolation:isolate !important;
+  overflow:hidden !important;
+  border:1px solid rgba(157,241,255,.44) !important;
+  background:linear-gradient(90deg, rgba(70,220,235,.98) 0%, rgba(112,116,246,.96) 54%, rgba(186,76,245,.98) 100%) !important;
+  color:#f8fcff !important;
+  box-shadow:
+    0 14px 34px rgba(29,196,255,.18),
+    0 10px 24px rgba(0,0,0,.22),
+    inset 0 0 0 1px rgba(255,255,255,.13) !important;
+  text-shadow:0 1px 0 rgba(0,0,0,.30), 0 0 12px rgba(255,255,255,.20) !important;
+}
+.stageResultActions #stageResultUpgradeBtn::after,
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy::after,
+#towerPopup .commonResearchBuy:not(:disabled)::after{
+  content:'' !important;
+  position:absolute !important;
+  inset:1px !important;
+  z-index:-1 !important;
+  pointer-events:none !important;
+  border-radius:inherit !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,0) 42%),
+    radial-gradient(circle at 10% 50%, rgba(155,255,255,.22), transparent 38%) !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy b,
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy span,
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy em,
+#towerPopup .commonResearchBuy:not(:disabled){
+  color:#f8fcff !important;
+}
+.stageResultActions #stageResultUpgradeBtn:hover,
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy:hover,
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy:focus-visible,
+#towerPopup .commonResearchBuy:not(:disabled):hover,
+#towerPopup .commonResearchBuy:not(:disabled):focus-visible{
+  filter:brightness(1.06) !important;
+  transform:translateY(-1px) !important;
+  outline:1px solid rgba(157,241,255,.32) !important;
+}
+.stageResultActions #stageResultUpgradeBtn:active,
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy:active,
+#towerPopup .commonResearchBuy:not(:disabled):active{
+  filter:brightness(.98) !important;
+  transform:translateY(1px) scale(.99) !important;
+}
+
+/* ===== v-upgrade-button-common-pill-layout =====
+   Scope-limited visual fix only:
+   Make active Upgrade buttons use the same horizontal rounded pill silhouette
+   as the shared game primary button. No click handlers/costs/balance changed. */
+.stageResultActions #stageResultUpgradeBtn,
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock .commonResearchBuy:not(:disabled),
+#towerPopup[data-active-tab="common"] .commonResearchBuy:not(:disabled){
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  min-width:0 !important;
+  min-height:48px !important;
+  height:48px !important;
+  padding:0 24px !important;
+  border-radius:999px !important;
+  clip-path:none !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+  line-height:1 !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy{
+  border-radius:999px !important;
+  clip-path:none !important;
+  overflow:hidden !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy::after,
+#towerPopup[data-active-tab="common"] .commonResearchBuy:not(:disabled)::after,
+.stageResultActions #stageResultUpgradeBtn::after{
+  border-radius:999px !important;
+  clip-path:none !important;
+}
+#towerPopup[data-active-tab="common"] .armoryUpgradeDock .commonResearchBuy:not(:disabled),
+#towerPopup[data-active-tab="common"] .commonResearchBuy:not(:disabled){
+  font-size:16px !important;
+  font-weight:950 !important;
+  letter-spacing:-.02em !important;
+}
+@media (orientation:landscape) and (max-height:640px){
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock .commonResearchBuy:not(:disabled),
+  #towerPopup[data-active-tab="common"] .commonResearchBuy:not(:disabled){
+    min-height:40px !important;
+    height:40px !important;
+    padding:0 18px !important;
+    font-size:13px !important;
+  }
+}
+@media (max-width:640px){
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock .commonResearchBuy:not(:disabled),
+  #towerPopup[data-active-tab="common"] .commonResearchBuy:not(:disabled){
+    min-height:44px !important;
+    height:44px !important;
+    padding:0 18px !important;
+    font-size:14px !important;
+  }
+}
+
+/* ===== v-armory-landscape-clean-no-skill-hover-flash =====
+   Scope: Upgrade Armory UI only.
+   1) Remove white hover/shine overlay from upgrade buttons.
+   2) Clean short landscape layout.
+   3) Hide skill/tag info blocks that are not needed for the simplified mobile UX. */
+#towerPopup .armoryTags,
+#towerPopup .towerDenseTags,
+#towerPopup .planetDetailTags,
+#towerPopup .commonResearchTags,
+#towerPopup .lockedResearchTags,
+#towerPopup .planetTowerSkillList,
+#towerPopup .towerSkillLine,
+#towerPopup .armorySkillList,
+#towerPopup .armorySkillRow,
+#towerPopup .towerDenseSkillList,
+#towerPopup .towerDenseSkillRow{
+  display:none !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy::after,
+#towerPopup[data-active-tab="common"] .commonResearchBuy:not(:disabled)::after,
+.stageResultActions #stageResultUpgradeBtn::after{
+  display:none !important;
+  content:none !important;
+  background:none !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy:hover,
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy:focus-visible,
+#towerPopup[data-active-tab="common"] .commonResearchBuy:not(:disabled):hover,
+#towerPopup[data-active-tab="common"] .commonResearchBuy:not(:disabled):focus-visible,
+.stageResultActions #stageResultUpgradeBtn:hover,
+.stageResultActions #stageResultUpgradeBtn:focus-visible{
+  filter:none !important;
+  outline:none !important;
+  transform:none !important;
+  box-shadow:
+    0 14px 34px rgba(29,196,255,.18),
+    0 10px 24px rgba(0,0,0,.22),
+    inset 0 0 0 1px rgba(255,255,255,.10) !important;
+}
+#towerPopup[data-active-tab="common"] .commonLevelCurrent.canBuy:active,
+#towerPopup[data-active-tab="common"] .commonResearchBuy:not(:disabled):active,
+.stageResultActions #stageResultUpgradeBtn:active{
+  filter:none !important;
+  transform:translateY(1px) scale(.995) !important;
+}
+@media (orientation:landscape) and (max-height:700px){
+  #towerPopup .towerPopupPanel{
+    width:min(980px, calc(100vw - 22px)) !important;
+    height:calc(100dvh - 20px) !important;
+    max-height:calc(100dvh - 20px) !important;
+    border-radius:22px !important;
+  }
+  #towerPopup .towerPopupPanel::before{inset:9px !important;border-radius:17px !important;}
+  #towerPopup .towerPopupHeader{
+    padding:13px 22px 8px !important;
+    min-height:0 !important;
+  }
+  #towerPopup .towerPopupKicker{font-size:10px !important;letter-spacing:.18em !important;}
+  #towerPopup .towerPopupTitle{margin-top:5px !important;font-size:25px !important;line-height:1.02 !important;}
+  #towerPopup .towerPopupClose{
+    width:44px !important;height:44px !important;min-width:44px !important;min-height:44px !important;
+    border-radius:14px !important;font-size:30px !important;
+  }
+  #towerPopup .towerPopupTabs{
+    padding:6px 14px 0 !important;
+    gap:8px !important;
+    overflow:visible !important;
+  }
+  #towerPopup .towerPopupTab{
+    flex:1 1 0 !important;
+    min-height:32px !important;
+    padding:0 10px !important;
+    font-size:12px !important;
+  }
+  #towerPopup .towerPopupBody,
+  #towerPopup[data-active-tab="common"] .towerPopupBody{
+    height:calc(100dvh - 112px) !important;
+    min-height:0 !important;
+    grid-template-columns:108px minmax(0,1fr) !important;
+    grid-template-rows:minmax(0,1fr) !important;
+    gap:12px !important;
+    padding:10px 16px 14px !important;
+    overflow:hidden !important;
+  }
+  #towerPopup .towerPopupList,
+  #towerPopup .towerPopupList.commonList{
+    display:flex !important;
+    flex-direction:column !important;
+    width:108px !important;
+    max-width:108px !important;
+    max-height:none !important;
+    height:100% !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    gap:8px !important;
+    padding:8px 6px !important;
+    border-radius:18px !important;
+  }
+  #towerPopup .towerPopupItem,
+  #towerPopup .commonResearchItem{
+    flex:0 0 auto !important;
+    width:88px !important;
+    min-width:88px !important;
+    max-width:88px !important;
+    min-height:76px !important;
+    height:76px !important;
+    padding:6px !important;
+    grid-template-columns:1fr !important;
+    grid-template-rows:1fr auto !important;
+    align-items:center !important;
+    justify-items:center !important;
+    gap:2px !important;
+    border-radius:15px !important;
+  }
+  #towerPopup .towerPopupThumb,
+  #towerPopup .towerPopupThumbImg{
+    width:52px !important;height:52px !important;border-radius:14px !important;
+  }
+  #towerPopup .commonResearchItem img.commonResearchImg{
+    width:48px !important;height:48px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonResearchItem .commonResearchLevelBadge{
+    position:static !important;
+    display:inline-flex !important;
+    min-height:17px !important;
+    padding:1px 8px !important;
+    border-radius:999px !important;
+    font-size:10px !important;
+    line-height:1 !important;
+    color:#f8fbff !important;
+    background:rgba(4,17,34,.82) !important;
+    border:1px solid rgba(103,232,249,.32) !important;
+  }
+  #towerPopup .towerPopupDetail{
+    height:100% !important;
+    min-height:0 !important;
+    overflow:auto !important;
+    padding:14px 16px !important;
+    border-radius:20px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonSimpleHero,
+  #towerPopup[data-active-tab="common"] .armoryCommonHero{
+    grid-template-columns:74px minmax(0,1fr) !important;
+    gap:12px !important;
+    padding:12px !important;
+    margin-bottom:10px !important;
+    border-radius:18px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup[data-active-tab="common"] .commonResearchIcon{
+    width:68px !important;height:68px !important;border-radius:18px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonResearchIcon img{
+    width:40px !important;height:40px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup[data-active-tab="common"] .commonResearchTitle{
+    font-size:23px !important;
+    line-height:1.12 !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonSubtitle,
+  #towerPopup[data-active-tab="common"] .commonResearchSubtitle,
+  #towerPopup[data-active-tab="common"] .commonSimpleDesc{
+    margin-top:6px !important;
+    font-size:12px !important;
+    line-height:1.35 !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelPanel{
+    padding:10px !important;
+    margin-top:8px !important;
+    border-radius:18px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelHeader{
+    margin-bottom:7px !important;
+    padding-bottom:6px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelHeader b{font-size:15px !important;}
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelList{
+    gap:6px !important;
+    max-height:calc(100dvh - 285px) !important;
+    padding-right:3px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonLevelStep{
+    min-height:38px !important;
+    grid-template-columns:44px minmax(0,1fr) 54px !important;
+    gap:7px !important;
+    padding:0 8px !important;
+    border-radius:999px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonLevelStep b{font-size:11px !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep span{font-size:10px !important;line-height:1.18 !important;}
+  #towerPopup[data-active-tab="common"] .commonLevelStep em{font-size:9px !important;}
+  #towerPopup .towerPopupDetail .armorySection,
+  #towerPopup .towerPopupDetail .planetDetailSection,
+  #towerPopup .towerPopupDetail .v164Section{
+    margin-top:12px !important;
+    padding-top:10px !important;
+  }
+}
+
+/* ===== v-stage-result-buttons-secondary-upgrade =====
+   Scope: stage result popup buttons only.
+   Keep Continue as the only primary gradient button.
+   Make Upgrade match the Stage Map secondary filled pill style.
+   No handlers, layout flow, stage progress, armory, or battle logic changed. */
+.stageResultActions{
+  gap:12px !important;
+}
+.stageResultActions #stageResultContinueBtn,
+.stageResultActions #stageResultUpgradeBtn,
+.stageResultActions #stageResultMapBtn{
+  position:relative !important;
+  isolation:isolate !important;
+  overflow:hidden !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  min-width:0 !important;
+  min-height:52px !important;
+  height:52px !important;
+  padding:0 22px !important;
+  border-radius:999px !important;
+  clip-path:none !important;
+  box-sizing:border-box !important;
+  font-family:'Orbitron','Noto Sans KR',Pretendard,system-ui,sans-serif !important;
+  font-size:18px !important;
+  font-weight:950 !important;
+  line-height:1 !important;
+  letter-spacing:-.02em !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+  text-shadow:0 1px 0 rgba(0,0,0,.28) !important;
+  transition:transform .12s ease, box-shadow .16s ease, border-color .16s ease !important;
+}
+.stageResultActions #stageResultContinueBtn,
+.stageResultActions button#stageResultContinueBtn.btnGreen{
+  border:1px solid rgba(157,241,255,.44) !important;
+  background:linear-gradient(90deg, rgba(70,220,235,.98) 0%, rgba(112,116,246,.96) 54%, rgba(186,76,245,.98) 100%) !important;
+  color:#f8fcff !important;
+  box-shadow:
+    0 14px 34px rgba(29,196,255,.18),
+    0 10px 24px rgba(0,0,0,.22),
+    inset 0 0 0 1px rgba(255,255,255,.12) !important;
+}
+.stageResultActions #stageResultUpgradeBtn,
+.stageResultActions #stageResultMapBtn{
+  border:1px solid rgba(125,211,252,.24) !important;
+  background:linear-gradient(180deg, rgba(42,55,74,.92), rgba(27,38,55,.94)) !important;
+  color:#dce8f6 !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.035),
+    0 10px 24px rgba(0,0,0,.18) !important;
+}
+.stageResultActions #stageResultContinueBtn::after,
+.stageResultActions #stageResultUpgradeBtn::after,
+.stageResultActions #stageResultMapBtn::after{
+  display:none !important;
+  content:none !important;
+  background:none !important;
+}
+.stageResultActions #stageResultContinueBtn:hover,
+.stageResultActions #stageResultContinueBtn:focus-visible,
+.stageResultActions #stageResultUpgradeBtn:hover,
+.stageResultActions #stageResultUpgradeBtn:focus-visible,
+.stageResultActions #stageResultMapBtn:hover,
+.stageResultActions #stageResultMapBtn:focus-visible{
+  filter:none !important;
+  outline:none !important;
+  transform:none !important;
+}
+.stageResultActions #stageResultContinueBtn:active,
+.stageResultActions #stageResultUpgradeBtn:active,
+.stageResultActions #stageResultMapBtn:active{
+  filter:none !important;
+  transform:translateY(1px) scale(.995) !important;
+}
+@media (orientation:landscape) and (max-height:540px){
+  .stageResultActions{gap:8px !important;}
+  .stageResultActions #stageResultContinueBtn,
+  .stageResultActions #stageResultUpgradeBtn,
+  .stageResultActions #stageResultMapBtn{
+    min-height:38px !important;
+    height:38px !important;
+    padding:0 14px !important;
+    font-size:12.5px !important;
+  }
+}
+@media (max-width:520px){
+  .stageResultActions{gap:10px !important;}
+  .stageResultActions #stageResultContinueBtn,
+  .stageResultActions #stageResultUpgradeBtn,
+  .stageResultActions #stageResultMapBtn{
+    min-height:48px !important;
+    height:48px !important;
+    font-size:17px !important;
+  }
+}
+
+
+/* ===== v-armory-current-level-in-title =====
+   Scope: common research detail title only. Keeps removed info cards removed. */
+#towerPopup[data-active-tab="common"] .armoryCommonTitle{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  flex-wrap:wrap !important;
+}
+#towerPopup[data-active-tab="common"] .armoryCommonTitle .armoryTitleText{
+  min-width:0 !important;
+}
+#towerPopup[data-active-tab="common"] .armoryCommonTitle .armoryTitleLevel{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-height:26px !important;
+  padding:3px 10px !important;
+  border-radius:999px !important;
+  border:1px solid rgba(125,211,252,.32) !important;
+  background:rgba(15,23,42,.62) !important;
+  color:#f8fafc !important;
+  font-family:'Orbitron','Pretendard',system-ui,sans-serif !important;
+  font-size:14px !important;
+  font-weight:900 !important;
+  letter-spacing:.02em !important;
+  line-height:1 !important;
+  text-shadow:0 0 10px rgba(125,211,252,.28) !important;
+  white-space:nowrap !important;
+}
+@media (orientation:landscape) and (max-height:540px){
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle .armoryTitleLevel{
+    min-height:22px !important;
+    padding:2px 8px !important;
+    font-size:12px !important;
+  }
+}

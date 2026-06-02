@@ -949,6 +949,7 @@ function gameOverTipText(){
 function removeGameOverOverlay(){
   const existing = $('gameOverOverlay');
   if(existing) existing.remove();
+  clearStageResultPendingFlag();
 }
 
 function showGameOverOverlay(summary){
@@ -1305,8 +1306,27 @@ function showStageMap(){
   renderStageMap();
 }
 
+function visibleStageResultOverlay(){
+  const overlay = getActiveStageResultOverlay();
+  if(!overlay) return null;
+  try{
+    const cs = window.getComputedStyle(overlay);
+    if(cs.display === 'none' || cs.visibility === 'hidden' || Number(cs.opacity || 1) === 0) return null;
+  }catch(_){ }
+  return overlay;
+}
+function isStageResultPendingBlocking(){
+  if(visibleStageResultOverlay()) return true;
+  const pendingAt = Number(window.PRD_STAGE_RESULT_PENDING_AT || 0);
+  if(window.PRD_STAGE_RESULT_PENDING && pendingAt && Date.now() - pendingAt < 1200) return true;
+  if(window.PRD_STAGE_RESULT_PENDING){
+    clearStageResultPendingFlag();
+    return false;
+  }
+  return false;
+}
 function startSelectedStageFromMap(){
-  if(window.PRD_STAGE_RESULT_PENDING || getActiveStageResultOverlay()){
+  if(isStageResultPendingBlocking()){
     // Stage clear/game-over result is still being mounted or displayed.
     // Do not consume the map ENTER click here; otherwise landscape dock buttons can hide
     // via prd-stage-entering even though battle entry is intentionally blocked.
@@ -1391,6 +1411,7 @@ function startSelectedStageFromMap(){
 
 function clearStageResultPendingFlag(){
   try{ window.PRD_STAGE_RESULT_PENDING = false; }catch(_){ }
+  try{ window.PRD_STAGE_RESULT_PENDING_AT = 0; }catch(_){ }
 }
 
 function removeStageClearOverlay(){
@@ -1660,6 +1681,7 @@ function forceStageClearUnlockAfterBattle(stageNo, opts={}){
 
 function completeStageFromBattle(){
   window.PRD_STAGE_RESULT_PENDING = true;
+  window.PRD_STAGE_RESULT_PENDING_AT = Date.now();
   window.PRD_STAGE_ENTERING = false;
   if(document.body) document.body.classList.remove('prd-stage-entering');
   const cleared = clamp(Number(S.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
