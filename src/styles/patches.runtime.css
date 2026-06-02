@@ -19312,3 +19312,59 @@ select,
   user-select:text !important;
   -webkit-touch-callout:default !important;
 }
+
+/* ===== v-stage-result-button-text-match-battle-command =====
+   Scope-limited UI fix: make stage-clear result action button text visually match
+   the in-battle command dock button text size. No combat/balance/logic changes. */
+.stageResultActions button,
+.stageResultActions #stageResultContinueBtn,
+.stageResultActions #stageResultUpgradeBtn,
+.stageResultActions #stageResultMapBtn{
+  font-family:'Orbitron','Noto Sans KR',Pretendard,system-ui,sans-serif !important;
+  font-size:18px !important;
+  line-height:1.16 !important;
+  font-weight:900 !important;
+  letter-spacing:.02em !important;
+  min-height:54px !important;
+  padding:12px 14px !important;
+  white-space:normal !important;
+  word-break:keep-all !important;
+}
+.stageResultActions #stageResultMapBtn{
+  font-size:17px !important;
+  letter-spacing:.01em !important;
+}
+@media (max-width:430px){
+  .stageResultActions button,
+  .stageResultActions #stageResultContinueBtn,
+  .stageResultActions #stageResultUpgradeBtn,
+  .stageResultActions #stageResultMapBtn{
+    font-size:17px !important;
+    min-height:52px !important;
+    padding:11px 12px !important;
+  }
+  .stageResultActions #stageResultMapBtn{font-size:16px !important;}
+}
+@media (orientation:landscape) and (max-height:520px){
+  .stageResultActions button,
+  .stageResultActions #stageResultContinueBtn,
+  .stageResultActions #stageResultUpgradeBtn,
+  .stageResultActions #stageResultMapBtn{
+    font-size:13.5px !important;
+    min-height:40px !important;
+    padding:8px 9px !important;
+    line-height:1.12 !important;
+  }
+  .stageResultActions #stageResultMapBtn{font-size:12.5px !important;}
+}
+@media (orientation:landscape) and (max-height:360px){
+  .stageResultActions button,
+  .stageResultActions #stageResultContinueBtn,
+  .stageResultActions #stageResultUpgradeBtn,
+  .stageResultActions #stageResultMapBtn{
+    font-size:13px !important;
+    min-height:38px !important;
+    padding:7px 8px !important;
+  }
+  .stageResultActions #stageResultMapBtn{font-size:12px !important;}
+}
