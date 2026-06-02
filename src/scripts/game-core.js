@@ -875,8 +875,81 @@ function buyOfflineUpgrade(key){
   toast(`${cfg.name} Lv.${fmt2(lv+1)}`);
   if(S){ syncGlobalUpgradesFromMeta(); updateUI(); }
 }
+// v-economy-balance: stage-wide economy tuning.
+// Keep early 1-1~1-3 close to the original 100-cost tutorial feel,
+// then make late waves/stages pay for extra tower density instead of snowballing for free.
+const ECONOMY_STAGE_KILL_SCALE = Object.freeze([1.00, .96, .90, .82, .75, .68, .60, .54, .48, .43, .39, .36]);
+const ECONOMY_STAGE_WAVE_SCALE = Object.freeze([1.00, .94, .86, .78, .70, .63, .56, .50, .44, .40, .36, .33]);
+const ECONOMY_STAGE_COMBO_SCALE = Object.freeze([1.00, .80, .65, .50, .35, .25, .20, .18, .15, .12, .10, .08]);
+const ECONOMY_TREASURE_GOLD_SCALE = Object.freeze([1.00, .92, .82, .66, .60, .54, .50, .48, .45, .43, .41, .40]);
+const ECONOMY_TREASURE_SHARD_CHANCE = Object.freeze([.45, .38, .30, .18, .22, .20, .20, .18, .18, .17, .16, .15]);
+const ECONOMY_TREASURE_SHARD_SCALE = Object.freeze([1.00, .90, .70, .35, .42, .38, .38, .36, .34, .32, .30, .30]);
+function economyClampInt(v,min,max){
+  v = Math.floor(Number(v || 0));
+  if(!Number.isFinite(v)) v = min;
+  return Math.max(min, Math.min(max, v));
+}
+function economyStageNo(stageNo=null){
+  const raw = stageNo ?? ((typeof S !== 'undefined' && S && S.stageNo) || (typeof StageMapState !== 'undefined' && StageMapState.current) || 1);
+  return economyClampInt(raw, 1, 12);
+}
+function economyWaveNo(waveNo=null){
+  const raw = waveNo ?? ((typeof S !== 'undefined' && S && S.ogge) || 1);
+  return economyClampInt(raw, 1, 10);
+}
+function economyScaleFrom(table, stageNo){
+  const idx = economyStageNo(stageNo) - 1;
+  return Number(table[idx] ?? table[table.length - 1] ?? 1) || 1;
+}
+function economyLateWaveScale(waveNo, floor=.86, perWave=.02){
+  const late = Math.max(0, economyWaveNo(waveNo) - 3);
+  return Math.max(floor, 1 - late * perWave);
+}
+function economyKillRewardScale(stageNo=null, waveNo=null){
+  return economyScaleFrom(ECONOMY_STAGE_KILL_SCALE, stageNo) * economyLateWaveScale(waveNo, .88, .018);
+}
+function economyWaveClearRewardScale(stageNo=null, waveNo=null){
+  return economyScaleFrom(ECONOMY_STAGE_WAVE_SCALE, stageNo) * economyLateWaveScale(waveNo, .84, .024);
+}
+function economyComboRewardScale(stageNo=null, waveNo=null){
+  return economyScaleFrom(ECONOMY_STAGE_COMBO_SCALE, stageNo) * economyLateWaveScale(waveNo, .78, .030);
+}
+function economyTreasureGoldScale(stageNo=null, waveNo=null){
+  return economyScaleFrom(ECONOMY_TREASURE_GOLD_SCALE, stageNo) * economyLateWaveScale(waveNo, .86, .018);
+}
+function economyTreasureShardChance(stageNo=null){
+  return economyScaleFrom(ECONOMY_TREASURE_SHARD_CHANCE, stageNo);
+}
+function economyTreasureShardAmount(baseAmount, stageNo=null, waveNo=null){
+  const scaled = Number(baseAmount || 0) * economyScaleFrom(ECONOMY_TREASURE_SHARD_SCALE, stageNo) * economyLateWaveScale(waveNo, .88, .016);
+  return Math.max(1, Math.floor(scaled));
+}
 function currentSummonCost(){
-  return 100;
+  const stage = economyStageNo();
+  const wave = economyWaveNo();
+  const stageAdd = Math.max(0, stage - 1) * 4;
+  const waveAdd = Math.max(0, wave - 3) * 8;
+  const lateStageAdd = Math.max(0, stage - 6) * 3;
+  const raw = 100 + stageAdd + waveAdd + lateStageAdd;
+  return Math.max(100, Math.round(raw / 5) * 5);
+}
+
+// v-wave-defense-balance: sub-stage 4+ durability tuning.
+// Purpose: keep the 1~3 tutorial waves intact, then prevent Lv.1 tower swarms
+// from clearing mid/late sub-stages by quantity alone.
+const WAVE_DEFENSE_ARMOR_BONUS = Object.freeze([0, 0, 0, .035, .055, .075, .095, .115, .135, .155]);
+const WAVE_DEFENSE_HP_MULTIPLIER = Object.freeze([1, 1, 1, 1.04, 1.07, 1.10, 1.13, 1.16, 1.20, 1.24]);
+function waveDefenseTuning(stageNo=null, waveNo=null, isBoss=false){
+  const stage = economyStageNo(stageNo);
+  const wave = economyWaveNo(waveNo);
+  if(wave < 4) return {armor:0, hpMul:1};
+  const idx = Math.max(0, Math.min(WAVE_DEFENSE_ARMOR_BONUS.length - 1, wave - 1));
+  const stagePressure = Math.max(0, stage - 1);
+  const bossArmorScale = isBoss ? .55 : 1;
+  const bossHpScale = isBoss ? .55 : 1;
+  const armor = Math.min(.26, (Number(WAVE_DEFENSE_ARMOR_BONUS[idx] || 0) + stagePressure * .007) * bossArmorScale);
+  const hpMul = 1 + ((Number(WAVE_DEFENSE_HP_MULTIPLIER[idx] || 1) - 1) + stagePressure * .006) * bossHpScale;
+  return {armor, hpMul};
 }
 function applyOfflineMetaToRun(resetHp=true){
   if(!S || !META) return;
@@ -5250,6 +5323,8 @@ class Enemy{
       this.skillInterval = bossData.interval || 128;
       this.skillCd = this.skillInterval * .75;
     }
+    const waveDefense = waveDefenseTuning(S.stageNo || StageMapState.current || 1, S.ogge || 1, !!(base.boss || this.stageBoss));
+    armor += Number(waveDefense.armor || 0);
     this.spd=spd;this.size=size;this.color=color;this.reward=reward;this.exp=exp;this.armor=armor;
     this.x=route[0].x;this.y=route[0].y;this.seg=0;this.progress=0;
     if(payload && Number.isFinite(payload.x) && Number.isFinite(payload.y)){
@@ -5262,7 +5337,8 @@ class Enemy{
     const stageHpMultiplier = (this.boss || this.stageBoss)
       ? Number(stageBalance.boss_multiplier || 1)
       : Number(stageBalance.general_hp_multiplier || 1);
-    this.maxHp=Math.floor(295*hpBase*(1+S.ogge*.30+S.theme*.38) * hpScale * stageHpMultiplier);
+    const waveHpMultiplier = Number(waveDefense.hpMul || 1);
+    this.maxHp=Math.floor(295*hpBase*(1+S.ogge*.30+S.theme*.38) * hpScale * stageHpMultiplier * waveHpMultiplier);
     this.hp=this.maxHp;
     if(this.shieldRatio > 0){
       this.maxShield = Math.max(1, Math.floor(this.maxHp * this.shieldRatio));
@@ -5339,7 +5415,8 @@ class Enemy{
     const g = getGlobalUpgradeStats();
     const stageBalance = getCommercialStageBalance(S.stageNo || StageMapState.current || 1);
     const rewardBonus = Math.max(0, Number(this.rewardBonus || 0));
-    const reward=Math.max(1,Math.floor((6+S.ogge*.9)*this.reward*Number(stageBalance.reward_multiplier || 1)*(1+S.mods.reward+(g.reward||0)+rewardBonus)));
+    const killScale = economyKillRewardScale(S.stageNo || StageMapState.current || 1, S.ogge || 1);
+    const reward=Math.max(1,Math.floor((6+S.ogge*.9)*this.reward*Number(stageBalance.reward_multiplier || 1)*(1+S.mods.reward+(g.reward||0)+rewardBonus)*killScale));
     S.gold+=reward;
     gainExp(this.exp);
     burst(this.x,this.y,this.color,22,38);
@@ -5350,14 +5427,15 @@ class Enemy{
     if(this.treasure){
       const treasureName = this.displayName || '성흔 운반체';
       triggerTreasureImpact(this);
-      if(Math.random()<.55){
-        const bonus=45+S.ogge*8;
+      const treasureShardChance = economyTreasureShardChance(S.stageNo || StageMapState.current || 1);
+      if(Math.random() >= treasureShardChance){
+        const bonus=Math.max(1, Math.floor((45+S.ogge*8)*economyTreasureGoldScale(S.stageNo || StageMapState.current || 1, S.ogge || 1)));
         S.gold+=bonus;
         toast(`${treasureName} 파괴! 수정 +${fmt2(bonus)}`);
         impactLabel(this.x,this.y-this.size-34,`+${fmt2(bonus)} CRYSTAL`,'#fde68a',18,78);
         sound('treasure');
       }else{
-        const shardBonus = Math.max(2, Math.floor(2 + S.ogge / 3));
+        const shardBonus = economyTreasureShardAmount(Math.max(2, Math.floor(2 + S.ogge / 3)), S.stageNo || StageMapState.current || 1, S.ogge || 1);
         if(META){ META.shards += shardBonus; saveOfflineMeta(); renderOfflineMetaPanel(); }
         toast(`${treasureName} 파괴! 성흔 조각 +${fmt2(shardBonus)}`);
         impactLabel(this.x,this.y-this.size-34,`+${fmt2(shardBonus)} SHARD`,'#fde68a',18,78);
@@ -6485,9 +6563,10 @@ function drawStageFx(){
 function waveDone(){
   S.active=false;
   const stageBalance = getCommercialStageBalance(S.stageNo || StageMapState.current || 1);
-  const bonus=Math.floor((150+S.ogge*24+S.theme*55)*Number(stageBalance.reward_multiplier || 1));
   const waveNo = Number(S.ogge || 1);
   const stageNo = Number(S.stageNo || StageMapState.current || 1);
+  const waveRewardScale = economyWaveClearRewardScale(stageNo, waveNo);
+  const bonus=Math.max(20, Math.floor((150+S.ogge*24+S.theme*55)*Number(stageBalance.reward_multiplier || 1)*waveRewardScale));
   const hpBeforeRepair = Number(S.hp || 0);
   const waveCoreLoss = coreLossValue(S.resultWaveStartHp || S.maxHp || 0, hpBeforeRepair);
   S.gold+=bonus;
@@ -7508,10 +7587,13 @@ function registerKillCombo(enemy){
   if(S.combo.kills >= 3){
     // v36: hide the floating `KILL xN` combo text. Combo tracking/rewards remain unchanged.
     if(S.combo.kills % 5 === 0){
-      const bonus = Math.min(38, 5 + Math.floor(S.combo.kills * 1.35));
-      S.gold += bonus;
-      impactLabel(enemy.x, enemy.y-enemy.size-34, `COMBO +${fmt2(bonus)}`, '#facc15', 13, 62);
-      log(`킬 콤보 보너스: x${fmt2(S.combo.kills)} / 수정 +${fmt2(bonus)}`);
+      const rawBonus = Math.min(38, 5 + Math.floor(S.combo.kills * 1.35));
+      const bonus = Math.floor(rawBonus * economyComboRewardScale(S.stageNo || StageMapState.current || 1, S.ogge || 1));
+      if(bonus > 0){
+        S.gold += bonus;
+        impactLabel(enemy.x, enemy.y-enemy.size-34, `COMBO +${fmt2(bonus)}`, '#facc15', 13, 62);
+        log(`킬 콤보 보너스: x${fmt2(S.combo.kills)} / 수정 +${fmt2(bonus)}`);
+      }
     }
   }
 }
@@ -7536,13 +7618,10 @@ function triggerMergeImpact(idx,color,level){
   }
 
   if(combo>=3){
-    const bonus=Math.min(60,8*combo);
-    S.gold+=bonus;
-    if(showMergeLabel){
-      impactLabel(p.x,p.y-56,`+${fmt2(bonus)} CRYSTAL`,'#fde68a',12,48);
-    }
+    // v-economy-balance: merging already upgrades firepower and compresses the board.
+    // Do not return crystal here; otherwise late-game summon/merge loops snowball too easily.
     if(combo === 3 || combo % 5 === 0){
-      log(`병합 콤보: x${fmt2(combo)} / 수정 +${fmt2(bonus)}`);
+      log(`병합 콤보: x${fmt2(combo)} / 보상 없음`);
     }
   }
   shake=Math.max(shake,6 + Math.min(10,visualCombo*2));
