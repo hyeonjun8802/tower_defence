@@ -150,9 +150,29 @@
     if(btn){ btn.click(); return; }
     if(window.PRD_NAV && typeof window.PRD_NAV.showStage === 'function') window.PRD_NAV.showStage();
   }
+  function hasActiveStageResult(){
+    var o = byId('stageClearOverlay') || byId('gameOverOverlay');
+    if(!o) return false;
+    var cs = getComputedStyle(o);
+    return cs.display !== 'none' && cs.visibility !== 'hidden' && Number(cs.opacity || 1) !== 0;
+  }
+  function canStartStageFromMap(){
+    if(window.PRD_STAGE_RESULT_PENDING || hasActiveStageResult()) return false;
+    var map = byId('stageMap');
+    if(!map || !visible(map)) return false;
+    var btn = byId('stageEnterBtn');
+    if(btn && btn.disabled) return false;
+    return true;
+  }
   var v85RecoveryEnterLock = false;
   function enterStage(){
     if(v85RecoveryEnterLock) return;
+    if(!canStartStageFromMap()){
+      window.PRD_STAGE_ENTERING = false;
+      if(document.body) document.body.classList.remove('prd-stage-entering');
+      syncSoon();
+      return;
+    }
     v85RecoveryEnterLock = true;
     window.PRD_STAGE_ENTERING = true;
     if(document.body) document.body.classList.add('prd-stage-entering');
@@ -171,6 +191,7 @@
           if(!game || getComputedStyle(game).display === 'none'){
             window.PRD_STAGE_ENTERING = false;
             if(document.body) document.body.classList.remove('prd-stage-entering');
+            syncSoon();
           }
         }, 650);
       }

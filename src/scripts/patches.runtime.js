@@ -2565,9 +2565,30 @@
     if(stage) stage.style.display='none';
     if(game) game.style.display='flex';
   }
+  function hasActiveStageResult(){
+    var o = byId('stageClearOverlay') || byId('gameOverOverlay');
+    if(!o) return false;
+    var cs = getComputedStyle(o);
+    return cs.display !== 'none' && cs.visibility !== 'hidden' && Number(cs.opacity || 1) !== 0;
+  }
+  function canStartStageFromMap(){
+    if(window.PRD_STAGE_RESULT_PENDING || hasActiveStageResult()) return false;
+    var stageMap = byId('stageMap');
+    if(!stageMap || getComputedStyle(stageMap).display === 'none') return false;
+    var realEnter = byId('stageEnterBtn');
+    if(realEnter && realEnter.disabled) return false;
+    return true;
+  }
   var v85StageEnterLock = false;
   function enterStageStable(){
     if(v85StageEnterLock) return;
+    if(!canStartStageFromMap()){
+      window.PRD_STAGE_ENTERING = false;
+      if(document.body) document.body.classList.remove('prd-stage-entering');
+      setTimeout(ensureDocks, 0);
+      setTimeout(ensureDocks, 160);
+      return;
+    }
     v85StageEnterLock = true;
     window.PRD_STAGE_ENTERING = true;
     if(document.body) document.body.classList.add('prd-stage-entering');
@@ -2584,6 +2605,8 @@
           if(!byId('game') || getComputedStyle(byId('game')).display === 'none'){
             window.PRD_STAGE_ENTERING = false;
             if(document.body) document.body.classList.remove('prd-stage-entering');
+            setTimeout(ensureDocks, 0);
+            setTimeout(ensureDocks, 160);
           }
         }, 650);
       }
@@ -4280,4 +4303,53 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock
     install();
   }
   window.addEventListener('load', install, {once:true});
+})();
+
+/* ===== v-no-mobile-text-selection-runtime =====
+   Prevent iOS/Android long-press copy/select/context callouts across the game UI.
+   Form/editable elements are kept selectable for future compatibility. */
+(function(){
+  'use strict';
+  if(window.PRD_NO_MOBILE_TEXT_SELECTION) return;
+  window.PRD_NO_MOBILE_TEXT_SELECTION = true;
+
+  var editableSelector = 'input,textarea,select,[contenteditable="true"],[contenteditable=""],[data-allow-text-select="true"]';
+  function isEditableTarget(target){
+    try{
+      return !!(target && target.closest && target.closest(editableSelector));
+    }catch(_){
+      return false;
+    }
+  }
+  function blockTextUi(e){
+    if(isEditableTarget(e.target)) return;
+    e.preventDefault();
+  }
+  function install(){
+    try{
+      var root = document.documentElement;
+      var body = document.body;
+      if(root){
+        root.style.webkitUserSelect = 'none';
+        root.style.userSelect = 'none';
+        root.style.webkitTouchCallout = 'none';
+        root.style.webkitTapHighlightColor = 'rgba(0,0,0,0)';
+      }
+      if(body){
+        body.style.webkitUserSelect = 'none';
+        body.style.userSelect = 'none';
+        body.style.webkitTouchCallout = 'none';
+        body.style.webkitTapHighlightColor = 'rgba(0,0,0,0)';
+      }
+    }catch(_){ }
+    document.addEventListener('selectstart', blockTextUi, true);
+    document.addEventListener('contextmenu', blockTextUi, true);
+    document.addEventListener('dragstart', blockTextUi, true);
+    document.addEventListener('copy', function(e){ if(!isEditableTarget(e.target)) e.preventDefault(); }, true);
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', install, {once:true});
+  }else{
+    install();
+  }
 })();

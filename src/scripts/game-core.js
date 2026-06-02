@@ -1306,6 +1306,15 @@ function showStageMap(){
 }
 
 function startSelectedStageFromMap(){
+  if(window.PRD_STAGE_RESULT_PENDING || getActiveStageResultOverlay()){
+    // Stage clear/game-over result is still being mounted or displayed.
+    // Do not consume the map ENTER click here; otherwise landscape dock buttons can hide
+    // via prd-stage-entering even though battle entry is intentionally blocked.
+    window.PRD_STAGE_ENTERING = false;
+    if(document.body) document.body.classList.remove('prd-stage-entering');
+    try{ renderStageMap(); }catch(_){ }
+    return false;
+  }
   const selectedStageNo = clamp(StageMapState.selected, 1, STAGE_MAP_DEFS.length);
   if(!TEST_MODE_CONFIG.enabled && selectedStageNo > StageMapState.unlocked){
     // v85: do not wake battle HUD when the selected stage is locked.
@@ -1380,14 +1389,20 @@ function startSelectedStageFromMap(){
 }
 
 
+function clearStageResultPendingFlag(){
+  try{ window.PRD_STAGE_RESULT_PENDING = false; }catch(_){ }
+}
+
 function removeStageClearOverlay(){
   const existing = $('stageClearOverlay');
   if(existing) existing.remove();
+  clearStageResultPendingFlag();
 }
 
 function removeStageResultOverlay(){
   removeStageClearOverlay();
   removeGameOverOverlay();
+  clearStageResultPendingFlag();
 }
 
 function resultStageTheme(stageNo){
@@ -1644,6 +1659,9 @@ function forceStageClearUnlockAfterBattle(stageNo, opts={}){
 }
 
 function completeStageFromBattle(){
+  window.PRD_STAGE_RESULT_PENDING = true;
+  window.PRD_STAGE_ENTERING = false;
+  if(document.body) document.body.classList.remove('prd-stage-entering');
   const cleared = clamp(Number(S.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
   const finalSelected = Math.min(STAGE_MAP_DEFS.length, cleared + 1);
   const nextDef = getStageDef(finalSelected);
@@ -5072,11 +5090,11 @@ class Enemy{
       this.maxShield = Math.max(1, Math.floor(this.maxHp * this.shieldRatio));
       this.shield = this.maxShield;
     }
-    this.dead=false;this.slow=0;this.freeze=0;this.dot=0;this.dotTime=0;this.mark=0;this._chainHitStamp=0;
+    this.dead=false;this.slow=0;this.freeze=0;this.dot=0;this.dotTime=0;this.dotColor='';this.mark=0;this._chainHitStamp=0;
     return this;
   }
   update(dt){
-    if(this.dotTime>0){this.hp-=this.dot*dt;this.dotTime-=dt}
+    if(this.dotTime>0){this.hp-=this.dot*dt;this.dotTime-=dt}else if(this.dotColor){this.dotColor=''}
     if(this.regen)this.hp=Math.min(this.maxHp,this.hp+.18*dt*(1+S.ogge*.045));
     if(this.slow>0)this.slow-=dt;
     if(this.freeze>0)this.freeze-=dt;
@@ -5196,7 +5214,7 @@ class Enemy{
   draw(){
     let c=this.color;
     if(this.freeze>0)c='#bae6fd';
-    else if(this.dotTime>0)c='#86efac';
+    else if(this.dotTime>0)c=this.dotColor || '#86efac';
     // v13: enemy draw does not need a full canvas state stack. All modified state is
     // either overwritten below or reset before returning; boss body rotation remains
     // isolated inside drawCachedEnemyBody().
@@ -5428,7 +5446,7 @@ class Bullet{
       const dotRadius=70*(1+this.st.area), dotRadiusSq=dotRadius*dotRadius;
       for(let i=0;i<enemies.length;i++){
         const e = enemies[i];
-        if(distSq(e.x,e.y,tx,ty)<dotRadiusSq){e.dot=(1.4+this.tower.level*.2)*(1+this.st.dot);e.dotTime=120}
+        if(distSq(e.x,e.y,tx,ty)<dotRadiusSq){e.dot=(1.4+this.tower.level*.2)*(1+this.st.dot);e.dotTime=120;e.dotColor='#7f1d1d'}
       }
       if(signatureChance(this.tower,.10,.016)) triggerSolarNova(this.tower,this.target,this.st,dmg);
     }else if(id==='frost'){
@@ -5863,7 +5881,8 @@ function summon(typeOverride=null){
   summonLastFxAt = now;
   burst(p.x,p.y,PLANETS[type].color,rapid ? 14 : 24,rapid ? 30 : 42);
   toast(`랜덤 소환 — ${PLANETS[type].name} 착지 완료`);
-  sound('summon');
+  // v-summon-audio-off: tower creation can happen rapidly on hold-repeat.
+  // Keep the visual feedback/toast, but skip the summon SFX to reduce WebView audio overhead.
   requestMergeUiRefresh(false);
   return true;
 }

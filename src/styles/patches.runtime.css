@@ -19280,3 +19280,35 @@ body.stage-result-armory-stack-open .stageResultOverlay--underArmory .stageResul
     min-width:66px !important;
   }
 }
+
+/* ===== v-no-mobile-text-selection =====
+   Game-only UX fix: prevent long-press text selection/copy callouts on iOS/Android WebView/browser.
+   Does not change combat, balance, layout, or button behavior. */
+html,
+body,
+body *{
+  -webkit-user-select:none !important;
+  -moz-user-select:none !important;
+  -ms-user-select:none !important;
+  user-select:none !important;
+  -webkit-touch-callout:none !important;
+  -webkit-tap-highlight-color:rgba(0,0,0,0) !important;
+}
+img,
+canvas,
+svg,
+video{
+  -webkit-user-drag:none !important;
+  user-drag:none !important;
+}
+input,
+textarea,
+select,
+[contenteditable="true"],
+[data-allow-text-select="true"]{
+  -webkit-user-select:text !important;
+  -moz-user-select:text !important;
+  -ms-user-select:text !important;
+  user-select:text !important;
+  -webkit-touch-callout:default !important;
+}
