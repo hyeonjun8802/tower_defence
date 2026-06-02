@@ -8720,7 +8720,7 @@ function nearestStageNodeFromPoint(clientX, clientY){
 function shouldIgnoreStageMapPointer(e){
   const target = e.target;
   if(!target || !target.closest) return false;
-  return !!target.closest('#stageInfoPanel, #stageEnterBtn, #stageMapBack, #constellationDeck, [data-constellation-jump], #stageHint');
+  return !!target.closest('#stageInfoPanel, #stageEnterBtn, #stageMapBack, #constellationDeck, [data-constellation-jump], #stageHint, #v274StageActionDock, #v274StageEnterBtn, #v274StageInfoBtn, #v274MapInfoOverlay');
 }
 function handleStageMapPointerSelection(e){
   const map = $('stageMap');
