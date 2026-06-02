@@ -20320,3 +20320,51 @@ select,
   border-color:rgba(254,202,202,.92) !important;
   box-shadow:inset 0 0 0 1px rgba(254,202,202,.22),0 0 28px rgba(239,68,68,.30) !important;
 }
+
+/* ===== v181-armory-close-button-plain-x ===== */
+/* Replace the ambiguous percent-like icon with a clear bold X in the center. */
+#towerPopup .towerPopupClose{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  color:transparent !important;
+  font-size:0 !important;
+  line-height:1 !important;
+}
+#towerPopup .towerPopupClose::before{
+  content:"X" !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  position:absolute !important;
+  inset:0 !important;
+  width:auto !important;
+  height:auto !important;
+  margin:0 !important;
+  border-radius:0 !important;
+  background:none !important;
+  box-shadow:none !important;
+  transform:none !important;
+  color:#f7fbff !important;
+  font-size:34px !important;
+  font-weight:900 !important;
+  font-family:Arial, Helvetica, sans-serif !important;
+  letter-spacing:-0.02em !important;
+  line-height:1 !important;
+  text-shadow:0 0 12px rgba(101,225,255,.22) !important;
+}
+#towerPopup .towerPopupClose::after{
+  content:none !important;
+  display:none !important;
+}
+@media (orientation:landscape){
+  #towerPopup .towerPopupClose::before{
+    font-size:32px !important;
+  }
+}
+@media (max-width:720px){
+  #towerPopup .towerPopupClose::before{
+    font-size:28px !important;
+  }
+}
