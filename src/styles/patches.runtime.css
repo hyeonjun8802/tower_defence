@@ -18906,3 +18906,98 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock
   box-shadow:0 14px 34px rgba(29,196,255,.14), inset 0 0 0 1px rgba(255,255,255,.10) !important;
   text-shadow:0 1px 0 rgba(0,0,0,.26),0 0 12px rgba(255,255,255,.18) !important;
 }
+
+/* ===== v4-command-button-text-size-tweak =====
+   Only slightly increases in-game command button text size.
+   Keeps button size/layout unchanged. */
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn{
+  font-size:12.5px !important;
+}
+@media (orientation:portrait) and (max-width:520px){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn{
+    font-size:12px !important;
+  }
+}
+@media (orientation:landscape){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn{
+    font-size:11px !important;
+  }
+}
+@media (orientation:landscape) and (max-height:430px){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn{
+    font-size:10px !important;
+  }
+}
+
+/* ===== v280-stage-result-armory-stack-and-primary-gradient =====
+   - Keep the stage result dialog stacked under the armory popup when Upgrade is opened.
+   - Make only the result dialog Continue button match the shared rainbow/cosmic primary button style.
+*/
+body.stage-result-armory-stack-open #towerPopup{
+  z-index:10090 !important;
+}
+body.stage-result-armory-stack-open .stageResultOverlay--underArmory{
+  pointer-events:none !important;
+}
+body.stage-result-armory-stack-open .stageResultOverlay--underArmory .stageResultCard{
+  transform:scale(.985) !important;
+  filter:saturate(.9) brightness(.82) blur(.6px) !important;
+  opacity:.78 !important;
+}
+.stageResultActions #stageResultContinueBtn,
+.stageResultActions button#stageResultContinueBtn.btnGreen{
+  position:relative !important;
+  isolation:isolate !important;
+  overflow:hidden !important;
+  border:1px solid rgba(157,241,255,.42) !important;
+  background:linear-gradient(90deg, rgba(70,220,235,.96) 0%, rgba(112,116,246,.95) 54%, rgba(186,76,245,.96) 100%) !important;
+  color:#f4fbff !important;
+  box-shadow:
+    0 14px 34px rgba(29,196,255,.16),
+    0 10px 24px rgba(0,0,0,.20),
+    inset 0 0 0 1px rgba(255,255,255,.12) !important;
+  text-shadow:0 1px 0 rgba(0,0,0,.28), 0 0 12px rgba(255,255,255,.20) !important;
+  letter-spacing:.08em !important;
+}
+.stageResultActions #stageResultContinueBtn::after,
+.stageResultActions button#stageResultContinueBtn.btnGreen::after{
+  content:'' !important;
+  position:absolute !important;
+  inset:1px !important;
+  border-radius:inherit !important;
+  z-index:-1 !important;
+  pointer-events:none !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,0) 42%),
+    radial-gradient(circle at 10% 50%, rgba(155,255,255,.22), transparent 38%) !important;
+}
+.stageResultActions #stageResultContinueBtn:hover,
+.stageResultActions button#stageResultContinueBtn.btnGreen:hover{
+  transform:translateY(-1px) !important;
+  filter:brightness(1.06) !important;
+}
+.stageResultActions #stageResultContinueBtn:active,
+.stageResultActions button#stageResultContinueBtn.btnGreen:active{
+  transform:translateY(1px) scale(.99) !important;
+  filter:brightness(.98) !important;
+}

@@ -1300,7 +1300,7 @@
   function render(tab){ensureTabs();setWallet();setActive(tab||activeTab);var e=els();if(!e.popup||!e.list||!e.detail)return;if(activeTab==='common')renderCommonList();else if(activeTab==='plate')renderPlateList();else renderTowerList();e.detail.scrollTop=0;}
   function resetCommonSelectionToFirst(){var api=window.TowerDefenseGrowth;var ups=api&&api.getUpgrades?api.getUpgrades():[];if(ups&&ups.length)selectedCommonKey=ups[0].key;}
   function open(tab){var e=els();if(!e.popup)return;ensureTabs();var firstTab=(tab==='tower'||tab==='plate'||tab==='common')?tab:'common';if(firstTab==='common')resetCommonSelectionToFirst();e.popup.classList.add('open');e.popup.setAttribute('aria-hidden','false');render(firstTab);}
-  function close(){var e=els();if(!e.popup)return;e.popup.classList.remove('open');e.popup.setAttribute('aria-hidden','true');}
+  function close(){var e=els();if(!e.popup)return;e.popup.classList.remove('open');e.popup.setAttribute('aria-hidden','true');if(typeof window.__closeStageResultArmoryStack==='function')window.__closeStageResultArmoryStack();}
   window.openTowerArmoryPopup=open;window.setTowerArmoryTab=function(tab){render(tab);};window.closeTowerArmoryPopup=close;
   document.addEventListener('click',function(ev){var t=ev.target;if(!t||!t.closest)return;var tab=t.closest('#towerPopup [data-tower-popup-tab]');var closeBtn=t.closest('#towerPopupClose,#towerPopup .towerPopupClose,[data-tower-popup-close]');var towerOpen=t.closest('#towerMenuBtn,#stageTowerManageBtn');var towerItem=t.closest('#towerPopup [data-v164-tower]');var commonItem=t.closest('#towerPopup [data-v164-common]');var plateItem=t.closest('#towerPopup [data-v164-plate]');var buy=t.closest('#towerPopup [data-v164-buy]');if(tab||closeBtn||towerOpen||towerItem||commonItem||plateItem||buy){ev.preventDefault();ev.stopPropagation();if(ev.stopImmediatePropagation)ev.stopImmediatePropagation();}
     if(closeBtn){close();return;} if(towerOpen){open('common');return;} if(tab){render(tab.dataset.towerPopupTab||'common');return;} if(towerItem){renderTowerDetail(towerItem.dataset.v164Tower);return;} if(commonItem){renderCommonDetail(commonItem.dataset.v164Common);return;} if(plateItem){renderPlateDetail(plateItem.dataset.v164Plate);return;} if(buy){var api=window.TowerDefenseGrowth;if(api&&typeof api.buy==='function')api.buy(buy.dataset.v164Buy);if(api&&typeof api.refresh==='function')api.refresh();setWallet();selectedCommonKey=buy.dataset.v164Buy;renderCommonList();return;} },true);
@@ -1383,8 +1383,8 @@
       var arr=(bgm && bgm.stages) || [];
       var theme=0;
       if(typeof S!=='undefined' && S && Number.isFinite(Number(S.theme))) theme=Number(S.theme);
-      return arr.length ? arr[theme % arr.length] : (bgm.map || bgm.main || 'audio/bgm_battle_sentinels_of_the_ember.ogg');
-    }catch(e){ return 'audio/bgm_battle_sentinels_of_the_ember.ogg'; }
+      return arr.length ? arr[theme % arr.length] : (bgm.map || bgm.main || 'audio/public_bgm.ogg');
+    }catch(e){ return 'audio/public_bgm.ogg'; }
   }
   function playBattleNormal(){
     ensureAudioOn();
@@ -3309,6 +3309,10 @@
   var raf = 0;
   var commandHitCache = null;
   var commandHitCacheAt = 0;
+  var summonHoldTimer = 0;
+  var summonHoldActive = false;
+  var summonHoldBlockClickUntil = 0;
+  var SUMMON_HOLD_INTERVAL_MS = 200;
 
   function byId(id){ return document.getElementById(id); }
   function safe(fn, fallback){ try{ return fn(); }catch(err){ console.warn('[v96]', err); return fallback; } }
@@ -3540,28 +3544,57 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
     safe(function(){ if(ev) ev.stopPropagation(); });
     safe(function(){ if(ev && ev.stopImmediatePropagation) ev.stopImmediatePropagation(); });
   }
-  function runCommand(action, ev){
+  function runCommand(action, ev, opts){
+    opts = opts || {};
     var now = Date.now();
-    if(action === lastAction && now - lastAt < 210){ stop(ev); return false; }
+    if(!opts.force && action === lastAction && now - lastAt < 210){ stop(ev); return false; }
     lastAction = action;
     lastAt = now;
     stop(ev);
     var api = window.PRD_GAME_COMMANDS_V96;
+    var result;
     if(api && typeof api[action] === 'function'){
-      api[action](action === 'pause' ? (ev || null) : undefined);
+      result = api[action](action === 'pause' ? (ev || null) : undefined);
     }else{
       var id = COMMANDS.find(function(c){ return c.action === action; })?.id;
       var btn = id ? byId(id) : null;
-      if(btn && typeof btn.onclick === 'function') btn.onclick.call(btn);
+      if(btn && typeof btn.onclick === 'function') result = btn.onclick.call(btn);
     }
     safe(function(){ window.dispatchEvent(new Event('prd-command-sync')); });
-    return false;
+    return result;
+  }
+  function isSummonHoldStart(ev){
+    var type = ev && ev.type;
+    return type === 'pointerdown' || type === 'touchstart' || type === 'mousedown';
+  }
+  function stopSummonHold(){
+    if(summonHoldActive) summonHoldBlockClickUntil = Date.now() + 260;
+    summonHoldActive = false;
+    if(summonHoldTimer){
+      clearInterval(summonHoldTimer);
+      summonHoldTimer = 0;
+    }
+  }
+  function startSummonHold(){
+    if(summonHoldActive) return;
+    summonHoldActive = true;
+    if(summonHoldTimer) clearInterval(summonHoldTimer);
+    summonHoldTimer = setInterval(function(){
+      if(!summonHoldActive || !combatActive()){ stopSummonHold(); return; }
+      var ok = runCommand('summon', null, {force:true, repeat:true});
+      if(ok === false) stopSummonHold();
+    }, SUMMON_HOLD_INTERVAL_MS);
+  }
+  function handleCommandEvent(action, ev){
+    if(action === 'summon' && ev && ev.type === 'click' && Date.now() < summonHoldBlockClickUntil){ stop(ev); return false; }
+    if(action === 'summon' && isSummonHoldStart(ev)) startSummonHold();
+    return runCommand(action, ev);
   }
   function captureCommand(ev){
     if(!combatActive()) return;
     var hit = commandFromPoint(point(ev));
     if(!hit) return;
-    runCommand(hit.action, ev);
+    handleCommandEvent(hit.action, ev);
   }
   function bindRealButtons(){
     commandHitCache = null;
@@ -3572,7 +3605,7 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
       btn.setAttribute('aria-label', cmd.label);
       btn.setAttribute('title', cmd.label);
       ['pointerdown','touchstart','mousedown','click'].forEach(function(type){
-        btn.addEventListener(type, function(ev){ runCommand(cmd.action, ev); }, {capture:true, passive:false});
+        btn.addEventListener(type, function(ev){ handleCommandEvent(cmd.action, ev); }, {capture:true, passive:false});
       });
     });
   }
@@ -3589,6 +3622,9 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
   ['pointerdown','touchstart','mousedown','click'].forEach(function(type){
     window.addEventListener(type, captureCommand, {capture:true, passive:false});
   });
+  ['pointerup','pointercancel','touchend','touchcancel','mouseup','mouseleave','blur'].forEach(function(type){
+    window.addEventListener(type, stopSummonHold, {capture:true, passive:true});
+  });
   ['resize','orientationchange','pageshow'].forEach(function(type){
     window.addEventListener(type, function(){ scheduleViewport(type); setTimeout(function(){ scheduleViewport(type + '-late'); }, 220); }, {passive:true});
   });
@@ -3596,7 +3632,7 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
     window.visualViewport.addEventListener('resize', function(){ scheduleViewport('visualViewport-resize'); }, {passive:true});
     window.visualViewport.addEventListener('scroll', function(){ scheduleViewport('visualViewport-scroll'); }, {passive:true});
   }
-  document.addEventListener('visibilitychange', function(){ scheduleViewport('visibilitychange'); }, {passive:true});
+  document.addEventListener('visibilitychange', function(){ stopSummonHold(); scheduleViewport('visibilitychange'); }, {passive:true});
   setTimeout(boot, 120);
   setTimeout(boot, 600);
   setInterval(function(){ if(document.hidden) return; bindRealButtons(); if(combatActive()) applyViewport('interval'); }, 1000);
@@ -4163,4 +4199,65 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) sync(); }, {passive:true});
   setTimeout(sync, 80);
   setTimeout(sync, 500);
+})();
+
+/* ===== v4-command-button-text-size-tweak-runtime =====
+   Final runtime override: slightly larger text only for in-game command buttons. */
+(function(){
+  'use strict';
+  if(window.PRD_V4_COMMAND_TEXT_SIZE_TWEAK) return;
+  window.PRD_V4_COMMAND_TEXT_SIZE_TWEAK = true;
+
+  function install(){
+    if(document.getElementById('v4-command-button-text-size-tweak-runtime')) return;
+    var style = document.createElement('style');
+    style.id = 'v4-command-button-text-size-tweak-runtime';
+    style.textContent = `
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn{
+  font-size:12.5px !important;
+}
+@media (orientation:portrait) and (max-width:520px){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock .hudProxyBtn{
+    font-size:12px !important;
+  }
+}
+@media (orientation:landscape){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn{
+    font-size:11px !important;
+  }
+}
+@media (orientation:landscape) and (max-height:430px){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock .hudProxyBtn{
+    font-size:10px !important;
+  }
+}`;
+    (document.head || document.documentElement).appendChild(style);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', install, {once:true});
+  }else{
+    install();
+  }
+  window.addEventListener('load', install, {once:true});
 })();

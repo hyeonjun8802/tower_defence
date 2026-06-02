@@ -953,36 +953,29 @@ function removeGameOverOverlay(){
 
 function showGameOverOverlay(summary){
   try{
-    removeGameOverOverlay();
     const safeSummary = summary || {};
     const stageNo = Number(safeSummary.stageNo || S?.stageNo || StageMapState.current || 1);
     const waveNo = Number(safeSummary.wave || safeSummary.ogge || S?.ogge || 1);
     const def = getStageDef(stageNo);
-    const overlay = document.createElement('div');
-    overlay.id = 'gameOverOverlay';
-    overlay.className = 'gameOverOverlay';
-    overlay.innerHTML = `<div class="gameOverCard" role="dialog" aria-modal="true" aria-labelledby="gameOverTitle">
-      <div class="gameOverKicker">MISSION FAILED</div>
-      <h2 id="gameOverTitle">${STORY_EVENT_TEXT.gameOverTitle}</h2>
-      <p>${escapeHtml(def.name)} ${fmt2(stageNo)}성역에서 코어가 파괴되었습니다. ${escapeHtml(STORY_EVENT_TEXT.gameOverBody)} 획득한 성흔 조각으로 일반 스킬을 강화할 수 있습니다.</p>
-      <div class="gameOverStats">
-        <div class="gameOverStat"><span>STAGE</span><b>${fmt2(stageNo)}-${fmt2(waveNo)}</b></div>
-        <div class="gameOverStat"><span>KILLS</span><b>${fmt2(safeSummary.kills || 0)}</b></div>
-        <div class="gameOverStat"><span>BEST COMBO</span><b>x${fmt2(safeSummary.bestCombo || 0)}</b></div>
-        <div class="gameOverStat"><span>SHARDS</span><b>+${fmt2(safeSummary.shardsGained || 0)}</b></div>
-      </div>
-      <div class="gameOverTip">추천: ${escapeHtml(gameOverTipText())}</div>
-      <div class="gameOverActions">
-        <button id="gameOverMapBtn" class="btnAlt">은하 지도에서 강화</button>
-        <button id="gameOverRetryBtn" class="btnGreen">같은 성역 재도전</button>
-      </div>
-    </div>`;
-    document.body.appendChild(overlay);
+    const overlay = createStageResultOverlay({
+      kind:'defeat',
+      stageNo,
+      wave:waveNo,
+      kicker:'MISSION FAILED',
+      title:'게임 오버',
+      body:`${def.name} / ${def.ko} ${fmt2(waveNo)}웨이브에서 코어가 붕괴되었습니다. 획득한 성흔 조각으로 업그레이드한 뒤 다시 도전할 수 있습니다.`,
+      coreLoss:Number(safeSummary.coreLoss || coreLossValue(S?.resultStageStartHp || S?.maxHp || 0, S?.hp || 0)),
+      shardsGained:Number(safeSummary.shardsGained || 0),
+      kills:Number(safeSummary.kills || 0),
+      nextText:nextResultSummaryText('defeat', stageNo, waveNo),
+      continueText:'계속하기'
+    });
     if(S) S.gameOverOverlayShown = true;
-    const retry = overlay.querySelector('#gameOverRetryBtn');
-    const mapBtn = overlay.querySelector('#gameOverMapBtn');
-    if(retry){
-      retry.onclick = () => {
+    const continueBtn = overlay.querySelector('#stageResultContinueBtn');
+    const mapBtn = overlay.querySelector('#stageResultMapBtn');
+    const upgradeBtn = overlay.querySelector('#stageResultUpgradeBtn');
+    if(continueBtn){
+      continueBtn.onclick = () => {
         removeGameOverOverlay();
         StageMapState.selected = stageNo;
         startSelectedStageFromMap();
@@ -990,21 +983,10 @@ function showGameOverOverlay(summary){
     }
     if(mapBtn){
       mapBtn.onclick = () => {
-        removeGameOverOverlay();
-        syncNonBattleChrome();
-        cancelAnimationFrame(raf);
-        $('game').style.display = 'none';
-        $('stageMap').style.display = 'block';
-        StageMapState.selected = stageNo;
-        StageMapState.current = stageNo;
-        stopAllGameAudio();
-        reset();
-        resetBattleUnitsForStageMap();
-        renderStageMap();
-        const hint = $('stageHint');
-        if(hint) hint.textContent = `전투 실패 기록 회수 완료 — 성흔 조각으로 일반 스킬을 강화한 뒤 ${fmt2(stageNo)}성역에 재도전하세요.`;
+        goStageMapFromResult(stageNo, `전투 실패 기록 회수 완료 — 성흔 조각으로 일반 스킬을 강화한 뒤 ${fmt2(stageNo)}성역에 재도전하세요.`);
       };
     }
+    if(upgradeBtn) upgradeBtn.onclick = () => openUpgradeFromResult(stageNo);
     return overlay;
   }catch(err){
     console.error('game over overlay failed', err);
@@ -1018,23 +1000,22 @@ function showEmergencyGameOverOverlay(summary={}, err=null){
   const stageNo = Number(summary.stageNo || S?.stageNo || StageMapState.current || 1);
   const overlay = document.createElement('div');
   overlay.id = 'gameOverOverlay';
-  overlay.className = 'gameOverOverlay';
-  overlay.innerHTML = `<div class="gameOverCard" role="dialog" aria-modal="true">
-    <div class="gameOverKicker">MISSION FAILED</div>
-    <h2>CORE COLLAPSE</h2>
-    <p>코어가 파괴되어 전투가 종료되었습니다. 은하 지도에서 강화하거나 같은 성역에 재도전할 수 있습니다.</p>
-    <div class="gameOverTip">${err ? '표시 오류를 복구했습니다. ' : ''}추천: 성흔 조각으로 전역 연구를 강화한 뒤 재도전하세요.</div>
-    <div class="gameOverActions">
-      <button id="gameOverMapBtn" class="btnAlt">은하 지도</button>
-      <button id="gameOverRetryBtn" class="btnGreen">재도전</button>
-    </div>
+  overlay.className = 'gameOverOverlay stageResultOverlay stageResultOverlay--defeat';
+  overlay.innerHTML = `<div class="stageResultCard" role="dialog" aria-modal="true">
+    <div class="stageResultKicker">MISSION FAILED</div>
+    <h2>게임 오버</h2>
+    <p class="stageResultBody">코어가 파괴되어 전투가 종료되었습니다. 업그레이드하거나 같은 성역에 재도전할 수 있습니다.</p>
+    <div class="stageResultNext"><span>NEXT</span><b>${err ? '표시 오류를 복구했습니다. ' : ''}성흔 조각으로 전역 연구를 강화한 뒤 재도전하세요.</b></div>
+    ${resultButtonHtml('계속하기')}
   </div>`;
   document.body.appendChild(overlay);
   if(S) S.gameOverOverlayShown = true;
-  const retry = overlay.querySelector('#gameOverRetryBtn');
-  const mapBtn = overlay.querySelector('#gameOverMapBtn');
-  if(retry) retry.onclick = () => { removeGameOverOverlay(); StageMapState.selected = stageNo; startSelectedStageFromMap(); };
-  if(mapBtn) mapBtn.onclick = () => { removeGameOverOverlay(); stopAllGameAudio(); $('game').style.display='none'; $('stageMap').style.display='block'; StageMapState.selected=stageNo; StageMapState.current=stageNo; reset(); resetBattleUnitsForStageMap(); renderStageMap(); };
+  const continueBtn = overlay.querySelector('#stageResultContinueBtn');
+  const mapBtn = overlay.querySelector('#stageResultMapBtn');
+  const upgradeBtn = overlay.querySelector('#stageResultUpgradeBtn');
+  if(continueBtn) continueBtn.onclick = () => { removeGameOverOverlay(); StageMapState.selected = stageNo; startSelectedStageFromMap(); };
+  if(mapBtn) mapBtn.onclick = () => goStageMapFromResult(stageNo);
+  if(upgradeBtn) upgradeBtn.onclick = () => openUpgradeFromResult(stageNo);
   return overlay;
 }
 
@@ -1059,6 +1040,7 @@ function triggerGameOver(reason='core'){
     wave: Number(S.ogge || 1),
     kills: Number(S.runKills || 0),
     bestCombo: Number(S.combo?.best || 0),
+    coreLoss: coreLossValue(S.resultStageStartHp || S.maxHp || 0, S.hp || 0),
     shardsGained: Math.max(0, afterShards - beforeShards)
   };
   S.lastGameOverSummary = summary;
@@ -1372,6 +1354,10 @@ function startSelectedStageFromMap(){
   S.stageMapKey = def.key;
   S.theme = def.theme;
   S.ogge = 1;
+  S.resultStageStartHp = Number(S.hp || S.maxHp || 0);
+  S.resultStageStartMaxHp = Number(S.maxHp || S.hp || 0);
+  S.resultWaveStartHp = Number(S.hp || S.maxHp || 0);
+  S.resultWaveStartMaxHp = Number(S.maxHp || S.hp || 0);
   resetBattleUnitsForStageMap();
   const logBox = $('log');
   if(logBox) logBox.innerHTML = '';
@@ -1399,39 +1385,213 @@ function removeStageClearOverlay(){
   if(existing) existing.remove();
 }
 
-function showStageClearOverlay(summary){
+function removeStageResultOverlay(){
   removeStageClearOverlay();
-  const cleared = Number(summary.stageNo || StageMapState.current || 1);
+  removeGameOverOverlay();
+}
+
+function resultStageTheme(stageNo){
+  const def = getStageDef(stageNo || StageMapState.current || 1);
+  const themeDef = THEMES[Number(def.theme || 0)] || THEMES[0];
+  return {stage:def, theme:themeDef, bg:themeDef.bg, color:def.color || themeDef.color || '#38bdf8'};
+}
+
+function coreLossValue(startHp, endHp){
+  return Math.max(0, Math.round(Number(startHp || 0) - Number(endHp || 0)));
+}
+
+function nextResultSummaryText(kind, stageNo, waveNo){
+  const stage = clamp(Number(stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
+  const wave = Number(waveNo || 1);
+  if(kind === 'sub-clear'){
+    const nextWave = Math.min(10, wave + 1);
+    const preview = getWavePreviewInfo(nextWave, stage);
+    return `다음 서브 스테이지 ${fmt2(stage)}-${fmt2(nextWave)} · ${preview.title}. ${preview.detail}`;
+  }
+  if(kind === 'defeat'){
+    const copy = getStageDescriptionCopy(stage);
+    return `다음 도전: ${fmt2(stage)}성역 재정비. ${copy.strategy || gameOverTipText()}`;
+  }
+  const nextStage = Math.min(STAGE_MAP_DEFS.length, stage + 1);
+  const nextDef = getStageDef(nextStage);
+  const copy = getStageDescriptionCopy(nextStage);
+  if(stage >= STAGE_MAP_DEFS.length) return '다음 목표: 모든 성역의 3성 숙련도와 최고 웨이브 기록을 갱신하세요.';
+  return `다음 메인 스테이지: ${nextDef.stage}. ${nextDef.name} / ${nextDef.ko}. ${copy.summary}`;
+}
+
+function goStageMapFromResult(stageNo, hintText=''){
+  removeStageResultOverlay();
+  syncNonBattleChrome();
+  cancelAnimationFrame(raf);
+  const game = $('game');
+  const map = $('stageMap');
+  if(game) game.style.display = 'none';
+  if(map) map.style.display = 'block';
+  StageMapState.selected = clamp(Number(stageNo || StageMapState.selected || 1), 1, STAGE_MAP_DEFS.length);
+  StageMapState.current = StageMapState.selected;
+  stopAllGameAudio();
+  reset();
+  resetBattleUnitsForStageMap();
+  renderStageMap();
+  const hint = $('stageHint');
+  if(hint && hintText) hint.textContent = hintText;
+}
+
+function getActiveStageResultOverlay(){
+  return $('stageClearOverlay') || $('gameOverOverlay');
+}
+
+function setStageResultArmoryStack(open){
+  const on = !!open;
+  if(document.body) document.body.classList.toggle('stage-result-armory-stack-open', on);
+  const overlay = getActiveStageResultOverlay();
+  if(overlay){
+    overlay.classList.toggle('stageResultOverlay--underArmory', on);
+    overlay.setAttribute('aria-hidden', on ? 'true' : 'false');
+  }
+}
+
+window.__closeStageResultArmoryStack = function(){
+  if(!window.__stageResultArmoryStackActive) return;
+  window.__stageResultArmoryStackActive = false;
+  setStageResultArmoryStack(false);
+};
+
+function openUpgradeFromResult(stageNo){
+  const targetStage = clamp(Number(stageNo || StageMapState.selected || 1), 1, STAGE_MAP_DEFS.length);
+  const resultOverlay = getActiveStageResultOverlay();
+
+  if(resultOverlay && typeof window.openTowerArmoryPopup === 'function'){
+    StageMapState.selected = targetStage;
+    StageMapState.current = targetStage;
+    window.__stageResultArmoryStackActive = true;
+    setStageResultArmoryStack(true);
+    requestAnimationFrame(() => {
+      try{
+        window.openTowerArmoryPopup('common');
+      }catch(err){
+        console.warn('upgrade popup open failed', err);
+        window.__closeStageResultArmoryStack && window.__closeStageResultArmoryStack();
+      }
+    });
+    return;
+  }
+
+  goStageMapFromResult(targetStage, '성흔 조각으로 공통 연구를 강화한 뒤 다시 도전하세요.');
+  setTimeout(() => {
+    try{
+      if(typeof window.openTowerArmoryPopup === 'function') window.openTowerArmoryPopup('common');
+      else $('stageTowerManageBtn')?.click();
+    }catch(err){ console.warn('upgrade popup open failed', err); }
+  }, 80);
+}
+
+function resultButtonHtml(continueText='계속하기'){
+  return `<div class="stageResultActions">
+    <button id="stageResultContinueBtn" class="btnGreen">${escapeHtml(continueText)}</button>
+    <button id="stageResultMapBtn" class="btnAlt">스테이지 맵으로 이동</button>
+    <button id="stageResultUpgradeBtn" class="btnAlt stageResultUpgradeBtn">업그레이드</button>
+  </div>`;
+}
+
+function createStageResultOverlay(options){
+  const opt = options || {};
+  const kind = opt.kind || 'sub-clear';
+  const stageNo = clamp(Number(opt.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
+  const waveNo = clamp(Number(opt.wave || S?.ogge || 1), 1, 10);
+  const stageTheme = resultStageTheme(stageNo);
+  const id = kind === 'defeat' ? 'gameOverOverlay' : 'stageClearOverlay';
+  removeStageResultOverlay();
+  const overlay = document.createElement('div');
+  overlay.id = id;
+  overlay.className = `${kind === 'defeat' ? 'gameOverOverlay' : 'stageClearOverlay'} stageResultOverlay stageResultOverlay--${kind}`;
+  overlay.style.setProperty('--stage-result-bg', `url("${stageTheme.bg}")`);
+  overlay.style.setProperty('--stage-result-accent', stageTheme.color);
+  overlay.innerHTML = `<div class="stageResultCard" role="dialog" aria-modal="true" aria-labelledby="stageResultTitle">
+    <div class="stageResultBgLabel">${escapeHtml(stageTheme.stage.name)} / ${escapeHtml(stageTheme.stage.ko)}</div>
+    <div class="stageResultKicker">${escapeHtml(opt.kicker || 'STAGE RESULT')}</div>
+    <h2 id="stageResultTitle">${escapeHtml(opt.title || '스테이지 결과')}</h2>
+    <p class="stageResultBody">${escapeHtml(opt.body || '')}</p>
+    <div class="stageResultStats">
+      <div class="stageResultStat"><span>STAGE</span><b>${fmt2(stageNo)}-${fmt2(waveNo)}</b></div>
+      <div class="stageResultStat danger"><span>CORE LOSS</span><b>-${fmt2(opt.coreLoss || 0)}</b></div>
+      <div class="stageResultStat shard"><span>성흔 조각</span><b>+${fmt2(opt.shardsGained || 0)}</b></div>
+      <div class="stageResultStat"><span>KILLS</span><b>${fmt2(opt.kills || S?.runKills || 0)}</b></div>
+    </div>
+    <div class="stageResultNext"><span>NEXT</span><b>${escapeHtml(opt.nextText || nextResultSummaryText(kind, stageNo, waveNo))}</b></div>
+    ${opt.extraHtml || ''}
+    ${resultButtonHtml(opt.continueText || '계속하기')}
+  </div>`;
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
+function showSubStageResultOverlay(summary){
+  const safe = summary || {};
+  const stageNo = clamp(Number(safe.stageNo || S?.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
+  const waveNo = clamp(Number(safe.wave || S?.ogge || 1), 1, 10);
+  const def = getStageDef(stageNo);
+  const overlay = createStageResultOverlay({
+    kind:'sub-clear',
+    stageNo,
+    wave:waveNo,
+    kicker:'SUB STAGE CLEAR',
+    title:'서브 스테이지 클리어',
+    body:`${def.ko} ${fmt2(waveNo)}웨이브를 방어했습니다. 다음 웨이브는 적 조합과 압박이 조금 더 강해집니다.`,
+    coreLoss:Number(safe.coreLoss || 0),
+    shardsGained:Number(safe.shardsGained || 0),
+    kills:Number(safe.kills || S?.runKills || 0),
+    nextText:nextResultSummaryText('sub-clear', stageNo, waveNo),
+    continueText:'계속하기'
+  });
+  overlay.querySelector('#stageResultContinueBtn').onclick = () => {
+    removeStageClearOverlay();
+    if(!S || S.gameOver) return;
+    S.ogge = Math.min(10, waveNo + 1);
+    prepareWave();
+  };
+  overlay.querySelector('#stageResultMapBtn').onclick = () => {
+    goStageMapFromResult(stageNo, `${fmt2(stageNo)}성역 ${fmt2(waveNo)}웨이브까지 기록했습니다. 다시 진입하면 1웨이브부터 재도전합니다.`);
+  };
+  overlay.querySelector('#stageResultUpgradeBtn').onclick = () => openUpgradeFromResult(stageNo);
+  return overlay;
+}
+
+function showStageClearOverlay(summary){
+  const safe = summary || {};
+  const cleared = Number(safe.stageNo || StageMapState.current || 1);
   const nextNo = Math.min(STAGE_MAP_DEFS.length, cleared + 1);
   const def = getStageDef(cleared);
-  const nextDef = getStageDef(nextNo);
   const reward = stageTowerReward(cleared);
   const isFinal = cleared >= STAGE_MAP_DEFS.length;
   const mastery = computeStageMastery(cleared);
-  const masteryGoals = STAGE_MASTERY_GOALS[Number(cleared)] || STAGE_MASTERY_GOALS[1];
   const starText = '★★★'.slice(0, mastery.stars) + '☆☆☆'.slice(0, 3 - mastery.stars);
-  const overlay = document.createElement('div');
-  overlay.id = 'stageClearOverlay';
-  overlay.className = 'stageClearOverlay';
-  overlay.innerHTML = `<div class="stageClearCard" role="dialog" aria-modal="true" aria-labelledby="stageClearTitle">
-    <div class="stageClearKicker">${escapeHtml(def.ko)} RESTORED</div>
-    <h2 id="stageClearTitle">${STORY_EVENT_TEXT.clearTitle}</h2>
-    <p>${escapeHtml(getOfflineStoryLog(cleared, 'clear'))}</p>
-    <div class="stageClearStats">
-      <div class="stageClearStat"><span>RESTORED</span><b>${fmt2(cleared)} / ${fmt2(STAGE_MAP_DEFS.length)}</b></div>
-      <div class="stageClearStat"><span>SHARDS</span><b>+${fmt2(summary.shardsGained)}</b></div>
-      <div class="stageClearStat"><span>REWARD</span><b>${reward ? escapeHtml(reward.name) : '완료'}</b></div>
-    </div>
-    <div class="stageClearMastery"><div class="meta"><span>성역 숙련도</span><b>${mastery.stars}성 달성 · 코어 보존 ${fmt2(mastery.hpRatio*100)}%</b><span>${escapeHtml(masteryGoals[Math.max(0, Math.min(masteryGoals.length-1, mastery.stars-1))] || masteryGoals[0])}</span></div><div class="stars">${starText}</div></div>
-    <div class="stageClearReward">${escapeHtml(STORY_EVENT_TEXT.clearBody)} ${isFinal ? '모든 성역이 안정화되었습니다. 이제 각 성역의 3성 숙련도와 최고 웨이브 기록을 노려 재정화 루프를 이어갈 수 있습니다.' : `다음 항로: ${nextDef.name} / ${nextDef.ko}`}</div>
-    <div class="stageClearActions">
-      <button id="stageClearMapBtn" class="btnAlt">성역 지도에서 강화</button>
-      <button id="stageClearNextBtn" class="btnGreen">${isFinal ? '은하 항로 재정화' : '다음 성역 진입'}</button>
-    </div>
-  </div>`;
-  document.body.appendChild(overlay);
-  const mapBtn = overlay.querySelector('#stageClearMapBtn');
-  const nextBtn = overlay.querySelector('#stageClearNextBtn');
+  const overlay = createStageResultOverlay({
+    kind:'main-clear',
+    stageNo:cleared,
+    wave:10,
+    kicker:'MAIN STAGE CLEAR',
+    title:'메인 스테이지 클리어',
+    body:`${def.name} / ${def.ko} 정화 완료. ${getOfflineStoryLog(cleared, 'clear')}`,
+    coreLoss:Number(safe.coreLoss || 0),
+    shardsGained:Number(safe.shardsGained || 0),
+    kills:Number(safe.kills || S?.runKills || 0),
+    nextText:nextResultSummaryText('main-clear', cleared, 10),
+    continueText:'계속하기',
+    extraHtml:`<div class="stageResultMastery"><span>성역 숙련도</span><b>${mastery.stars}성 · 코어 보존 ${fmt2(mastery.hpRatio*100)}%</b><em>${starText}</em></div><div class="stageResultReward">${escapeHtml(STORY_EVENT_TEXT.clearBody)} 보상: ${reward ? escapeHtml(reward.name) : '완료'}</div>`
+  });
+  const continueBtn = overlay.querySelector('#stageResultContinueBtn');
+  const mapBtn = overlay.querySelector('#stageResultMapBtn');
+  const upgradeBtn = overlay.querySelector('#stageResultUpgradeBtn');
+  if(continueBtn){
+    continueBtn.onclick = () => {
+      removeStageClearOverlay();
+      StageMapState.selected = isFinal ? cleared : nextNo;
+      StageMapState.current = StageMapState.selected;
+      saveStageMapProgress();
+      startSelectedStageFromMap();
+    };
+  }
   if(mapBtn){
     mapBtn.onclick = () => {
       removeStageClearOverlay();
@@ -1440,19 +1600,15 @@ function showStageClearOverlay(summary){
       if(game) game.style.display = 'none';
       if(map) map.style.display = 'block';
       syncStageUnlockFromClears();
+      StageMapState.selected = isFinal ? cleared : nextNo;
+      StageMapState.current = StageMapState.selected;
+      saveStageMapProgress();
       if(audio && audio.on) playMapBgm();
       renderStageMap();
     };
   }
-  if(nextBtn){
-    nextBtn.onclick = () => {
-      removeStageClearOverlay();
-      StageMapState.selected = isFinal ? cleared : nextNo;
-      StageMapState.current = StageMapState.selected;
-      saveStageMapProgress();
-      startSelectedStageFromMap();
-    };
-  }
+  if(upgradeBtn) upgradeBtn.onclick = () => openUpgradeFromResult(isFinal ? cleared : nextNo);
+  return overlay;
 }
 
 
@@ -1510,7 +1666,13 @@ function completeStageFromBattle(){
   });
 
   const afterShards = Number(META?.shards || 0);
-  const clearSummary = {stageNo:cleared, shardsGained:Math.max(0, afterShards - beforeShards)};
+  const clearSummary = {
+    stageNo:cleared,
+    wave:10,
+    kills:Number(S?.runKills || 0),
+    coreLoss:coreLossValue(S.resultStageStartHp || S.maxHp || 0, S.hp || 0),
+    shardsGained:Math.max(0, afterShards - beforeShards)
+  };
   window.PRD_LAST_STAGE_CLEAR_V98 = Object.assign({ts:Date.now()}, repaired, clearSummary);
 
   sound('clear');
@@ -1610,23 +1772,23 @@ function drawImageContainCentered(img, cx, cy, maxW, maxH){
 
 const AUDIO_URLS = {
   bgm: {
-    main:'audio/bgm_general_glass_horizon.ogg',
-    map:'audio/bgm_general_glass_horizon.ogg',
+    main:'audio/public_bgm.ogg',
+    map:'audio/public_bgm.ogg',
     boss:'audio/bgm_boss_beneath_the_iron_crust.ogg',
-    clear:'audio/bgm_result_sanctuary_restored.ogg',
-    gameover:'audio/bgm_result_core_collapse.ogg',
+    clear:'audio/public_bgm.ogg',
+    gameover:'audio/public_bgm.ogg',
     // v32: use the existing lightweight stage loops for normal battle BGM.
     // The previous config reused the 148kbps battle track for every stage.
     // These stage loops are about 47-49kbps, so background music stays on while
     // reducing continuous decode pressure during combat.
     stages:[
-      'audio/bgm_stage_01_cosmic_void.ogg',
-      'audio/bgm_stage_02_frost_expanse.ogg',
-      'audio/bgm_stage_03_lava_nebula.ogg',
-      'audio/bgm_stage_04_jungle_core.ogg',
-      'audio/bgm_stage_05_smog_wasteland.ogg',
-      'audio/bgm_stage_06_crystal_nebula.ogg',
-      'audio/bgm_stage_07_machine_core.ogg'
+      'audio/public_bgm.ogg',
+      'audio/public_bgm.ogg',
+      'audio/public_bgm.ogg',
+      'audio/public_bgm.ogg',
+      'audio/public_bgm.ogg',
+      'audio/public_bgm.ogg',
+      'audio/public_bgm.ogg'
     ]
   },
   sfx: {
@@ -3460,6 +3622,8 @@ function prepareWave(){
   S.total=S.queue.length;
   S.spawned=0;
   S.active=true;
+  S.resultWaveStartHp = Number(S.hp || S.maxHp || 0);
+  S.resultWaveStartMaxHp = Number(S.maxHp || S.hp || 0);
   spawnTimer=13;
   document.getElementById('bg').style.backgroundImage=`url("${theme().bg}")`;
   triggerStageFx('enter');
@@ -5368,19 +5532,19 @@ function updateTacticalCooldowns(dt){
 let summonLastFxAt = 0;
 const SUMMON_RAPID_FX_GAP_MS = 260;
 function summon(typeOverride=null){
-  if(S.gameOver) return;
+  if(S.gameOver) return false;
   const pool = availableSummonTypes();
   const preferred = Number(typeOverride);
   const type = pool.includes(preferred) ? preferred : pool[Math.floor(Math.random()*pool.length)];
   const cost = currentSummonCost();
-  if(S.gold<cost)return toast('수정이 부족합니다');
+  if(S.gold<cost){ toast('수정이 부족합니다'); return false; }
 
   // v23: rapid tapping the summon button used to allocate a temporary `free[]`
   // array and immediately refresh the side UI every tap.  Pick a random free
   // slot with two cheap scans instead, and batch UI refreshes below.
   let freeCount = 0;
   for(let i=0;i<grid.length;i++) if(!grid[i]&&canBuild(i)) freeCount++;
-  if(!freeCount)return toast('배치 가능한 장판이 없습니다');
+  if(!freeCount){ toast('배치 가능한 장판이 없습니다'); return false; }
   let pick = Math.floor(Math.random()*freeCount);
   let idx = -1;
   for(let i=0;i<grid.length;i++){
@@ -5388,7 +5552,7 @@ function summon(typeOverride=null){
       if(pick-- === 0){ idx = i; break; }
     }
   }
-  if(idx < 0)return toast('배치 가능한 장판이 없습니다');
+  if(idx < 0){ toast('배치 가능한 장판이 없습니다'); return false; }
 
   grid[idx]=new Planet(type,1,idx);
   invalidateTerrainRenderCache();
@@ -5403,6 +5567,7 @@ function summon(typeOverride=null){
   toast(`랜덤 소환 — ${PLANETS[type].name} 착지 완료`);
   sound('summon');
   requestMergeUiRefresh(false);
+  return true;
 }
 const MERGE_TERRAIN_PRIORITY = {
   rift:60, amp:52, coil:46, lens:42, mine:34, empty:20, blocked:-100, path:-100
@@ -5709,21 +5874,31 @@ function waveDone(){
   S.active=false;
   const stageBalance = getCommercialStageBalance(S.stageNo || StageMapState.current || 1);
   const bonus=Math.floor((150+S.ogge*24+S.theme*55)*Number(stageBalance.reward_multiplier || 1));
+  const waveNo = Number(S.ogge || 1);
+  const stageNo = Number(S.stageNo || StageMapState.current || 1);
+  const hpBeforeRepair = Number(S.hp || 0);
+  const waveCoreLoss = coreLossValue(S.resultWaveStartHp || S.maxHp || 0, hpBeforeRepair);
   S.gold+=bonus;
   S.hp=Math.min(S.maxHp,S.hp+S.mods.repair);
   toast(`웨이브 클리어! 수정 +${fmt2(bonus)}`);
   log(`웨이브 클리어 보상: 수정 ${fmt2(bonus)}`);
   recordOfflineWaveProgress();
 
-  if(S.ogge >= 10){
-    log(`성역 ${S.stageNo || StageMapState.current || 1} 클리어 — 유닛 초기화 및 다음 항로 개방`);
+  if(waveNo >= 10){
+    log(`성역 ${stageNo} 클리어 — 유닛 초기화 및 다음 항로 개방`);
     completeStageFromBattle();
     return;
   }
 
-  S.ogge++;
-  prepareWave();
+  showSubStageResultOverlay({
+    stageNo,
+    wave:waveNo,
+    kills:Number(S.runKills || 0),
+    coreLoss:waveCoreLoss,
+    shardsGained:0
+  });
 }
+
 
 let backgroundGlowGradient = null;
 let backgroundGlowGradientKey = '';

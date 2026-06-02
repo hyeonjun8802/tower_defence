@@ -12069,3 +12069,210 @@ html, body{overflow-x:hidden !important;}
   .stageActionRow .stageEnter{height:48px;font-size:11px!important;}
   #stageInfoPanel{bottom:132px!important;}
 }
+
+/* v279-stage-result-popup: stage/sub-stage clear and game-over result dialog */
+.stageResultOverlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10040 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: max(18px, env(safe-area-inset-top, 0px)) 18px max(18px, env(safe-area-inset-bottom, 0px)) !important;
+  background:
+    radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--stage-result-accent, #38bdf8) 30%, transparent), transparent 35%),
+    linear-gradient(180deg, rgba(2,6,23,.18), rgba(2,6,23,.82)),
+    var(--stage-result-bg, none) center / cover no-repeat,
+    #020617 !important;
+  color: #e5e7eb !important;
+  backdrop-filter: blur(6px) saturate(1.05) !important;
+  overflow: auto !important;
+}
+.stageResultOverlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(2,6,23,.86), rgba(2,6,23,.52) 45%, rgba(2,6,23,.86)),
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.14), transparent 42%);
+  pointer-events: none;
+}
+.stageResultOverlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(148,163,184,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.045) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black, transparent 72%);
+  pointer-events: none;
+}
+.stageResultCard {
+  position: relative;
+  z-index: 1;
+  width: min(760px, calc(100vw - 28px));
+  max-height: min(88vh, 720px);
+  overflow: auto;
+  border-radius: 26px;
+  padding: 24px;
+  border: 1px solid color-mix(in srgb, var(--stage-result-accent, #38bdf8) 42%, rgba(255,255,255,.18));
+  background:
+    linear-gradient(145deg, rgba(15,23,42,.88), rgba(2,6,23,.94)),
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--stage-result-accent, #38bdf8) 18%, transparent), transparent 38%);
+  box-shadow: 0 28px 90px rgba(0,0,0,.68), inset 0 1px 0 rgba(255,255,255,.1), 0 0 42px color-mix(in srgb, var(--stage-result-accent, #38bdf8) 18%, transparent);
+}
+.stageResultBgLabel {
+  position: absolute;
+  right: 20px;
+  top: 18px;
+  max-width: 46%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: Orbitron, Pretendard, sans-serif;
+  font-size: 10px;
+  letter-spacing: .16em;
+  color: rgba(226,232,240,.58);
+  text-align: right;
+}
+.stageResultKicker {
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--stage-result-accent, #38bdf8) 42%, rgba(255,255,255,.14));
+  background: color-mix(in srgb, var(--stage-result-accent, #38bdf8) 15%, rgba(15,23,42,.62));
+  color: #e0f2fe;
+  font-family: Orbitron, Pretendard, sans-serif;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .22em;
+}
+.stageResultOverlay--defeat .stageResultKicker,
+.stageResultOverlay--defeat .stageResultStat.danger {
+  color: #fecaca;
+  border-color: rgba(248,113,113,.36);
+  background: rgba(127,29,29,.26);
+}
+.stageResultCard h2 {
+  margin: 12px 0 7px;
+  font-family: Orbitron, Pretendard, sans-serif;
+  font-size: 32px;
+  line-height: 1.12;
+  letter-spacing: .04em;
+  color: #f8fafc;
+  text-shadow: 0 0 28px color-mix(in srgb, var(--stage-result-accent, #38bdf8) 34%, transparent);
+}
+.stageResultBody {
+  margin: 0;
+  max-width: 95%;
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.stageResultStats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 17px 0 12px;
+}
+.stageResultStat {
+  min-height: 64px;
+  padding: 10px 11px;
+  border-radius: 16px;
+  background: rgba(15,23,42,.68);
+  border: 1px solid rgba(148,163,184,.16);
+}
+.stageResultStat span {
+  display: block;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .15em;
+  color: #94a3b8;
+}
+.stageResultStat b {
+  display: block;
+  margin-top: 5px;
+  color: #f8fafc;
+  font-family: Orbitron, Pretendard, sans-serif;
+  font-size: 17px;
+}
+.stageResultStat.shard b { color: #fde68a; }
+.stageResultNext {
+  margin-top: 10px;
+  padding: 13px 14px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(15,23,42,.72), rgba(30,41,59,.42));
+  border: 1px solid color-mix(in srgb, var(--stage-result-accent, #38bdf8) 24%, rgba(148,163,184,.16));
+}
+.stageResultNext span {
+  display: block;
+  margin-bottom: 5px;
+  color: color-mix(in srgb, var(--stage-result-accent, #38bdf8) 72%, #e0f2fe);
+  font-family: Orbitron, Pretendard, sans-serif;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .18em;
+}
+.stageResultNext b {
+  color: #dbeafe;
+  font-size: 13px;
+  line-height: 1.55;
+  font-weight: 700;
+}
+.stageResultMastery,
+.stageResultReward {
+  margin-top: 10px;
+  padding: 11px 13px;
+  border-radius: 16px;
+  background: rgba(15,23,42,.54);
+  border: 1px solid rgba(148,163,184,.14);
+  color: #dbeafe;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.stageResultMastery {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+}
+.stageResultMastery span {
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+.stageResultMastery b { color: #f8fafc; }
+.stageResultMastery em {
+  color: #fde68a;
+  font-style: normal;
+  font-family: Orbitron, Pretendard, sans-serif;
+  letter-spacing: .08em;
+}
+.stageResultActions {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: 9px;
+  margin-top: 18px;
+}
+.stageResultActions button {
+  min-height: 44px;
+  border-radius: 999px;
+  padding: 11px 14px;
+  font-size: 13px;
+  font-weight: 900;
+}
+.stageResultUpgradeBtn {
+  border-color: rgba(253,230,138,.32) !important;
+  color: #fef3c7 !important;
+}
+@media (max-width: 720px) {
+  .stageResultOverlay { align-items: flex-end !important; padding: 14px !important; }
+  .stageResultCard { width: 100%; padding: 18px; border-radius: 22px; max-height: 86vh; }
+  .stageResultBgLabel { position: static; max-width: 100%; margin-bottom: 8px; text-align: left; }
+  .stageResultCard h2 { font-size: 24px; }
+  .stageResultBody { font-size: 13px; max-width: 100%; }
+  .stageResultStats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stageResultActions { grid-template-columns: 1fr; }
+  .stageResultActions button { min-height: 46px; }
+  .stageResultMastery { grid-template-columns: 1fr; }
+}
