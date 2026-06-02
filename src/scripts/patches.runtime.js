@@ -3568,27 +3568,47 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
     return type === 'pointerdown' || type === 'touchstart' || type === 'mousedown';
   }
   function stopSummonHold(){
-    if(summonHoldActive) summonHoldBlockClickUntil = Date.now() + 260;
+    if(summonHoldActive) summonHoldBlockClickUntil = Date.now() + 320;
     summonHoldActive = false;
     if(summonHoldTimer){
       clearInterval(summonHoldTimer);
       summonHoldTimer = 0;
     }
   }
+  function invokeSummonHoldRepeat(){
+    if(!summonHoldActive || !combatActive()){
+      stopSummonHold();
+      return false;
+    }
+    var api = window.PRD_GAME_COMMANDS_V96;
+    var ok;
+    if(api && typeof api.summon === 'function'){
+      ok = safe(function(){ return api.summon(); }, false);
+      safe(function(){ window.dispatchEvent(new Event('prd-command-sync')); });
+    }else{
+      ok = runCommand('summon', null, {force:true, repeat:true});
+    }
+    if(ok === false){
+      stopSummonHold();
+      return false;
+    }
+    return true;
+  }
   function startSummonHold(){
     if(summonHoldActive) return;
     summonHoldActive = true;
     if(summonHoldTimer) clearInterval(summonHoldTimer);
     summonHoldTimer = setInterval(function(){
-      if(!summonHoldActive || !combatActive()){ stopSummonHold(); return; }
-      var ok = runCommand('summon', null, {force:true, repeat:true});
-      if(ok === false) stopSummonHold();
+      invokeSummonHoldRepeat();
     }, SUMMON_HOLD_INTERVAL_MS);
   }
   function handleCommandEvent(action, ev){
     if(action === 'summon' && ev && ev.type === 'click' && Date.now() < summonHoldBlockClickUntil){ stop(ev); return false; }
-    if(action === 'summon' && isSummonHoldStart(ev)) startSummonHold();
-    return runCommand(action, ev);
+    var isHoldStart = action === 'summon' && isSummonHoldStart(ev);
+    if(isHoldStart) startSummonHold();
+    var result = runCommand(action, ev, isHoldStart ? {force:true} : undefined);
+    if(isHoldStart && result === false) stopSummonHold();
+    return result;
   }
   function captureCommand(ev){
     if(!combatActive()) return;
@@ -3645,7 +3665,7 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
       var st = getStyle(el);
       return {action:c.action, exists:!!el, visible:visible(el), display:st&&st.display, visibility:st&&st.visibility, opacity:st&&st.opacity, pointerEvents:st&&st.pointerEvents, rect:r?{left:r.left,top:r.top,width:r.width,height:r.height}:null, onclick:!!(el&&typeof el.onclick==='function')};
     });
-    return {viewport:p, body:document.body&&document.body.className, combatActive:combatActive(), commands:rows, api:!!window.PRD_GAME_COMMANDS_V96};
+    return {viewport:p, body:document.body&&document.body.className, combatActive:combatActive(), commands:rows, api:!!window.PRD_GAME_COMMANDS_V96, summonHoldActive:summonHoldActive, summonHoldIntervalMs:SUMMON_HOLD_INTERVAL_MS};
   };
 })();
 

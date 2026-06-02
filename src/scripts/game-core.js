@@ -1486,11 +1486,12 @@ function openUpgradeFromResult(stageNo){
   }, 80);
 }
 
-function resultButtonHtml(continueText='계속하기'){
+function resultButtonHtml(continueText='계속하기', swapMapUpgradeButtons=false){
+  const mapButton = '<button id="stageResultMapBtn" class="btnAlt">스테이지 맵으로 이동</button>';
+  const upgradeButton = '<button id="stageResultUpgradeBtn" class="btnAlt stageResultUpgradeBtn">업그레이드</button>';
   return `<div class="stageResultActions">
     <button id="stageResultContinueBtn" class="btnGreen">${escapeHtml(continueText)}</button>
-    <button id="stageResultMapBtn" class="btnAlt">스테이지 맵으로 이동</button>
-    <button id="stageResultUpgradeBtn" class="btnAlt stageResultUpgradeBtn">업그레이드</button>
+    ${swapMapUpgradeButtons ? upgradeButton + mapButton : mapButton + upgradeButton}
   </div>`;
 }
 
@@ -1520,7 +1521,7 @@ function createStageResultOverlay(options){
     </div>
     <div class="stageResultNext"><span>NEXT</span><b>${escapeHtml(opt.nextText || nextResultSummaryText(kind, stageNo, waveNo))}</b></div>
     ${opt.extraHtml || ''}
-    ${resultButtonHtml(opt.continueText || '계속하기')}
+    ${resultButtonHtml(opt.continueText || '계속하기', !!opt.swapMapUpgradeButtons)}
   </div>`;
   document.body.appendChild(overlay);
   return overlay;
@@ -1542,7 +1543,8 @@ function showSubStageResultOverlay(summary){
     shardsGained:Number(safe.shardsGained || 0),
     kills:Number(safe.kills || S?.runKills || 0),
     nextText:nextResultSummaryText('sub-clear', stageNo, waveNo),
-    continueText:'계속하기'
+    continueText:'계속하기',
+    swapMapUpgradeButtons:true
   });
   overlay.querySelector('#stageResultContinueBtn').onclick = () => {
     removeStageClearOverlay();
