@@ -4451,3 +4451,166 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock
     if(++retry > 40) clearInterval(timer);
   }, 120);
 })();
+
+/* ===== v185-orientation-transition-blackout-mask =====
+   Covers only the visual reflow that happens while switching portrait/landscape.
+   It is intentionally isolated: no layout values are changed and the overlay does
+   not intercept pointer/touch events, so existing UI logic remains untouched. */
+(function(){
+  var STYLE_ID = 'prd-orientation-fade-style-v185';
+  var OVERLAY_ID = 'prdOrientationFadeOverlay';
+  var active = false;
+  var hideTimer = 0;
+  var removeTimer = 0;
+  var lastMode = getMode();
+  var lastW = getWidth();
+  var lastH = getHeight();
+
+  function getWidth(){
+    try{ return Math.round((window.visualViewport && window.visualViewport.width) || window.innerWidth || 0); }
+    catch(_){ return Math.round(window.innerWidth || 0); }
+  }
+  function getHeight(){
+    try{ return Math.round((window.visualViewport && window.visualViewport.height) || window.innerHeight || 0); }
+    catch(_){ return Math.round(window.innerHeight || 0); }
+  }
+  function getMode(){
+    var w = getWidth();
+    var h = getHeight();
+    return w >= h ? 'landscape' : 'portrait';
+  }
+  function installStyle(){
+    if(document.getElementById(STYLE_ID)) return;
+    var style = document.createElement('style');
+    style.id = STYLE_ID;
+    style.textContent = [
+      '#'+OVERLAY_ID+'{',
+      'position:fixed!important;',
+      'inset:0!important;',
+      'width:100vw!important;',
+      'height:100vh!important;',
+      'z-index:2147483000!important;',
+      'background:rgba(0,0,0,0.96)!important;',
+      'opacity:0;',
+      'pointer-events:none!important;',
+      'visibility:hidden;',
+      'transition:opacity 320ms ease, visibility 0s linear 320ms;',
+      'will-change:opacity;',
+      'transform:translateZ(0);',
+      'contain:strict;',
+      '}',
+      '#'+OVERLAY_ID+'.is-visible{',
+      'opacity:1;',
+      'visibility:visible;',
+      'transition:opacity 110ms ease-out, visibility 0s;',
+      '}',
+      '#'+OVERLAY_ID+'.is-hiding{',
+      'opacity:0;',
+      'visibility:visible;',
+      'transition:opacity 360ms ease-in, visibility 0s linear 360ms;',
+      '}',
+      '@media (prefers-reduced-motion: reduce){',
+      '#'+OVERLAY_ID+',#'+OVERLAY_ID+'.is-visible,#'+OVERLAY_ID+'.is-hiding{transition:none!important;}',
+      '}'
+    ].join('');
+    (document.head || document.documentElement).appendChild(style);
+  }
+  function getOverlay(){
+    installStyle();
+    var el = document.getElementById(OVERLAY_ID);
+    if(el) return el;
+    el = document.createElement('div');
+    el.id = OVERLAY_ID;
+    el.setAttribute('aria-hidden', 'true');
+    el.dataset.reason = '';
+    (document.body || document.documentElement).appendChild(el);
+    return el;
+  }
+  function showMask(reason){
+    try{
+      if(!document.body) return;
+      var el = getOverlay();
+      el.dataset.reason = reason || 'orientation';
+      clearTimeout(hideTimer);
+      clearTimeout(removeTimer);
+      active = true;
+      el.classList.remove('is-hiding');
+      // Force a style flush so the fade-in starts from opacity 0 even after a quick re-trigger.
+      void el.offsetWidth;
+      el.classList.add('is-visible');
+      scheduleHide(760);
+    }catch(_){ }
+  }
+  function scheduleHide(delayMs){
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(hideMask, Math.max(220, delayMs || 760));
+  }
+  function hideMask(){
+    try{
+      var el = document.getElementById(OVERLAY_ID);
+      if(!el){ active = false; return; }
+      active = false;
+      el.classList.remove('is-visible');
+      el.classList.add('is-hiding');
+      clearTimeout(removeTimer);
+      removeTimer = setTimeout(function(){
+        try{
+          var node = document.getElementById(OVERLAY_ID);
+          if(node && !active){
+            node.classList.remove('is-hiding');
+            node.style.visibility = '';
+          }
+        }catch(_){ }
+      }, 420);
+    }catch(_){ active = false; }
+  }
+  function handleViewportChange(reason){
+    var mode = getMode();
+    var w = getWidth();
+    var h = getHeight();
+    var modeChanged = mode !== lastMode;
+    var largeSwap = Math.abs(w - lastW) > 120 && Math.abs(h - lastH) > 90 && ((w >= h) !== (lastW >= lastH));
+    if(modeChanged || largeSwap){
+      showMask(reason || 'viewport-mode-change');
+      lastMode = mode;
+    }else if(active){
+      // While the browser emits resize bursts during rotation, keep the mask on screen.
+      scheduleHide(620);
+    }
+    lastW = w;
+    lastH = h;
+  }
+  function onOrientationSignal(reason){
+    showMask(reason || 'orientationchange');
+    // Re-check after the browser/WebView reports the final viewport size.
+    setTimeout(function(){ handleViewportChange((reason || 'orientationchange') + '-settle-1'); }, 120);
+    setTimeout(function(){ handleViewportChange((reason || 'orientationchange') + '-settle-2'); }, 360);
+    setTimeout(function(){ handleViewportChange((reason || 'orientationchange') + '-settle-3'); }, 680);
+  }
+  function install(){
+    installStyle();
+    lastMode = getMode();
+    lastW = getWidth();
+    lastH = getHeight();
+    window.addEventListener('orientationchange', function(){ onOrientationSignal('orientationchange'); }, {passive:true});
+    window.addEventListener('resize', function(){ handleViewportChange('resize'); }, {passive:true});
+    window.addEventListener('pageshow', function(){ lastMode = getMode(); lastW = getWidth(); lastH = getHeight(); }, {passive:true});
+    try{
+      if(window.visualViewport){
+        window.visualViewport.addEventListener('resize', function(){ handleViewportChange('visualViewport-resize'); }, {passive:true});
+      }
+    }catch(_){ }
+    try{
+      if(screen && screen.orientation && screen.orientation.addEventListener){
+        screen.orientation.addEventListener('change', function(){ onOrientationSignal('screen-orientation-change'); }, {passive:true});
+      }
+    }catch(_){ }
+    window.PRD_ORIENTATION_FADE_V185 = {
+      show: function(){ showMask('manual'); },
+      hide: hideMask,
+      state: function(){ return { active: active, mode: getMode(), width: getWidth(), height: getHeight() }; }
+    };
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
+  else install();
+})();
