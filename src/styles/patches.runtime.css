@@ -20368,3 +20368,872 @@ select,
     font-size:28px !important;
   }
 }
+
+/* ===== v182-landscape-common-armory-scale-fix =====
+   가로모드 공통 연구 상세 카드만 확대한다. 세로모드 레이아웃은 변경하지 않는다. */
+@media (orientation: landscape){
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail:not(.compactCombined),
+  #towerPopup[data-active-tab="common"] .towerPopupDetail:not(.compactCombined){
+    display:grid !important;
+    grid-template-columns:minmax(420px, .95fr) minmax(560px, 1.35fr) !important;
+    gap:0 !important;
+    align-items:center !important;
+    align-content:center !important;
+    justify-content:stretch !important;
+    padding:0 clamp(16px, 2.2vw, 38px) !important;
+    overflow:hidden !important;
+    min-height:0 !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup[data-active-tab="common"] .armoryCommonHero{
+    min-height:clamp(184px, 30dvh, 260px) !important;
+    height:auto !important;
+    display:grid !important;
+    grid-template-columns:clamp(128px, 12vw, 180px) minmax(0,1fr) !important;
+    gap:clamp(20px, 2.1vw, 34px) !important;
+    align-items:center !important;
+    margin:0 !important;
+    padding:clamp(22px, 3.2dvh, 38px) clamp(24px, 3vw, 46px) !important;
+    border-radius:28px 0 0 28px !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon{
+    width:clamp(118px, 10vw, 156px) !important;
+    height:clamp(118px, 10vw, 156px) !important;
+    min-width:clamp(118px, 10vw, 156px) !important;
+    min-height:clamp(118px, 10vw, 156px) !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon::before,
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon::before{
+    width:78% !important;
+    height:78% !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon img,
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon img.commonResearchImg,
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon img.commonResearchImg{
+    width:clamp(72px, 6.2vw, 96px) !important;
+    height:clamp(72px, 6.2vw, 96px) !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle{
+    font-size:clamp(34px, 3vw, 48px) !important;
+    line-height:1.08 !important;
+    margin:0 !important;
+    letter-spacing:-.055em !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonTitle .armoryTitleLevel,
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle .armoryTitleLevel{
+    min-height:clamp(32px, 3.4dvh, 44px) !important;
+    padding:4px clamp(14px, 1.2vw, 20px) !important;
+    font-size:clamp(18px, 1.75vw, 28px) !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonSubtitle,
+  #towerPopup[data-active-tab="common"] .armoryCommonSubtitle{
+    margin-top:clamp(12px, 1.8dvh, 20px) !important;
+    font-size:clamp(18px, 1.5vw, 25px) !important;
+    line-height:1.35 !important;
+    font-weight:850 !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock,
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+    min-height:clamp(184px, 30dvh, 260px) !important;
+    height:auto !important;
+    display:grid !important;
+    grid-template-columns:minmax(0, 1fr) clamp(180px, 16vw, 260px) !important;
+    gap:clamp(18px, 2.2vw, 34px) !important;
+    align-items:center !important;
+    margin:0 !important;
+    padding:clamp(22px, 3.1dvh, 38px) clamp(28px, 3.2vw, 48px) !important;
+    border-radius:0 28px 28px 0 !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock small,
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock small{
+    font-size:clamp(18px, 1.55vw, 25px) !important;
+    letter-spacing:.14em !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock b,
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock b{
+    margin-top:clamp(14px, 1.9dvh, 22px) !important;
+    font-size:clamp(24px, 2.2vw, 36px) !important;
+    line-height:1.22 !important;
+    letter-spacing:-.045em !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock span,
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock span{
+    margin-top:clamp(12px, 1.5dvh, 18px) !important;
+    font-size:clamp(16px, 1.25vw, 21px) !important;
+    line-height:1.45 !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchBuy,
+  #towerPopup[data-active-tab="common"] .commonResearchBuy{
+    width:100% !important;
+    min-width:clamp(150px, 13vw, 220px) !important;
+    min-height:clamp(84px, 11dvh, 112px) !important;
+    height:clamp(84px, 11dvh, 112px) !important;
+    padding:0 clamp(18px, 2vw, 32px) !important;
+    font-size:clamp(28px, 2.3vw, 40px) !important;
+    font-weight:950 !important;
+  }
+}
+
+@media (orientation: landscape) and (max-height:700px){
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail:not(.compactCombined),
+  #towerPopup[data-active-tab="common"] .towerPopupDetail:not(.compactCombined){
+    align-content:center !important;
+    padding-top:clamp(18px, 5dvh, 54px) !important;
+    padding-bottom:clamp(10px, 3dvh, 28px) !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock,
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+    min-height:clamp(138px, 31dvh, 218px) !important;
+  }
+}
+
+/* ===== v183-iphone-landscape-armory-safe-fit =====
+   Scope: landscape-only armory popup on iPhone-sized viewports.
+   Keeps portrait/vertical mode untouched while preventing common research detail
+   cards, tabs, wallet, and close button from being clipped on 667~932px wide
+   landscape screens. */
+@media (orientation: landscape) and (max-width: 950px),
+       (orientation: landscape) and (max-height: 460px){
+  #towerPopup .towerPopupPanel,
+  #towerPopup.armory-layout-landscape .towerPopupPanel{
+    --ar-ios-left:max(14px, env(safe-area-inset-left));
+    --ar-ios-right:max(14px, env(safe-area-inset-right));
+    --ar-ios-top:max(8px, env(safe-area-inset-top));
+    --ar-ios-bottom:max(10px, env(safe-area-inset-bottom));
+    --ar-header-top:var(--ar-ios-top) !important;
+    --ar-header-h:clamp(50px, 12dvh, 66px) !important;
+    --ar-tabs-top:clamp(78px, 20dvh, 104px) !important;
+    --ar-tabs-h:clamp(30px, 8dvh, 38px) !important;
+    --ar-body-top:calc(var(--ar-tabs-top) + var(--ar-tabs-h) + clamp(7px, 1.4dvh, 10px)) !important;
+    --ar-bottom:var(--ar-ios-bottom) !important;
+    width:100vw !important;
+    height:100dvh !important;
+    max-width:100vw !important;
+    max-height:100dvh !important;
+    border-radius:0 !important;
+  }
+
+  #towerPopup .towerPopupHeader,
+  #towerPopup.armory-layout-landscape .towerPopupHeader{
+    left:var(--ar-ios-left) !important;
+    right:var(--ar-ios-right) !important;
+    top:var(--ar-header-top) !important;
+    height:var(--ar-header-h) !important;
+    max-height:var(--ar-header-h) !important;
+    grid-template-columns:minmax(0,1fr) auto clamp(32px, 4.8dvh, 42px) !important;
+    gap:clamp(6px, 1.2vw, 10px) !important;
+    overflow:visible !important;
+  }
+  #towerPopup .towerPopupKicker,
+  #towerPopup.armory-layout-landscape .towerPopupKicker{
+    font-size:clamp(8px, 1.2vw, 10px) !important;
+    letter-spacing:.18em !important;
+  }
+  #towerPopup .towerPopupTitle,
+  #towerPopup.armory-layout-landscape .towerPopupTitle{
+    margin-top:clamp(4px, 1dvh, 7px) !important;
+    font-size:clamp(18px, 3.2dvh, 27px) !important;
+    line-height:1.03 !important;
+  }
+
+  #towerPopup .towerPopupWallet,
+  #towerPopup.armory-layout-landscape .towerPopupWallet,
+  #towerPopup #towerPopupWallet{
+    min-width:clamp(118px, 22vw, 168px) !important;
+    max-width:clamp(138px, 25vw, 188px) !important;
+    height:clamp(26px, 7.6dvh, 34px) !important;
+    min-height:clamp(26px, 7.6dvh, 34px) !important;
+    padding:0 clamp(7px, 1.4vw, 10px) !important;
+    overflow:visible !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+    grid-template-columns:clamp(13px, 2.2vw, 17px) auto auto !important;
+    column-gap:clamp(5px, 1vw, 8px) !important;
+    min-width:0 !important;
+    max-width:none !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard::before,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard::before,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem))::before{
+    width:clamp(13px, 2.2vw, 17px) !important;
+    height:clamp(13px, 2.2vw, 17px) !important;
+    min-width:clamp(13px, 2.2vw, 17px) !important;
+    margin-top:0 !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup .towerPopupWallet > span{
+    top:0 !important;
+    font-size:clamp(11px, 1.9vw, 15px) !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup .towerPopupWallet > b{
+    top:0 !important;
+    font-size:clamp(21px, 4.4vw, 32px) !important;
+    line-height:.92 !important;
+    min-width:0 !important;
+    padding-right:2px !important;
+    white-space:nowrap !important;
+  }
+
+  #towerPopup .towerPopupClose,
+  #towerPopup.armory-layout-landscape .towerPopupClose{
+    width:clamp(32px, 8.8dvh, 42px) !important;
+    height:clamp(32px, 8.8dvh, 42px) !important;
+    min-width:clamp(32px, 8.8dvh, 42px) !important;
+    min-height:clamp(32px, 8.8dvh, 42px) !important;
+    overflow:hidden !important;
+  }
+  #towerPopup .towerPopupClose::before,
+  #towerPopup.armory-layout-landscape .towerPopupClose::before{
+    font-size:clamp(22px, 6.2dvh, 30px) !important;
+  }
+
+  #towerPopup .towerPopupTabs,
+  #towerPopup.armory-layout-landscape .towerPopupTabs{
+    left:auto !important;
+    right:var(--ar-ios-right) !important;
+    top:var(--ar-tabs-top) !important;
+    width:clamp(252px, 44vw, 400px) !important;
+    height:var(--ar-tabs-h) !important;
+    min-width:252px !important;
+    max-width:calc(100vw - var(--ar-ios-left) - var(--ar-ios-right)) !important;
+    grid-template-columns:repeat(3, minmax(0,1fr)) !important;
+    gap:clamp(5px, 1vw, 9px) !important;
+    padding:0 !important;
+    overflow:visible !important;
+  }
+  #towerPopup .towerPopupTab,
+  #towerPopup.armory-layout-landscape .towerPopupTab{
+    min-width:0 !important;
+    height:100% !important;
+    min-height:0 !important;
+    padding:0 clamp(6px, 1.2vw, 10px) !important;
+    font-size:clamp(11px, 2vw, 15px) !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+  }
+
+  #towerPopup .towerPopupBody,
+  #towerPopup.armory-layout-landscape .towerPopupBody,
+  #towerPopup[data-active-tab="common"] .towerPopupBody,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupBody,
+  #towerPopup[data-active-tab="plate"] .towerPopupBody,
+  #towerPopup.armory-layout-landscape[data-active-tab="plate"] .towerPopupBody,
+  #towerPopup[data-active-tab="tower"] .towerPopupBody,
+  #towerPopup.armory-layout-landscape[data-active-tab="tower"] .towerPopupBody{
+    left:var(--ar-ios-left) !important;
+    right:var(--ar-ios-right) !important;
+    top:var(--ar-body-top) !important;
+    bottom:var(--ar-bottom) !important;
+    height:auto !important;
+    width:auto !important;
+    grid-template-columns:clamp(54px, 8.6vw, 76px) minmax(0,1fr) !important;
+    gap:clamp(6px, 1vw, 9px) !important;
+    padding:0 !important;
+    margin:0 !important;
+    overflow:hidden !important;
+  }
+
+  #towerPopup .towerPopupList,
+  #towerPopup .towerPopupList.commonList,
+  #towerPopup.armory-layout-landscape .towerPopupList,
+  #towerPopup.armory-layout-landscape .towerPopupList.commonList,
+  #towerPopup[data-active-tab="common"] .towerPopupList,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupList,
+  #towerPopup[data-active-tab="common"] .towerPopupList.commonList,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupList.commonList{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:100% !important;
+    padding:clamp(5px, 1dvh, 8px) clamp(3px, .8vw, 6px) !important;
+    gap:clamp(5px, 1dvh, 8px) !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    border-radius:clamp(12px, 2vw, 17px) !important;
+  }
+  #towerPopup .towerPopupItem,
+  #towerPopup .commonResearchItem,
+  #towerPopup.armory-layout-landscape .towerPopupItem,
+  #towerPopup.armory-layout-landscape .commonResearchItem,
+  #towerPopup[data-active-tab="common"] .commonResearchItem,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchItem{
+    width:clamp(42px, 7.2vw, 62px) !important;
+    min-width:clamp(42px, 7.2vw, 62px) !important;
+    max-width:clamp(42px, 7.2vw, 62px) !important;
+    height:clamp(42px, 7.2vw, 62px) !important;
+    min-height:clamp(42px, 7.2vw, 62px) !important;
+    max-height:clamp(42px, 7.2vw, 62px) !important;
+    flex:0 0 clamp(42px, 7.2vw, 62px) !important;
+    padding:clamp(4px, .8vw, 6px) !important;
+    border-radius:clamp(12px, 2vw, 17px) !important;
+  }
+  #towerPopup .towerPopupThumb,
+  #towerPopup .towerPopupThumb img,
+  #towerPopup .towerPopupThumbImg,
+  #towerPopup.armory-layout-landscape .towerPopupThumb,
+  #towerPopup.armory-layout-landscape .towerPopupThumb img,
+  #towerPopup.armory-layout-landscape .towerPopupThumbImg{
+    width:clamp(34px, 6vw, 52px) !important;
+    height:clamp(34px, 6vw, 52px) !important;
+  }
+  #towerPopup .commonResearchItem img.commonResearchImg,
+  #towerPopup.armory-layout-landscape .commonResearchItem img.commonResearchImg{
+    width:clamp(30px, 5vw, 44px) !important;
+    height:clamp(30px, 5vw, 44px) !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonResearchItem .commonResearchLevelBadge{
+    position:absolute !important;
+    left:50% !important;
+    bottom:2px !important;
+    transform:translateX(-50%) !important;
+    min-height:clamp(14px, 3.3dvh, 18px) !important;
+    padding:1px clamp(5px, 1.1vw, 8px) !important;
+    font-size:clamp(8px, 1.45vw, 10px) !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+  }
+
+  #towerPopup .towerPopupDetail,
+  #towerPopup.armory-layout-landscape .towerPopupDetail{
+    width:100% !important;
+    height:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    min-height:0 !important;
+    max-height:100% !important;
+    padding:clamp(7px, 1.4dvh, 11px) clamp(8px, 1.3vw, 13px) !important;
+    overflow:hidden !important;
+    border-radius:clamp(14px, 2vw, 20px) !important;
+    box-sizing:border-box !important;
+  }
+
+  /* Non-compact common detail: the previously enlarged 420px + 560px min columns
+     are too wide for iPhone landscape. Use fluid zero-min columns instead. */
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail:not(.compactCombined),
+  #towerPopup[data-active-tab="common"] .towerPopupDetail:not(.compactCombined){
+    display:grid !important;
+    grid-template-columns:minmax(0,.92fr) minmax(0,1.18fr) !important;
+    gap:0 !important;
+    align-items:center !important;
+    align-content:center !important;
+    justify-content:stretch !important;
+    overflow:hidden !important;
+    padding:clamp(8px, 2dvh, 12px) clamp(8px, 1.5vw, 14px) !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup[data-active-tab="common"] .armoryCommonHero{
+    min-width:0 !important;
+    min-height:clamp(106px, 30dvh, 148px) !important;
+    height:auto !important;
+    grid-template-columns:clamp(66px, 10vw, 96px) minmax(0,1fr) !important;
+    gap:clamp(9px, 1.7vw, 14px) !important;
+    margin:0 !important;
+    padding:clamp(11px, 2.3dvh, 16px) clamp(12px, 2vw, 18px) !important;
+    border-radius:20px 0 0 20px !important;
+    overflow:hidden !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchIcon,
+  #towerPopup[data-active-tab="common"] .commonResearchIcon{
+    width:clamp(62px, 9vw, 88px) !important;
+    height:clamp(62px, 9vw, 88px) !important;
+    min-width:clamp(62px, 9vw, 88px) !important;
+    min-height:clamp(62px, 9vw, 88px) !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon img,
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchIcon img,
+  #towerPopup[data-active-tab="common"] .commonResearchIcon img{
+    width:clamp(38px, 5.8vw, 58px) !important;
+    height:clamp(38px, 5.8vw, 58px) !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle{
+    font-size:clamp(19px, 3.4vw, 30px) !important;
+    line-height:1.08 !important;
+    gap:clamp(5px, 1vw, 9px) !important;
+    overflow-wrap:anywhere !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonTitle .armoryTitleLevel,
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle .armoryTitleLevel{
+    min-height:clamp(20px, 4.6dvh, 30px) !important;
+    padding:2px clamp(7px, 1.2vw, 11px) !important;
+    font-size:clamp(11px, 2vw, 16px) !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonSubtitle,
+  #towerPopup[data-active-tab="common"] .armoryCommonSubtitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonSimpleDesc,
+  #towerPopup[data-active-tab="common"] .commonSimpleDesc{
+    margin-top:clamp(5px, 1.2dvh, 9px) !important;
+    font-size:clamp(11px, 1.9vw, 15px) !important;
+    line-height:1.3 !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock,
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock{
+    min-width:0 !important;
+    min-height:clamp(106px, 30dvh, 148px) !important;
+    height:auto !important;
+    grid-template-columns:minmax(0,1fr) clamp(74px, 13vw, 112px) !important;
+    gap:clamp(8px, 1.6vw, 13px) !important;
+    margin:0 !important;
+    padding:clamp(11px, 2.3dvh, 16px) clamp(12px, 2vw, 18px) !important;
+    border-radius:0 20px 20px 0 !important;
+    overflow:hidden !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock small,
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock small{
+    font-size:clamp(10px, 1.7vw, 14px) !important;
+    letter-spacing:.12em !important;
+    white-space:nowrap !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock b,
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock b{
+    margin-top:clamp(6px, 1.4dvh, 10px) !important;
+    font-size:clamp(15px, 2.7vw, 23px) !important;
+    line-height:1.2 !important;
+    overflow-wrap:anywhere !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock span,
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock span{
+    margin-top:clamp(5px, 1.1dvh, 8px) !important;
+    font-size:clamp(10px, 1.65vw, 13px) !important;
+    line-height:1.34 !important;
+    overflow-wrap:anywhere !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchBuy,
+  #towerPopup[data-active-tab="common"] .commonResearchBuy{
+    width:100% !important;
+    min-width:0 !important;
+    height:clamp(44px, 12dvh, 64px) !important;
+    min-height:clamp(44px, 12dvh, 64px) !important;
+    padding:0 clamp(8px, 1.4vw, 12px) !important;
+    font-size:clamp(15px, 2.9vw, 22px) !important;
+    white-space:nowrap !important;
+  }
+
+  /* Compact rebuild variant: remove fixed 205/310/210px tracks on iPhone. */
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail.compactCombined,
+  #towerPopup[data-active-tab="common"] .towerPopupDetail.compactCombined{
+    display:grid !important;
+    grid-template-columns:minmax(0,.96fr) minmax(0,1.04fr) !important;
+    grid-template-rows:minmax(0,1fr) !important;
+    gap:clamp(7px, 1.2vw, 10px) !important;
+    overflow:hidden !important;
+    align-content:stretch !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryHeroPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonLevelListPanel,
+  #towerPopup[data-active-tab="common"] .armoryHeroPanel,
+  #towerPopup[data-active-tab="common"] .commonLevelListPanel{
+    min-width:0 !important;
+    width:auto !important;
+    max-width:none !important;
+    height:100% !important;
+    max-height:100% !important;
+    overflow:hidden !important;
+    padding:clamp(8px, 1.7dvh, 12px) !important;
+    border-radius:clamp(14px, 2vw, 18px) !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryHeroHeader,
+  #towerPopup[data-active-tab="common"] .armoryHeroHeader{
+    grid-template-columns:clamp(58px, 9vw, 84px) minmax(0,1fr) !important;
+    gap:clamp(8px, 1.4vw, 12px) !important;
+    align-items:center !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonSimpleLevelList,
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelList{
+    max-height:calc(100dvh - 190px) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonLevelStep,
+  #towerPopup[data-active-tab="common"] .commonLevelStep{
+    min-width:0 !important;
+    grid-template-columns:clamp(34px, 5.8vw, 48px) minmax(0,1fr) clamp(44px, 7.4vw, 60px) !important;
+    min-height:clamp(30px, 7.8dvh, 40px) !important;
+    padding:0 clamp(6px, 1vw, 9px) !important;
+    gap:clamp(5px, .9vw, 7px) !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonLevelStep b,
+  #towerPopup[data-active-tab="common"] .commonLevelStep b{font-size:clamp(9px, 1.5vw, 12px) !important;}
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonLevelStep span,
+  #towerPopup[data-active-tab="common"] .commonLevelStep span{font-size:clamp(8px, 1.35vw, 10px) !important;line-height:1.18 !important;}
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonLevelStep em,
+  #towerPopup[data-active-tab="common"] .commonLevelStep em{font-size:clamp(8px, 1.25vw, 9px) !important;}
+}
+
+/* ===== v184-iphone-landscape-armory-wallet-number-safe =====
+   Scope: landscape-only armory popup. Keeps portrait layout untouched.
+   Purpose: prevent the 성흔 조각 amount from becoming too wide/tall on iPhone
+   landscape screens while preserving exact comma-formatted numbers. */
+@media (orientation: landscape){
+  #towerPopup.armory-layout-landscape .towerPopupWallet,
+  #towerPopup.armory-layout-landscape #towerPopupWallet{
+    box-sizing:border-box !important;
+    overflow:visible !important;
+  }
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard,
+  #towerPopup.armory-layout-landscape #towerPopupWallet .towerWalletItem.shard,
+  #towerPopup.armory-layout-landscape .towerPopupWallet:not(:has(.towerWalletItem)){
+    min-width:0 !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+    align-items:center !important;
+  }
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup.armory-layout-landscape #towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup.armory-layout-landscape .towerPopupWallet > span{
+    min-width:0 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup.armory-layout-landscape #towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup.armory-layout-landscape .towerPopupWallet > b{
+    font-size:var(--armory-wallet-num-size, clamp(18px, 3.2vw, 27px)) !important;
+    line-height:.95 !important;
+    letter-spacing:var(--armory-wallet-num-letter, -.035em) !important;
+    font-variant-numeric:tabular-nums !important;
+    min-width:0 !important;
+    max-width:none !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    transform:none !important;
+  }
+  #towerPopup.armory-layout-landscape #towerPopupWallet.shardAmountMedium,
+  #towerPopup.armory-layout-landscape .towerPopupWallet.shardAmountMedium{
+    --armory-wallet-num-size:clamp(17px, 2.9vw, 24px);
+    --armory-wallet-num-letter:-.045em;
+  }
+  #towerPopup.armory-layout-landscape #towerPopupWallet.shardAmountLong,
+  #towerPopup.armory-layout-landscape .towerPopupWallet.shardAmountLong{
+    --armory-wallet-num-size:clamp(15px, 2.55vw, 21px);
+    --armory-wallet-num-letter:-.055em;
+  }
+  #towerPopup.armory-layout-landscape #towerPopupWallet.shardAmountVeryLong,
+  #towerPopup.armory-layout-landscape .towerPopupWallet.shardAmountVeryLong{
+    --armory-wallet-num-size:clamp(13px, 2.15vw, 18px);
+    --armory-wallet-num-letter:-.065em;
+  }
+}
+
+@media (orientation: landscape) and (max-width: 950px),
+       (orientation: landscape) and (max-height: 460px){
+  #towerPopup .towerPopupHeader,
+  #towerPopup.armory-layout-landscape .towerPopupHeader{
+    grid-template-columns:minmax(0,1fr) minmax(clamp(132px, 23vw, 178px), auto) clamp(32px, 4.8dvh, 42px) !important;
+  }
+  #towerPopup .towerPopupWallet,
+  #towerPopup.armory-layout-landscape .towerPopupWallet,
+  #towerPopup #towerPopupWallet{
+    min-width:clamp(132px, 23vw, 178px) !important;
+    max-width:clamp(154px, 28vw, 214px) !important;
+    width:auto !important;
+    padding-inline:clamp(7px, 1.2vw, 10px) !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard,
+  #towerPopup .towerPopupWallet:not(:has(.towerWalletItem)){
+    grid-template-columns:clamp(13px, 2.1vw, 16px) auto max-content !important;
+    column-gap:clamp(4px, .8vw, 7px) !important;
+  }
+  #towerPopup .towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup #towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup .towerPopupWallet > span{
+    font-size:clamp(9px, 1.55vw, 12px) !important;
+    letter-spacing:-.035em !important;
+  }
+  #towerPopup #towerPopupWallet.shardAmountLong .towerWalletItem.shard span,
+  #towerPopup .towerPopupWallet.shardAmountLong .towerWalletItem.shard span,
+  #towerPopup #towerPopupWallet.shardAmountVeryLong .towerWalletItem.shard span,
+  #towerPopup .towerPopupWallet.shardAmountVeryLong .towerWalletItem.shard span{
+    font-size:clamp(8px, 1.35vw, 10px) !important;
+  }
+}
+
+/* ===== v185-landscape-common-armory-info-clip-safe =====
+   Scope: landscape-only Upgrade Armory common tab.
+   Keeps portrait untouched. Fixes short landscape/browser/iPhone-like frames where
+   hero title, subtitle, and MAX/NEXT UPGRADE panels could sit too close to the
+   top border and appear clipped. */
+@media (orientation: landscape) and (min-width: 951px){
+  #towerPopup[data-active-tab="common"] .towerPopupBody,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupBody{
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .towerPopupDetail,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail{
+    box-sizing:border-box !important;
+    min-height:0 !important;
+    max-height:100% !important;
+    padding:clamp(16px, 2.2dvh, 28px) clamp(18px, 1.8vw, 32px) clamp(14px, 2dvh, 24px) !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    align-content:center !important;
+    align-items:center !important;
+    scroll-padding-top:clamp(16px, 2.2dvh, 28px) !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .towerPopupDetail:not(.compactCombined),
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail:not(.compactCombined){
+    display:grid !important;
+    grid-template-columns:minmax(0, .96fr) minmax(0, 1.04fr) !important;
+    grid-template-rows:minmax(0, auto) !important;
+    gap:0 !important;
+    justify-content:stretch !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock,
+  #towerPopup[data-active-tab="common"] .armoryHeroPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryHeroPanel,
+  #towerPopup[data-active-tab="common"] .commonLevelListPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonLevelListPanel{
+    box-sizing:border-box !important;
+    min-height:0 !important;
+    max-height:100% !important;
+    overflow:hidden !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonHero{
+    padding:clamp(20px, 3dvh, 34px) clamp(22px, 2.2vw, 40px) !important;
+    align-items:center !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock{
+    padding:clamp(20px, 3dvh, 34px) clamp(24px, 2.4vw, 44px) !important;
+    align-items:center !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryHeroHeader,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryHeroHeader{
+    min-height:0 !important;
+    align-items:center !important;
+    align-content:center !important;
+    overflow:visible !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonTitle{
+    margin:0 !important;
+    padding:0 !important;
+    line-height:1.1 !important;
+    overflow:visible !important;
+    text-wrap:balance;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle .armoryTitleText,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonTitle .armoryTitleText{
+    display:inline-block !important;
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonSubtitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonSubtitle,
+  #towerPopup[data-active-tab="common"] .commonSimpleDesc,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonSimpleDesc{
+    overflow:visible !important;
+    word-break:keep-all !important;
+  }
+}
+
+@media (orientation: landscape) and (min-width: 951px) and (max-height: 720px){
+  #towerPopup[data-active-tab="common"] .towerPopupDetail,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail{
+    padding-top:clamp(22px, 4dvh, 34px) !important;
+    padding-bottom:clamp(14px, 2.4dvh, 24px) !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock{
+    min-height:clamp(142px, 29dvh, 218px) !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonHero{
+    grid-template-columns:clamp(92px, 12dvh, 128px) minmax(0, 1fr) !important;
+    gap:clamp(16px, 1.7vw, 26px) !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup[data-active-tab="common"] .commonResearchIcon,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchIcon{
+    width:clamp(88px, 12dvh, 118px) !important;
+    height:clamp(88px, 12dvh, 118px) !important;
+    min-width:clamp(88px, 12dvh, 118px) !important;
+    min-height:clamp(88px, 12dvh, 118px) !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon img,
+  #towerPopup[data-active-tab="common"] .commonResearchIcon img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchIcon img{
+    width:clamp(54px, 7.4dvh, 78px) !important;
+    height:clamp(54px, 7.4dvh, 78px) !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonTitle{
+    font-size:clamp(24px, 2.15vw, 36px) !important;
+    gap:clamp(7px, .8vw, 12px) !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle .armoryTitleLevel,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonTitle .armoryTitleLevel{
+    min-height:clamp(24px, 3.8dvh, 34px) !important;
+    padding:3px clamp(10px, 1vw, 16px) !important;
+    font-size:clamp(14px, 1.25vw, 20px) !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonSubtitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonSubtitle{
+    margin-top:clamp(8px, 1.4dvh, 14px) !important;
+    font-size:clamp(15px, 1.35vw, 22px) !important;
+    line-height:1.32 !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .commonSimpleDesc,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonSimpleDesc{
+    margin-top:clamp(6px, 1.1dvh, 10px) !important;
+    font-size:clamp(12px, 1vw, 16px) !important;
+    line-height:1.3 !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock{
+    grid-template-columns:minmax(0, 1fr) clamp(116px, 13vw, 178px) !important;
+    gap:clamp(12px, 1.4vw, 22px) !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock small,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock small{
+    font-size:clamp(13px, 1.15vw, 18px) !important;
+    white-space:nowrap !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock b,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock b{
+    margin-top:clamp(8px, 1.3dvh, 14px) !important;
+    font-size:clamp(20px, 2vw, 32px) !important;
+    line-height:1.18 !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock span,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock span{
+    margin-top:clamp(7px, 1.1dvh, 12px) !important;
+    font-size:clamp(13px, 1.1vw, 18px) !important;
+    line-height:1.34 !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .commonResearchBuy,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchBuy{
+    height:clamp(56px, 10dvh, 86px) !important;
+    min-height:clamp(56px, 10dvh, 86px) !important;
+    font-size:clamp(20px, 2vw, 32px) !important;
+  }
+}
+
+@media (orientation: landscape) and (min-width: 951px) and (max-height: 560px){
+  #towerPopup[data-active-tab="common"] .towerPopupDetail,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail{
+    padding-top:18px !important;
+    padding-inline:clamp(14px, 1.4vw, 22px) !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock{
+    min-height:clamp(118px, 27dvh, 162px) !important;
+    padding:clamp(14px, 2.5dvh, 20px) clamp(16px, 1.8vw, 26px) !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonTitle{
+    font-size:clamp(20px, 1.85vw, 29px) !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonSubtitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonSubtitle,
+  #towerPopup[data-active-tab="common"] .armoryUpgradeDock span,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock span{
+    font-size:clamp(11px, 1vw, 15px) !important;
+  }
+}
+
+
+/* v-stage-result-auto-continue: clear result countdown fixed at the top center */
+.stageResultAutoCountdown{
+  position:fixed !important;
+  top:calc(env(safe-area-inset-top, 0px) + 18px) !important;
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  z-index:10042 !important;
+  min-width:46px !important;
+  height:46px !important;
+  padding:0 12px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  pointer-events:none !important;
+  font-family:'Orbitron','Pretendard','Noto Sans KR',system-ui,sans-serif !important;
+  font-size:34px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  letter-spacing:.02em !important;
+  color:#fff !important;
+  text-align:center !important;
+  text-shadow:
+    0 0 8px rgba(255,255,255,.60),
+    0 0 22px rgba(56,189,248,.42),
+    0 3px 14px rgba(0,0,0,.88) !important;
+  filter:drop-shadow(0 0 10px rgba(14,165,233,.34)) !important;
+  animation:stageResultAutoCountdownPulse .92s ease-in-out infinite !important;
+}
+@keyframes stageResultAutoCountdownPulse{
+  0%,100%{ opacity:.92; transform:translateX(-50%) scale(1); }
+  48%{ opacity:1; transform:translateX(-50%) scale(1.08); }
+}
+@media (max-height:430px){
+  .stageResultAutoCountdown{
+    height:36px !important;
+    min-width:38px !important;
+    font-size:27px !important;
+  }
+}

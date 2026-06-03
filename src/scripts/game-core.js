@@ -342,7 +342,7 @@ const STAGE_MAP_DEFS = [
 
 
 
-const COMMERCIAL_STAGE_BALANCE = [{"stage":1,"key":"cosmic","name":"COSMIC VOID","concept":"intro_damage","general_hp_multiplier":0.72,"general_speed_multiplier":0.99,"wave_count_multiplier":0.64,"boss_multiplier":0.92,"reward_multiplier":1.06,"plate_budget":{"amp":1,"coil":1,"lens":0,"mine":0,"rift":0},"forbidden_budget":0,"minimum_usable_placements":24,"target_winrate":0.88},{"stage":2,"key":"frost","name":"FROST EXPANSE","concept":"speed_control","general_hp_multiplier":0.82,"general_speed_multiplier":1.0,"wave_count_multiplier":0.7,"boss_multiplier":0.98,"reward_multiplier":1.1,"plate_budget":{"amp":0,"coil":1,"lens":1,"mine":0,"rift":0},"forbidden_budget":1,"minimum_usable_placements":23,"target_winrate":0.83},{"stage":3,"key":"lava","name":"LAVA NEBULA","concept":"armor_break","general_hp_multiplier":0.96,"general_speed_multiplier":1.01,"wave_count_multiplier":0.78,"boss_multiplier":1.05,"reward_multiplier":1.14,"plate_budget":{"amp":2,"coil":0,"lens":0,"mine":0,"rift":1},"forbidden_budget":1,"minimum_usable_placements":22,"target_winrate":0.76},{"stage":4,"key":"jungle","name":"JUNGLE CORE","concept":"regen_cut","general_hp_multiplier":1.08,"general_speed_multiplier":1.02,"wave_count_multiplier":0.84,"boss_multiplier":1.1,"reward_multiplier":1.18,"plate_budget":{"amp":1,"coil":1,"lens":0,"mine":1,"rift":0},"forbidden_budget":2,"minimum_usable_placements":21,"target_winrate":0.7},{"stage":5,"key":"smog","name":"SMOG WASTELAND","concept":"stealth_weaken","general_hp_multiplier":1.24,"general_speed_multiplier":1.03,"wave_count_multiplier":0.88,"boss_multiplier":1.16,"reward_multiplier":1.24,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":1,"rift":0},"forbidden_budget":2,"minimum_usable_placements":20,"target_winrate":0.65},{"stage":6,"key":"crystal","name":"CRYSTAL NEBULA","concept":"resonance_charge","general_hp_multiplier":1.4,"general_speed_multiplier":1.04,"wave_count_multiplier":0.92,"boss_multiplier":1.22,"reward_multiplier":1.3,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":1,"rift":1},"forbidden_budget":2,"minimum_usable_placements":20,"target_winrate":0.6},{"stage":7,"key":"machine","name":"MACHINE CORE","concept":"shield_dismantle","general_hp_multiplier":1.58,"general_speed_multiplier":1.05,"wave_count_multiplier":0.96,"boss_multiplier":1.26,"reward_multiplier":1.38,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":0,"rift":1},"forbidden_budget":3,"minimum_usable_placements":19,"target_winrate":0.56},{"stage":8,"key":"gravity","name":"GRAVITY MAUSOLEUM","concept":"crowd_control","general_hp_multiplier":2.02,"general_speed_multiplier":1.07,"wave_count_multiplier":1.02,"boss_multiplier":1.36,"reward_multiplier":1.48,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":0,"rift":1},"forbidden_budget":3,"minimum_usable_placements":18,"target_winrate":0.5},{"stage":9,"key":"thunder","name":"THUNDER CORRIDOR","concept":"speed_pressure","general_hp_multiplier":2.14,"general_speed_multiplier":1.08,"wave_count_multiplier":1.05,"boss_multiplier":1.42,"reward_multiplier":1.58,"plate_budget":{"amp":1,"coil":2,"lens":1,"mine":0,"rift":1},"forbidden_budget":3,"minimum_usable_placements":18,"target_winrate":0.46},{"stage":10,"key":"time","name":"TIME SHARDS","concept":"echo_split","general_hp_multiplier":2.22,"general_speed_multiplier":1.09,"wave_count_multiplier":1.08,"boss_multiplier":1.46,"reward_multiplier":1.68,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":0,"rift":2},"forbidden_budget":4,"minimum_usable_placements":17,"target_winrate":0.42},{"stage":11,"key":"silent","name":"SILENT CONSTELLATION","concept":"limited_info","general_hp_multiplier":2.28,"general_speed_multiplier":1.1,"wave_count_multiplier":1.1,"boss_multiplier":1.5,"reward_multiplier":1.8,"plate_budget":{"amp":1,"coil":1,"lens":2,"mine":0,"rift":1},"forbidden_budget":4,"minimum_usable_placements":17,"target_winrate":0.38},{"stage":12,"key":"throne","name":"RIFT THRONE","concept":"final_hybrid","general_hp_multiplier":2.36,"general_speed_multiplier":1.11,"wave_count_multiplier":1.12,"boss_multiplier":1.56,"reward_multiplier":1.92,"plate_budget":{"amp":2,"coil":1,"lens":1,"mine":0,"rift":2},"forbidden_budget":5,"minimum_usable_placements":16,"target_winrate":0.34}];
+const COMMERCIAL_STAGE_BALANCE = [{"stage":1,"key":"cosmic","name":"COSMIC VOID","concept":"intro_damage","general_hp_multiplier":0.72,"general_speed_multiplier":0.99,"wave_count_multiplier":0.64,"boss_multiplier":0.92,"reward_multiplier":1.06,"plate_budget":{"amp":1,"coil":1,"lens":0,"mine":0,"rift":0},"forbidden_budget":0,"minimum_usable_placements":24,"target_winrate":0.88},{"stage":2,"key":"frost","name":"FROST EXPANSE","concept":"speed_control","general_hp_multiplier":0.82,"general_speed_multiplier":1.0,"wave_count_multiplier":0.7,"boss_multiplier":0.98,"reward_multiplier":1.1,"plate_budget":{"amp":0,"coil":1,"lens":1,"mine":0,"rift":0},"forbidden_budget":1,"minimum_usable_placements":23,"target_winrate":0.83},{"stage":3,"key":"lava","name":"LAVA NEBULA","concept":"armor_break","general_hp_multiplier":0.96,"general_speed_multiplier":1.01,"wave_count_multiplier":0.78,"boss_multiplier":1.05,"reward_multiplier":1.14,"plate_budget":{"amp":2,"coil":0,"lens":0,"mine":0,"rift":1},"forbidden_budget":1,"minimum_usable_placements":22,"target_winrate":0.76},{"stage":4,"key":"jungle","name":"JUNGLE CORE","concept":"regen_cut","general_hp_multiplier":1.08,"general_speed_multiplier":1.02,"wave_count_multiplier":0.84,"boss_multiplier":1.1,"reward_multiplier":1.18,"plate_budget":{"amp":1,"coil":1,"lens":0,"mine":1,"rift":0},"forbidden_budget":2,"minimum_usable_placements":21,"target_winrate":0.7},{"stage":5,"key":"smog","name":"SMOG WASTELAND","concept":"stealth_weaken","general_hp_multiplier":1.24,"general_speed_multiplier":1.03,"wave_count_multiplier":0.88,"boss_multiplier":1.16,"reward_multiplier":1.24,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":1,"rift":0},"forbidden_budget":2,"minimum_usable_placements":20,"target_winrate":0.65},{"stage":6,"key":"crystal","name":"CRYSTAL NEBULA","concept":"resonance_charge","general_hp_multiplier":1.4,"general_speed_multiplier":1.04,"wave_count_multiplier":0.92,"boss_multiplier":1.22,"reward_multiplier":1.3,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":1,"rift":1},"forbidden_budget":2,"minimum_usable_placements":20,"target_winrate":0.6},{"stage":7,"key":"machine","name":"MACHINE CORE","concept":"shield_dismantle","general_hp_multiplier":1.38,"general_speed_multiplier":1.02,"wave_count_multiplier":0.9,"boss_multiplier":1.14,"reward_multiplier":1.46,"plate_budget":{"amp":2,"coil":1,"lens":1,"mine":2,"rift":1},"forbidden_budget":1,"minimum_usable_placements":22,"target_winrate":0.64},{"stage":8,"key":"gravity","name":"GRAVITY MAUSOLEUM","concept":"crowd_control","general_hp_multiplier":1.82,"general_speed_multiplier":1.05,"wave_count_multiplier":0.96,"boss_multiplier":1.28,"reward_multiplier":1.54,"plate_budget":{"amp":2,"coil":1,"lens":1,"mine":2,"rift":1},"forbidden_budget":2,"minimum_usable_placements":21,"target_winrate":0.56},{"stage":9,"key":"thunder","name":"THUNDER CORRIDOR","concept":"speed_pressure","general_hp_multiplier":1.92,"general_speed_multiplier":1.06,"wave_count_multiplier":0.99,"boss_multiplier":1.32,"reward_multiplier":1.64,"plate_budget":{"amp":2,"coil":2,"lens":1,"mine":2,"rift":1},"forbidden_budget":2,"minimum_usable_placements":20,"target_winrate":0.52},{"stage":10,"key":"time","name":"TIME SHARDS","concept":"echo_split","general_hp_multiplier":2.0,"general_speed_multiplier":1.07,"wave_count_multiplier":1.02,"boss_multiplier":1.36,"reward_multiplier":1.74,"plate_budget":{"amp":2,"coil":1,"lens":2,"mine":1,"rift":2},"forbidden_budget":3,"minimum_usable_placements":20,"target_winrate":0.48},{"stage":11,"key":"silent","name":"SILENT CONSTELLATION","concept":"limited_info","general_hp_multiplier":2.08,"general_speed_multiplier":1.08,"wave_count_multiplier":1.04,"boss_multiplier":1.4,"reward_multiplier":1.86,"plate_budget":{"amp":2,"coil":1,"lens":2,"mine":2,"rift":1},"forbidden_budget":3,"minimum_usable_placements":19,"target_winrate":0.44},{"stage":12,"key":"throne","name":"RIFT THRONE","concept":"final_hybrid","general_hp_multiplier":2.18,"general_speed_multiplier":1.09,"wave_count_multiplier":1.06,"boss_multiplier":1.48,"reward_multiplier":2.0,"plate_budget":{"amp":2,"coil":2,"lens":1,"mine":2,"rift":2},"forbidden_budget":4,"minimum_usable_placements":19,"target_winrate":0.4}];
 const COMMERCIAL_STAGE_BALANCE_BY_STAGE = Object.freeze(Object.fromEntries(COMMERCIAL_STAGE_BALANCE.map(row => [Number(row.stage), Object.freeze(row)])));
 const COMMERCIAL_STAGE_BALANCE_DEFAULT = Object.freeze({
   general_hp_multiplier:1,
@@ -938,6 +938,7 @@ function currentSummonCost(){
 // Scope: monster durability only. Economy, terrain pressure, tower numbers and UI stay unchanged.
 // The previous v2 curve still allowed Lv.1 tower swarms to clear mid/late waves too easily,
 // so v3 adds a moderate armor-first bump while keeping the 1~3 tutorial waves intact.
+// v-stage7-late-ease: stage 7+ difficulty curve softened for smoother post-6 progression.
 const WAVE_DEFENSE_ARMOR_BONUS = Object.freeze([0, 0, 0, .100, .135, .170, .205, .240, .275, .310]);
 const WAVE_DEFENSE_HP_MULTIPLIER = Object.freeze([1, 1, 1, 1.18, 1.30, 1.43, 1.57, 1.73, 1.90, 2.10]);
 function waveDefenseTuning(stageNo=null, waveNo=null, isBoss=false){
@@ -946,19 +947,64 @@ function waveDefenseTuning(stageNo=null, waveNo=null, isBoss=false){
   if(wave < 4) return {armor:0, hpMul:1};
   const idx = Math.max(0, Math.min(WAVE_DEFENSE_ARMOR_BONUS.length - 1, wave - 1));
   const stagePressure = Math.max(0, stage - 1);
+  const lateStageDefenseEase = stage >= 7 ? 0.82 : 1;
   const bossArmorScale = isBoss ? .45 : 1;
   const bossHpScale = isBoss ? .45 : 1;
   const armorCap = isBoss ? .26 : .52;
-  const armor = Math.min(armorCap, (Number(WAVE_DEFENSE_ARMOR_BONUS[idx] || 0) + stagePressure * .012) * bossArmorScale);
-  const hpMul = 1 + ((Number(WAVE_DEFENSE_HP_MULTIPLIER[idx] || 1) - 1) + stagePressure * .020) * bossHpScale;
+  const armor = Math.min(armorCap, (Number(WAVE_DEFENSE_ARMOR_BONUS[idx] || 0) + stagePressure * .012 * lateStageDefenseEase) * bossArmorScale);
+  const hpMul = 1 + ((Number(WAVE_DEFENSE_HP_MULTIPLIER[idx] || 1) - 1) + stagePressure * .020 * lateStageDefenseEase) * bossHpScale;
   return {armor, hpMul};
+}
+
+
+// v-stage7-post-first-wave-pressure: stage n-1 remains approachable, while n-2~n-10 regains pressure.
+// The previous stage 7+ ease patch and five-tower starting crystal made post-first substages too easy,
+// so this applies only when stage >= 7 and wave >= 2. Stage 7-1, 8-1, ... 12-1 stay untouched.
+function lateStagePostFirstWavePressure(stageNo=null, waveNo=null, isBoss=false){
+  const stage = economyStageNo(stageNo);
+  const wave = economyWaveNo(waveNo);
+  if(stage < 7 || wave < 2) return {hpMul:1, countMul:1, speedMul:1, armor:0};
+
+  const stageStep = Math.max(0, stage - 7);
+  const waveStep = Math.max(1, wave - 1);
+  const postWaveStep = Math.max(0, wave - 2);
+
+  const stageHpBase = [0.18, 0.28, 0.34, 0.40, 0.46, 0.52][Math.max(0, Math.min(5, stageStep))] || 0.18;
+  const hpGrowth = 0.050 + stageStep * 0.006;
+  const rawHpMul = 1 + stageHpBase + postWaveStep * hpGrowth;
+
+  const rawCountMul = 1 + 0.10 + stageStep * 0.025 + Math.min(0.25, waveStep * 0.025);
+  const rawSpeedMul = 1 + 0.025 + stageStep * 0.006 + Math.min(0.07, waveStep * 0.008);
+  const rawArmor = Math.min(0.18, 0.040 + stageStep * 0.015 + postWaveStep * 0.008);
+
+  if(isBoss){
+    return {
+      hpMul: 1 + (rawHpMul - 1) * 0.78,
+      countMul: 1,
+      speedMul: 1 + (rawSpeedMul - 1) * 0.45,
+      armor: rawArmor * 0.48
+    };
+  }
+  return {hpMul: rawHpMul, countMul: rawCountMul, speedMul: rawSpeedMul, armor: rawArmor};
+}
+function startingGoldForStage(stageNo=null){
+  const stage = economyStageNo(stageNo);
+  if(stage < 7) return 420;
+
+  // v-stage7-start-money-v2: stage 7+ starts with enough crystal for five immediate summons.
+  // Keep stages 1~6 unchanged, and calculate from the actual wave-1 summon cost so
+  // later stage cost scaling remains consistent if the summon formula changes nearby.
+  const stageAdd = Math.max(0, stage - 1) * 4;
+  const lateStageAdd = Math.max(0, stage - 6) * 3;
+  const waveOneCost = Math.max(100, Math.round((100 + stageAdd + lateStageAdd) / 5) * 5);
+  return Math.max(420, waveOneCost * 5);
 }
 function applyOfflineMetaToRun(resetHp=true){
   if(!S || !META) return;
   syncGlobalUpgradesFromMeta();
   S.maxHp = Math.max(S.maxHp || 22, 22);
   if(resetHp) S.hp = S.maxHp;
-  S.gold = Math.max(S.gold || 0, 420);
+  S.gold = Math.max(S.gold || 0, startingGoldForStage());
   S.mods.reward = Math.max(S.mods.reward || 0, 0);
   S.mods.repair = Math.max(S.mods.repair || 0, 0);
   S.offline = {summonCost:currentSummonCost(), cooldownScale:1};
@@ -1490,7 +1536,82 @@ function clearStageResultPendingFlag(){
   try{ window.PRD_STAGE_RESULT_PENDING_AT = 0; }catch(_){ }
 }
 
+
+const STAGE_CLEAR_AUTO_CONTINUE_SECONDS = 10;
+let stageClearAutoContinueTimer = null;
+let stageClearAutoContinueResizeHandler = null;
+
+function stopStageClearAutoContinueTimer(){
+  if(stageClearAutoContinueTimer){
+    clearInterval(stageClearAutoContinueTimer);
+    stageClearAutoContinueTimer = null;
+  }
+  if(stageClearAutoContinueResizeHandler){
+    try{ window.removeEventListener('resize', stageClearAutoContinueResizeHandler); }catch(_){}
+    try{ window.removeEventListener('orientationchange', stageClearAutoContinueResizeHandler); }catch(_){}
+    stageClearAutoContinueResizeHandler = null;
+  }
+  const counter = document.getElementById('stageResultAutoCountdown');
+  if(counter) counter.remove();
+}
+
+function positionStageClearAutoCountdown(overlay, counter){
+  try{
+    if(!overlay || !counter) return;
+    const viewportHeight = Number(window.visualViewport ? window.visualViewport.height : window.innerHeight) || window.innerHeight || 390;
+    const topGap = Math.round(Math.max(14, Math.min(26, viewportHeight * 0.04)));
+    counter.style.top = `calc(env(safe-area-inset-top, 0px) + ${topGap}px)`;
+  }catch(_){}
+}
+
+function setupStageClearAutoContinue(overlay, seconds=STAGE_CLEAR_AUTO_CONTINUE_SECONDS){
+  stopStageClearAutoContinueTimer();
+  if(!overlay || overlay.id !== 'stageClearOverlay') return;
+  const continueBtn = overlay.querySelector('#stageResultContinueBtn');
+  if(!continueBtn) return;
+
+  let remaining = Math.max(1, Number(seconds) || STAGE_CLEAR_AUTO_CONTINUE_SECONDS);
+  const counter = document.createElement('div');
+  counter.id = 'stageResultAutoCountdown';
+  counter.className = 'stageResultAutoCountdown';
+  counter.setAttribute('aria-live', 'polite');
+  counter.textContent = String(remaining);
+  overlay.appendChild(counter);
+
+  const reposition = () => positionStageClearAutoCountdown(overlay, counter);
+  stageClearAutoContinueResizeHandler = reposition;
+  reposition();
+  setTimeout(reposition, 0);
+  setTimeout(reposition, 180);
+  try{ window.addEventListener('resize', reposition, {passive:true}); }catch(_){}
+  try{ window.addEventListener('orientationchange', reposition, {passive:true}); }catch(_){}
+
+  const cancelOnManualAction = () => stopStageClearAutoContinueTimer();
+  ['#stageResultContinueBtn', '#stageResultMapBtn', '#stageResultUpgradeBtn'].forEach((selector) => {
+    const btn = overlay.querySelector(selector);
+    if(btn) btn.addEventListener('click', cancelOnManualAction, {capture:true, once:true});
+  });
+
+  stageClearAutoContinueTimer = setInterval(() => {
+    if(!document.body.contains(overlay) || !document.body.contains(continueBtn)){
+      stopStageClearAutoContinueTimer();
+      return;
+    }
+    remaining -= 1;
+    if(remaining >= 1){
+      counter.textContent = String(remaining);
+      reposition();
+      return;
+    }
+    stopStageClearAutoContinueTimer();
+    if(document.body.contains(overlay) && document.body.contains(continueBtn) && !continueBtn.disabled){
+      continueBtn.click();
+    }
+  }, 1000);
+}
+
 function removeStageClearOverlay(){
+  stopStageClearAutoContinueTimer();
   const existing = $('stageClearOverlay');
   if(existing) existing.remove();
   clearStageResultPendingFlag();
@@ -1668,6 +1789,7 @@ function showSubStageResultOverlay(summary){
     goStageMapFromResult(stageNo, `${fmt2(stageNo)}성역 ${fmt2(waveNo)}웨이브까지 기록했습니다. 다시 진입하면 1웨이브부터 재도전합니다.`);
   };
   overlay.querySelector('#stageResultUpgradeBtn').onclick = () => openUpgradeFromResult(stageNo);
+  setupStageClearAutoContinue(overlay);
   return overlay;
 }
 
@@ -1722,6 +1844,7 @@ function showStageClearOverlay(summary){
     };
   }
   if(upgradeBtn) upgradeBtn.onclick = () => openUpgradeFromResult(isFinal ? cleared : nextNo);
+  setupStageClearAutoContinue(overlay);
   return overlay;
 }
 
@@ -1895,18 +2018,17 @@ const AUDIO_URLS = {
     boss:'audio/bgm_boss_beneath_the_iron_crust.ogg',
     clear:'audio/public_bgm.ogg',
     gameover:'audio/public_bgm.ogg',
+    stage5Plus:'audio/stage5_bgm.ogg',
     // v32: use the existing lightweight stage loops for normal battle BGM.
-    // The previous config reused the 148kbps battle track for every stage.
-    // These stage loops are about 47-49kbps, so background music stays on while
-    // reducing continuous decode pressure during combat.
+    // v245: from stage 5 onward, normal battle BGM uses stage5_bgm.ogg.
     stages:[
       'audio/public_bgm.ogg',
       'audio/public_bgm.ogg',
       'audio/public_bgm.ogg',
       'audio/public_bgm.ogg',
-      'audio/public_bgm.ogg',
-      'audio/public_bgm.ogg',
-      'audio/public_bgm.ogg'
+      'audio/stage5_bgm.ogg',
+      'audio/stage5_bgm.ogg',
+      'audio/stage5_bgm.ogg'
     ]
   },
   sfx: {
@@ -1921,6 +2043,7 @@ const AUDIO_URLS = {
    React Native(expo-audio) 쪽으로 오디오 요청만 전달한다. UI/밸런스/전투 로직은 변경하지 않는다. */
 const NATIVE_AUDIO_BGM_KEY_BY_SRC = {
   'audio/public_bgm.ogg':'public_bgm',
+  'audio/stage5_bgm.ogg':'stage5_bgm',
   'audio/bgm_stage_01_cosmic_void.ogg':'bgm_stage_01_cosmic_void',
   'audio/bgm_stage_02_frost_expanse.ogg':'bgm_stage_02_frost_expanse',
   'audio/bgm_stage_03_lava_nebula.ogg':'bgm_stage_03_lava_nebula',
@@ -2243,11 +2366,11 @@ const TERRAIN = {
   empty:{name:'공허판', desc:'출력 손실: 피해 -14%, 공격 주기 +6%', color:'rgba(148,163,184,.055)'},
   path:{name:'균열항로', desc:'적 이동 경로. 배치 불가', color:'rgba(56,189,248,.08)'},
   blocked:{name:'균열 봉쇄 장판', desc:'배치 불가. 경로 주변의 좋은 자리를 봉쇄합니다.', color:'rgba(15,23,42,.70)'},
-  amp:{name:'증폭성운', desc:'핵심 장판: 피해 +38%', color:'rgba(251,191,36,.22)'},
-  coil:{name:'가속궤도', desc:'핵심 장판: 공격 주기 -30%', color:'rgba(56,189,248,.21)'},
-  lens:{name:'중력렌즈', desc:'핵심 장판: 사거리 +38', color:'rgba(125,211,252,.21)'},
-  mine:{name:'수정광맥', desc:'보상 장판: 보상 +16%', color:'rgba(34,197,94,.18)'},
-  rift:{name:'불안정균열', desc:'위험 장판: 피해 +62%, 과열', color:'rgba(244,114,182,.20)'},
+  amp:{name:'증폭성운', desc:'핵심 장판: 피해 +45%, 공격 주기 -6%', color:'rgba(251,191,36,.22)'},
+  coil:{name:'가속궤도', desc:'핵심 장판: 피해 +4%, 공격 주기 -34%', color:'rgba(56,189,248,.21)'},
+  lens:{name:'중력렌즈', desc:'핵심 장판: 피해 -2%, 공격 주기 -4%, 사거리 +48', color:'rgba(125,211,252,.21)'},
+  mine:{name:'수정광맥', desc:'보상 장판: 피해 -2%, 보상 +22%', color:'rgba(34,197,94,.18)'},
+  rift:{name:'불안정균열', desc:'위험 장판: 피해 +70%, 사거리 +12, 과열 5%', color:'rgba(244,114,182,.20)'},
   hazard_overheat:{name:'과열 균열', desc:'3x3 위험 구역: 배치 가능 · 공격 주기 +18%', color:'rgba(239,68,68,.13)'},
   hazard_weaken:{name:'약화 균열', desc:'3x3 위험 구역: 배치 가능 · 공격력 -18%', color:'rgba(248,113,113,.13)'},
   hazard_disrupt:{name:'교란 균열', desc:'3x3 위험 구역: 배치 가능 · 사거리 -14%', color:'rgba(251,146,60,.13)'},
@@ -2394,7 +2517,7 @@ function towerSkillCompactText(t){
 }
 
 const GLOBAL_UPGRADE_MAX_LEVEL = 15;
-const COMMERCIAL_RESEARCH_CURVES = {"global_damage":{"unlock_stage":1,"max":12,"damage_curve":[0.06,0.06,0.06,0.05,0.05,0.05,0.04,0.04,0.04,0.03,0.03,0.03]},"global_crit":{"unlock_stage":2,"max":10,"crit_chance_curve":[0.015,0.015,0.015,0.015,0.01,0.01,0.01,0.01,0.008,0.008],"crit_multiplier_curve":[0.04,0.04,0.04,0.04,0.03,0.03,0.03,0.03,0.025,0.025]},"global_speed":{"unlock_stage":3,"max":10,"fire_rate_curve":[0.04,0.04,0.03,0.03,0.03,0.02,0.02,0.02,0.02,0.01]},"global_boss":{"unlock_stage":4,"max":10,"boss_damage_curve":[0.05,0.05,0.05,0.05,0.04,0.04,0.04,0.04,0.03,0.03],"armor_break_curve":[0.012,0.012,0.012,0.012,0.008,0.008,0.008,0.008,0.006,0.006]},"global_range":{"unlock_stage":5,"max":8,"range_curve":[5,5,5,5,4,4,4,4]},"global_plate":{"unlock_stage":6,"max":8,"plate_damage_curve":[0.05,0.05,0.05,0.04,0.04,0.04,0.03,0.03],"plate_fire_rate_curve":[0.03,0.03,0.03,0.02,0.02,0.02,0.015,0.015]},"global_economy":{"unlock_stage":7,"max":8,"reward_curve":[0.04,0.04,0.04,0.04,0.03,0.03,0.03,0.03]}};
+const COMMERCIAL_RESEARCH_CURVES = {"global_damage":{"unlock_stage":1,"max":12,"damage_curve":[0.06,0.06,0.06,0.05,0.05,0.05,0.04,0.04,0.04,0.03,0.03,0.03]},"global_crit":{"unlock_stage":2,"max":10,"crit_chance_curve":[0.015,0.015,0.015,0.015,0.01,0.01,0.01,0.01,0.008,0.008],"crit_multiplier_curve":[0.04,0.04,0.04,0.04,0.03,0.03,0.03,0.03,0.025,0.025]},"global_speed":{"unlock_stage":3,"max":10,"fire_rate_curve":[0.04,0.04,0.03,0.03,0.03,0.02,0.02,0.02,0.02,0.01]},"global_boss":{"unlock_stage":4,"max":10,"boss_damage_curve":[0.05,0.05,0.05,0.05,0.04,0.04,0.04,0.04,0.03,0.03],"armor_break_curve":[0.012,0.012,0.012,0.012,0.008,0.008,0.008,0.008,0.006,0.006]},"global_range":{"unlock_stage":5,"max":8,"range_curve":[5,5,5,5,4,4,4,4]},"global_plate":{"unlock_stage":6,"max":8,"plate_damage_curve":[0.06,0.06,0.05,0.05,0.04,0.04,0.035,0.035],"plate_fire_rate_curve":[0.035,0.035,0.03,0.03,0.025,0.025,0.02,0.02]},"global_economy":{"unlock_stage":7,"max":8,"reward_curve":[0.04,0.04,0.04,0.04,0.03,0.03,0.03,0.03]}};
 function sumCommercialCurve(curve, level){
   const n = Math.max(0, Math.floor(Number(level || 0)));
   if(!Array.isArray(curve) || n <= 0) return 0;
@@ -2663,8 +2786,8 @@ let hangarVisualLastCheckAt = 0;
 let dragHoverTargetIdx = -1;
 let dragHoverTargetStartedAt = 0;
 let plateAffinity = {};
-const PLATE_AFFINITY_DAMAGE_BONUS = 0.12;
-const PLATE_AFFINITY_FIRE_RATE_BONUS = 0.04;
+const PLATE_AFFINITY_DAMAGE_BONUS = 0.16;
+const PLATE_AFFINITY_FIRE_RATE_BONUS = 0.06;
 let raf = 0, last = performance.now(), spawnTimer = 0, shake = 0, flash = 0;
 let hangarFrame = -1;
 let nextPlanetUid = 1;
@@ -3747,12 +3870,12 @@ function dynamicBlockedPlateTarget(stageNo=null, waveNo=null){
   // After that, pressure is based on cumulative main-stage progress so 2-1,
   // 3-1, 5-1... do not reset back to an empty board.
   if(stage <= 1 && wave < 4) return 0;
-  const mainCarry = Math.floor(Math.max(0, stage - 1) * 1.6)
+  const lateEase = stage >= 7 ? 0.86 : 1;
+  const mainCarry = Math.floor(Math.max(0, stage - 1) * 1.6 * lateEase)
     + (stage >= 2 ? 2 : 0)
-    + (stage >= 4 ? 2 : 0)
-    + (stage >= 7 ? 1 : 0);
-  const subRamp = wave >= 4 ? Math.floor(Math.max(0, wave - 3) * 2.2) : 0;
-  return Math.max(0, Math.min(24, mainCarry + subRamp));
+    + (stage >= 4 ? 2 : 0);
+  const subRampBase = wave >= 4 ? Math.floor(Math.max(0, wave - 3) * 2.2 * lateEase) : 0;
+  return Math.max(0, Math.min(22, mainCarry + subRampBase));
 }
 function dynamicHazardClusterPlan(stageNo=null, waveNo=null){
   const stage = economyStageNo(stageNo);
@@ -3761,6 +3884,8 @@ function dynamicHazardClusterPlan(stageNo=null, waveNo=null){
   // 1-1~1-6 remain readable for onboarding, but from 2-1 onward each main
   // stage keeps its baseline pressure instead of resetting on sub-stage 1.
   if(stage <= 1 && wave < 7) return [];
+  if(stage >= 7 && wave <= 3) return [{size:2, offset:0}];
+  if(stage >= 7 && wave < 7) return [{size:3, offset:0}];
   if(stage >= 4 && wave >= 7) return [{size:3, offset:0}, {size:2, offset:1}];
   if(stage >= 4 || (stage >= 3 && wave >= 8)) return [{size:3, offset:0}];
   if(stage >= 2 || wave >= 7) return [{size:2, offset:0}];
@@ -4112,8 +4237,9 @@ function prepareWave(){
   buildDustClouds();
   S.queue.length=0;
   const stageBalance = getCommercialStageBalance(S.stageNo || StageMapState.current || 1);
+  const lateStageWavePressure = lateStagePostFirstWavePressure(S.stageNo || StageMapState.current || 1, S.ogge || 1, false);
   const baseCount = 28 + S.ogge*6 + S.theme*6;
-  const count = Math.max(10, Math.round(baseCount * Number(stageBalance.wave_count_multiplier || 1)));
+  const count = Math.max(10, Math.round(baseCount * Number(stageBalance.wave_count_multiplier || 1) * Number(lateStageWavePressure.countMul || 1)));
   const monsterPool = getStageMonsterPool(S.stageNo || StageMapState.current || 1, S.ogge || 1);
   for(let i=0;i<count;i++){
     let type = pickWeightedMonster(monsterPool);
@@ -5017,11 +5143,11 @@ function drawAnomalies(){
 
 const TERRAIN_BONUS_DEFAULT = {dmg:.86,cd:1.06,range:0,rangeMul:1,gold:0,over:false,overChance:0,plate:false,specialChanceMul:1};
 const TERRAIN_BONUS_BY_KEY = {
-  amp:{dmg:1.38,cd:.96,range:0,rangeMul:1,gold:0,over:false,overChance:0,plate:true,specialChanceMul:1},
-  coil:{dmg:1.00,cd:.70,range:0,rangeMul:1,gold:0,over:false,overChance:0,plate:true,specialChanceMul:1},
-  lens:{dmg:.94,cd:.98,range:38,rangeMul:1,gold:0,over:false,overChance:0,plate:true,specialChanceMul:1},
-  mine:{dmg:.92,cd:1.02,range:0,rangeMul:1,gold:.16,over:false,overChance:0,plate:true,specialChanceMul:1},
-  rift:{dmg:1.62,cd:1.06,range:8,rangeMul:1,gold:0,over:true,overChance:.06,plate:true,specialChanceMul:1},
+  amp:{dmg:1.45,cd:.94,range:0,rangeMul:1,gold:0,over:false,overChance:0,plate:true,specialChanceMul:1},
+  coil:{dmg:1.04,cd:.66,range:0,rangeMul:1,gold:0,over:false,overChance:0,plate:true,specialChanceMul:1},
+  lens:{dmg:.98,cd:.96,range:48,rangeMul:1,gold:0,over:false,overChance:0,plate:true,specialChanceMul:1},
+  mine:{dmg:.98,cd:1.00,range:0,rangeMul:1,gold:.22,over:false,overChance:0,plate:true,specialChanceMul:1},
+  rift:{dmg:1.70,cd:1.03,range:12,rangeMul:1,gold:0,over:true,overChance:.05,plate:true,specialChanceMul:1},
   hazard_overheat:{dmg:1.00,cd:1.18,range:0,rangeMul:1,gold:0,over:false,overChance:0,plate:false,hazard:true,specialChanceMul:1},
   hazard_weaken:{dmg:.82,cd:1.00,range:0,rangeMul:1,gold:0,over:false,overChance:0,plate:false,hazard:true,specialChanceMul:1},
   hazard_disrupt:{dmg:.96,cd:1.02,range:0,rangeMul:.86,gold:0,over:false,overChance:0,plate:false,hazard:true,specialChanceMul:1},
@@ -5421,12 +5547,12 @@ const STAGE_MONSTER_POOLS = {
   4:{theme:'생체 정글', intro:'보상형과 재생 압박으로 처치 우선순위를 익히는 전장', early:[['void_sentry',46],['stigma_carrier',18],['iron_guardian',18],['meteor_charger',18]], mid:[['stigma_carrier',22],['iron_guardian',24],['crystal_barrier',18],['void_sentry',36]], late:[['stigma_carrier',18],['rift_splitter',16],['crystal_barrier',24],['iron_guardian',24],['void_sentry',18]]},
   5:{theme:'매연 폐역', intro:'흐릿하게 접근하는 회피형과 장갑형이 섞이는 전장', early:[['phase_ghost',24],['void_sentry',40],['iron_guardian',22],['meteor_charger',14]], mid:[['phase_ghost',30],['iron_guardian',26],['crystal_barrier',20],['void_sentry',24]], late:[['phase_ghost',34],['core_overdrive',12],['iron_guardian',26],['crystal_barrier',18],['stigma_carrier',10]]},
   6:{theme:'수정 성운', intro:'보호막과 공명 압박으로 지속 화력을 요구하는 전장', early:[['crystal_barrier',38],['void_sentry',28],['iron_guardian',20],['stigma_carrier',14]], mid:[['crystal_barrier',44],['phase_ghost',16],['iron_guardian',24],['stigma_carrier',16]], late:[['crystal_barrier',42],['rift_splitter',18],['phase_ghost',18],['iron_guardian',22]]},
-  7:{theme:'기계 핵성', intro:'방벽과 장갑을 해체해야 하는 방어망 전장', early:[['crystal_barrier',34],['iron_guardian',34],['void_sentry',20],['meteor_charger',12]], mid:[['crystal_barrier',36],['iron_guardian',32],['abyss_knight',8],['phase_ghost',12],['stigma_carrier',12]], late:[['crystal_barrier',32],['iron_guardian',28],['abyss_knight',14],['core_overdrive',14],['phase_ghost',12]]},
-  8:{theme:'중력 무덤', intro:'대형 적과 위험형 적이 전선을 밀어붙이는 전장', early:[['core_overdrive',24],['iron_guardian',24],['crystal_barrier',24],['void_sentry',28]], mid:[['core_overdrive',28],['void_colossus',10],['iron_guardian',24],['phase_ghost',18],['crystal_barrier',20]], late:[['core_overdrive',30],['void_colossus',14],['abyss_knight',14],['rift_splitter',16],['crystal_barrier',26]]},
-  9:{theme:'번개 회랑', intro:'빠른 돌격체와 위험형이 동시에 압박하는 고속 전장', early:[['meteor_charger',38],['phase_ghost',18],['core_overdrive',18],['void_sentry',26]], mid:[['meteor_charger',42],['core_overdrive',22],['phase_ghost',20],['iron_guardian',16]], late:[['meteor_charger',38],['core_overdrive',24],['abyss_knight',12],['phase_ghost',18],['rift_splitter',8]]},
-  10:{theme:'시간 잔해', intro:'분열체가 전장을 되감듯 늘어나는 반복 전장', early:[['rift_splitter',28],['phase_ghost',20],['void_sentry',28],['iron_guardian',24]], mid:[['rift_splitter',34],['phase_ghost',22],['core_overdrive',18],['crystal_barrier',26]], late:[['rift_splitter',38],['abyss_knight',14],['phase_ghost',20],['void_colossus',10],['core_overdrive',18]]},
-  11:{theme:'침묵 성단', intro:'정예와 회피형이 정보 없는 압박을 주는 심연 전장', early:[['abyss_knight',24],['phase_ghost',24],['iron_guardian',24],['void_sentry',28]], mid:[['abyss_knight',30],['phase_ghost',24],['core_overdrive',18],['crystal_barrier',18],['rift_splitter',10]], late:[['abyss_knight',34],['phase_ghost',22],['void_colossus',12],['core_overdrive',20],['rift_splitter',12]]},
-  12:{theme:'균열 왕좌', intro:'모든 몬스터 역할이 합쳐지는 최종 복합 전장', early:[['abyss_knight',22],['crystal_barrier',22],['meteor_charger',18],['core_overdrive',18],['phase_ghost',20]], mid:[['abyss_knight',26],['rift_splitter',18],['core_overdrive',20],['void_colossus',12],['crystal_barrier',24]], late:[['abyss_knight',26],['void_colossus',16],['rift_splitter',20],['core_overdrive',22],['phase_ghost',16]]}
+  7:{theme:'기계 핵성', intro:'방벽과 장갑을 해체해야 하는 방어망 전장', early:[['void_sentry',42],['crystal_barrier',22],['iron_guardian',24],['meteor_charger',12]], mid:[['crystal_barrier',29],['iron_guardian',23],['phase_ghost',12],['abyss_knight',5],['stigma_carrier',31]], late:[['crystal_barrier',25],['iron_guardian',22],['core_overdrive',9],['phase_ghost',10],['abyss_knight',8],['stigma_carrier',26]]},
+  8:{theme:'중력 무덤', intro:'대형 적과 위험형 적이 전선을 밀어붙이는 전장', early:[['void_sentry',34],['core_overdrive',20],['iron_guardian',22],['crystal_barrier',24]], mid:[['core_overdrive',24],['iron_guardian',22],['phase_ghost',16],['crystal_barrier',22],['void_colossus',7],['stigma_carrier',9]], late:[['core_overdrive',26],['crystal_barrier',24],['rift_splitter',14],['abyss_knight',10],['void_colossus',10],['stigma_carrier',16]]},
+  9:{theme:'번개 회랑', intro:'빠른 돌격체와 위험형이 동시에 압박하는 고속 전장', early:[['meteor_charger',34],['void_sentry',32],['phase_ghost',16],['core_overdrive',18]], mid:[['meteor_charger',36],['core_overdrive',20],['phase_ghost',18],['iron_guardian',14],['stigma_carrier',12]], late:[['meteor_charger',34],['core_overdrive',22],['phase_ghost',16],['abyss_knight',9],['rift_splitter',8],['stigma_carrier',11]]},
+  10:{theme:'시간 잔해', intro:'분열체가 전장을 되감듯 늘어나는 반복 전장', early:[['void_sentry',32],['rift_splitter',24],['phase_ghost',18],['iron_guardian',22],['stigma_carrier',4]], mid:[['rift_splitter',30],['phase_ghost',20],['core_overdrive',16],['crystal_barrier',24],['stigma_carrier',10]], late:[['rift_splitter',34],['phase_ghost',18],['core_overdrive',16],['abyss_knight',11],['void_colossus',8],['stigma_carrier',13]]},
+  11:{theme:'침묵 성단', intro:'정예와 회피형이 정보 없는 압박을 주는 심연 전장', early:[['void_sentry',32],['iron_guardian',24],['phase_ghost',22],['abyss_knight',18],['stigma_carrier',4]], mid:[['abyss_knight',24],['phase_ghost',22],['core_overdrive',16],['crystal_barrier',18],['rift_splitter',9],['stigma_carrier',11]], late:[['abyss_knight',28],['phase_ghost',20],['core_overdrive',18],['rift_splitter',11],['void_colossus',10],['stigma_carrier',13]]},
+  12:{theme:'균열 왕좌', intro:'모든 몬스터 역할이 합쳐지는 최종 복합 전장', early:[['crystal_barrier',22],['abyss_knight',18],['meteor_charger',18],['core_overdrive',16],['phase_ghost',18],['stigma_carrier',8]], mid:[['abyss_knight',22],['core_overdrive',18],['crystal_barrier',22],['rift_splitter',16],['void_colossus',10],['stigma_carrier',12]], late:[['abyss_knight',24],['rift_splitter',18],['core_overdrive',18],['void_colossus',14],['crystal_barrier',18],['phase_ghost',8],['stigma_carrier',10]]}
 };
 
 const MONSTER_INTRO_STORAGE_KEY = 'planetRiftMonsterIntroSeenV1';
@@ -5700,7 +5826,9 @@ class Enemy{
       this.skillCd = this.skillInterval * .75;
     }
     const waveDefense = waveDefenseTuning(S.stageNo || StageMapState.current || 1, S.ogge || 1, !!(base.boss || this.stageBoss));
-    armor += Number(waveDefense.armor || 0);
+    const lateStageWavePressure = lateStagePostFirstWavePressure(S.stageNo || StageMapState.current || 1, S.ogge || 1, !!(base.boss || this.stageBoss));
+    armor += Number(waveDefense.armor || 0) + Number(lateStageWavePressure.armor || 0);
+    this.lateStageSpeedMul = Number(lateStageWavePressure.speedMul || 1);
     this.spd=spd;this.size=size;this.color=color;this.reward=reward;this.exp=exp;this.armor=armor;
     this.x=route[0].x;this.y=route[0].y;this.seg=0;this.progress=0;
     if(payload && Number.isFinite(payload.x) && Number.isFinite(payload.y)){
@@ -5714,7 +5842,8 @@ class Enemy{
       ? Number(stageBalance.boss_multiplier || 1)
       : Number(stageBalance.general_hp_multiplier || 1);
     const waveHpMultiplier = Number(waveDefense.hpMul || 1);
-    this.maxHp=Math.floor(295*hpBase*(1+S.ogge*.30+S.theme*.38) * hpScale * stageHpMultiplier * waveHpMultiplier);
+    const lateStageHpMultiplier = Number(lateStageWavePressure.hpMul || 1);
+    this.maxHp=Math.floor(295*hpBase*(1+S.ogge*.30+S.theme*.38) * hpScale * stageHpMultiplier * waveHpMultiplier * lateStageHpMultiplier);
     this.hp=this.maxHp;
     if(this.shieldRatio > 0){
       this.maxShield = Math.max(1, Math.floor(this.maxHp * this.shieldRatio));
@@ -5738,7 +5867,7 @@ class Enemy{
     }
     if(this.hp<=0){this.kill();return}
     const stageBalance = getCommercialStageBalance(S.stageNo || StageMapState.current || 1);
-    let speed=this.spd*Number(stageBalance.general_speed_multiplier || 1)*(1+S.ogge*.032+S.theme*.028);
+    let speed=this.spd*Number(stageBalance.general_speed_multiplier || 1)*(1+S.ogge*.032+S.theme*.028)*Number(this.lateStageSpeedMul || 1);
     if(this.slow>0)speed*=.55;
     if(this.freeze>0)speed*=.12;
     const to=route[this.seg+1];
@@ -8326,10 +8455,18 @@ function playBgmSrc(src, volume=.30){
   bgm.play().catch(()=>{});
 }
 
-function playStageBgm(){
-  const stageList = AUDIO_URLS.bgm?.stages || [];
+function getNormalStageBgmSrc(){
+  const bgm = AUDIO_URLS.bgm || {};
+  const mapStageNo = (typeof StageMapState !== 'undefined' && StageMapState) ? Number(StageMapState.current || 0) : 0;
+  const stageNo = Number(S.stageNo || mapStageNo || 0);
+  if(stageNo >= 5 && bgm.stage5Plus) return bgm.stage5Plus;
+  const stageList = bgm.stages || [];
   const fallbackList = Array.isArray(AUDIO_URLS.bgm) ? AUDIO_URLS.bgm : [];
-  const baseSrc = stageList[S.theme % stageList.length] || fallbackList[S.theme % fallbackList.length];
+  return stageList[S.theme % stageList.length] || fallbackList[S.theme % fallbackList.length] || bgm.main || 'audio/public_bgm.ogg';
+}
+
+function playStageBgm(){
+  const baseSrc = getNormalStageBgmSrc();
   const bossWave = !!S.currentBossInfo && (S.ogge === 5 || S.ogge === 10);
   const src = bossWave ? (AUDIO_URLS.bgm?.boss || baseSrc) : baseSrc;
   playBgmSrc(src, bossWave ? .40 : .34);

@@ -1,9 +1,16 @@
 {
   "schema_version": 1,
   "basis": "runtime_TERRAIN_and_R1_R2_generation",
-  "affinity": {"mode": "fixed_seed_per_stage_wave_tile", "damage_bonus": 0.12, "fire_rate_bonus": 0.04},
+  "affinity": {
+    "mode": "fixed_seed_per_stage_wave_tile",
+    "damage_bonus": 0.16,
+    "fire_rate_bonus": 0.06
+  },
   "placement_algorithm": {
-    "preferred_distances": [1, 2],
+    "preferred_distances": [
+      1,
+      2
+    ],
     "distance_metric": "manhattan_to_path_tile",
     "special_plates_use": "R1_then_R2_then_fallback_only_if_needed",
     "forbidden_uses": "R1_then_R2_only",
@@ -11,12 +18,53 @@
     "guarantee_minimum_usable_placements": true
   },
   "plates": {
-    "empty": {"damage_multiplier": 0.86, "cooldown_multiplier": 1.06, "range_bonus": 0, "reward_bonus": 0, "overheat_chance": 0},
-    "amp": {"damage_multiplier": 1.38, "cooldown_multiplier": 0.96, "range_bonus": 0, "reward_bonus": 0, "overheat_chance": 0},
-    "coil": {"damage_multiplier": 1.00, "cooldown_multiplier": 0.70, "range_bonus": 0, "reward_bonus": 0, "overheat_chance": 0},
-    "lens": {"damage_multiplier": 0.94, "cooldown_multiplier": 0.98, "range_bonus": 38, "reward_bonus": 0, "overheat_chance": 0},
-    "mine": {"damage_multiplier": 0.92, "cooldown_multiplier": 1.02, "range_bonus": 0, "reward_bonus": 0.16, "overheat_chance": 0},
-    "rift": {"damage_multiplier": 1.62, "cooldown_multiplier": 1.06, "range_bonus": 8, "reward_bonus": 0, "overheat_chance": 0.06},
-    "forbidden": {"buildable": false, "path_distance_rule": "R1_R2", "stage_1_budget": 0, "stage_12_budget": 5}
+    "empty": {
+      "damage_multiplier": 0.86,
+      "cooldown_multiplier": 1.06,
+      "range_bonus": 0,
+      "reward_bonus": 0,
+      "overheat_chance": 0
+    },
+    "amp": {
+      "damage_multiplier": 1.45,
+      "cooldown_multiplier": 0.94,
+      "range_bonus": 0,
+      "reward_bonus": 0,
+      "overheat_chance": 0
+    },
+    "coil": {
+      "damage_multiplier": 1.04,
+      "cooldown_multiplier": 0.66,
+      "range_bonus": 0,
+      "reward_bonus": 0,
+      "overheat_chance": 0
+    },
+    "lens": {
+      "damage_multiplier": 0.98,
+      "cooldown_multiplier": 0.96,
+      "range_bonus": 48,
+      "reward_bonus": 0,
+      "overheat_chance": 0
+    },
+    "mine": {
+      "damage_multiplier": 0.98,
+      "cooldown_multiplier": 1.0,
+      "range_bonus": 0,
+      "reward_bonus": 0.22,
+      "overheat_chance": 0
+    },
+    "rift": {
+      "damage_multiplier": 1.7,
+      "cooldown_multiplier": 1.03,
+      "range_bonus": 12,
+      "reward_bonus": 0,
+      "overheat_chance": 0.05
+    },
+    "forbidden": {
+      "buildable": false,
+      "path_distance_rule": "R1_R2",
+      "stage_1_budget": 0,
+      "stage_12_budget": 5
+    }
   }
 }

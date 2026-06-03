@@ -1231,11 +1231,11 @@
   var commonSub={global_damage:'전체 화력 강화 / 공용 패시브',global_crit:'치명 기대값 강화 / 공용 패시브',global_speed:'공격 템포 강화 / 공용 패시브',global_boss:'보스전 대응 강화 / 공용 패시브',global_range:'전장 커버리지 강화 / 공용 패시브',global_plate:'장판 운용 강화 / 공용 패시브',global_economy:'성장 자원 회수 / 공용 패시브'};
   var commonTags={global_damage:['공용','패시브','전역 효과'],global_crit:['치명','폭발력','전역 효과'],global_speed:['공속','템포','전역 효과'],global_boss:['보스','관통','후반'],global_range:['사거리','배치','커버'],global_plate:['장판','전략','증폭'],global_economy:['보상','성장','경제']};
   var plates={
-    amp:{key:'amp',symbol:'DMG',label:'증폭',name:'증폭성운',subtitle:'핵심 화력 장판',tags:['화력','보스','버스트'],effect:'피해 +38%',best:'보스 구간 · 합류 지점 · 주력 딜러',caution:'제어보다 순수 화력 비중이 큽니다.',summary:'증폭성운은 가장 직관적인 공격 장판입니다. 주력 딜러를 올리면 짧은 시간에 큰 피해를 몰아넣기 좋아 웨이브 정리와 보스 삭제에 강합니다.',tips:'솔라, 스톰, 광자처럼 원래 화력이 높은 행성을 우선 배치하세요. 합류 지점이나 보스가 오래 머무는 구간에 두면 효율이 크게 올라갑니다.'},
-    coil:{key:'coil',symbol:'SPD',label:'가속',name:'가속궤도',subtitle:'가속 / 공격속도 장판',tags:['공속','연사','템포'],effect:'공격 주기 -30%',best:'연사형 · 독/연쇄형 · 꾸준딜 라인',caution:'한방 화력보다는 누적 딜 효율이 좋습니다.',summary:'가속궤도는 초당 타격 횟수를 늘려 누적 피해를 키우는 장판입니다. 평타 빈도가 많은 타워일수록 기대 효율이 높습니다.',tips:'바이오, 스톰, 프로스트처럼 지속적으로 효과를 누적하는 행성과 잘 맞습니다. 병목 구간보다 긴 직선 초입에서 안정적입니다.'},
-    lens:{key:'lens',symbol:'RNG',label:'사거리',name:'중력렌즈',subtitle:'사거리 확장 장판',tags:['사거리','저격','커버'],effect:'사거리 +38',best:'후방 배치 · 직선 저격 · 광역 커버',caution:'사거리가 짧은 타워보다 장거리형에서 체감이 큽니다.',summary:'중력렌즈는 타워의 공격 반경을 넓혀 한 자리에서 더 오랫동안 공격하게 만드는 장판입니다. 후방 안전지대 활용도가 높아집니다.',tips:'광자, 프로스트처럼 사거리 가치가 큰 행성과 잘 맞습니다. 코어 근처보다 긴 라인을 비출 수 있는 후방 칸에 두세요.'},
-    mine:{key:'mine',symbol:'ORE',label:'광맥',name:'수정광맥',subtitle:'성장 / 보상 장판',tags:['성장','보상','경제'],effect:'보상 +16%',best:'안전한 후방 · 장기전 · 여유 슬롯',caution:'즉시 전투력 상승은 다른 장판보다 약합니다.',summary:'수정광맥은 전투 중 보상을 조금 더 챙겨 장기적인 성장을 돕는 장판입니다. 초반이나 안정 구간에서 자원 굴리기에 좋습니다.',tips:'라인 핵심 전투 칸보다는 후방 안정 칸에 두고, 여유가 생긴 뒤 성장용 행성을 배치하는 운영이 무난합니다.'},
-    rift:{key:'rift',symbol:'RFT',label:'균열',name:'불안정균열',subtitle:'고위험 고화력 장판',tags:['리스크','폭딜','후반'],effect:'피해 +62% · 과열 6%',best:'고레벨 주력 딜러 · 중반 병목 구간',caution:'리스크가 큰 만큼 아무 타워나 올리면 손해를 볼 수 있습니다.',summary:'불안정균열은 가장 강한 공격 보너스를 주지만 과열 리스크가 있는 하이리스크 장판입니다. 잘 쓰면 전장을 크게 압축하지만 운영 난도가 높습니다.',tips:'고레벨 주력 딜러를 올리고, 군중 제어 타워와 같이 써서 리스크를 줄이세요. 초반보다 중후반 핵심 구간에 배치하는 편이 안전합니다.'},
+    amp:{key:'amp',symbol:'DMG',label:'증폭',name:'증폭성운',subtitle:'핵심 화력 장판',tags:['화력','보스','버스트'],effect:'피해 +45% · 공격 주기 -6%',best:'보스 구간 · 합류 지점 · 주력 딜러',caution:'제어보다 순수 화력 비중이 큽니다.',summary:'증폭성운은 가장 직관적인 공격 장판입니다. 주력 딜러를 올리면 짧은 시간에 큰 피해를 몰아넣기 좋아 웨이브 정리와 보스 삭제에 강합니다.',tips:'솔라, 스톰, 광자처럼 원래 화력이 높은 행성을 우선 배치하세요. 합류 지점이나 보스가 오래 머무는 구간에 두면 효율이 크게 올라갑니다.'},
+    coil:{key:'coil',symbol:'SPD',label:'가속',name:'가속궤도',subtitle:'가속 / 공격속도 장판',tags:['공속','연사','템포'],effect:'피해 +4% · 공격 주기 -34%',best:'연사형 · 독/연쇄형 · 꾸준딜 라인',caution:'한방 화력보다는 누적 딜 효율이 좋습니다.',summary:'가속궤도는 초당 타격 횟수를 늘려 누적 피해를 키우는 장판입니다. 평타 빈도가 많은 타워일수록 기대 효율이 높습니다.',tips:'바이오, 스톰, 프로스트처럼 지속적으로 효과를 누적하는 행성과 잘 맞습니다. 병목 구간보다 긴 직선 초입에서 안정적입니다.'},
+    lens:{key:'lens',symbol:'RNG',label:'사거리',name:'중력렌즈',subtitle:'사거리 확장 장판',tags:['사거리','저격','커버'],effect:'피해 -2% · 사거리 +48',best:'후방 배치 · 직선 저격 · 광역 커버',caution:'사거리가 짧은 타워보다 장거리형에서 체감이 큽니다.',summary:'중력렌즈는 타워의 공격 반경을 넓혀 한 자리에서 더 오랫동안 공격하게 만드는 장판입니다. 후방 안전지대 활용도가 높아집니다.',tips:'광자, 프로스트처럼 사거리 가치가 큰 행성과 잘 맞습니다. 코어 근처보다 긴 라인을 비출 수 있는 후방 칸에 두세요.'},
+    mine:{key:'mine',symbol:'ORE',label:'광맥',name:'수정광맥',subtitle:'성장 / 보상 장판',tags:['성장','보상','경제'],effect:'피해 -2% · 보상 +22%',best:'안전한 후방 · 장기전 · 여유 슬롯',caution:'즉시 전투력 상승은 다른 장판보다 약합니다.',summary:'수정광맥은 전투 중 보상을 조금 더 챙겨 장기적인 성장을 돕는 장판입니다. 초반이나 안정 구간에서 자원 굴리기에 좋습니다.',tips:'라인 핵심 전투 칸보다는 후방 안정 칸에 두고, 여유가 생긴 뒤 성장용 행성을 배치하는 운영이 무난합니다.'},
+    rift:{key:'rift',symbol:'RFT',label:'균열',name:'불안정균열',subtitle:'고위험 고화력 장판',tags:['리스크','폭딜','후반'],effect:'피해 +70% · 과열 5%',best:'고레벨 주력 딜러 · 중반 병목 구간',caution:'리스크가 큰 만큼 아무 타워나 올리면 손해를 볼 수 있습니다.',summary:'불안정균열은 가장 강한 공격 보너스를 주지만 과열 리스크가 있는 하이리스크 장판입니다. 잘 쓰면 전장을 크게 압축하지만 운영 난도가 높습니다.',tips:'고레벨 주력 딜러를 올리고, 군중 제어 타워와 같이 써서 리스크를 줄이세요. 초반보다 중후반 핵심 구간에 배치하는 편이 안전합니다.'},
     hazard:{key:'hazard',symbol:'HAZ',label:'위험',name:'붉은 위험 장판',subtitle:'3x3 디버프 구역',tags:['디버프','위험','공간압박'],effect:'배치 가능 · 타워 성능 하락',best:'몬스터 경로 주변 좋은 자리에 등장 · 위험 감수 선택',caution:'일반 장판과 반대로 보너스가 아니라 디버프가 적용됩니다.',summary:'붉은 위험 장판은 3x3 정사각형으로 나타나는 위험 구역입니다. 타워를 배치할 수는 있지만, 장판 종류에 따라 공격 주기 증가, 공격력 감소, 사거리 감소, 치명/특수 확률 감소가 적용됩니다.',tips:'위험 장판은 막힌 칸이 아니라 손해가 있는 칸입니다. 자리가 너무 좋다면 감수하고 배치할 수 있지만, 주력 딜러는 가능하면 안전 장판이나 일반 칸에 배치하는 편이 좋습니다.',resonance:'공명 없음 · 디버프 전용',matchingTitle:'디버프 규칙',matching:'과열은 공속, 약화는 공격력, 교란은 사거리, 불안정은 치명/특수 확률을 낮춥니다.',matchingDesc:'일반 장판의 보너스가 반대로 적용되는 위험 구역이라고 이해하면 쉽습니다.',ruleTitle:'3x3 구역',rule:'동일한 위험 효과가 3x3 전체에 적용됩니다.',ruleDesc:'구역 안 9칸 어디에 배치해도 같은 디버프가 적용됩니다.'}
   };
   var plateKeys=['amp','coil','lens','mine','rift','hazard'];
@@ -1386,6 +1386,10 @@
   function stageBaseSrc(){
     try{
       var bgm=AUDIO_URLS && AUDIO_URLS.bgm;
+      var stageNo=0;
+      if(typeof S!=='undefined' && S && Number.isFinite(Number(S.stageNo))) stageNo=Number(S.stageNo);
+      else if(typeof StageMapState!=='undefined' && StageMapState && Number.isFinite(Number(StageMapState.current))) stageNo=Number(StageMapState.current);
+      if(stageNo >= 5 && bgm && bgm.stage5Plus) return bgm.stage5Plus;
       var arr=(bgm && bgm.stages) || [];
       var theme=0;
       if(typeof S!=='undefined' && S && Number.isFinite(Number(S.theme))) theme=Number(S.theme);
@@ -4403,4 +4407,47 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock
   }else{
     install();
   }
+})();
+
+/* ===== v184-iphone-landscape-armory-wallet-number-safe =====
+   Adds only state classes for CSS sizing. It does not change the actual shard value. */
+(function(){
+  function syncArmoryWalletAmountClass(){
+    try{
+      var wallet = document.getElementById('towerPopupWallet');
+      if(!wallet) return;
+      var amountNode = wallet.querySelector('b');
+      var text = (amountNode && amountNode.textContent ? amountNode.textContent : '').replace(/\s+/g,'').trim();
+      var len = text.length;
+      wallet.classList.remove('shardAmountMedium','shardAmountLong','shardAmountVeryLong');
+      wallet.setAttribute('data-shard-text-len', String(len || 0));
+      if(len >= 9) wallet.classList.add('shardAmountVeryLong');
+      else if(len >= 7) wallet.classList.add('shardAmountLong');
+      else if(len >= 5) wallet.classList.add('shardAmountMedium');
+    }catch(err){}
+  }
+  function scheduleSync(){
+    requestAnimationFrame(function(){
+      syncArmoryWalletAmountClass();
+      setTimeout(syncArmoryWalletAmountClass, 80);
+    });
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleSync, {once:true});
+  else scheduleSync();
+  document.addEventListener('click', function(ev){
+    if(ev && ev.target && ev.target.closest && ev.target.closest('#towerPopup, #towerMenuBtn, #stageTowerManageBtn')) scheduleSync();
+  }, true);
+  var retry = 0;
+  var timer = setInterval(function(){
+    var wallet = document.getElementById('towerPopupWallet');
+    if(wallet && !wallet.__armoryWalletAmountObserverV184){
+      wallet.__armoryWalletAmountObserverV184 = true;
+      try{
+        new MutationObserver(scheduleSync).observe(wallet, {childList:true, subtree:true, characterData:true});
+      }catch(err){}
+      scheduleSync();
+      clearInterval(timer);
+    }
+    if(++retry > 40) clearInterval(timer);
+  }, 120);
 })();
