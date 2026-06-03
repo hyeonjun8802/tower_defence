@@ -1282,7 +1282,7 @@
       +'</div>';
     requestAnimationFrame(function(){e.detail.scrollLeft=0;});
   }
-  function renderTowerList(){var e=els();e.list.classList.remove('commonList');var towers=getTowers();if(!towers.length){e.list.innerHTML='';e.detail.innerHTML='<div class="towerPopupEmpty">타워 데이터를 불러오지 못했습니다.</div>';return;}if(!towers.some(function(t){return Number(t.type)===Number(selectedTowerType);}))selectedTowerType=(towers.find(function(t){return t.unlocked;})||towers[0]).type;e.list.innerHTML=towers.map(function(t){var active=Number(t.type)===Number(selectedTowerType);return '<button class="towerPopupItem '+(active?'active ':'')+(t.unlocked?'':'locked')+'" type="button" data-v164-tower="'+esc(t.type)+'" aria-label="'+esc(t.unlocked?t.name:'미개방 행성')+'" title="'+esc(t.unlocked?t.name:(t.unlockText||'잠금'))+'"><div class="towerPopupThumb">'+towerImg(t)+'</div></button>';}).join('');renderTowerDetail(selectedTowerType);}
+  function renderTowerList(){var e=els();e.list.classList.remove('commonList');var towers=getTowers();if(!towers.length){e.list.innerHTML='';e.detail.innerHTML='<div class="towerPopupEmpty">타워 데이터를 불러오지 못했습니다.</div>';return;}if(!towers.some(function(t){return Number(t.type)===Number(selectedTowerType);}))selectedTowerType=(towers.find(function(t){return t.unlocked;})||towers[0]).type;e.list.innerHTML=towers.map(function(t){var active=Number(t.type)===Number(selectedTowerType);var base=Number(t.type)<9;var mark=base?'<span class="towerHiddenReqMark '+(t.hiddenRequirementDone?'done':'pending')+'">'+(t.hiddenRequirementDone?'✓':'□')+'</span>':'';return '<button class="towerPopupItem '+(active?'active ':'')+(t.unlocked?'':'locked')+' '+(base?(t.hiddenRequirementDone?'hiddenReqDone':'hiddenReqPending'):'')+'" type="button" data-v164-tower="'+esc(t.type)+'" aria-label="'+esc(t.unlocked?t.name:'미개방 행성')+'" title="'+esc(t.unlocked?t.name:(t.unlockText||'잠금'))+'"><div class="towerPopupThumb">'+towerImg(t)+'</div>'+mark+'</button>';}).join('');renderTowerDetail(selectedTowerType);}
   function commonTitle(u){return commonNames[u&&u.key]||(u&&u.name)||'공통 연구';}
   function commonSubtitle(u){return commonSub[u&&u.key]||((u&&u.type)||'공통')+' 강화 / 공용 패시브';}
   function commonLevelLabel(u){var max=Math.max(1,Number(u&&u.max||1));var level=Math.max(0,Number(u&&u.level||0));if(!u||!u.unlocked)return '잠금';return 'Lv.'+Math.min(level,max);}
@@ -2437,6 +2437,19 @@
     }
     return '<div class="commonLevelListPanel commonSimpleLevelPanel" style="--skill-color:'+esc(u&&u.color)+'"><div class="commonSimpleLevelHeader"><small>LEVEL ROUTE</small><b>레벨 진행</b></div><div class="commonLevelStepList commonSimpleLevelList" role="list">'+rows.join('')+'</div></div>';
   }
+  function hiddenUnlockLockedDetail(t){
+    var progress=t&&t.hiddenUnlockProgress;
+    var items=(t&&Array.isArray(t.hiddenUnlockItems))?t.hiddenUnlockItems:((progress&&Array.isArray(progress.items))?progress.items:[]);
+    var done=Number(progress&&progress.done||items.filter(function(x){return x&&x.done;}).length||0);
+    var total=Number(progress&&progress.total||items.length||0);
+    var pending=items.filter(function(x){return !(x&&x.done);});
+    var missing=pending.length?pending.map(function(item){return '<span>'+esc((item&&item.name)||'기본 행성')+'</span>';}).join(''):'<span class="allDone">모든 조건 달성</span>';
+    var rows=items.map(function(item){
+      var on=!!(item&&item.done);
+      return '<div class="hiddenUnlockStep '+(on?'done':'locked')+'"><b>'+(on?'✓':'□')+'</b><span>'+esc((item&&item.name)||'기본 행성')+' Lv.6</span><em>'+(on?'달성':'부족')+'</em></div>';
+    }).join('');
+    return '<div class="armoryLockedShell hiddenPlanetLockShell"><div class="armoryLockOverlay hiddenUnlockOverlay" style="position:relative;min-height:260px"><div class="armoryLockBox hiddenPlanetLockBox hiddenPlanetLockBox--clear"><div class="armoryLockIcon">🔒</div><b>히든 행성 잠금</b><div class="hiddenUnlockMeter"><strong>'+esc(done)+'</strong><span>/</span><strong>'+esc(total)+'</strong></div><span>'+esc((t&&t.unlockText)||'기본 행성 전체 Lv.6 누적 달성')+'</span></div><div class="hiddenMissingBox"><small>아직 부족한 행성</small><div class="hiddenMissingChips">'+missing+'</div></div><div class="hiddenUnlockTip">왼쪽 목록의 □ 표시는 미달성, ✓ 표시는 달성입니다.</div><div class="hiddenUnlockPanel"><div class="hiddenUnlockHeader"><small>HIDDEN UNLOCK</small><b>조건 현황 '+esc(done)+' / '+esc(total)+'</b></div><p>아래 항목 중 <b>부족</b>으로 표시된 기본 행성을 Lv.6까지 한 번 달성하면 체크로 바뀝니다.</p><div class="hiddenUnlockList">'+rows+'</div></div></div></div>';
+  }
 
   renderCommonDetail=function(key){
     var e=els(); var api=window.TowerDefenseGrowth; var ups=api&&api.getUpgrades?api.getUpgrades():[]; var u=ups.find(function(x){return x.key===key;})||ups[0];
@@ -2463,7 +2476,12 @@
     if(!t){e.detail.innerHTML='<div class="towerPopupEmpty">타워 데이터를 불러오지 못했습니다.</div>';return;}
     selectedTowerType=Number(t.type);
     e.list.querySelectorAll('[data-v164-tower]').forEach(function(b){ b.classList.toggle('active', Number(b.dataset.v164Tower)===selectedTowerType); });
-    if(!t.unlocked){e.detail.innerHTML='<div class="armoryLockedShell"><div class="armoryLockOverlay" style="position:relative;min-height:260px"><div class="armoryLockBox"><div class="armoryLockIcon">🔒</div><b>행성 정보 잠금</b><span>'+esc(t.unlockText||'성역 클리어 후 공개')+'</span></div></div></div>';return;}
+    if(!t.unlocked){
+      e.detail.className='towerPopupDetail compactCombined';
+      e.detail.innerHTML=(Number(t.type)===9 && t.hiddenUnlockProgress)?hiddenUnlockLockedDetail(t):'<div class="armoryLockedShell"><div class="armoryLockOverlay" style="position:relative;min-height:260px"><div class="armoryLockBox"><div class="armoryLockIcon">🔒</div><b>행성 정보 잠금</b><span>'+esc(t.unlockText||'성역 클리어 후 공개')+'</span></div></div></div>';
+      rerenderAfterUpdate();
+      return;
+    }
     e.detail.className='towerPopupDetail compactCombined';
     e.detail.innerHTML=''
       +'<div class="armoryHeroPanel" style="--planet-color:'+esc(t.color)+'"><div class="armoryHeroHeader"><div class="armoryTowerThumb">'+towerImg(t)+'</div><div><div class="armoryPanelTitle">Tower Profile</div><h2 class="armoryTowerTitle">'+esc(t.name)+'</h2><div class="armoryTowerRole">'+esc(t.role)+' / '+esc(kindText(t.kind))+'</div>'+'</div></div></div>'

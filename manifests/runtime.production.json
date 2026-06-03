@@ -9,6 +9,13 @@
   "progression": {
     "stageClearRule": "clearing stage N unlocks stage N+1 and hides battle HUD on map/end screens",
     "maxStage": 12,
-    "sourceOfTruth": "planetRiftOfflineMetaV2.clears"
+    "sourceOfTruth": "planetRiftOfflineMetaV2.clears",
+    "subStageCounts": {
+      "1-3": 10,
+      "4-7": 15,
+      "8-12": 20
+    },
+    "finalBossRule": "final boss appears on the last sub-stage for each main stage",
+    "midBossRule": "mid boss appears around the halfway sub-stage for each main stage"
   }
 }

@@ -21237,3 +21237,321 @@ select,
     font-size:27px !important;
   }
 }
+
+/* ===== v-hidden-lv6-unlock-random-pool-ui ===== */
+.towerPopupItem{position:relative!important;}
+.towerHiddenReqMark{
+  position:absolute!important;
+  right:5px!important;
+  bottom:5px!important;
+  width:18px!important;
+  height:18px!important;
+  border-radius:999px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-family:'Orbitron','Noto Sans KR',system-ui,sans-serif!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  border:1px solid rgba(148,163,184,.30)!important;
+  background:rgba(2,6,23,.78)!important;
+  color:#64748b!important;
+  box-shadow:0 0 10px rgba(2,6,23,.55)!important;
+  pointer-events:none!important;
+}
+.towerHiddenReqMark.done{
+  color:#67e8f9!important;
+  border-color:rgba(103,232,249,.68)!important;
+  background:rgba(8,47,73,.76)!important;
+  box-shadow:0 0 14px rgba(34,211,238,.32)!important;
+}
+.towerPopupItem.hiddenReqDone .towerPopupThumb,
+.towerPopupItem.hiddenReqDone .towerPopupThumb img{
+  filter:saturate(1.18) brightness(1.08)!important;
+}
+.towerPopupItem.hiddenReqPending:not(.locked) .towerPopupThumb,
+.towerPopupItem.hiddenReqPending:not(.locked) .towerPopupThumb img{
+  filter:saturate(.82) brightness(.86)!important;
+}
+.hiddenUnlockPanel{
+  width:min(640px,calc(100% - 28px))!important;
+  margin:14px auto 0!important;
+  padding:14px 16px!important;
+  border:1px solid rgba(103,232,249,.28)!important;
+  background:linear-gradient(135deg,rgba(8,47,73,.58),rgba(2,6,23,.82))!important;
+  box-shadow:0 0 24px rgba(34,211,238,.13), inset 0 0 24px rgba(15,23,42,.35)!important;
+  color:#e2e8f0!important;
+  box-sizing:border-box!important;
+}
+.hiddenUnlockHeader{
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  margin-bottom:8px!important;
+}
+.hiddenUnlockHeader small{
+  font-family:'Orbitron','Noto Sans KR',system-ui,sans-serif!important;
+  font-size:11px!important;
+  font-weight:900!important;
+  letter-spacing:.16em!important;
+  color:#67e8f9!important;
+}
+.hiddenUnlockHeader b{
+  font-family:'Orbitron','Noto Sans KR',system-ui,sans-serif!important;
+  font-size:15px!important;
+  font-weight:900!important;
+  color:#f8fafc!important;
+}
+.hiddenUnlockPanel p{
+  margin:0 0 10px!important;
+  font-size:13px!important;
+  line-height:1.45!important;
+  color:#cbd5e1!important;
+  word-break:keep-all!important;
+}
+.hiddenUnlockList{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:7px!important;
+}
+.hiddenUnlockStep{
+  min-width:0!important;
+  display:grid!important;
+  grid-template-columns:18px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:6px!important;
+  padding:7px 8px!important;
+  border:1px solid rgba(148,163,184,.18)!important;
+  background:rgba(2,6,23,.55)!important;
+  color:#94a3b8!important;
+  font-size:11px!important;
+  line-height:1.25!important;
+}
+.hiddenUnlockStep b{
+  font-family:'Orbitron','Noto Sans KR',system-ui,sans-serif!important;
+  font-size:13px!important;
+  color:#64748b!important;
+}
+.hiddenUnlockStep span{
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-weight:800!important;
+}
+.hiddenUnlockStep em{
+  font-style:normal!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  color:#64748b!important;
+}
+.hiddenUnlockStep.done{
+  color:#e0f2fe!important;
+  border-color:rgba(103,232,249,.42)!important;
+  background:rgba(8,47,73,.46)!important;
+  box-shadow:inset 0 0 16px rgba(34,211,238,.09)!important;
+}
+.hiddenUnlockStep.done b,
+.hiddenUnlockStep.done em{color:#67e8f9!important;}
+.planetCard{position:relative!important;}
+.hiddenLv6Badge{
+  position:absolute!important;
+  left:8px!important;
+  bottom:8px!important;
+  z-index:3!important;
+  padding:2px 6px!important;
+  border-radius:999px!important;
+  border:1px solid rgba(148,163,184,.22)!important;
+  background:rgba(2,6,23,.76)!important;
+  color:#64748b!important;
+  font-family:'Orbitron','Noto Sans KR',system-ui,sans-serif!important;
+  font-size:8px!important;
+  font-weight:900!important;
+  line-height:1.2!important;
+  pointer-events:none!important;
+}
+.planetCard.hiddenReqDone .hiddenLv6Badge{
+  color:#67e8f9!important;
+  border-color:rgba(103,232,249,.62)!important;
+  background:rgba(8,47,73,.78)!important;
+  box-shadow:0 0 12px rgba(34,211,238,.24)!important;
+}
+.planetCard.hiddenReqPending .hiddenLv6Badge{opacity:.82!important;}
+@media (max-width: 760px), (max-height: 520px){
+  .hiddenUnlockPanel{width:calc(100% - 18px)!important;margin-top:10px!important;padding:10px 11px!important;}
+  .hiddenUnlockList{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important;}
+  .hiddenUnlockHeader b{font-size:13px!important;}
+  .hiddenUnlockPanel p{font-size:11.5px!important;}
+  .hiddenUnlockStep{font-size:10px!important;padding:6px 7px!important;}
+}
+
+
+/* ===== v-hidden-unlock-clarity: show exactly what is missing ===== */
+#towerPopup .hiddenPlanetLockShell .hiddenUnlockOverlay{
+  position:absolute!important;
+  inset:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:10px!important;
+  padding:14px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  background:rgba(0,7,20,.48)!important;
+  backdrop-filter:blur(5px)!important;
+  box-sizing:border-box!important;
+}
+#towerPopup .hiddenPlanetLockShell .hiddenPlanetLockBox--clear{
+  width:min(560px,92%)!important;
+  max-width:92%!important;
+  min-width:0!important;
+  padding:16px 20px!important;
+  text-align:center!important;
+  box-sizing:border-box!important;
+}
+#towerPopup .hiddenPlanetLockShell .hiddenPlanetLockBox--clear .armoryLockIcon{
+  margin-bottom:4px!important;
+}
+#towerPopup .hiddenPlanetLockShell .hiddenPlanetLockBox--clear b{
+  font-size:25px!important;
+  line-height:1.12!important;
+  margin-bottom:6px!important;
+}
+#towerPopup .hiddenUnlockMeter{
+  display:flex!important;
+  align-items:baseline!important;
+  justify-content:center!important;
+  gap:6px!important;
+  margin:2px 0 5px!important;
+  font-family:'Orbitron','Noto Sans KR',system-ui,sans-serif!important;
+  color:#fef3c7!important;
+  text-shadow:0 0 12px rgba(250,204,21,.22)!important;
+}
+#towerPopup .hiddenUnlockMeter strong{
+  font-size:24px!important;
+  font-weight:950!important;
+  line-height:1!important;
+}
+#towerPopup .hiddenUnlockMeter span{
+  margin:0!important;
+  display:inline!important;
+  color:#94a3b8!important;
+  font-size:14px!important;
+  font-weight:900!important;
+}
+#towerPopup .hiddenMissingBox{
+  width:min(680px,92%)!important;
+  padding:10px 12px!important;
+  border:1px solid rgba(250,204,21,.22)!important;
+  background:linear-gradient(135deg,rgba(113,63,18,.34),rgba(2,6,23,.74))!important;
+  box-shadow:inset 0 0 18px rgba(250,204,21,.045)!important;
+  box-sizing:border-box!important;
+}
+#towerPopup .hiddenMissingBox small{
+  display:block!important;
+  margin:0 0 7px!important;
+  color:#fef3c7!important;
+  font-family:'Orbitron','Noto Sans KR',system-ui,sans-serif!important;
+  font-size:11px!important;
+  font-weight:950!important;
+  letter-spacing:.08em!important;
+}
+#towerPopup .hiddenMissingChips{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+}
+#towerPopup .hiddenMissingChips span{
+  max-width:100%!important;
+  padding:4px 8px!important;
+  border-radius:999px!important;
+  border:1px solid rgba(148,163,184,.24)!important;
+  background:rgba(2,6,23,.68)!important;
+  color:#e2e8f0!important;
+  font-size:11px!important;
+  font-weight:900!important;
+  line-height:1.25!important;
+  white-space:nowrap!important;
+}
+#towerPopup .hiddenMissingChips .allDone{
+  color:#67e8f9!important;
+  border-color:rgba(103,232,249,.50)!important;
+  background:rgba(8,47,73,.56)!important;
+}
+#towerPopup .hiddenUnlockTip{
+  width:min(680px,92%)!important;
+  color:#bae6fd!important;
+  font-size:12px!important;
+  font-weight:800!important;
+  line-height:1.35!important;
+  text-align:left!important;
+  box-sizing:border-box!important;
+}
+#towerPopup .hiddenPlanetLockShell .hiddenUnlockPanel{
+  width:min(680px,92%)!important;
+  max-height:38%!important;
+  margin:0!important;
+  padding:10px 12px!important;
+  overflow-y:auto!important;
+  box-sizing:border-box!important;
+}
+#towerPopup .hiddenPlanetLockShell .hiddenUnlockPanel p{
+  margin-bottom:8px!important;
+  font-size:12px!important;
+}
+#towerPopup .hiddenPlanetLockShell .hiddenUnlockList{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+}
+#towerPopup .hiddenPlanetLockShell .hiddenUnlockStep{
+  padding:6px 7px!important;
+  font-size:10.5px!important;
+}
+#towerPopup .hiddenPlanetLockShell .hiddenUnlockStep.locked em{
+  color:#fbbf24!important;
+}
+#towerPopup .hiddenPlanetLockShell .hiddenUnlockStep.locked b{
+  color:#fbbf24!important;
+}
+@media (max-width:760px), (max-height:560px){
+  #towerPopup .hiddenPlanetLockShell .hiddenUnlockOverlay{
+    justify-content:flex-start!important;
+    gap:8px!important;
+    padding:10px 9px!important;
+  }
+  #towerPopup .hiddenPlanetLockShell .hiddenPlanetLockBox--clear{
+    width:94%!important;
+    padding:12px 13px!important;
+  }
+  #towerPopup .hiddenPlanetLockShell .hiddenPlanetLockBox--clear b{font-size:20px!important;}
+  #towerPopup .hiddenUnlockMeter strong{font-size:20px!important;}
+  #towerPopup .hiddenMissingBox,
+  #towerPopup .hiddenUnlockTip,
+  #towerPopup .hiddenPlanetLockShell .hiddenUnlockPanel{width:94%!important;}
+  #towerPopup .hiddenPlanetLockShell .hiddenUnlockList{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  #towerPopup .hiddenPlanetLockShell .hiddenUnlockPanel{max-height:44%!important;}
+  #towerPopup .hiddenMissingChips span{font-size:10px!important;padding:3px 7px!important;}
+}
+@media (max-height:430px){
+  #towerPopup .hiddenPlanetLockShell .hiddenUnlockOverlay{gap:6px!important;padding:8px!important;}
+  #towerPopup .hiddenPlanetLockShell .hiddenPlanetLockBox--clear{padding:9px 11px!important;}
+  #towerPopup .hiddenPlanetLockShell .hiddenPlanetLockBox--clear .armoryLockIcon{display:none!important;}
+  #towerPopup .hiddenPlanetLockShell .hiddenPlanetLockBox--clear b{font-size:17px!important;margin-bottom:2px!important;}
+  #towerPopup .hiddenPlanetLockShell .hiddenPlanetLockBox--clear span{font-size:10.5px!important;line-height:1.3!important;}
+  #towerPopup .hiddenUnlockMeter{margin:0 0 2px!important;}
+  #towerPopup .hiddenUnlockMeter strong{font-size:17px!important;}
+  #towerPopup .hiddenMissingBox{padding:7px 8px!important;}
+  #towerPopup .hiddenMissingBox small{font-size:9.5px!important;margin-bottom:5px!important;}
+  #towerPopup .hiddenMissingChips{gap:4px!important;max-height:42px!important;overflow:hidden!important;}
+  #towerPopup .hiddenMissingChips span{font-size:9px!important;padding:2px 6px!important;}
+  #towerPopup .hiddenUnlockTip{font-size:10px!important;}
+  #towerPopup .hiddenPlanetLockShell .hiddenUnlockPanel{max-height:34%!important;padding:7px 8px!important;}
+  #towerPopup .hiddenPlanetLockShell .hiddenUnlockHeader{margin-bottom:5px!important;}
+  #towerPopup .hiddenPlanetLockShell .hiddenUnlockPanel p{display:none!important;}
+  #towerPopup .hiddenPlanetLockShell .hiddenUnlockStep{font-size:9px!important;padding:4px 5px!important;grid-template-columns:14px minmax(0,1fr) auto!important;}
+}

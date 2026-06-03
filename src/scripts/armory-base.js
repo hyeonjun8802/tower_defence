@@ -137,6 +137,17 @@
   function lockShell(inner, title, reason){
     return `<div class="armoryLockedShell"><div class="armoryMasked">${inner}</div><div class="armoryLockOverlay"><div class="armoryLockBox"><div class="armoryLockIcon">🔒</div><b>${esc(title)}</b><span>${esc(reason)}</span></div></div></div>`;
   }
+  function hiddenUnlockProgressHtml(t){
+    const progress = t?.hiddenUnlockProgress;
+    const items = Array.isArray(t?.hiddenUnlockItems) ? t.hiddenUnlockItems : (Array.isArray(progress?.items) ? progress.items : []);
+    if(!progress && !items.length) return '';
+    const done = Number(progress?.done || items.filter(x => x.done).length || 0);
+    const total = Number(progress?.total || items.length || 0);
+    const pending = items.filter(item => !item?.done);
+    const missing = pending.length ? pending.map(item => `<span>${esc(item.name || item.id || '기본 행성')}</span>`).join('') : '<span class="allDone">모든 조건 달성</span>';
+    const rows = items.map(item => `<div class="hiddenUnlockStep ${item.done ? 'done' : 'locked'}"><b>${item.done ? '✓' : '□'}</b><span>${esc(item.name || item.id || '기본 행성')} Lv.6</span><em>${item.done ? '달성' : '부족'}</em></div>`).join('');
+    return `<div class="hiddenMissingBox"><small>아직 부족한 행성</small><div class="hiddenMissingChips">${missing}</div></div><div class="hiddenUnlockTip">왼쪽 목록의 □ 표시는 미달성, ✓ 표시는 달성입니다.</div><div class="hiddenUnlockPanel"><div class="hiddenUnlockHeader"><small>HIDDEN UNLOCK</small><b>조건 현황 ${esc(done)} / ${esc(total)}</b></div><p>아래 항목 중 <b>부족</b>으로 표시된 기본 행성을 Lv.6까지 한 번 달성하면 체크로 바뀝니다.</p><div class="hiddenUnlockList">${rows}</div></div>`;
+  }
   function genericLockedTowerDetail(t){
     const unlock = t?.unlockText || '성역 클리어 후 공개';
     const masked = `
@@ -145,6 +156,12 @@
         <div><h2 class="armoryTowerTitle">미개방 행성</h2><div class="armoryTowerRole">??? / ??? / ???</div></div>
       </div>
       <div class="armoryStatGrid"><div class="armoryStat"><small>활성 조건</small><b>${esc(unlock)}</b></div><div class="armoryStat"><small>전투 역할</small><b>???</b></div></div>`;
+    if(Number(t?.type) === 9 && t?.hiddenUnlockProgress){
+      const progress = t?.hiddenUnlockProgress;
+      const done = Number(progress?.done || 0);
+      const total = Number(progress?.total || 0);
+      return `<div class="armoryLockedShell hiddenPlanetLockShell"><div class="armoryMasked">${masked}</div><div class="armoryLockOverlay hiddenUnlockOverlay"><div class="armoryLockBox hiddenPlanetLockBox hiddenPlanetLockBox--clear"><div class="armoryLockIcon">🔒</div><b>히든 행성 잠금</b><div class="hiddenUnlockMeter"><strong>${esc(done)}</strong><span>/</span><strong>${esc(total)}</strong></div><span>${esc(unlock)}</span></div>${hiddenUnlockProgressHtml(t)}</div></div>`;
+    }
     return lockShell(masked, '행성 정보 잠금', `${unlock} 달성 후 행성 정보가 공개됩니다.`);
   }
   function towerSkillRows(t){ return ``; }
@@ -188,10 +205,13 @@
       return;
     }
     if(!towers.some(t => Number(t.type) === Number(selectedTowerType))) selectedTowerType = towers[0].type;
-    list.innerHTML = towers.map(t => `
-      <button class="towerPopupItem ${Number(t.type) === Number(selectedTowerType) ? 'active' : ''} ${t.unlocked ? '' : 'locked'}" type="button" data-tower-type="${esc(t.type)}" aria-label="${esc(t.unlocked ? t.name : '미개방 행성')}" title="${esc(t.unlocked ? t.name : t.unlockText)}">
-        <div class="towerPopupThumb">${towerImg(t, 'towerPopupThumbImg')}</div>
-      </button>`).join('');
+    list.innerHTML = towers.map(t => {
+      const reqMark = Number(t.type) < 9 ? `<span class="towerHiddenReqMark ${t.hiddenRequirementDone ? 'done' : 'pending'}">${t.hiddenRequirementDone ? '✓' : '□'}</span>` : '';
+      return `
+      <button class="towerPopupItem ${Number(t.type) === Number(selectedTowerType) ? 'active' : ''} ${t.unlocked ? '' : 'locked'} ${Number(t.type) < 9 ? (t.hiddenRequirementDone ? 'hiddenReqDone' : 'hiddenReqPending') : ''}" type="button" data-tower-type="${esc(t.type)}" aria-label="${esc(t.unlocked ? t.name : '미개방 행성')}" title="${esc(t.unlocked ? t.name : t.unlockText)}">
+        <div class="towerPopupThumb">${towerImg(t, 'towerPopupThumbImg')}</div>${reqMark}
+      </button>`;
+    }).join('');
     const selected = towers.find(t => Number(t.type) === Number(selectedTowerType));
     const preferred = (selected && selected.unlocked) ? selected : (towers.find(t => t.unlocked) || selected || towers[0]);
     selectedTowerType = Number(preferred.type);

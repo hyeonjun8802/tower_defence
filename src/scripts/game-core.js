@@ -342,6 +342,45 @@ const STAGE_MAP_DEFS = [
 
 
 
+
+// v-substage-count-expansion: variable sub-stage counts by main stage.
+// Note: the request listed stages 4~7 twice (12 and 15). The later/higher value is
+// treated as the final target so the campaign actually expands in the mid game.
+const STAGE_SUB_STAGE_COUNT_BY_STAGE = Object.freeze({
+  1: 10,
+  2: 10,
+  3: 10,
+  4: 15,
+  5: 15,
+  6: 15,
+  7: 15,
+  8: 20,
+  9: 20,
+  10: 20,
+  11: 20,
+  12: 20
+});
+function getSubStageCountForStage(stageNo=null){
+  const rawStage = stageNo ?? ((typeof S !== 'undefined' && S && S.stageNo) || (typeof StageMapState !== 'undefined' && StageMapState.current) || 1);
+  const stage = clamp(Number(rawStage || 1), 1, STAGE_MAP_DEFS.length);
+  return Number(STAGE_SUB_STAGE_COUNT_BY_STAGE[stage] || 10);
+}
+function getMidBossWaveForStage(stageNo=null){
+  const maxWave = getSubStageCountForStage(stageNo);
+  return Math.max(5, Math.ceil(maxWave / 2));
+}
+function getFinalBossWaveForStage(stageNo=null){
+  return getSubStageCountForStage(stageNo);
+}
+function isMidBossWave(stageNo=null, waveNo=null){
+  const wave = Number(waveNo ?? ((typeof S !== 'undefined' && S && S.ogge) || 1));
+  return wave === getMidBossWaveForStage(stageNo);
+}
+function isFinalBossWave(stageNo=null, waveNo=null){
+  const wave = Number(waveNo ?? ((typeof S !== 'undefined' && S && S.ogge) || 1));
+  return wave === getFinalBossWaveForStage(stageNo);
+}
+
 const COMMERCIAL_STAGE_BALANCE = [{"stage":1,"key":"cosmic","name":"COSMIC VOID","concept":"intro_damage","general_hp_multiplier":0.72,"general_speed_multiplier":0.99,"wave_count_multiplier":0.64,"boss_multiplier":0.92,"reward_multiplier":1.06,"plate_budget":{"amp":1,"coil":1,"lens":0,"mine":0,"rift":0},"forbidden_budget":0,"minimum_usable_placements":24,"target_winrate":0.88},{"stage":2,"key":"frost","name":"FROST EXPANSE","concept":"speed_control","general_hp_multiplier":0.82,"general_speed_multiplier":1.0,"wave_count_multiplier":0.7,"boss_multiplier":0.98,"reward_multiplier":1.1,"plate_budget":{"amp":0,"coil":1,"lens":1,"mine":0,"rift":0},"forbidden_budget":1,"minimum_usable_placements":23,"target_winrate":0.83},{"stage":3,"key":"lava","name":"LAVA NEBULA","concept":"armor_break","general_hp_multiplier":0.96,"general_speed_multiplier":1.01,"wave_count_multiplier":0.78,"boss_multiplier":1.05,"reward_multiplier":1.14,"plate_budget":{"amp":2,"coil":0,"lens":0,"mine":0,"rift":1},"forbidden_budget":1,"minimum_usable_placements":22,"target_winrate":0.76},{"stage":4,"key":"jungle","name":"JUNGLE CORE","concept":"regen_cut","general_hp_multiplier":1.08,"general_speed_multiplier":1.02,"wave_count_multiplier":0.84,"boss_multiplier":1.1,"reward_multiplier":1.18,"plate_budget":{"amp":1,"coil":1,"lens":0,"mine":1,"rift":0},"forbidden_budget":2,"minimum_usable_placements":21,"target_winrate":0.7},{"stage":5,"key":"smog","name":"SMOG WASTELAND","concept":"stealth_weaken","general_hp_multiplier":1.24,"general_speed_multiplier":1.03,"wave_count_multiplier":0.88,"boss_multiplier":1.16,"reward_multiplier":1.24,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":1,"rift":0},"forbidden_budget":2,"minimum_usable_placements":20,"target_winrate":0.65},{"stage":6,"key":"crystal","name":"CRYSTAL NEBULA","concept":"resonance_charge","general_hp_multiplier":1.4,"general_speed_multiplier":1.04,"wave_count_multiplier":0.92,"boss_multiplier":1.22,"reward_multiplier":1.3,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":1,"rift":1},"forbidden_budget":2,"minimum_usable_placements":20,"target_winrate":0.6},{"stage":7,"key":"machine","name":"MACHINE CORE","concept":"shield_dismantle","general_hp_multiplier":1.38,"general_speed_multiplier":1.02,"wave_count_multiplier":0.9,"boss_multiplier":1.14,"reward_multiplier":1.46,"plate_budget":{"amp":2,"coil":1,"lens":1,"mine":2,"rift":1},"forbidden_budget":1,"minimum_usable_placements":22,"target_winrate":0.64},{"stage":8,"key":"gravity","name":"GRAVITY MAUSOLEUM","concept":"crowd_control","general_hp_multiplier":1.82,"general_speed_multiplier":1.05,"wave_count_multiplier":0.96,"boss_multiplier":1.28,"reward_multiplier":1.54,"plate_budget":{"amp":2,"coil":1,"lens":1,"mine":2,"rift":1},"forbidden_budget":2,"minimum_usable_placements":21,"target_winrate":0.56},{"stage":9,"key":"thunder","name":"THUNDER CORRIDOR","concept":"speed_pressure","general_hp_multiplier":1.92,"general_speed_multiplier":1.06,"wave_count_multiplier":0.99,"boss_multiplier":1.32,"reward_multiplier":1.64,"plate_budget":{"amp":2,"coil":2,"lens":1,"mine":2,"rift":1},"forbidden_budget":2,"minimum_usable_placements":20,"target_winrate":0.52},{"stage":10,"key":"time","name":"TIME SHARDS","concept":"echo_split","general_hp_multiplier":2.0,"general_speed_multiplier":1.07,"wave_count_multiplier":1.02,"boss_multiplier":1.36,"reward_multiplier":1.74,"plate_budget":{"amp":2,"coil":1,"lens":2,"mine":1,"rift":2},"forbidden_budget":3,"minimum_usable_placements":20,"target_winrate":0.48},{"stage":11,"key":"silent","name":"SILENT CONSTELLATION","concept":"limited_info","general_hp_multiplier":2.08,"general_speed_multiplier":1.08,"wave_count_multiplier":1.04,"boss_multiplier":1.4,"reward_multiplier":1.86,"plate_budget":{"amp":2,"coil":1,"lens":2,"mine":2,"rift":1},"forbidden_budget":3,"minimum_usable_placements":19,"target_winrate":0.44},{"stage":12,"key":"throne","name":"RIFT THRONE","concept":"final_hybrid","general_hp_multiplier":2.18,"general_speed_multiplier":1.09,"wave_count_multiplier":1.06,"boss_multiplier":1.48,"reward_multiplier":2.0,"plate_budget":{"amp":2,"coil":2,"lens":1,"mine":2,"rift":2},"forbidden_budget":4,"minimum_usable_placements":19,"target_winrate":0.4}];
 const COMMERCIAL_STAGE_BALANCE_BY_STAGE = Object.freeze(Object.fromEntries(COMMERCIAL_STAGE_BALANCE.map(row => [Number(row.stage), Object.freeze(row)])));
 const COMMERCIAL_STAGE_BALANCE_DEFAULT = Object.freeze({
@@ -703,7 +742,13 @@ const OFFLINE_CHAPTERS = {
 let META = defaultOfflineMeta();
 
 function defaultOfflineMeta(){
-  return {saveVersion:SAVE_SCHEMA_VERSION,shards:0,totalClears:0,totalDefeats:0,bestWave:{},clears:{},story:{},upgrades:{},mastery:{},flags:{},settings:{bgm:true,sfx:true},unlockedTowers:STARTER_PLANET_TYPES.slice()};
+  return {
+    saveVersion:SAVE_SCHEMA_VERSION,shards:0,totalClears:0,totalDefeats:0,
+    bestWave:{},clears:{},story:{},upgrades:{},mastery:{},flags:{},settings:{bgm:true,sfx:true},
+    unlockedTowers:STARTER_PLANET_TYPES.slice(),
+    hiddenLevel6Progress:{},
+    hiddenPlanetUnlocked:false
+  };
 }
 function normalizeOfflineMeta(raw){
   const base = defaultOfflineMeta();
@@ -717,6 +762,8 @@ function normalizeOfflineMeta(raw){
   m.flags = Object.assign({}, base.flags, raw?.flags || {});
   m.settings = Object.assign({}, base.settings, raw?.settings || {});
   m.unlockedTowers = normalizeUnlockedTowers(raw?.unlockedTowers, m.clears);
+  m.hiddenLevel6Progress = normalizeHiddenLevel6Progress(raw?.hiddenLevel6Progress || raw?.hiddenPlanetLevel6Progress || raw?.flags?.hiddenLevel6Progress || {});
+  m.hiddenPlanetUnlocked = Boolean(raw?.hiddenPlanetUnlocked || raw?.hiddenUnlocked || raw?.flags?.hiddenPlanetUnlocked || hiddenProgressCompleted(m.hiddenLevel6Progress));
   m.shards = Math.max(0, Math.floor(Number(m.shards) || 0));
   m.totalClears = Math.max(0, Math.floor(Number(m.totalClears) || 0));
   m.totalDefeats = Math.max(0, Math.floor(Number(m.totalDefeats) || 0));
@@ -747,6 +794,7 @@ function isHangarPlanetLocked(type){
 }
 function availableSummonTypes(){
   const pool = Array.from(unlockedTowerSet()).filter(type => type >= 0 && type < BASE_PLANET_COUNT);
+  if(!isHiddenLocked() && !pool.includes(HIDDEN_PLANET_TYPE)) pool.push(HIDDEN_PLANET_TYPE);
   return pool.length ? pool : STARTER_PLANET_TYPES.slice();
 }
 function stageTowerReward(stageNo){
@@ -796,6 +844,7 @@ function loadOfflineMeta(){
       }
     }
     META = normalizeOfflineMeta(JSON.parse(rawText || 'null'));
+    refreshHiddenPlanetUnlocked({save:false, announce:false});
     applyCanonicalProgressToState({preferSelected:true});
     if(!TEST_MODE_CONFIG.enabled) saveOfflineMeta();
   }
@@ -893,9 +942,9 @@ function economyStageNo(stageNo=null){
   const raw = stageNo ?? ((typeof S !== 'undefined' && S && S.stageNo) || (typeof StageMapState !== 'undefined' && StageMapState.current) || 1);
   return economyClampInt(raw, 1, 12);
 }
-function economyWaveNo(waveNo=null){
+function economyWaveNo(waveNo=null, stageNo=null){
   const raw = waveNo ?? ((typeof S !== 'undefined' && S && S.ogge) || 1);
-  return economyClampInt(raw, 1, 10);
+  return economyClampInt(raw, 1, getSubStageCountForStage(stageNo));
 }
 function economyScaleFrom(table, stageNo){
   const idx = economyStageNo(stageNo) - 1;
@@ -989,19 +1038,24 @@ function lateStagePostFirstWavePressure(stageNo=null, waveNo=null, isBoss=false)
 }
 function startingGoldForStage(stageNo=null){
   const stage = economyStageNo(stageNo);
-  if(stage < 7) return 420;
-
-  // v-stage7-start-money-v2: stage 7+ starts with enough crystal for five immediate summons.
-  // Keep stages 1~6 unchanged, and calculate from the actual wave-1 summon cost so
-  // later stage cost scaling remains consistent if the summon formula changes nearby.
   const stageAdd = Math.max(0, stage - 1) * 4;
   const lateStageAdd = Math.max(0, stage - 6) * 3;
   const waveOneCost = Math.max(100, Math.round((100 + stageAdd + lateStageAdd) / 5) * 5);
+
+  // v-stage6-start-money-v2: stage 6 starts with enough crystal for five immediate summons.
+  // Keep stages 1~5 unchanged, because the user only reported stage 6-1 as hard.
+  if(stage === 6) return Math.max(420, waveOneCost * 5);
+  if(stage < 7) return 420;
+
+  // v-stage7-start-money-v2: stage 7+ starts with enough crystal for five immediate summons.
+  // Calculate from the actual wave-1 summon cost so later stage cost scaling remains consistent
+  // if the summon formula changes nearby.
   return Math.max(420, waveOneCost * 5);
 }
 function applyOfflineMetaToRun(resetHp=true){
   if(!S || !META) return;
   syncGlobalUpgradesFromMeta();
+  S.hiddenUnlocked = hiddenPlanetUnlocked();
   S.maxHp = Math.max(S.maxHp || 22, 22);
   if(resetHp) S.hp = S.maxHp;
   S.gold = Math.max(S.gold || 0, startingGoldForStage());
@@ -1637,7 +1691,7 @@ function nextResultSummaryText(kind, stageNo, waveNo){
   const stage = clamp(Number(stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
   const wave = Number(waveNo || 1);
   if(kind === 'sub-clear'){
-    const nextWave = Math.min(10, wave + 1);
+    const nextWave = Math.min(getSubStageCountForStage(stage), wave + 1);
     const preview = getWavePreviewInfo(nextWave, stage);
     return `다음 서브 스테이지 ${fmt2(stage)}-${fmt2(nextWave)} · ${preview.title}. ${preview.detail}`;
   }
@@ -1732,7 +1786,8 @@ function createStageResultOverlay(options){
   const opt = options || {};
   const kind = opt.kind || 'sub-clear';
   const stageNo = clamp(Number(opt.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
-  const waveNo = clamp(Number(opt.wave || S?.ogge || 1), 1, 10);
+  const maxSubStage = getSubStageCountForStage(stageNo);
+  const waveNo = clamp(Number(opt.wave || S?.ogge || 1), 1, maxSubStage);
   const stageTheme = resultStageTheme(stageNo);
   const id = kind === 'defeat' ? 'gameOverOverlay' : 'stageClearOverlay';
   removeStageResultOverlay();
@@ -1763,7 +1818,8 @@ function createStageResultOverlay(options){
 function showSubStageResultOverlay(summary){
   const safe = summary || {};
   const stageNo = clamp(Number(safe.stageNo || S?.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
-  const waveNo = clamp(Number(safe.wave || S?.ogge || 1), 1, 10);
+  const maxSubStage = getSubStageCountForStage(stageNo);
+  const waveNo = clamp(Number(safe.wave || S?.ogge || 1), 1, maxSubStage);
   const def = getStageDef(stageNo);
   const overlay = createStageResultOverlay({
     kind:'sub-clear',
@@ -1782,7 +1838,7 @@ function showSubStageResultOverlay(summary){
   overlay.querySelector('#stageResultContinueBtn').onclick = () => {
     removeStageClearOverlay();
     if(!S || S.gameOver) return;
-    S.ogge = Math.min(10, waveNo + 1);
+    S.ogge = Math.min(getSubStageCountForStage(stageNo), waveNo + 1);
     prepareWave();
   };
   overlay.querySelector('#stageResultMapBtn').onclick = () => {
@@ -1805,14 +1861,14 @@ function showStageClearOverlay(summary){
   const overlay = createStageResultOverlay({
     kind:'main-clear',
     stageNo:cleared,
-    wave:10,
+    wave:getSubStageCountForStage(cleared),
     kicker:'MAIN STAGE CLEAR',
     title:'메인 스테이지 클리어',
     body:`${def.name} / ${def.ko} 정화 완료. ${getOfflineStoryLog(cleared, 'clear')}`,
     coreLoss:Number(safe.coreLoss || 0),
     shardsGained:Number(safe.shardsGained || 0),
     kills:Number(safe.kills || S?.runKills || 0),
-    nextText:nextResultSummaryText('main-clear', cleared, 10),
+    nextText:nextResultSummaryText('main-clear', cleared, getSubStageCountForStage(cleared)),
     continueText:'계속하기',
     extraHtml:`<div class="stageResultMastery"><span>성역 숙련도</span><b>${mastery.stars}성 · 코어 보존 ${fmt2(mastery.hpRatio*100)}%</b><em>${starText}</em></div><div class="stageResultReward">${escapeHtml(STORY_EVENT_TEXT.clearBody)} 보상: ${reward ? escapeHtml(reward.name) : '완료'}</div>`
   });
@@ -1909,7 +1965,7 @@ function completeStageFromBattle(){
   const afterShards = Number(META?.shards || 0);
   const clearSummary = {
     stageNo:cleared,
-    wave:10,
+    wave:getSubStageCountForStage(cleared),
     kills:Number(S?.runKills || 0),
     coreLoss:coreLossValue(S.resultStageStartHp || S.maxHp || 0, S.hp || 0),
     shardsGained:Math.max(0, afterShards - beforeShards)
@@ -1973,6 +2029,101 @@ const PLANET_BASE_SIZE = 34; // v39: tower visual size reduced
 const PLANET_RENDER_SCALE = 0.76; // v39: icon sheet render scale reduced
 const BASE_PLANET_COUNT = 9;
 const HIDDEN_PLANET_TYPE = 9;
+const HIDDEN_PLANET_UNLOCK_LEVEL = 6;
+
+function hiddenUnlockRequiredTypes(){
+  return Array.from({length: BASE_PLANET_COUNT}, (_, i) => i);
+}
+function hiddenProgressKeyForType(type){
+  const p = Array.isArray(PLANETS) ? PLANETS[Number(type)] : null;
+  return p && p.id ? p.id : String(type);
+}
+function normalizeHiddenLevel6Progress(raw){
+  const src = raw && typeof raw === 'object' ? raw : {};
+  const out = {};
+  for(const type of hiddenUnlockRequiredTypes()){
+    const key = hiddenProgressKeyForType(type);
+    out[key] = Boolean(src[key] || src[String(type)] || src[Number(type)]);
+  }
+  return out;
+}
+function hiddenProgressCompleted(progress){
+  const p = normalizeHiddenLevel6Progress(progress || {});
+  return hiddenUnlockRequiredTypes().every(type => p[hiddenProgressKeyForType(type)] === true);
+}
+function ensureHiddenLevel6Progress(){
+  if(!META) return {};
+  META.hiddenLevel6Progress = normalizeHiddenLevel6Progress(META.hiddenLevel6Progress || {});
+  return META.hiddenLevel6Progress;
+}
+function hiddenLevel6ProgressSummary(){
+  const progress = ensureHiddenLevel6Progress();
+  const items = hiddenUnlockRequiredTypes().map(type => {
+    const p = PLANETS[type];
+    const key = hiddenProgressKeyForType(type);
+    return {type, key, id:p?.id || key, name:p?.name || `행성 ${type + 1}`, done: progress[key] === true};
+  });
+  const done = items.filter(x => x.done).length;
+  return {items, done, total:items.length, completed:items.length > 0 && done >= items.length};
+}
+function hiddenPlanetUnlocked(){
+  if(META?.hiddenPlanetUnlocked) return true;
+  const summary = hiddenLevel6ProgressSummary();
+  if(summary.completed && META){
+    META.hiddenPlanetUnlocked = true;
+    if(S) S.hiddenUnlocked = true;
+    return true;
+  }
+  return false;
+}
+function refreshHiddenPlanetUnlocked(options={}){
+  const wasUnlocked = Boolean(META?.hiddenPlanetUnlocked || S?.hiddenUnlocked);
+  const summary = hiddenLevel6ProgressSummary();
+  if(!summary.completed) return false;
+  if(META) META.hiddenPlanetUnlocked = true;
+  if(S) S.hiddenUnlocked = true;
+  if(options.save) saveOfflineMeta();
+  if(!wasUnlocked && options.announce){
+    toast('히든 행성 해금 — 스타 엔진이 랜덤 소환 풀에 합류했습니다');
+    sound('unlock');
+    log('히든 행성 해금: 기본 행성 전체 Lv.6 누적 달성 / 랜덤 소환 활성화');
+  }
+  return !wasUnlocked;
+}
+function isHiddenLevel6Done(type){
+  const progress = ensureHiddenLevel6Progress();
+  return progress[hiddenProgressKeyForType(type)] === true;
+}
+function markHiddenPlanetLevel6(type, options={}){
+  type = Number(type);
+  if(!(type >= 0 && type < BASE_PLANET_COUNT) || !META) return false;
+  const progress = ensureHiddenLevel6Progress();
+  const key = hiddenProgressKeyForType(type);
+  const changed = progress[key] !== true;
+  if(changed){
+    progress[key] = true;
+    if(options.announce){
+      const summary = hiddenLevel6ProgressSummary();
+      const name = PLANETS[type]?.name || `행성 ${type + 1}`;
+      log(`히든 조건 기록: ${name} Lv.${HIDDEN_PLANET_UNLOCK_LEVEL} 달성 (${summary.done}/${summary.total})`);
+    }
+  }
+  const unlockedNow = refreshHiddenPlanetUnlocked({save:false, announce:options.announce});
+  if((changed || unlockedNow) && options.save) saveOfflineMeta();
+  return changed || unlockedNow;
+}
+function syncHiddenPlanetLevel6ProgressFromGrid(options={}){
+  if(!Array.isArray(grid) || !META) return false;
+  let changed = false;
+  for(const tower of grid){
+    if(tower && Number(tower.level || 1) >= HIDDEN_PLANET_UNLOCK_LEVEL){
+      changed = markHiddenPlanetLevel6(tower.type, {save:false, announce:options.announce}) || changed;
+    }
+  }
+  const unlockedNow = refreshHiddenPlanetUnlocked({save:false, announce:options.announce});
+  if((changed || unlockedNow) && options.save) saveOfflineMeta();
+  return changed || unlockedNow;
+}
 
 function fmtInt(value){
   const n = Number(value);
@@ -2358,7 +2509,7 @@ const PLANETS = [
   {id:'smog', name:'스모그 행성', role:'약화 / 장판 제어', identity:'매연 장막으로 적을 약화시키고 둔화시켜 후반 압박을 안정적으로 낮춥니다.', color:'#9cab62', range:138, dmg:30, cd:31, kind:'poison', cost:115, card:'정화 장막 · 응축/역류', tags:['정화','장판제어','역류']},
   {id:'crystal', name:'크리스탈 행성', role:'축전 / 공명 설계', identity:'초과 피해를 저장하고 장판 공명을 만들어 배치 설계의 보상을 키웁니다.', color:'#c084fc', range:144, dmg:33, cd:33, kind:'crystal', cost:125, card:'축전 · 프리즘 링크', tags:['축전','장판설계','공명']},
   {id:'mecha', name:'메카 행성', role:'실드 해체 / 후반 안정성', identity:'장갑과 실드를 해체하고 위성포/방벽으로 최종 성역 압박을 버팁니다.', color:'#60a5fa', range:136, dmg:41, cd:38, kind:'mecha', cost:135, card:'실드 해체 · 방어망', tags:['실드해체','위성','방벽']},
-  {id:'starengine', name:'히든 스타 엔진', role:'최종 융합 병기', identity:'기본 9종의 고레벨 융합으로 열리는 초고출력 치명타 코어입니다.', color:'#f8fafc', range:220, dmg:205, cd:20, cost:0, kind:'crit', card:'히든 · 초고출력 크리티컬 코어', tags:['히든','치명타','융합','최종병기'], critChance:.68, critMul:3.6, explodeChance:.26, explodeRadius:126, bossMul:1.35}
+  {id:'starengine', name:'히든 스타 엔진', role:'히든 랜덤 병기', identity:'기본 행성 전체가 한 번이라도 Lv.6을 달성하면 랜덤 소환 풀에 합류하는 초고출력 치명타 코어입니다.', color:'#f8fafc', range:220, dmg:205, cd:20, cost:100, kind:'crit', card:'히든 · 초고출력 크리티컬 코어', tags:['히든','치명타','랜덤소환','최종병기'], critChance:.68, critMul:3.6, explodeChance:.26, explodeRadius:126, bossMul:1.35}
 ];
 
 
@@ -3029,7 +3180,8 @@ function planetThumbColumnForLevel(level){
 function hangarVisualSignature(){
   if(!Array.isArray(PLANETS)) return '0';
   const levels = fillLivePlanetLevels();
-  return levels.join('|') + '::' + (selected >= 0 && grid[selected] ? `${grid[selected].type}:${grid[selected].level}` : 'none');
+  const hp = hiddenLevel6ProgressSummary();
+  return levels.join('|') + '::' + (selected >= 0 && grid[selected] ? `${grid[selected].type}:${grid[selected].level}` : 'none') + `::hidden:${hp.done}/${hp.total}:${isHiddenLocked() ? 0 : 1}`;
 }
 
 function applyLiveThumb(el, type, frameIndex){
@@ -3074,14 +3226,17 @@ function applyLiveThumb(el, type, frameIndex){
 
 
 function isHiddenLocked(){
-  return !S || !S.hiddenUnlocked;
+  return !hiddenPlanetUnlocked();
 }
 
 function hangarCostText(type){
   const p = PLANETS[type];
   if(!p) return '-';
-  if(type === HIDDEN_PLANET_TYPE && isHiddenLocked()) return 'LOCK';
-  if(type === HIDDEN_PLANET_TYPE) return 'UNLOCKED';
+  if(type === HIDDEN_PLANET_TYPE && isHiddenLocked()){
+    const p = hiddenLevel6ProgressSummary();
+    return `조건 ${fmt2(p.done)}/${fmt2(p.total)}`;
+  }
+  if(type === HIDDEN_PLANET_TYPE) return 'RANDOM';
   if(!isTowerUnlocked(type)) return towerUnlockRequirementText(type);
   return `COST ${fmt2(p.cost || 100)}`;
 }
@@ -3090,7 +3245,8 @@ function hangarRoleText(type){
   const p = PLANETS[type];
   if(!p) return '';
   if(type === HIDDEN_PLANET_TYPE && isHiddenLocked()){
-    return '기본 행성 9종 Lv.5 달성 시 각성';
+    const p = hiddenLevel6ProgressSummary();
+    return `기본 행성 전체 Lv.${HIDDEN_PLANET_UNLOCK_LEVEL} 누적 달성 ${fmt2(p.done)}/${fmt2(p.total)}`;
   }
   if(!isTowerUnlocked(type)){
     const req = towerUnlockRequirementText(type);
@@ -3108,7 +3264,7 @@ function escapeHtml(value){
 
 function planetKindLabel(kind){
   return ({
-    splash:'광역 폭발형', slow:'감속 제어형', chain:'연쇄 전격형', poison:'지속 피해형', gravity:'군중 제어형', beam:'관통 빔형', crystal:'축전 공명형', mecha:'방어 해체형', crit:'치명타 융합형'
+    splash:'광역 폭발형', slow:'감속 제어형', chain:'연쇄 전격형', poison:'지속 피해형', gravity:'군중 제어형', beam:'관통 빔형', crystal:'축전 공명형', mecha:'방어 해체형', crit:'치명타 폭발형'
   })[kind] || '전투 행성';
 }
 
@@ -3125,7 +3281,7 @@ function planetPlayGuide(type){
     smog:'장판 제어와 둔화, 지속 피해를 함께 쓰는 행성입니다. 5성역 이후 혼잡한 경로에서 안정성이 좋습니다.',
     crystal:'피해를 저장하고 공명시키는 설계형 행성입니다. 여러 장판 효과가 만나는 자리에 배치하면 성장 효율이 좋습니다.',
     mecha:'실드 해체와 방어 보조에 강한 행성입니다. 장갑/실드 적이 늘어나는 후반 성역에서 가치가 큽니다.',
-    starengine:'기본 9종 Lv.5 달성 후 열리는 최종 병기입니다. 치명타와 폭발 피해로 후반 보스를 압박합니다.'
+    starengine:'기본 행성 전체 Lv.6 누적 달성 후 랜덤 소환에 합류하는 최종 병기입니다. 치명타와 폭발 피해로 후반 보스를 압박합니다.'
   };
   return guides[p.id] || `${p.card || p.kind || '전투 행성'} 역할을 담당합니다.`;
 }
@@ -3157,7 +3313,8 @@ function planetLevelNote(type, level){
   if(!p) return '';
   if(level === 1) return '소환 시작';
   if(level === 3) return '1차 진화 외형';
-  if(level === 5) return type < BASE_PLANET_COUNT ? '2차 진화 · 히든 융합 재료 가능' : '2차 진화';
+  if(level === 5) return '2차 진화';
+  if(level === HIDDEN_PLANET_UNLOCK_LEVEL && type < BASE_PLANET_COUNT) return '히든 해금 조건 누적 기록';
   if(level === 7) return '3차 진화 외형';
   if(level === 10) return '최종 진화 외형';
   if(level === PLANET_DETAIL_MAX_LEVEL) return '최대 합성 레벨';
@@ -3223,7 +3380,7 @@ function showPlanetDetail(type){
       <div class="planetDetailStat"><small>기본 공격력</small><b>${fmt2(p.dmg)}</b></div>
       <div class="planetDetailStat"><small>기본 사거리</small><b>${fmt2(p.range)}</b></div>
       <div class="planetDetailStat"><small>공격 주기</small><b>${fmt2(p.cd)}</b></div>
-      <div class="planetDetailStat"><small>소환 비용</small><b>${type === HIDDEN_PLANET_TYPE ? '융합' : fmt2(p.cost || 0)}</b></div>
+      <div class="planetDetailStat"><small>소환 비용</small><b>${type === HIDDEN_PLANET_TYPE ? '랜덤 소환' : fmt2(p.cost || 0)}</b></div>
       ${st ? `<div class="planetDetailStat"><small>현재 공격력</small><b>${fmt2(st.dmg)}</b></div>
       <div class="planetDetailStat"><small>현재 사거리</small><b>${fmt2(st.range)}</b></div>` : ''}
     </div>
@@ -3278,8 +3435,9 @@ function renderHangar(){
   box.innerHTML = PLANETS.map((p, i) => {
     const locked = isHangarPlanetLocked(i);
     return `
-    <div class="planetCard ${locked ? 'locked' : ''}" data-type="${i}" style="--planet-color:${p.color}">
+    <div class="planetCard ${locked ? 'locked' : ''} ${i < BASE_PLANET_COUNT ? (isHiddenLevel6Done(i) ? 'hiddenReqDone' : 'hiddenReqPending') : ''}" data-type="${i}" style="--planet-color:${p.color}">
       ${locked ? `<span class="lockTag">${i===HIDDEN_PLANET_TYPE ? 'LOCK' : '미해금'}</span>` : ''}
+      ${i < BASE_PLANET_COUNT ? `<span class="hiddenLv6Badge">${isHiddenLevel6Done(i) ? '✓ Lv.6' : 'Lv.6'}</span>` : ''}
       <div class="planetThumb liveThumb" data-type="${i}"></div>
       <div class="planetCardInfo">
         <div class="planetCardName">${p.name}</div>
@@ -3317,6 +3475,12 @@ function updateHangarState(){
     card.classList.toggle('active', active);
     card.classList.toggle('locked', isHangarPlanetLocked(type));
     card.classList.toggle('hasUnit', highest > 0);
+    if(type >= 0 && type < BASE_PLANET_COUNT){
+      const done = isHiddenLevel6Done(type);
+      card.classList.toggle('hiddenReqDone', done);
+      card.classList.toggle('hiddenReqPending', !done);
+      setTextIfChanged(card.querySelector('.hiddenLv6Badge'), done ? '✓ Lv.6' : 'Lv.6');
+    }
     setTextIfChanged(card.querySelector('.planetCardCost'), hangarCostText(type));
     setHtmlIfChanged(card.querySelector('.planetCardRole'), `${hangarRoleText(type)}`);
     setTextIfChanged(card.querySelector('.planetCardLevel'), highest > 0 ? `MAX Lv.${fmt2(highest)}` : 'LV.1');
@@ -3658,6 +3822,7 @@ function createMergedPlanet(a,b,idx){
   p.skillLevels = combineSkillLevels(a,b);
   const unlocked = syncTowerSkillUnlocks(p);
   if(unlocked.length && S){ log(`${p.def.name} Lv.${fmt2(p.level)} 고유 스킬 해금: ${unlocked.map(s=>s.name).join(' · ')}`); }
+  if(p.level >= HIDDEN_PLANET_UNLOCK_LEVEL) markHiddenPlanetLevel6(p.type, {save:true, announce:true});
   return p;
 }
 function pointSeg(px,py,x1,y1,x2,y2){
@@ -4163,10 +4328,10 @@ const STAGE_WAVE_TIPS = {
 };
 function getStageBattleDescription(stageNo, waveNo){
   const n = clamp(Number(stageNo || S?.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
-  const wave = Number(waveNo || S?.ogge || 1);
+  const wave = clamp(Number(waveNo || S?.ogge || 1), 1, getSubStageCountForStage(n));
   const base = STAGE_BATTLE_DESCRIPTIONS[n] || getStageDef(n).ko || '성역 방어';
-  if(wave === 5) return `${base} · 중간 보스`;
-  if(wave === 10) return `${base} · 최종 보스`;
+  if(isMidBossWave(n, wave)) return `${base} · 중간 보스`;
+  if(isFinalBossWave(n, wave)) return `${base} · 최종 보스`;
   if(wave % 4 === 0) return `${base} · 압박 웨이브`;
   return base;
 }
@@ -4191,11 +4356,11 @@ function getWavePreviewInfo(waveNo, stageNo){
   const stageTip = STAGE_WAVE_TIPS[stage] || '균형 배치';
   const parts = [];
   const tips = [];
-  if(wave === 5){
+  if(isMidBossWave(stage, wave)){
     parts.push(`${enemyLine} · 중간 보스 출현`);
     tips.push('보스 피해');
     tips.push(stageTip);
-  }else if(wave === 10){
+  }else if(isFinalBossWave(stage, wave)){
     parts.push(`${enemyLine} · 최종 보스 출현`);
     tips.push('핵심 타워 병합');
     tips.push(stageTip);
@@ -4248,12 +4413,13 @@ function prepareWave(){
     S.queue.push({type, monsterWave:S.ogge || 1, monsterStage:S.stageNo || StageMapState.current || 1});
   }
   S.currentBossInfo = null;
-  if(S.ogge===5){
-    const bossData = getStageBossDef(S.stageNo || StageMapState.current || 1, 'mid');
+  const currentStageNo = S.stageNo || StageMapState.current || 1;
+  if(isMidBossWave(currentStageNo, S.ogge)){
+    const bossData = getStageBossDef(currentStageNo, 'mid');
     S.queue.push({type:'midboss', bossTier:'mid', bossData});
     S.currentBossInfo = bossData;
-  }else if(S.ogge===10){
-    const bossData = getStageBossDef(S.stageNo || StageMapState.current || 1, 'final');
+  }else if(isFinalBossWave(currentStageNo, S.ogge)){
+    const bossData = getStageBossDef(currentStageNo, 'final');
     S.queue.push({type:'finalboss', bossTier:'final', bossData});
     S.currentBossInfo = bossData;
   }else if(S.ogge%4===0){
@@ -4270,7 +4436,7 @@ function prepareWave(){
   if(audio && audio.on) playStageBgm();
   toast(`${theme().ko} 진입 — 장판 활용이 필수입니다`);
   if(S.currentBossInfo){
-    const storyPhase = S.ogge===10 ? 'final' : 'mid';
+    const storyPhase = isFinalBossWave(S.stageNo || StageMapState.current || 1, S.ogge) ? 'final' : 'mid';
     markOfflineStory(S.stageNo || StageMapState.current || 1, storyPhase);
     sound('boss', { intensity: storyPhase === 'final' ? 1.2 : 1 });
     playStageBgm();
@@ -6829,52 +6995,13 @@ function autoMerge(continueSession=false, runId=null){
 }
 
 
-function tryCreateHiddenPlanet(){
-  // v14 safety-pass: keep the exact hidden-planet recipe, but avoid scanning the
-  // full grid once per base type. This only runs after board changes / fallback.
-  if(S?.hiddenUnlocked) return false;
+function syncHiddenUnlockProgressFromBoard(){
+  // 히든 행성은 더 이상 필드 위 기본 행성을 조합/소모해서 만들지 않는다.
+  // 기본 행성 전체의 Lv.6 누적 달성 여부만 저장하고, 완료되면 랜덤 소환 풀에 합류한다.
   if(!hiddenPlanetCheckDirty && (perfFrameId - hiddenPlanetCheckLastFrame) < HIDDEN_PLANET_CHECK_INTERVAL_FRAMES) return false;
   hiddenPlanetCheckDirty = false;
   hiddenPlanetCheckLastFrame = perfFrameId;
-
-  const recipe = new Array(BASE_PLANET_COUNT);
-  let matched = 0;
-  for(let i=0;i<grid.length;i++){
-    const t = grid[i];
-    if(!t) continue;
-    if(t.type === HIDDEN_PLANET_TYPE) return false;
-    const type = Number(t.type);
-    if(type >= 0 && type < BASE_PLANET_COUNT && t.level >= 5 && recipe[type] == null){
-      recipe[type] = i;
-      matched++;
-    }
-  }
-  if(matched < BASE_PLANET_COUNT) return false;
-
-  let sumX = 0, sumY = 0;
-  for(let i=0;i<recipe.length;i++){ const c = center(recipe[i]); sumX += c.x; sumY += c.y; }
-  const avgX = sumX / recipe.length, avgY = sumY / recipe.length;
-  let anchor = recipe[0], best = Infinity;
-  for(let i=0;i<recipe.length;i++){
-    const idx = recipe[i], c = center(idx);
-    const dx = c.x - avgX, dy = c.y - avgY, d = dx*dx + dy*dy;
-    if(d < best){ best = d; anchor = idx; }
-  }
-  for(let i=0;i<recipe.length;i++){ const idx = recipe[i]; if(idx !== anchor) grid[idx] = null; }
-  grid[anchor] = new Planet(HIDDEN_PLANET_TYPE, 1, anchor);
-  invalidateTerrainRenderCache();
-  S.hiddenUnlocked = true;
-  selected = anchor;
-  const c = center(anchor);
-  burst(c.x,c.y,'#f8fafc',44,56);
-  ring(c.x,c.y,92,'#f8fafc');
-  toast('히든 행성 각성 — 스타 엔진이 출현했습니다');
-  log('히든 행성 해금: 모든 기본 행성 Lv.5 융합 성공 / 스타 엔진 활성화');
-  sound('merge');
-  renderHangar();
-  updateSelected();
-  updateUI();
-  return true;
+  return syncHiddenPlanetLevel6ProgressFromGrid({save:true, announce:true});
 }
 
 
@@ -7082,7 +7209,7 @@ function waveDone(){
   log(`웨이브 클리어 보상: 수정 ${fmt2(bonus)}`);
   recordOfflineWaveProgress();
 
-  if(waveNo >= 10){
+  if(waveNo >= getSubStageCountForStage(stageNo)){
     log(`성역 ${stageNo} 클리어 — 유닛 초기화 및 다음 항로 개방`);
     completeStageFromBattle();
     return;
@@ -7932,7 +8059,7 @@ function loop(now){
     const interval=Math.max(18,54-S.ogge*1.8-S.theme*3);
     if(S.active&&S.queue.length&&spawnTimer<=0){spawn(S.queue.shift());spawnTimer=interval}
     for(let i=0;i<grid.length;i++){ const t = grid[i]; if(t) t.update(dt); }
-    tryCreateHiddenPlanet();
+    syncHiddenUnlockProgressFromBoard();
     for(let i=0;i<bullets.length;i++) bullets[i].update(dt);
     let bulletWrite = 0;
     for(let i=0;i<bullets.length;i++){
@@ -8467,7 +8594,7 @@ function getNormalStageBgmSrc(){
 
 function playStageBgm(){
   const baseSrc = getNormalStageBgmSrc();
-  const bossWave = !!S.currentBossInfo && (S.ogge === 5 || S.ogge === 10);
+  const bossWave = !!S.currentBossInfo && (isMidBossWave(S.stageNo || StageMapState.current || 1, S.ogge) || isFinalBossWave(S.stageNo || StageMapState.current || 1, S.ogge));
   const src = bossWave ? (AUDIO_URLS.bgm?.boss || baseSrc) : baseSrc;
   playBgmSrc(src, bossWave ? .40 : .34);
 }
@@ -9625,8 +9752,12 @@ window.TowerDefenseCatalog = {
     return PLANETS.map((planet, type) => {
       let unlockText = '기본 지급';
       let rewardStage = null;
+      const hiddenProgress = hiddenLevel6ProgressSummary();
+      const hiddenReqDone = type >= 0 && type < BASE_PLANET_COUNT ? isHiddenLevel6Done(type) : false;
       if(type === HIDDEN_PLANET_TYPE){
-        unlockText = '히든 융합 조건 달성 후 공개';
+        unlockText = isHiddenLocked()
+          ? `기본 행성 전체 Lv.${HIDDEN_PLANET_UNLOCK_LEVEL} 누적 달성 ${fmt2(hiddenProgress.done)}/${fmt2(hiddenProgress.total)}`
+          : '히든 해금 완료 · 랜덤 소환 가능';
       }else{
         const rewardEntry = Object.entries(STAGE_TOWER_REWARDS).find(([, reward]) => Number(reward.type) === Number(type));
         if(rewardEntry){
@@ -9650,6 +9781,9 @@ window.TowerDefenseCatalog = {
         tags: Array.isArray(planet.tags) ? planet.tags.slice() : [],
         rewardStage,
         unlockText,
+        hiddenRequirementDone: hiddenReqDone,
+        hiddenUnlockProgress: type === HIDDEN_PLANET_TYPE ? hiddenProgress : null,
+        hiddenUnlockItems: hiddenProgress.items.map(item => ({type:item.type, id:item.id, name:item.name, done:item.done})),
         unlocked: type === HIDDEN_PLANET_TYPE ? !isHiddenLocked() : isTowerUnlocked(type),
         thumb: planetThumbSrc(type, 1)
       };
