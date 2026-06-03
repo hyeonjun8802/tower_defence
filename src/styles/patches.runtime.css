@@ -21555,3 +21555,53 @@ select,
   #towerPopup .hiddenPlanetLockShell .hiddenUnlockPanel p{display:none!important;}
   #towerPopup .hiddenPlanetLockShell .hiddenUnlockStep{font-size:9px!important;padding:4px 5px!important;grid-template-columns:14px minmax(0,1fr) auto!important;}
 }
+
+/* ===== v-armory-selected-icon-bar-inside-fix =====
+   Scope: Armory left icon list only.
+   Keeps the selected accent bar clipped inside the icon frame so it never
+   protrudes outside rounded/cut-corner item geometry during tab/layout changes. */
+#towerPopup .towerPopupList > .towerPopupItem.active:not(.locked),
+#towerPopup .towerPopupList > .commonResearchItem.active:not(.locked),
+#towerPopup .towerPopupList > .plateInfoItem.active:not(.locked){
+  overflow:hidden !important;
+}
+#towerPopup .towerPopupList > .towerPopupItem.active:not(.locked)::after,
+#towerPopup .towerPopupList > .commonResearchItem.active:not(.locked)::after,
+#towerPopup .towerPopupList > .plateInfoItem.active:not(.locked)::after{
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  top:0 !important;
+  bottom:0 !important;
+  right:auto !important;
+  width:6px !important;
+  height:auto !important;
+  min-height:0 !important;
+  transform:none !important;
+  z-index:5 !important;
+  display:block !important;
+  pointer-events:none !important;
+  border:0 !important;
+  border-radius:0 !important;
+  clip-path:none !important;
+  background:linear-gradient(180deg, rgba(84,236,255,.95), rgba(34,211,238,.92)) !important;
+  box-shadow:0 0 14px rgba(57,231,255,.72) !important;
+  opacity:1 !important;
+}
+#towerPopup .towerPopupList > .towerPopupItem.locked.active::after,
+#towerPopup .towerPopupList > .commonResearchItem.locked.active::after,
+#towerPopup .towerPopupList > .plateInfoItem.locked.active::after{
+  left:auto !important;
+  top:auto !important;
+  right:8px !important;
+  bottom:6px !important;
+  width:22px !important;
+  height:22px !important;
+}
+@media (max-width:640px), (orientation:landscape) and (max-height:540px){
+  #towerPopup .towerPopupList > .towerPopupItem.active:not(.locked)::after,
+  #towerPopup .towerPopupList > .commonResearchItem.active:not(.locked)::after,
+  #towerPopup .towerPopupList > .plateInfoItem.active:not(.locked)::after{
+    width:5px !important;
+  }
+}

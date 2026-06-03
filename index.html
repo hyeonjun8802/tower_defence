@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>Planet Rift Defense: Cosmic Plates</title>
+<!-- Build: v5 cache-fixed planet unit sprites + animated starfield + upgraded BGM -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/styles/base.css">
+<link rel="stylesheet" href="src/styles/patches.runtime.css">
+
+
+<!-- v189-cleanup-summary: exact duplicate style/script blocks removed; final patch order preserved. -->
+
+
+</head>
+<body>
+<div id="bg"></div>
+<div id="nebula"></div>
+<canvas id="starfield"></canvas>
+<div id="vignette"></div>
+
+<div id="wrap">
+  <div id="game">
+    <div id="field">
+      <canvas id="canvas" width="748" height="708"></canvas>
+      <div id="toastLayer"></div>
+      <div id="stageFxLabel" class="stageFxLabel"></div>
+      <div id="hangar"></div>
+      <div class="fieldTopControls" aria-label="전투 빠른 조작">
+        <button id="towerMenuBtn" class="towerMenuBtn fieldIconBtn fieldIconBtn--tower" type="button" aria-haspopup="dialog" aria-controls="towerPopup" aria-label="강화 관리" title="강화 관리"><img src="assets/images/ui/icons/ui_icon_tower.png" alt="" aria-hidden="true"></button>
+        <button id="audioBtn" class="fieldIconBtn fieldIconBtn--bgm" type="button" aria-label="BGM 켜기" title="BGM"><img src="assets/images/ui/icons/ui_icon_bgm.png" alt="" aria-hidden="true"></button>
+      </div>
+    </div>
+
+    <aside id="side" class="battleMinimal">
+      <section class="battleHud" id="battleHud">
+        <div class="battleStageLine">
+          <span class="title" id="themeName">COSMIC VOID</span>
+          <strong class="value" id="stageLabel">1-1</strong>
+          <em class="sub" id="stageType">장판 방어</em>
+        </div>
+        <div id="wavePreviewLine"><b>웨이브 예고</b><span id="wavePreviewText">기본 적 웨이브 · 추천: 균형 배치</span></div>
+        <div class="bar compactWave"><span id="waveBar"></span></div>
+        <div class="battleStatLine statGrid">
+          <div class="stat"><span class="label">CRYSTAL</span><b class="value" id="gold" style="color:var(--gold)">500</b></div>
+          <div class="stat"><span class="label">CORE</span><b class="value" id="hp" style="color:var(--red)">25</b></div>
+          <div class="stat"><span class="label">EXP</span><b class="value" id="exp" style="color:#a78bfa">0/50</b><div class="miniBar"><span id="expBar"></span></div></div>
+          <div class="stat"><span class="label">LV</span><b class="value" id="level" style="color:#67e8f9">1</b></div>
+        </div>
+        <div id="globalEffectLine" class="globalEffectLine"><b>전역</b>효과 없음</div>
+      </section>
+
+      <section class="battleActions">
+        <div class="row">
+          <button id="summonBtn">소환</button>
+          <button id="mergeBtn" class="btnAlt">합치기</button>
+        </div>
+        <div class="row3" style="margin-top:7px">
+          <button id="speedBtn" class="btnAlt">1x</button>
+          <button id="pauseBtn" class="btnAlt">정지</button>
+        </div>
+      </section>
+
+      <section class="battleSelected" id="selected">
+        <div class="title">SELECTED</div>
+        <div id="selectedText" class="sub">
+          장판을 선택하면 필요한 정보만 간단히 표시됩니다.
+        </div>
+      </section>
+
+      <section class="uiHidden" id="logPanel" aria-hidden="true">
+        <div id="log"></div>
+      </section>
+
+      <section class="uiHidden" id="offlinePanel" aria-hidden="true">
+        <div id="offlinePanelBody" class="offlineBox"></div>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<div id="towerPopup" class="towerPopup" aria-hidden="true">
+  <canvas id="towerPopupStarfield" class="screenStarfield" aria-hidden="true"></canvas>
+  <div class="towerPopupBackdrop" data-tower-popup-close></div>
+  <div class="towerPopupPanel" role="dialog" aria-modal="true" aria-labelledby="towerPopupTitle">
+    <div class="towerPopupHeader">
+      <div>
+        <div class="towerPopupKicker">UPGRADE ARMORY</div>
+        <div class="towerPopupTitle" id="towerPopupTitle">강화 관리</div>
+      </div>
+      <div id="towerPopupWallet" class="towerPopupWallet" aria-label="보유 성흔 조각">
+        <span>성흔 조각</span><b>0</b>
+      </div>
+      <button id="towerPopupClose" class="towerPopupClose" type="button" aria-label="닫기">닫기</button>
+    </div>
+    <div class="towerPopupTabs" role="tablist" aria-label="강화 관리 탭">
+      <button class="towerPopupTab active" type="button" role="tab" aria-selected="true" data-tower-popup-tab="common">공통 연구</button>
+      <button class="towerPopupTab" type="button" role="tab" aria-selected="false" data-tower-popup-tab="tower">타워</button>
+    </div>
+    <div class="towerPopupBody">
+      <div id="towerPopupList" class="towerPopupList"></div>
+      <div id="towerPopupDetail" class="towerPopupDetail"></div>
+    </div>
+  </div>
+</div>
+
+<div id="menu">
+  <div class="card">
+    <h1>PLANET RIFT DEFENSE</h1>
+    <div class="menuSub">COSMIC PLATES</div>
+    <p style="max-width:780px;margin:0 auto;color:#cbd5e1;line-height:1.68;font-size:15px">
+      붕괴된 은하수의 마지막 코어를 지키기 위해 잠든 행성 병기를 깨우고, 별자리마다 오염된 성역을 하나씩 복원하세요.
+      공통 연구는 강화 관리 안에서 올리고, 전투 중에는 배치·병합·생존 판단에만 집중합니다.
+      첫 판 튜토리얼, 로컬 전투 로그, 3성 숙련도 루프로 반복 플레이 흐름을 정리했습니다.
+    </p>
+    <div class="menuGrid">
+      <div class="info">
+        <b>핵심 컨셉</b><br>
+        <span class="sub">성역별 시나리오 + 공통 연구 단계 해금 + 랜덤 행성 장판 + 드래그 병합 + 행성별 고유 성장.</span>
+      </div>
+      <div class="info">
+        <b>모바일 UX</b><br>
+        <span class="sub">전투 화면은 소환·병합·속도·일시정지만 남기고, 강화 관리는 전용 팝업에서 수행합니다.</span>
+      </div>
+
+    <div id="offlineMenuPanel" class="offlineMenuPanel">
+      <div class="offlineMetaTop">
+        <div>
+          <div class="offlineMetaTitle">OFFLINE COMMAND ARCHIVE</div>
+          <div class="offlineMetaStory">로컬 저장 기반 영구 성장, 성역 기록, 시나리오 로그가 표시됩니다.</div>
+        </div>
+        <div class="offlineMetaShard">성흔 조각 0</div>
+      </div>
+    </div>
+    </div>
+    <div class="menuActionRow">
+      <button id="startBtn" style="font-size:18px;padding:15px 54px;border-radius:999px">START DEFENSE</button>
+      <button id="testModeBtn" class="secondaryAction" style="font-size:18px;padding:15px 40px;border-radius:999px">TEST MODE</button>
+      <button id="runLogBtn" class="secondaryAction" style="font-size:15px;padding:15px 30px;border-radius:999px">RUN LOG CSV</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="galaxyMap" data-selected-galaxy="milky-rift">
+  <canvas id="galaxyMapStarfield" class="screenStarfield" aria-hidden="true"></canvas>
+  <div class="galaxyFrame"></div>
+  <div class="galaxyBackdrop milky-rift"></div>
+  <div class="galaxyBackdrop andromeda-frost"></div>
+  <div class="galaxyBackdrop ember-spiral"></div>
+  <div class="galaxyBackdrop void-crown"></div>
+  <div id="galaxyZoomLayer" class="galaxyZoomLayer" aria-hidden="true"></div>
+  <button id="galaxyMapBack" class="galaxyBackBtn">← MAIN</button>
+  <div class="galaxyTopTitle">GALAXY MAP</div>
+  <div class="galaxyStatus">
+    <b id="galaxyProgressLabel">MILKY RIFT · 1 / 4 GALAXIES</b><br>
+    <span id="galaxyProgressSub">은하 선택 후 성좌 지도로 확대 진입합니다.</span>
+  </div>
+  <div class="galaxySceneWrap">
+    <div class="galaxySceneGlow"></div>
+    <svg id="galaxyRouteSvg" class="galaxyRouteSvg" viewBox="0 0 1000 560" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="galaxyRouteGradientV62" x1="0%" y1="50%" x2="100%" y2="50%">
+          <stop offset="0%" stop-color="#60a5fa"/>
+          <stop offset="40%" stop-color="#67e8f9"/>
+          <stop offset="72%" stop-color="#fb923c"/>
+          <stop offset="100%" stop-color="#c084fc"/>
+        </linearGradient>
+      </defs>
+      <path class="routeBase" d="M 180 390 C 230 320, 290 250, 385 170 S 570 220, 630 325 S 760 350, 820 180" />
+      <path class="routeGlow" d="M 180 390 C 230 320, 290 250, 385 170 S 570 220, 630 325 S 760 350, 820 180" style="stroke:url(#galaxyRouteGradientV62)" />
+    </svg>
+    <div id="galaxyNodeLayer" class="galaxyNodeLayer">
+      <button class="galaxyNode active open" type="button" data-galaxy-id="milky-rift" style="left:18%;top:69%;--galaxyA:#60a5fa;--galaxyB:#1d4ed8;">
+        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('assets/images/galaxies/galaxy_milky_rift.png')"></div>
+        <div class="galaxyNodeBadge">OPEN</div><div class="galaxyNodeLabel"><div class="galaxyNodeName">MILKY RIFT</div><div class="galaxyNodeKo">은하수 균열</div></div>
+      </button>
+      <button class="galaxyNode locked" type="button" data-galaxy-id="andromeda-frost" style="left:38%;top:29%;--galaxyA:#67e8f9;--galaxyB:#0f766e;">
+        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('assets/images/galaxies/galaxy_andromeda_frost.png')"></div>
+        <div class="galaxyNodeBadge">LOCKED</div><div class="galaxyLockMark">🔒</div><div class="galaxyNodeLabel"><div class="galaxyNodeName">ANDROMEDA FROST</div><div class="galaxyNodeKo">안드로메다 빙하</div></div>
+      </button>
+      <button class="galaxyNode locked" type="button" data-galaxy-id="ember-spiral" style="left:63%;top:63%;--galaxyA:#fb923c;--galaxyB:#991b1b;">
+        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('assets/images/galaxies/galaxy_ember_spiral.png')"></div>
+        <div class="galaxyNodeBadge">LOCKED</div><div class="galaxyLockMark">🔒</div><div class="galaxyNodeLabel"><div class="galaxyNodeName">EMBER SPIRAL</div><div class="galaxyNodeKo">잿불 나선은하</div></div>
+      </button>
+      <button class="galaxyNode locked" type="button" data-galaxy-id="void-crown" style="left:82%;top:30%;--galaxyA:#c084fc;--galaxyB:#5b21b6;">
+        <div class="galaxyNodeHalo"></div><div class="galaxyNodeOrbit"></div><div class="galaxyNodeCore" style="background-image:url('assets/images/galaxies/galaxy_void_crown.png')"></div>
+        <div class="galaxyNodeBadge">LOCKED</div><div class="galaxyLockMark">🔒</div><div class="galaxyNodeLabel"><div class="galaxyNodeName">VOID CROWN</div><div class="galaxyNodeKo">공허 왕관</div></div>
+      </button>
+    </div>
+  </div>
+  <div id="galaxyInfoPanel" class="galaxyInfoPanel">
+    <div class="galaxyInfoHead">
+      <div class="galaxyInfoTitle">MILKY RIFT<small>은하수 균열</small></div>
+      <div class="galaxyInfoState">STATE <b>OPEN</b></div>
+    </div>
+    <div class="galaxyInfoBody">현재 플레이 가능한 본편 은하입니다. 성좌 내부로 진입해 12개 성역을 순차적으로 복원합니다.</div>
+    <div class="galaxyTagRow"><span class="galaxyTag">CORE ROUTE</span><span class="galaxyTag">12 STAGES</span><span class="galaxyTag">RESTORATION</span></div>
+    <div class="galaxyInfoMeta">
+      <div class="galaxyMetaCard"><small>ROUTE</small><b>SANCTUARY 1-12</b><span>현재 메인 캠페인</span></div>
+      <div class="galaxyMetaCard"><small>THREAT</small><b>공허 잔재 · 장판 오염</b><span>은하 단위 난이도 콘셉트입니다.</span></div>
+      <div class="galaxyMetaCard"><small>REWARD</small><b>공통 연구 해금</b><span>12 SANCTUARIES</span></div>
+    </div>
+  </div>
+  <button id="galaxyEnterBtn" class="galaxyEnterBtn">ENTER MILKY RIFT</button>
+</div>
+
+
+<div id="stageMap" data-unlocked="1" data-selected="1">
+  <canvas id="stageMapStarfield" class="screenStarfield" aria-hidden="true"></canvas>
+  <div class="stageBg cosmic"></div>
+  <div class="stageBg frost"></div>
+  <div class="stageBg lava"></div>
+  <div class="stageBg jungle"></div>
+  <div class="stageBg smog"></div>
+  <div class="stageBg crystal"></div>
+  <div class="stageBg machine"></div>
+  <div class="stageBg gravity"></div>
+  <div class="stageBg thunder"></div>
+  <div class="stageBg time"></div>
+  <div class="stageBg silent"></div>
+  <div class="stageBg rift"></div>
+  <div class="stageFrame"></div>
+  <button id="stageMapBack" class="stageBackBtn">← GALAXY</button>
+  <button id="stageTowerManageBtn" class="stageManageBtn" type="button" aria-haspopup="dialog" aria-controls="towerPopup" aria-label="강화 관리" title="강화 관리"><img src="assets/images/ui/icons/ui_icon_tower.png" alt="" aria-hidden="true"><span>강화 관리</span></button>
+  <div class="stageTopTitle">CONSTELLATION MAP</div>
+  <div class="stageStatus">
+    <span id="stageProgressLabel">ORION CONSTELLATION · SANCTUARY 1 / 12</span>
+    <small id="stageProgressSub">은하수 외곽 항로에서 첫 성역을 복원합니다</small>
+  </div>
+  <div id="constellationDeck" class="constellationDeck"></div>
+
+  <div class="stageMapInner">
+    <div class="constellationLabel constellation-orion">ORION OUTER ARC</div>
+    <div class="constellationLabel constellation-cygnus">CYGNUS RIFT ARC</div>
+    <div class="constellationLabel constellation-draco">DRACO ABYSS ARC</div>
+    <svg class="stagePathSvg" viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="stageRouteGradientV64" x1="0%" y1="50%" x2="100%" y2="50%">
+          <stop offset="0%" stop-color="#60a5fa"/>
+          <stop offset="40%" stop-color="#67e8f9"/>
+          <stop offset="72%" stop-color="#fb923c"/>
+          <stop offset="100%" stop-color="#c084fc"/>
+        </linearGradient>
+      </defs>
+      <path class="mapRouteBase" d="M 140 370 C 182 338, 219 303, 252 289 S 210 214, 188 188 S 302 130, 362 142 S 458 210, 478 250 S 442 328, 418 346 S 478 408, 546 422 S 634 362, 668 348 S 758 286, 784 252 S 748 180, 722 152 S 830 128, 876 142 S 914 256, 900 374"></path>
+      <path class="mapRouteLine" d="M 140 370 C 182 338, 219 303, 252 289 S 210 214, 188 188 S 302 130, 362 142 S 458 210, 478 250 S 442 328, 418 346 S 478 408, 546 422 S 634 362, 668 348 S 758 286, 784 252 S 748 180, 722 152 S 830 128, 876 142 S 914 256, 900 374"></path>
+    </svg>
+
+    <button class="stageNode active unlocked" data-stage="1" style="left:16%;top:60%;--nodeColor:#38bdf8;--nodeA:#0284c7;--nodeB:#052238">
+      <span class="nodePlanet"><span class="nodeNo">1</span></span><span class="nodeLabel" title="COSMIC VOID">COSMIC</span><span class="nodeKo">공허 성역</span>
+    </button>
+    <button class="stageNode locked" data-stage="2" style="left:27%;top:38%;--nodeColor:#67e8f9;--nodeA:#0891b2;--nodeB:#06283a">
+      <span class="nodePlanet"><span class="nodeNo">2</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="FROST EXPANSE">FROST</span><span class="nodeKo">빙결 외곽</span>
+    </button>
+    <button class="stageNode locked" data-stage="3" style="left:20%;top:20%;--nodeColor:#fb923c;--nodeA:#ea580c;--nodeB:#351006">
+      <span class="nodePlanet"><span class="nodeNo">3</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="LAVA NEBULA">LAVA</span><span class="nodeKo">용암 성운</span>
+    </button>
+    <button class="stageNode locked" data-stage="4" style="left:37%;top:13%;--nodeColor:#22c55e;--nodeA:#16a34a;--nodeB:#082b16">
+      <span class="nodePlanet"><span class="nodeNo">4</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="JUNGLE CORE">JUNGLE</span><span class="nodeKo">생체 정글</span>
+    </button>
+    <button class="stageNode locked" data-stage="5" style="left:48%;top:32%;--nodeColor:#9cab62;--nodeA:#64702f;--nodeB:#1f2412">
+      <span class="nodePlanet"><span class="nodeNo">5</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="SMOG WASTELAND">SMOG</span><span class="nodeKo">매연 폐역</span>
+    </button>
+    <button class="stageNode locked" data-stage="6" style="left:42%;top:55%;--nodeColor:#c084fc;--nodeA:#7e22ce;--nodeB:#1e1238">
+      <span class="nodePlanet"><span class="nodeNo">6</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="CRYSTAL NEBULA">CRYSTAL</span><span class="nodeKo">수정 성운</span>
+    </button>
+    <button class="stageNode locked" data-stage="7" style="left:55%;top:74%;--nodeColor:#60a5fa;--nodeA:#1d4ed8;--nodeB:#0f172a">
+      <span class="nodePlanet"><span class="nodeNo">7</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="MACHINE CORE">MACHINE</span><span class="nodeKo">기계 핵성</span>
+    </button>
+    <button class="stageNode locked" data-stage="8" style="left:67%;top:58%;--nodeColor:#8b5cf6;--nodeA:#5b21b6;--nodeB:#0f1127">
+      <span class="nodePlanet"><span class="nodeNo">8</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="GRAVITY MAUSOLEUM">GRAVITY</span><span class="nodeKo">중력 무덤</span>
+    </button>
+    <button class="stageNode locked" data-stage="9" style="left:78%;top:38%;--nodeColor:#22d3ee;--nodeA:#0e7490;--nodeB:#082032">
+      <span class="nodePlanet"><span class="nodeNo">9</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="THUNDER CORRIDOR">THUNDER</span><span class="nodeKo">번개 회랑</span>
+    </button>
+    <button class="stageNode locked" data-stage="10" style="left:72%;top:18%;--nodeColor:#a78bfa;--nodeA:#6d28d9;--nodeB:#1a1431">
+      <span class="nodePlanet"><span class="nodeNo">10</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="TIME SHARDS">TIME</span><span class="nodeKo">시간 잔해</span>
+    </button>
+    <button class="stageNode locked" data-stage="11" style="left:88%;top:16%;--nodeColor:#64748b;--nodeA:#334155;--nodeB:#0f172a">
+      <span class="nodePlanet"><span class="nodeNo">11</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="SILENT CONSTELLATION">SILENT</span><span class="nodeKo">침묵 성단</span>
+    </button>
+    <button class="stageNode locked" data-stage="12" style="left:90%;top:58%;--nodeColor:#ef4444;--nodeA:#991b1b;--nodeB:#24090a">
+      <span class="nodePlanet"><span class="nodeNo">12</span><span class="nodeLock">🔒</span></span><span class="nodeLabel" title="RIFT THRONE">RIFT</span><span class="nodeKo">균열 왕좌</span>
+    </button>
+  </div>
+
+  <div id="stageHint" class="stageHint">오리온 외곽 성좌 · 1. COSMIC VOID / 공허 성역 — 진입 가능. 첫 번째 공허 성역입니다. 기본 행성 배치, 장판 활용, 병합 타이밍을 익히는 입문 전장입니다.</div>
+  <div id="stageInfoPanel" class="stageInfoPanel">
+    <div class="stageInfoHead">
+      <div id="stageInfoTitle" class="stageInfoTitle">1. COSMIC VOID</div>
+      <div class="stageInfoRisk"><span>RISK</span><b id="stageInfoRisk">LOW</b></div>
+    </div>
+    <div id="stageInfoMood" class="stageInfoMood">공허 성역 설명 · 첫 번째 공허 성역입니다. 기본 행성 배치, 장판 활용, 병합 타이밍을 익히는 입문 전장입니다.</div>
+    <div id="stageInfoTags" class="stageTagRow"></div>
+    <div class="stageBossRow">
+      <div class="stageBossCard"><small>MID BOSS</small><b id="stageMidBossName">ASTRAL WARDEN</b><span id="stageMidBossKo">성운 감시자 · 위상 수호체</span><em id="stageMidBossSkill">PHASE REGEN</em></div>
+      <div class="stageBossCard"><small>FINAL BOSS</small><b id="stageFinalBossName">OBLIVION HEART</b><span id="stageFinalBossKo">공허 심핵 · 최종 균열 군주</span><em id="stageFinalBossSkill">SINGULARITY SURGE</em></div>
+    </div>
+    <div id="offlineStagePanel" class="offlineStagePanel"></div>
+  </div>
+  <div class="stageActionRow">
+    <button id="stageGalaxyBtn" class="stageEnter stageGalaxyEnter" type="button">ENTER GALAXY MAP</button>
+    <button id="stageEnterBtn" class="stageEnter" type="button">ENTER SANCTUARY 1</button>
+  </div>
+</div>
+
+
+<div id="modal">
+  <div class="card" style="text-align:left">
+    <div class="title" style="font-size:26px">전투 보상 선택</div>
+    <div class="sub" style="margin-top:5px">현재 버전에서는 공통 연구는 강화 관리 창에서만 관리됩니다.</div>
+    <div class="choiceGrid" id="choices"></div>
+  </div>
+</div>
+
+
+<div id="planetDetailModal" aria-hidden="true">
+  <div class="planetDetailCard" role="dialog" aria-modal="true" aria-labelledby="planetDetailTitle">
+    <button class="planetDetailClose" type="button" data-planet-detail-close aria-label="행성 상세 닫기">×</button>
+    <div id="planetDetailBody"></div>
+  </div>
+</div>
+
+<script src="src/scripts/game-core.js"></script>
+
+<script src="src/scripts/armory-base.js"></script>
+
+
+<script src="src/scripts/patches.runtime.js"></script>
+<script src="src/scripts/map-hud-recovery.v83.js"></script>
+
+
+<!-- moved invalid trailing patches into body for HTML stability -->
+
+
+<!-- v101: 성좌 지도 우측 버튼 정리 - 모든 추가 코드를 
+<!-- v104: 팝업 레이아웃 복구 + 별 배경 실표시 + 닫기 버튼 정렬 -->
+
+
+<!-- v117: restore visible Galaxy Map back button on the planet stage map. -->
+
+
+<!-- v122: remove duplicate top-right quick buttons from map screens.
+     Tower/BGM controls stay available in the actual battle HUD only. -->
+
+
+<!-- v128: canonical manifest unlock finalizer. This runs last and hard-wires TEST MODE and clear-based progression to STAGE_UNLOCK_MANIFEST. -->
+
+
+<!-- v24: restore canvas pointer hit-test while keeping combat HUD/buttons visible. -->
+
+
+<!-- v227: final pause decision menu. Battle-only, does not touch map/stage navigation buttons. -->
+
+
+<!-- v230: native pause safety css -->
+
+
+<!-- moved late patches inside body -->
+
+
+<!-- v103: 타워 팝업 배경 별 애니메이션 + 닫기 버튼 보강 -->
+
+
+<!-- v104: 팝업 레이아웃 복구 + 별 배경 실표시 + 닫기 버튼 정렬 -->
+
+
+<!-- v111: navigation recovery from stable v107. Keep existing Milky Rift map and prevent accidental battle auto-entry. -->
+
+
+<!-- v112: map layout alignment restore. v111 accidentally made absolute HUD/map layers relative, which stacked and shifted the galaxy/stage UIs. -->
+
+
+<!-- v113: stage info panel lift. Prevent bottom info panel from colliding with the two stage action buttons. -->
+
+
+<!-- v116: battle enter bridge. Rebind stage-enter after navigation recovery so it calls the exported real battle initializer, not only setScreen('game'). -->
+
+
+<!-- v114: stage back button + galaxy info lift. Move the bottom galaxy-map action into the top-left back control and raise the galaxy detail panel into the empty lower map space. -->
+
+
+<!-- v117: restore visible Galaxy Map back button on the planet stage map. -->
+
+
+<!-- v118: make the stage-map Galaxy Map back button identical to the Galaxy Map MAIN pill style. -->
+
+
+<!-- v122: remove duplicate top-right quick buttons from map screens.
+     Tower/BGM controls stay available in the actual battle HUD only. -->
+
+
+<!-- v126: Test mode unlock consistency. Test mode must always expose every sanctuary/stage, even after navigation helpers reload saved progress. -->
+
+
+<!-- v128: canonical manifest unlock finalizer. This runs last and hard-wires TEST MODE and clear-based progression to STAGE_UNLOCK_MANIFEST. -->
+
+
+<!-- v189-cleanup: previously appended style/script blocks moved inside <body> to keep the document structurally valid. -->
+
+
+<!-- v119: match the planet stage back button to the Galaxy Map MAIN button sizing and switch label to English. -->
+
+
+<!-- v120: normalize top control margins and tighten shared map/info spacing. -->
+
+
+<!-- v121: mobile-first vertical rhythm for map screens; center stage progress under title; prevent lower panels from clipping. -->
+
+
+<!-- v127: integrated test/progress unlock hardening. Uses the game's lexical globals directly, not window.*, so it works with const/let declarations. -->
+
+
+<!-- v130: constellation compact planet + slim info panel patch -->
+
+
+<!-- v215: battle board expansion lock. Field fills the active screen so the start-time board calculation can visibly add columns/rows. -->
+
+
+<!-- v218: front polish + cleaner tactical HUD pass. -->
+
+
+<!-- v21: safe combat-only controls. Keep stage/map navigation untouched. -->
+
+
+<!-- v24: restore canvas pointer hit-test while keeping combat HUD/buttons visible. -->
+
+
+<!-- v227: final pause decision menu. Battle-only, does not touch map/stage navigation buttons. -->
+
+
+<!-- v229: reliable pause decision modal. Uses lexical S, not window.S, so it works with the current inline game script. -->
+
+
+<!-- v35: field pointer bridge + hit-test guard. -->
+
+
+<!-- v240: compact transparent top HUD requested - stage left, money/core right, no EXP/LV display. -->
+
+
+<!-- v241: top-right tower/music vertical stack + compact HUD right margin tune. -->
+
+
+<!-- v274: landscape map HUD recovery.
+     Fixes: galaxy nodes disappearing, stage planets clipped below the screen,
+     and map dock buttons not firing after the previous DOM-moving dock patch. -->
+
+
+<!-- v76: production progress manifest + deterministic stage unlock fix.
+     Test/debug unlock code is gated behind explicit test mode and normal stage progression is derived
+     from saved clear records every time the map renders or a run ends. -->
+
+
+<!-- v78: final stage unlock + visible enter label sync.
+     Fixes the remaining case where the map state was open but the visible v274 dock still showed
+     ENTER SANCTUARY 1, and hardens clear persistence if an older wrapper marks S.runEnded before
+     recordOfflineRunEnd can write META.clears. -->
+
+
+</body>
+</html>

@@ -381,6 +381,22 @@ function isFinalBossWave(stageNo=null, waveNo=null){
   return wave === getFinalBossWaveForStage(stageNo);
 }
 
+// v-balance-perfect-v1: normal boss checkpoints are now derived from the expanded
+// sub-stage count. This removes the old wave-4 cliff for 15/20-wave chapters while
+// keeping mid/final bosses untouched.
+function getRegularBossWavesForStage(stageNo=null){
+  const maxWave = getSubStageCountForStage(stageNo);
+  if(maxWave >= 20) return [5, 15];
+  if(maxWave >= 15) return [5, 12];
+  return [4, 8].filter(w => w < maxWave);
+}
+function isRegularBossWave(stageNo=null, waveNo=null){
+  const wave = Number(waveNo ?? ((typeof S !== 'undefined' && S && S.ogge) || 1));
+  if(!Number.isFinite(wave) || wave < 1) return false;
+  if(isMidBossWave(stageNo, wave) || isFinalBossWave(stageNo, wave)) return false;
+  return getRegularBossWavesForStage(stageNo).includes(wave);
+}
+
 const COMMERCIAL_STAGE_BALANCE = [{"stage":1,"key":"cosmic","name":"COSMIC VOID","concept":"intro_damage","general_hp_multiplier":0.72,"general_speed_multiplier":0.99,"wave_count_multiplier":0.64,"boss_multiplier":0.92,"reward_multiplier":1.06,"plate_budget":{"amp":1,"coil":1,"lens":0,"mine":0,"rift":0},"forbidden_budget":0,"minimum_usable_placements":24,"target_winrate":0.88},{"stage":2,"key":"frost","name":"FROST EXPANSE","concept":"speed_control","general_hp_multiplier":0.82,"general_speed_multiplier":1.0,"wave_count_multiplier":0.7,"boss_multiplier":0.98,"reward_multiplier":1.1,"plate_budget":{"amp":0,"coil":1,"lens":1,"mine":0,"rift":0},"forbidden_budget":1,"minimum_usable_placements":23,"target_winrate":0.83},{"stage":3,"key":"lava","name":"LAVA NEBULA","concept":"armor_break","general_hp_multiplier":0.96,"general_speed_multiplier":1.01,"wave_count_multiplier":0.78,"boss_multiplier":1.05,"reward_multiplier":1.14,"plate_budget":{"amp":2,"coil":0,"lens":0,"mine":0,"rift":1},"forbidden_budget":1,"minimum_usable_placements":22,"target_winrate":0.76},{"stage":4,"key":"jungle","name":"JUNGLE CORE","concept":"regen_cut","general_hp_multiplier":1.08,"general_speed_multiplier":1.02,"wave_count_multiplier":0.84,"boss_multiplier":1.1,"reward_multiplier":1.18,"plate_budget":{"amp":1,"coil":1,"lens":0,"mine":1,"rift":0},"forbidden_budget":2,"minimum_usable_placements":21,"target_winrate":0.7},{"stage":5,"key":"smog","name":"SMOG WASTELAND","concept":"stealth_weaken","general_hp_multiplier":1.24,"general_speed_multiplier":1.03,"wave_count_multiplier":0.88,"boss_multiplier":1.16,"reward_multiplier":1.24,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":1,"rift":0},"forbidden_budget":2,"minimum_usable_placements":20,"target_winrate":0.65},{"stage":6,"key":"crystal","name":"CRYSTAL NEBULA","concept":"resonance_charge","general_hp_multiplier":1.4,"general_speed_multiplier":1.04,"wave_count_multiplier":0.92,"boss_multiplier":1.22,"reward_multiplier":1.3,"plate_budget":{"amp":1,"coil":1,"lens":1,"mine":1,"rift":1},"forbidden_budget":2,"minimum_usable_placements":20,"target_winrate":0.6},{"stage":7,"key":"machine","name":"MACHINE CORE","concept":"shield_dismantle","general_hp_multiplier":1.38,"general_speed_multiplier":1.02,"wave_count_multiplier":0.9,"boss_multiplier":1.14,"reward_multiplier":1.46,"plate_budget":{"amp":2,"coil":1,"lens":1,"mine":2,"rift":1},"forbidden_budget":1,"minimum_usable_placements":22,"target_winrate":0.64},{"stage":8,"key":"gravity","name":"GRAVITY MAUSOLEUM","concept":"crowd_control","general_hp_multiplier":1.82,"general_speed_multiplier":1.05,"wave_count_multiplier":0.96,"boss_multiplier":1.28,"reward_multiplier":1.54,"plate_budget":{"amp":2,"coil":1,"lens":1,"mine":2,"rift":1},"forbidden_budget":2,"minimum_usable_placements":21,"target_winrate":0.56},{"stage":9,"key":"thunder","name":"THUNDER CORRIDOR","concept":"speed_pressure","general_hp_multiplier":1.92,"general_speed_multiplier":1.06,"wave_count_multiplier":0.99,"boss_multiplier":1.32,"reward_multiplier":1.64,"plate_budget":{"amp":2,"coil":2,"lens":1,"mine":2,"rift":1},"forbidden_budget":2,"minimum_usable_placements":20,"target_winrate":0.52},{"stage":10,"key":"time","name":"TIME SHARDS","concept":"echo_split","general_hp_multiplier":2.0,"general_speed_multiplier":1.07,"wave_count_multiplier":1.02,"boss_multiplier":1.36,"reward_multiplier":1.74,"plate_budget":{"amp":2,"coil":1,"lens":2,"mine":1,"rift":2},"forbidden_budget":3,"minimum_usable_placements":20,"target_winrate":0.48},{"stage":11,"key":"silent","name":"SILENT CONSTELLATION","concept":"limited_info","general_hp_multiplier":2.08,"general_speed_multiplier":1.08,"wave_count_multiplier":1.04,"boss_multiplier":1.4,"reward_multiplier":1.86,"plate_budget":{"amp":2,"coil":1,"lens":2,"mine":2,"rift":1},"forbidden_budget":3,"minimum_usable_placements":19,"target_winrate":0.44},{"stage":12,"key":"throne","name":"RIFT THRONE","concept":"final_hybrid","general_hp_multiplier":2.18,"general_speed_multiplier":1.09,"wave_count_multiplier":1.06,"boss_multiplier":1.48,"reward_multiplier":2.0,"plate_budget":{"amp":2,"coil":2,"lens":1,"mine":2,"rift":2},"forbidden_budget":4,"minimum_usable_placements":19,"target_winrate":0.4}];
 const COMMERCIAL_STAGE_BALANCE_BY_STAGE = Object.freeze(Object.fromEntries(COMMERCIAL_STAGE_BALANCE.map(row => [Number(row.stage), Object.freeze(row)])));
 const COMMERCIAL_STAGE_BALANCE_DEFAULT = Object.freeze({
@@ -983,32 +999,29 @@ function currentSummonCost(){
   return Math.max(100, Math.round(raw / 5) * 5);
 }
 
-// v-wave-defense-balance-v3: sub-stage 4+ durability tuning.
-// Scope: monster durability only. Economy, terrain pressure, tower numbers and UI stay unchanged.
-// The previous v2 curve still allowed Lv.1 tower swarms to clear mid/late waves too easily,
-// so v3 adds a moderate armor-first bump while keeping the 1~3 tutorial waves intact.
-// v-stage7-late-ease: stage 7+ difficulty curve softened for smoother post-6 progression.
-const WAVE_DEFENSE_ARMOR_BONUS = Object.freeze([0, 0, 0, .100, .135, .170, .205, .240, .275, .310]);
-const WAVE_DEFENSE_HP_MULTIPLIER = Object.freeze([1, 1, 1, 1.18, 1.30, 1.43, 1.57, 1.73, 1.90, 2.10]);
+// v-balance-perfect-v1: expanded sub-stage durability curve.
+// Goals:
+// 1) keep n-1 waves approachable,
+// 2) remove the old wave-4 cliff,
+// 3) make 8-2/8-3 meaningful despite stage 8's visual theme reset,
+// 4) prevent 16~20 from growing into an unfair wall.
+const WAVE_DEFENSE_ARMOR_BONUS = Object.freeze([0, 0, 0, .065, .105, .145, .185, .225, .265, .300]);
+const WAVE_DEFENSE_HP_MULTIPLIER = Object.freeze([1, 1, 1, 1.10, 1.24, 1.38, 1.54, 1.70, 1.86, 2.02]);
 function waveDefenseTuning(stageNo=null, waveNo=null, isBoss=false){
   const stage = economyStageNo(stageNo);
   const wave = economyWaveNo(waveNo);
   if(wave < 4) return {armor:0, hpMul:1};
   const idx = Math.max(0, Math.min(WAVE_DEFENSE_ARMOR_BONUS.length - 1, wave - 1));
   const stagePressure = Math.max(0, stage - 1);
-  const lateStageDefenseEase = stage >= 7 ? 0.82 : 1;
-  const bossArmorScale = isBoss ? .45 : 1;
-  const bossHpScale = isBoss ? .45 : 1;
-  const armorCap = isBoss ? .26 : .52;
-  const armor = Math.min(armorCap, (Number(WAVE_DEFENSE_ARMOR_BONUS[idx] || 0) + stagePressure * .012 * lateStageDefenseEase) * bossArmorScale);
-  const hpMul = 1 + ((Number(WAVE_DEFENSE_HP_MULTIPLIER[idx] || 1) - 1) + stagePressure * .020 * lateStageDefenseEase) * bossHpScale;
+  const lateStageDefenseEase = stage >= 7 ? 0.78 : 1;
+  const bossArmorScale = isBoss ? .42 : 1;
+  const bossHpScale = isBoss ? .42 : 1;
+  const armorCap = isBoss ? .24 : .48;
+  const armor = Math.min(armorCap, (Number(WAVE_DEFENSE_ARMOR_BONUS[idx] || 0) + stagePressure * .010 * lateStageDefenseEase) * bossArmorScale);
+  const hpMul = 1 + ((Number(WAVE_DEFENSE_HP_MULTIPLIER[idx] || 1) - 1) + stagePressure * .018 * lateStageDefenseEase) * bossHpScale;
   return {armor, hpMul};
 }
 
-
-// v-stage7-post-first-wave-pressure: stage n-1 remains approachable, while n-2~n-10 regains pressure.
-// The previous stage 7+ ease patch and five-tower starting crystal made post-first substages too easy,
-// so this applies only when stage >= 7 and wave >= 2. Stage 7-1, 8-1, ... 12-1 stay untouched.
 function lateStagePostFirstWavePressure(stageNo=null, waveNo=null, isBoss=false){
   const stage = economyStageNo(stageNo);
   const wave = economyWaveNo(waveNo);
@@ -1018,20 +1031,43 @@ function lateStagePostFirstWavePressure(stageNo=null, waveNo=null, isBoss=false)
   const waveStep = Math.max(1, wave - 1);
   const postWaveStep = Math.max(0, wave - 2);
 
-  const stageHpBase = [0.18, 0.28, 0.34, 0.40, 0.46, 0.52][Math.max(0, Math.min(5, stageStep))] || 0.18;
-  const hpGrowth = 0.050 + stageStep * 0.006;
-  const rawHpMul = 1 + stageHpBase + postWaveStep * hpGrowth;
+  // Base pressure is intentionally moderate. Stage 7 remains a bridge chapter,
+  // while 8+ gets stronger from wave 2 onward.
+  const stageHpBase = [0.18, 0.34, 0.40, 0.46, 0.52, 0.58][Math.max(0, Math.min(5, stageStep))] || 0.18;
+  const hpGrowth = 0.044 + stageStep * 0.005;
+  let rawHpMul = 1 + stageHpBase + postWaveStep * hpGrowth;
+  let rawCountMul = 1 + 0.10 + stageStep * 0.026 + Math.min(0.24, waveStep * 0.024);
+  let rawSpeedMul = 1 + 0.024 + stageStep * 0.006 + Math.min(0.066, waveStep * 0.0075);
+  let rawArmor = Math.min(0.17, 0.034 + stageStep * 0.014 + postWaveStep * 0.007);
 
-  const rawCountMul = 1 + 0.10 + stageStep * 0.025 + Math.min(0.25, waveStep * 0.025);
-  const rawSpeedMul = 1 + 0.025 + stageStep * 0.006 + Math.min(0.07, waveStep * 0.008);
-  const rawArmor = Math.min(0.18, 0.040 + stageStep * 0.015 + postWaveStep * 0.008);
+  // Stage 8 visually reuses the calm cosmic theme, so the base formula underestimates
+  // 8-2 and 8-3. Add a short catch-up only after 8-1.
+  if(stage === 8){
+    const earlyCatchupHp = {2:2.25, 3:1.72, 4:1.36, 5:1.22, 6:1.12, 7:1.06};
+    const earlyCatchupCount = {2:1.38, 3:1.28, 4:1.18, 5:1.12, 6:1.06, 7:1.03};
+    rawHpMul *= Number(earlyCatchupHp[wave] || 1);
+    rawCountMul *= Number(earlyCatchupCount[wave] || 1);
+  }
+
+  // Long chapters should feel harder, but not become exponential. Apply a soft cap
+  // after wave 15 so 16~20 stay challenging rather than unfair.
+  if(stage >= 8 && wave > 15){
+    const tail = Math.min(5, wave - 15);
+    rawHpMul *= (1 - Math.min(0.16, tail * 0.024));
+    rawCountMul *= (1 - Math.min(0.10, tail * 0.014));
+    rawSpeedMul *= (1 - Math.min(0.035, tail * 0.006));
+  }
+
+  rawHpMul = Math.min(rawHpMul, stage >= 10 ? 2.72 : 2.42);
+  rawCountMul = Math.min(rawCountMul, stage >= 10 ? 1.46 : 1.42);
+  rawSpeedMul = Math.min(rawSpeedMul, stage >= 10 ? 1.15 : 1.12);
 
   if(isBoss){
     return {
-      hpMul: 1 + (rawHpMul - 1) * 0.78,
+      hpMul: 1 + (rawHpMul - 1) * 0.70,
       countMul: 1,
-      speedMul: 1 + (rawSpeedMul - 1) * 0.45,
-      armor: rawArmor * 0.48
+      speedMul: 1 + (rawSpeedMul - 1) * 0.38,
+      armor: rawArmor * 0.42
     };
   }
   return {hpMul: rawHpMul, countMul: rawCountMul, speedMul: rawSpeedMul, armor: rawArmor};
@@ -4364,8 +4400,8 @@ function getWavePreviewInfo(waveNo, stageNo){
     parts.push(`${enemyLine} · 최종 보스 출현`);
     tips.push('핵심 타워 병합');
     tips.push(stageTip);
-  }else if(wave % 4 === 0){
-    parts.push(`${enemyLine} · 압박 웨이브`);
+  }else if(isRegularBossWave(stage, wave)){
+    parts.push(`${enemyLine} · 압박 보스 웨이브`);
     tips.push('범위 화력');
     tips.push(stageTip);
   }else{
@@ -4422,7 +4458,7 @@ function prepareWave(){
     const bossData = getStageBossDef(currentStageNo, 'final');
     S.queue.push({type:'finalboss', bossTier:'final', bossData});
     S.currentBossInfo = bossData;
-  }else if(S.ogge%4===0){
+  }else if(isRegularBossWave(currentStageNo, S.ogge)){
     S.queue.push('boss');
   }
   S.total=S.queue.length;

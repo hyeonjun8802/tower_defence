@@ -5,5 +5,8 @@
   "enableTestHarness": true,
   "enableProgressMocks": true,
   "activation": "Only when URL has ?test, ?qa, ?debug or localStorage.PLANET_RIFT_TEST_MODE is 1",
-  "note": "Do not merge this manifest into production runtime."
+  "note": "Do not merge this manifest into production runtime.",
+  "progression": {
+    "regularBossRule": "normal boss checkpoints are stage-length based: 10-wave=4/8, 15-wave=5/12, 20-wave=5/15; mid/final bosses unchanged"
+  }
 }

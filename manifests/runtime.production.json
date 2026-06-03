@@ -16,6 +16,7 @@
       "8-12": 20
     },
     "finalBossRule": "final boss appears on the last sub-stage for each main stage",
-    "midBossRule": "mid boss appears around the halfway sub-stage for each main stage"
+    "midBossRule": "mid boss appears around the halfway sub-stage for each main stage",
+    "regularBossRule": "normal boss checkpoints are stage-length based: 10-wave=4/8, 15-wave=5/12, 20-wave=5/15; mid/final bosses unchanged"
   }
 }
