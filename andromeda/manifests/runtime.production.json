@@ -1,0 +1,17 @@
+{
+  "id": "planet-rift-runtime",
+  "version": "andromeda-v6-tower-unlock-and-boss-phase",
+  "mode": "production",
+  "enableTestHarness": false,
+  "enableProgressMocks": false,
+  "stageProgressKey": "planetRiftStageProgressV3",
+  "offlineMetaKey": "planetRiftOfflineMetaV2",
+  "progression": {
+    "stageClearRule": "clearing Andromeda stage N unlocks stage N+1; 15 is final boss node",
+    "maxStage": 15,
+    "sourceOfTruth": "planetRiftOfflineMetaV2.clears",
+    "chapter": "ANDROMEDA SPIRAL",
+    "andromedaScenarioPolish": "v2: spiral map override, U/K plate rules, M01/M04 boost, M05 aura, M07 pack bonus, M10 absorb",
+    "andromedaScenarioDevelopment": "v6: T01/T02/T03 runtime tower unlocks and final boss phase helpers"
+  }
+}

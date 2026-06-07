@@ -205,54 +205,126 @@ function starLoop(now){
 const rand = (a,b)=>a+Math.random()*(b-a);
 
 
-/* v106: screen-specific starfields reuse the exact battle star renderer values. */
+/* v101-final: stable shared screen starfield renderer for galaxy / stage / popup screens.
+   Root cause guard: stage-map refresh observers can call refreshScreenStarfields()
+   repeatedly. The old code rebuilt Math.random() stars whenever the measured canvas
+   size jittered, which looked like the background was being re-created every frame.
+   This renderer keeps one shared motion path for galaxyMapStarfield and
+   stageMapStarfield, but preserves/scales the existing stars instead of random
+   rebuilding during observer/layout refreshes. */
 const SCREEN_STAR_CANVAS_IDS = ['galaxyMapStarfield','stageMapStarfield','towerPopupStarfield'];
+const SCREEN_STAR_SIZE_EPSILON = 3;
 const screenStarFields = SCREEN_STAR_CANVAS_IDS.map(id => {
   const canvas = document.getElementById(id);
-  return canvas ? { id, canvas, ctx: canvas.getContext('2d'), stars: [], lastW: 0, lastH: 0 } : null;
+  return canvas ? {
+    id,
+    canvas,
+    ctx: canvas.getContext('2d'),
+    stars: [],
+    lastW: 0,
+    lastH: 0,
+    rebuilds: 0,
+    resizes: 0
+  } : null;
 }).filter(Boolean);
 let screenStarRaf = 0;
 let screenStarLast = performance.now();
+let screenStarFrame = 0;
+
+function screenStarHash(seedText){
+  let h = 2166136261;
+  for(let i=0;i<seedText.length;i++){
+    h ^= seedText.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function screenStarRand(seed){
+  let t = seed >>> 0;
+  return function(){
+    t += 0x6D2B79F5;
+    let r = Math.imul(t ^ (t >>> 15), 1 | t);
+    r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
 function buildScreenStarfield(sf, w, h){
   sf.stars = [];
+  sf.rebuilds = (sf.rebuilds || 0) + 1;
+  const baseSeed = screenStarHash(sf.id + ':' + Math.round(w) + 'x' + Math.round(h));
   STAR_LAYER_CONFIG.forEach((layer, layerIndex) => {
+    const rnd = screenStarRand(baseSeed + layerIndex * 4099);
     for(let i=0;i<layer.count;i++){
       sf.stars.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
+        x: rnd() * w,
+        y: rnd() * h,
         size: 1.15,
         alpha: layer.alpha,
         layer: layerIndex,
         speedX: layer.speedX,
         speedY: layer.speedY,
-        twinkle: Math.random() * TAU,
-        twinkleSpeed: rand(.25, .85)
+        twinkle: rnd() * TAU,
+        twinkleSpeed: .25 + rnd() * .60
       });
     }
   });
 }
 
+function scaleScreenStarfield(sf, w, h){
+  const oldW = Math.max(1, Number(sf.lastW || w || 1));
+  const oldH = Math.max(1, Number(sf.lastH || h || 1));
+  const sx = w / oldW;
+  const sy = h / oldH;
+  for(let i=0;i<sf.stars.length;i++){
+    const s = sf.stars[i];
+    s.x *= sx;
+    s.y *= sy;
+  }
+}
+
 function resizeScreenStarfield(sf, measuredRect=null){
-  const rect = measuredRect || sf.canvas.getBoundingClientRect();
+  // Guard against accidental callback arguments such as Array.forEach index.
+  // measuredRect must be a DOMRect-like object; otherwise use the canvas rect.
+  const rect = (measuredRect && typeof measuredRect === 'object' &&
+    Number.isFinite(measuredRect.width) && Number.isFinite(measuredRect.height))
+      ? measuredRect
+      : sf.canvas.getBoundingClientRect();
   const w = Math.max(0, Math.round(rect.width));
   const h = Math.max(0, Math.round(rect.height));
   if(w < 2 || h < 2) return false;
-  if(sf.lastW === w && sf.lastH === h) return true;
+
+  // Observer/layout refreshes can report 1~3px jitter on mobile WebView.
+  // Treat that as the same canvas so the stars are not rebuilt/re-randomized.
+  if(sf.lastW > 0 && sf.lastH > 0 &&
+     Math.abs(sf.lastW - w) <= SCREEN_STAR_SIZE_EPSILON &&
+     Math.abs(sf.lastH - h) <= SCREEN_STAR_SIZE_EPSILON){
+    return true;
+  }
+
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   sf.canvas.width = Math.floor(w * dpr);
   sf.canvas.height = Math.floor(h * dpr);
   sf.canvas.style.width = w + 'px';
   sf.canvas.style.height = h + 'px';
   sf.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  sf.resizes = (sf.resizes || 0) + 1;
+
+  if(sf.stars.length && sf.lastW > 1 && sf.lastH > 1) scaleScreenStarfield(sf, w, h);
+  else buildScreenStarfield(sf, w, h);
+
   sf.lastW = w;
   sf.lastH = h;
-  buildScreenStarfield(sf, w, h);
   return true;
 }
 
 function refreshScreenStarfields(){
-  screenStarFields.forEach(resizeScreenStarfield);
+  // v101-final: do not pass resizeScreenStarfield directly to forEach.
+  // forEach supplies (item, index, array); the numeric index was being treated as
+  // measuredRect for the 2nd/3rd canvases, producing NaN sizes and forcing
+  // stageMapStarfield/towerPopupStarfield to rebuild on later RAF frames.
+  screenStarFields.forEach(function(sf){ resizeScreenStarfield(sf); });
 }
 
 function updateScreenStarfield(sf, dt){
@@ -264,10 +336,12 @@ function updateScreenStarfield(sf, dt){
     s.x += s.speedX * dt;
     s.y += s.speedY * dt;
     s.twinkle += s.twinkleSpeed * dt;
-    if(s.x < -8){ s.x = w + 8; s.y = Math.random() * h; }
-    if(s.x > w + 8){ s.x = -8; s.y = Math.random() * h; }
-    if(s.y < -8){ s.y = h + 8; s.x = Math.random() * w; }
-    if(s.y > h + 8){ s.y = -8; s.x = Math.random() * w; }
+    // Keep the same diagonal motion style as the galaxy map, but do not randomize
+    // the opposite axis on wrap. Random edge re-entry looked like repeated reset.
+    if(s.x < -8){ s.x = w + 8; s.y = (s.y + h * .173 + (s.layer + 1) * 11) % h; }
+    if(s.x > w + 8){ s.x = -8; s.y = (s.y + h * .173 + (s.layer + 1) * 11) % h; }
+    if(s.y < -8){ s.y = h + 8; s.x = (s.x + w * .217 + (s.layer + 1) * 13) % w; }
+    if(s.y > h + 8){ s.y = -8; s.x = (s.x + w * .217 + (s.layer + 1) * 13) % w; }
   }
 }
 
@@ -296,14 +370,16 @@ function drawScreenStarfield(sf){
 function screenStarLoop(now){
   const dt = Math.min((now - screenStarLast) / 1000, 0.05);
   screenStarLast = now;
+  screenStarFrame += 1;
   for(let i=0;i<screenStarFields.length;i++){
     const sf = screenStarFields[i];
     const el = sf.canvas;
     if(!el || !el.isConnected) continue;
     const rect = el.getBoundingClientRect();
     if(rect.width < 2 || rect.height < 2) continue;
-    // getComputedStyle() can force style resolution; keep it as a rare safety check only.
-    if((perfFrameId & 31) === 0){
+    // Avoid coupling this renderer to the battle perfFrameId. This is a map/popup
+    // renderer and must not be affected by battle-loop timing or observer refreshes.
+    if((screenStarFrame & 31) === 0){
       const st = getComputedStyle(el);
       if(st.display === 'none' || st.visibility === 'hidden') continue;
     }
@@ -312,7 +388,16 @@ function screenStarLoop(now){
     drawScreenStarfield(sf);
   }
   screenStarRaf = requestAnimationFrame(screenStarLoop);
+  try{ window.__PRD_SCREEN_STAR_RAF_V101_FINAL = screenStarRaf; }catch(_err){}
 }
+
+try{
+  window.PRD_SCREEN_STARFIELD_V101_FINAL_DEBUG = function(){
+    return screenStarFields.map(function(sf){
+      return {id:sf.id, stars:sf.stars.length, w:sf.lastW, h:sf.lastH, rebuilds:sf.rebuilds||0, resizes:sf.resizes||0};
+    });
+  };
+}catch(_err){}
 
 const THEMES = [
   {name:'COSMIC VOID', ko:'공허 성역', bg:'assets/images/backgrounds/bg_cosmic.webp', color:'#38bdf8', starSpeed:1.0},
@@ -324,6 +409,12 @@ const THEMES = [
   {name:'MACHINE CORE', ko:'기계 핵성', bg:'assets/images/backgrounds/bg_machine.webp', color:'#60a5fa', starSpeed:.78}
 ];
 
+
+const CONSTELLATION_ARCS = [
+  {id:'orion', name:'ORION CONSTELLATION', ko:'오리온 외곽 성좌', start:1, end:7, desc:'은하수 균열의 첫 방어선을 복원하는 본편 초반 권역'},
+  {id:'cygnus', name:'CYGNUS RIFT', ko:'백조 균열 성좌', start:8, end:10, desc:'중력과 시간 왜곡이 겹치는 본편 중반 권역'},
+  {id:'draco', name:'DRACO ABYSS', ko:'용자리 심연 성좌', start:11, end:12, desc:'균열 왕좌로 이어지는 본편 최종 권역'}
+];
 
 const STAGE_MAP_DEFS = [
   {stage:1, key:'cosmic', name:'COSMIC VOID', ko:'공허 성역', theme:0, color:'#38bdf8', constellation:'orion', mood:'오로라 균열 · 첫 방어선 · 기본 화력 학습'},
@@ -550,6 +641,26 @@ const TEST_MODE_CONFIG = {
 function setTestModeEnabled(flag){
   TEST_MODE_CONFIG.enabled = !!flag;
   document.body.classList.toggle('test-mode-active', TEST_MODE_CONFIG.enabled);
+  try{
+    window.TEST_MODE_CONFIG = TEST_MODE_CONFIG;
+    window.PRD_FORCE_TEST_MODE_ACTIVE = TEST_MODE_CONFIG.enabled;
+    window.__PRD_TEST_MODE_ACTIVE = TEST_MODE_CONFIG.enabled;
+    if(TEST_MODE_CONFIG.enabled){
+      sessionStorage.setItem('PRD_ENTRY_MODE','test');
+      sessionStorage.setItem('PRD_TEST_ENTRY_ACTIVE','1');
+      sessionStorage.setItem('PLANET_RIFT_TEST_MODE','1');
+    }else{
+      sessionStorage.removeItem('PRD_ENTRY_MODE');
+      sessionStorage.removeItem('PRD_TEST_ENTRY_ACTIVE');
+      sessionStorage.removeItem('PLANET_RIFT_TEST_MODE');
+      sessionStorage.removeItem('PRD_FORCE_TEST_MODE_ACTIVE');
+      sessionStorage.removeItem('PRD_TEST_MODE');
+      localStorage.removeItem('PRD_TEST_ENTRY_ACTIVE');
+      localStorage.removeItem('PLANET_RIFT_TEST_MODE');
+      localStorage.removeItem('PRD_FORCE_TEST_MODE_ACTIVE');
+      localStorage.removeItem('PRD_TEST_MODE');
+    }
+  }catch(_){ }
   if(TEST_MODE_CONFIG.enabled){
     StageMapState.unlocked = STAGE_MAP_DEFS.length;
     StageMapState.selected = clamp(Number(StageMapState.selected || 1), 1, STAGE_MAP_DEFS.length);
@@ -776,6 +887,9 @@ function normalizeOfflineMeta(raw){
   m.upgrades = Object.assign({}, base.upgrades, raw?.upgrades || {});
   m.mastery = Object.assign({}, base.mastery, raw?.mastery || {});
   m.flags = Object.assign({}, base.flags, raw?.flags || {});
+  // Runtime-only mode: persisted save data must never reactivate TEST MODE.
+  // TEST MODE is enabled only by the current entry flow (TEST MODE button or explicit URL flag).
+  m.flags.testMode = false;
   m.settings = Object.assign({}, base.settings, raw?.settings || {});
   m.unlockedTowers = normalizeUnlockedTowers(raw?.unlockedTowers, m.clears);
   m.hiddenLevel6Progress = normalizeHiddenLevel6Progress(raw?.hiddenLevel6Progress || raw?.hiddenPlanetLevel6Progress || raw?.flags?.hiddenLevel6Progress || {});
@@ -860,17 +974,22 @@ function loadOfflineMeta(){
       }
     }
     META = normalizeOfflineMeta(JSON.parse(rawText || 'null'));
+    try{ window.META = META; window.StageMapState = StageMapState; window.TEST_MODE_CONFIG = TEST_MODE_CONFIG; }catch(_){ }
     refreshHiddenPlanetUnlocked({save:false, announce:false});
     applyCanonicalProgressToState({preferSelected:true});
     if(!TEST_MODE_CONFIG.enabled) saveOfflineMeta();
   }
-  catch(err){ META = defaultOfflineMeta(); }
+  catch(err){ META = defaultOfflineMeta(); try{ window.META = META; window.StageMapState = StageMapState; window.TEST_MODE_CONFIG = TEST_MODE_CONFIG; }catch(_){ } }
   renderOfflineMetaPanel();
 }
 function saveOfflineMeta(){
   if(TEST_MODE_CONFIG.enabled) return;
   try{
+    if(META && META.flags) META.flags.testMode = false;
     META.saveVersion = SAVE_SCHEMA_VERSION;
+    window.META = META;
+    window.StageMapState = StageMapState;
+    window.TEST_MODE_CONFIG = TEST_MODE_CONFIG;
     localStorage.setItem(OFFLINE_META_KEY, JSON.stringify(META));
   }
   catch(err){}
@@ -1371,7 +1490,8 @@ function renderStageMapInfo(stageNo){
   if(risk) risk.textContent = presentation.risk;
   if(mood){
     const chapter = OFFLINE_CHAPTERS[Number(stageNo)] || OFFLINE_CHAPTERS[1];
-    const audioCue = STAGE_AUDIO_CUES[Number(def.theme)] || STAGE_AUDIO_CUES[0];
+    const audioCues = (typeof STAGE_AUDIO_CUES !== 'undefined' && STAGE_AUDIO_CUES) ? STAGE_AUDIO_CUES : [{mood:'기본 전투 루프'}];
+    const audioCue = audioCues[Number(def.theme)] || audioCues[0] || {mood:'기본 전투 루프'};
     const copy = getStageDescriptionCopy(stageNo);
     mood.textContent = `${def.ko} 설명 · ${copy.summary} 적 특성: ${copy.enemy} 추천 전략: ${copy.strategy} · BGM: ${audioCue.mood} · ${stageTowerRewardText(stageNo)}`;
     mood.title = `${chapter.title} · ${chapter.intro}`;
@@ -1538,6 +1658,7 @@ function isStageResultPendingBlocking(){
   return false;
 }
 function startSelectedStageFromMap(){
+  try{ if(typeof clearResultStageMapDirectV116 === 'function') clearResultStageMapDirectV116(); }catch(_err){}
   if(isStageResultPendingBlocking()){
     // Stage clear/game-over result is still being mounted or displayed.
     // Do not consume the map ENTER click here; otherwise landscape dock buttons can hide
@@ -1743,21 +1864,7 @@ function nextResultSummaryText(kind, stageNo, waveNo){
 }
 
 function goStageMapFromResult(stageNo, hintText=''){
-  removeStageResultOverlay();
-  syncNonBattleChrome();
-  cancelAnimationFrame(raf);
-  const game = $('game');
-  const map = $('stageMap');
-  if(game) game.style.display = 'none';
-  if(map) map.style.display = 'block';
-  StageMapState.selected = clamp(Number(stageNo || StageMapState.selected || 1), 1, STAGE_MAP_DEFS.length);
-  StageMapState.current = StageMapState.selected;
-  stopAllGameAudio();
-  reset();
-  resetBattleUnitsForStageMap();
-  renderStageMap();
-  const hint = $('stageHint');
-  if(hint && hintText) hint.textContent = hintText;
+  return resultStageMapNavigateV116(null, stageNo, hintText);
 }
 
 function getActiveStageResultOverlay(){
@@ -1809,8 +1916,206 @@ function openUpgradeFromResult(stageNo){
   }, 80);
 }
 
+
+
+/* ===== v116-core-result-stage-map-return =====
+   Result overlay "스테이지 맵으로 이동" must leave battle lifecycle and show
+   the real CONSTELLATION MAP immediately. This is the only result-navigation fix
+   applied on top of v110. */
+function clearResultStageMapDirectV116(){
+  try{
+    if(document.body) document.body.classList.remove('prd-result-stage-map-direct-v116');
+    const game = $('game');
+    if(game){
+      game.hidden = false;
+      ['display','visibility','opacity','pointer-events','z-index'].forEach(function(prop){ game.style.removeProperty(prop); });
+    }
+    const map = $('stageMap');
+    if(map){ ['visibility','opacity','pointer-events','z-index'].forEach(function(prop){ map.style.removeProperty(prop); }); }
+  }catch(_err){}
+}
+
+function resultStageMapTargetV116(explicitStage, source){
+  let stage = Number(explicitStage || 0);
+  try{
+    const overlay = source && source.closest ? source.closest('.stageResultOverlay,#stageClearOverlay,#gameOverOverlay') : null;
+    if(!stage && overlay && overlay.dataset && overlay.dataset.resultStageNo) stage = Number(overlay.dataset.resultStageNo || 0);
+    if(!stage && overlay){
+      const stat = overlay.querySelector('.stageResultStat b');
+      const m = String((stat && stat.textContent) || '').match(/(\d+)/);
+      if(m) stage = Number(m[1] || 0);
+    }
+    if(!stage) stage = Number((S && S.stageNo) || StageMapState.current || StageMapState.selected || 1);
+    if(overlay && overlay.classList && overlay.classList.contains('stageResultOverlay--main-clear')){
+      stage = Math.min(STAGE_MAP_DEFS.length, stage + 1);
+    }
+  }catch(_err){
+    stage = Number((S && S.stageNo) || StageMapState.current || StageMapState.selected || 1);
+  }
+  return clamp(stage || 1, 1, STAGE_MAP_DEFS.length);
+}
+
+function ensureResultStageMapDirectStyleV116(){
+  if(!document || document.getElementById('prd-result-stage-map-direct-v116-style')) return;
+  const style = document.createElement('style');
+  style.id = 'prd-result-stage-map-direct-v116-style';
+  style.textContent = `
+html body.prd-result-stage-map-direct-v116 #game,
+html body.prd-result-stage-map-direct-v116 #combatHudOverlay,
+html body.prd-result-stage-map-direct-v116 #combatHudTopLine,
+html body.prd-result-stage-map-direct-v116 #combatHudCommands,
+html body.prd-result-stage-map-direct-v116 #combatHudCommandsLandscapeDock,
+html body.prd-result-stage-map-direct-v116 #combatHudCommandsPortraitDock,
+html body.prd-result-stage-map-direct-v116 #battleHud,
+html body.prd-result-stage-map-direct-v116 #side > .battleActions,
+html body.prd-result-stage-map-direct-v116 #field > .fieldTopControls,
+html body.prd-result-stage-map-direct-v116 #combatHudTopLine .fieldTopControls,
+html body.prd-result-stage-map-direct-v116 #combatHudOverlay .fieldTopControls{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+html body.prd-result-stage-map-direct-v116 #stageMap{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  z-index:45!important;
+}
+html body .stageResultOverlay,
+html body #stageClearOverlay,
+html body #gameOverOverlay{
+  z-index:2147483000!important;
+  pointer-events:auto!important;
+}
+html body .stageResultOverlay *,
+html body #stageClearOverlay *,
+html body #gameOverOverlay *{
+  pointer-events:auto!important;
+}
+`;
+  document.head.appendChild(style);
+}
+
+function forceStageMapScreenDirectV116(targetStage, reason){
+  ensureResultStageMapDirectStyleV116();
+  try{
+    if(document.body){
+      document.body.classList.add('prd-map-ui-active','prd-result-stage-map-direct-v116');
+      document.body.classList.remove('prd-stage-entering','prd-combat-ui-active','prd-battle-active','prd-combat-screen-active');
+    }
+    window.PRD_STAGE_ENTERING = false;
+  }catch(_err){}
+
+  const menu = $('menu');
+  const galaxy = $('galaxyMap');
+  const game = $('game');
+  const map = $('stageMap');
+  if(menu){ menu.style.setProperty('display','none','important'); menu.style.setProperty('visibility','hidden','important'); menu.style.setProperty('opacity','0','important'); menu.style.setProperty('pointer-events','none','important'); }
+  if(galaxy){ galaxy.style.setProperty('display','none','important'); galaxy.style.setProperty('visibility','hidden','important'); galaxy.style.setProperty('opacity','0','important'); galaxy.style.setProperty('pointer-events','none','important'); }
+  if(game){
+    game.hidden = false;
+    game.style.setProperty('display','none','important');
+    game.style.setProperty('visibility','hidden','important');
+    game.style.setProperty('opacity','0','important');
+    game.style.setProperty('pointer-events','none','important');
+  }
+  if(map){
+    map.hidden = false;
+    map.style.setProperty('display','block','important');
+    map.style.setProperty('visibility','visible','important');
+    map.style.setProperty('opacity','1','important');
+    map.style.setProperty('pointer-events','auto','important');
+    map.style.setProperty('z-index','45','important');
+    map.classList.add('premiumStage');
+  }
+  ['combatHudOverlay','combatHudTopLine','combatHudCommands','combatHudCommandsLandscapeDock','combatHudCommandsPortraitDock','battleHud'].forEach(function(id){
+    const node = $(id);
+    if(!node) return;
+    node.style.setProperty('display','none','important');
+    node.style.setProperty('visibility','hidden','important');
+    node.style.setProperty('opacity','0','important');
+    node.style.setProperty('pointer-events','none','important');
+  });
+
+  try{ StageMapState.selected = targetStage; StageMapState.current = targetStage; saveStageMapProgress(); }catch(_err){}
+  try{
+    if(window.PRD_STAGE_FLOW_CONTROLLER_V46_API && typeof window.PRD_STAGE_FLOW_CONTROLLER_V46_API.showStageMap === 'function') window.PRD_STAGE_FLOW_CONTROLLER_V46_API.showStageMap(targetStage);
+    else {
+      if(window.PRD_STAGE_FLOW && typeof window.PRD_STAGE_FLOW.selectStage === 'function') window.PRD_STAGE_FLOW.selectStage(targetStage);
+      if(window.PRD_STAGE_FLOW && typeof window.PRD_STAGE_FLOW.renderStageMap === 'function') window.PRD_STAGE_FLOW.renderStageMap();
+      else if(typeof renderStageMap === 'function') renderStageMap();
+    }
+  }catch(err){
+    console.warn('v116 direct stage-map render failed', err);
+    try{ if(typeof renderStageMap === 'function') renderStageMap(); }catch(_innerErr){}
+  }
+  try{ StageMapState.selected = targetStage; StageMapState.current = targetStage; }catch(_err){}
+  if(map){
+    map.hidden = false;
+    map.style.setProperty('display','block','important');
+    map.style.setProperty('visibility','visible','important');
+    map.style.setProperty('opacity','1','important');
+    map.style.setProperty('pointer-events','auto','important');
+    map.style.setProperty('z-index','45','important');
+  }
+  try{ if(typeof refreshScreenStarfields === 'function') refreshScreenStarfields(); }catch(_err){}
+  try{ window.PRD_RESULT_STAGE_MAP_DIRECT_V116_LAST = {stage:targetStage, reason:reason || 'direct', ts:Date.now()}; }catch(_err){}
+}
+
+function resultStageMapNavigateV116(ev, explicitStage, hintText=''){
+  try{
+    if(ev){
+      if(ev.preventDefault) ev.preventDefault();
+      if(ev.stopImmediatePropagation) ev.stopImmediatePropagation();
+      else if(ev.stopPropagation) ev.stopPropagation();
+    }
+  }catch(_err){}
+  const btn = ev && (ev.currentTarget || ev.target);
+  const targetStage = resultStageMapTargetV116(explicitStage, btn);
+  try{ stopStageClearAutoContinueTimer(); }catch(_err){}
+  try{ clearStageResultPendingFlag(); }catch(_err){}
+  try{ cancelAnimationFrame(raf); }catch(_err){}
+  try{ stopAllGameAudio(); }catch(_err){}
+  try{ if(typeof setBattleChromeVisible === 'function') setBattleChromeVisible(false); }catch(_err){}
+  try{ if(S){ S.active = false; S.paused = true; S.skillModalOpen = false; S.queue = []; S.gameOver = false; S.gameOverOverlayShown = false; S.gameOverOverlayRequested = false; S.runEnded = true; } }catch(_err){}
+  try{ removeStageResultOverlay(); }catch(_err){}
+  try{ resetBattleUnitsForStageMap(); }catch(_err){}
+  try{
+    sessionStorage.setItem('PRD_RESULT_STAGE_MAP_RETURN_STAGE_V116', String(targetStage));
+    sessionStorage.setItem('PRD_RESULT_STAGE_MAP_RETURN_TS_V116', String(Date.now()));
+  }catch(_err){}
+
+  forceStageMapScreenDirectV116(targetStage, 'primary');
+  [0, 80, 220, 520].forEach(function(delay){
+    setTimeout(function(){ forceStageMapScreenDirectV116(targetStage, 'verify-' + delay); }, delay);
+  });
+  setTimeout(function(){
+    try{
+      const map = $('stageMap');
+      const game = $('game');
+      const mapVisible = !!map && getComputedStyle(map).display !== 'none' && getComputedStyle(map).visibility !== 'hidden' && map.getBoundingClientRect().width > 1 && map.getBoundingClientRect().height > 1;
+      const gameVisible = !!game && getComputedStyle(game).display !== 'none' && getComputedStyle(game).visibility !== 'hidden' && game.getBoundingClientRect().width > 1 && game.getBoundingClientRect().height > 1;
+      if(mapVisible && !gameVisible) return;
+      const url = new URL(location.href);
+      url.searchParams.set('resultStageMap', '1');
+      url.searchParams.set('screen', 'stage');
+      url.searchParams.set('stage', String(targetStage));
+      url.searchParams.set('prdReturn', String(Date.now()));
+      if(TEST_MODE_CONFIG && TEST_MODE_CONFIG.enabled) url.searchParams.set('test', '1');
+      location.replace(url.href);
+    }catch(err){ console.warn('v116 result stage-map reload fallback skipped', err); }
+  }, 700);
+  return false;
+}
+window.PRD_RESULT_STAGE_MAP_NAVIGATE_V116 = resultStageMapNavigateV116;
+window.PRD_RESULT_STAGE_MAP_NAVIGATE_V115 = resultStageMapNavigateV116;
+window.PRD_ENSURE_RESULT_STAGE_MAP_DIRECT_STYLE_V116 = ensureResultStageMapDirectStyleV116;
+
 function resultButtonHtml(continueText='계속하기', swapMapUpgradeButtons=false){
-  const mapButton = '<button id="stageResultMapBtn" class="btnAlt">스테이지 맵으로 이동</button>';
+  try{ ensureResultStageMapDirectStyleV116(); }catch(_err){}
+  const mapButton = '<button id="stageResultMapBtn" class="btnAlt" data-result-action="stage-map" onclick="return window.PRD_RESULT_STAGE_MAP_NAVIGATE_V116 ? window.PRD_RESULT_STAGE_MAP_NAVIGATE_V116(event) : true;">스테이지 맵으로 이동</button>';
   const upgradeButton = '<button id="stageResultUpgradeBtn" class="btnAlt stageResultUpgradeBtn">업그레이드</button>';
   return `<div class="stageResultActions">
     <button id="stageResultContinueBtn" class="btnGreen">${escapeHtml(continueText)}</button>
@@ -1921,19 +2226,7 @@ function showStageClearOverlay(summary){
     };
   }
   if(mapBtn){
-    mapBtn.onclick = () => {
-      removeStageClearOverlay();
-      const game = $('game');
-      const map = $('stageMap');
-      if(game) game.style.display = 'none';
-      if(map) map.style.display = 'block';
-      syncStageUnlockFromClears();
-      StageMapState.selected = isFinal ? cleared : nextNo;
-      StageMapState.current = StageMapState.selected;
-      saveStageMapProgress();
-      if(audio && audio.on) playMapBgm();
-      renderStageMap();
-    };
+    mapBtn.onclick = (ev) => resultStageMapNavigateV116(ev, isFinal ? cleared : nextNo);
   }
   if(upgradeBtn) upgradeBtn.onclick = () => openUpgradeFromResult(isFinal ? cleared : nextNo);
   setupStageClearAutoContinue(overlay);
@@ -6813,8 +7106,14 @@ const SUMMON_RAPID_FX_GAP_MS = 260;
 function summon(typeOverride=null){
   if(S.gameOver) return false;
   const pool = availableSummonTypes();
-  const preferred = Number(typeOverride);
-  const type = pool.includes(preferred) ? preferred : pool[Math.floor(Math.random()*pool.length)];
+  // v117: Only honor an explicit tower override. The summon button calls
+  // summon() with no argument, and Number(null) becomes 0, which made every
+  // normal random summon turn into type 0 (Solar) once Solar was unlocked.
+  const hasExplicitTypeOverride = typeOverride !== null && typeOverride !== undefined && typeOverride !== '';
+  const preferred = hasExplicitTypeOverride ? Number(typeOverride) : NaN;
+  const type = (hasExplicitTypeOverride && Number.isFinite(preferred) && pool.includes(preferred))
+    ? preferred
+    : pool[Math.floor(Math.random()*pool.length)];
   const cost = currentSummonCost();
   if(S.gold<cost){ toast('수정이 부족합니다'); return false; }
 
@@ -8789,7 +9088,13 @@ function bindGalaxyMapClean(){
   });
 }
 
+function stageFlowOwnsMapEvents(){
+  return !!(window.PRD_STAGE_FLOW_CONTROLLER_ACTIVE || window.PRD_DISABLE_LEGACY_FLOW_HANDLERS || window.PRD_STAGE_FLOW);
+}
+window.PRD_STAGE_FLOW_OWNS_MAP_EVENTS = stageFlowOwnsMapEvents;
+
 $('startBtn').onclick=()=>{
+  if(stageFlowOwnsMapEvents()) return;
   setTestModeEnabled(false);
   loadOfflineMeta();
   loadStageMapProgress();
@@ -8798,6 +9103,7 @@ $('startBtn').onclick=()=>{
 };
 
 $('testModeBtn').onclick=()=>{
+  if(stageFlowOwnsMapEvents()) return;
   loadOfflineMeta();
   loadStageMapProgress();
   applyTestModeOverrides();
@@ -8808,6 +9114,7 @@ $('testModeBtn').onclick=()=>{
 };
 
 $('stageMapBack').onclick=()=>{
+  if(stageFlowOwnsMapEvents()) return;
   $('stageMap').style.display='none';
   bindGalaxyMapClean();
   showGalaxyMapClean();
@@ -8997,18 +9304,21 @@ recordOfflineRunEnd = function(cleared=false, stageNoOverride=null){
 };
 
 if($('stageGalaxyBtn')) $('stageGalaxyBtn').onclick=()=>{
+  if(stageFlowOwnsMapEvents()) return;
   $('stageMap').style.display='none';
   bindGalaxyMapClean();
   showGalaxyMapClean();
 };
 
 $('stageEnterBtn').onclick=()=>{
+  if(stageFlowOwnsMapEvents()) return;
   startSelectedStageFromMap();
 };
 if($('runLogBtn')) $('runLogBtn').onclick = showBattleLogSummary;
 
 document.querySelectorAll('#stageMap .stageNode').forEach(node => {
   node.addEventListener('click', () => {
+    if(stageFlowOwnsMapEvents()) return;
     const stageNo = clamp(Number(node.dataset.stage || 1), 1, STAGE_MAP_DEFS.length);
     StageMapState.selected = stageNo;
     saveStageMapProgress();
@@ -9023,6 +9333,7 @@ document.querySelectorAll('#stageMap .stageNode').forEach(node => {
 });
 
 document.addEventListener('click', e => {
+  if(stageFlowOwnsMapEvents()) return;
   const btn = e.target.closest('[data-constellation-jump]');
   if(!btn) return;
   const stageNo = clamp(Number(btn.dataset.constellationJump || 1), 1, STAGE_MAP_DEFS.length);
@@ -9629,6 +9940,7 @@ renderStageMap = function(){
 };
 
 document.addEventListener('click', function(e){
+  if(stageFlowOwnsMapEvents()) return;
   const node = e.target.closest && e.target.closest('#stageMap .stageNode');
   if(!node) return;
   e.preventDefault();
@@ -9639,6 +9951,7 @@ document.addEventListener('click', function(e){
 }, true);
 
 document.addEventListener('click', function(e){
+  if(stageFlowOwnsMapEvents()) return;
   const card = e.target.closest && e.target.closest('#stageMap [data-constellation-jump]');
   if(!card) return;
   e.preventDefault();
@@ -9686,6 +9999,7 @@ function shouldIgnoreStageMapPointer(e){
   return !!target.closest('#stageInfoPanel, #stageEnterBtn, #stageMapBack, #constellationDeck, [data-constellation-jump], #stageHint, #v274StageActionDock, #v274StageEnterBtn, #v274StageInfoBtn, #v274MapInfoOverlay');
 }
 function handleStageMapPointerSelection(e){
+  if(stageFlowOwnsMapEvents()) return;
   const map = $('stageMap');
   if(!map || map.style.display === 'none') return;
   if(!e || typeof e.clientX !== 'number' || typeof e.clientY !== 'number') return;
@@ -9721,6 +10035,7 @@ function forceLowerTextToSelectedStage(stageNo){
   }
 }
 function forceSelectStageFromEvent(e){
+  if(stageFlowOwnsMapEvents()) return;
   const node = e?.target?.closest && e.target.closest('#stageMap .stageNode');
   if(!node) return;
   const n = stageSyncClampStage(node.dataset.stage || 1);
@@ -9732,7 +10047,11 @@ document.addEventListener('touchend', forceSelectStageFromEvent, true);
 try{
   const mapForLowerText = $('stageMap');
   if(mapForLowerText){
-    new MutationObserver(() => forceLowerTextToSelectedStage()).observe(mapForLowerText, {attributes:true, attributeFilter:['data-selected','class']});
+    if(window.PRD_CLEAN_RUNTIME_V38 && window.PRD_CLEAN_RUNTIME_V38.observeStageMapState){
+      window.PRD_CLEAN_RUNTIME_V38.observeStageMapState('core-lower-stage-text', () => forceLowerTextToSelectedStage());
+    }else{
+      new MutationObserver(() => forceLowerTextToSelectedStage()).observe(mapForLowerText, {attributes:true, attributeFilter:['data-selected','class']});
+    }
   }
 }catch(err){}
 
@@ -9869,6 +10188,74 @@ window.PRD_BATTLE = {
   updateUI,
   loop
 };
+
+window.PRD_STAGE_RUNTIME = {
+  getMaxStage(){ return STAGE_MAP_DEFS.length; },
+  isTestMode(){ return !!(TEST_MODE_CONFIG && TEST_MODE_CONFIG.enabled); },
+  setTestMode(flag){
+    setTestModeEnabled(!!flag);
+    try{
+      if(flag){
+        sessionStorage.setItem('PRD_ENTRY_MODE','test');
+        sessionStorage.setItem('PRD_TEST_ENTRY_ACTIVE','1');
+        sessionStorage.setItem('PLANET_RIFT_TEST_MODE','1');
+      }else{
+        sessionStorage.removeItem('PRD_ENTRY_MODE');
+        sessionStorage.removeItem('PRD_TEST_ENTRY_ACTIVE');
+        sessionStorage.removeItem('PLANET_RIFT_TEST_MODE');
+        sessionStorage.removeItem('PRD_FORCE_TEST_MODE_ACTIVE');
+        sessionStorage.removeItem('PRD_TEST_MODE');
+        localStorage.removeItem('PRD_TEST_ENTRY_ACTIVE');
+        localStorage.removeItem('PLANET_RIFT_TEST_MODE');
+        localStorage.removeItem('PRD_FORCE_TEST_MODE_ACTIVE');
+        localStorage.removeItem('PRD_TEST_MODE');
+        if(META && META.flags) META.flags.testMode = false;
+      }
+    }catch(_){ }
+    return !!(TEST_MODE_CONFIG && TEST_MODE_CONFIG.enabled);
+  },
+  getState(){
+    return {
+      unlocked: StageMapState.unlocked,
+      selected: StageMapState.selected,
+      current: StageMapState.current,
+      testMode: !!(TEST_MODE_CONFIG && TEST_MODE_CONFIG.enabled)
+    };
+  },
+  setSelected(stageNo, opts={}){
+    const max = STAGE_MAP_DEFS.length;
+    let n = clamp(Number(stageNo || 1), 1, max);
+    const allowLockedPreview = opts && opts.allowLockedPreview === true;
+    const unlocked = TEST_MODE_CONFIG.enabled ? max : clamp(Number(StageMapState.unlocked || 1), 1, max);
+    if(!allowLockedPreview && !TEST_MODE_CONFIG.enabled && n > unlocked) n = unlocked;
+    StageMapState.selected = n;
+    StageMapState.current = n;
+    return this.getState();
+  },
+  syncProgress(opts={}){
+    if(typeof applyCanonicalProgressToState === 'function') applyCanonicalProgressToState(Object.assign({keepSelected:true, allowLockedPreview:true, save:!TEST_MODE_CONFIG.enabled}, opts || {}));
+    else if(typeof syncStageUnlockFromClears === 'function') syncStageUnlockFromClears();
+    return this.getState();
+  },
+  render(){
+    if(typeof renderStageMap === 'function') renderStageMap();
+    return this.getState();
+  },
+  start(){ return startSelectedStageFromMap(); },
+  getStageView(stageNo){
+    const max = STAGE_MAP_DEFS.length;
+    const n = clamp(Number(stageNo || StageMapState.selected || 1), 1, max);
+    const def = getStageDef(n);
+    const arc = getConstellationArcByStage(n);
+    const presentation = getStagePresentation(n);
+    const copy = getStageDescriptionCopy(n);
+    const reward = stageTowerRewardText(n);
+    const unlocked = TEST_MODE_CONFIG.enabled ? max : clamp(Number(StageMapState.unlocked || 1), 1, max);
+    const canEnter = TEST_MODE_CONFIG.enabled || n <= unlocked;
+    return {stage:n, max, def, arc, presentation, copy, reward, unlocked, canEnter, testMode:!!TEST_MODE_CONFIG.enabled, hint:stageHintLine(n, canEnter)};
+  }
+};
+
 window.PRD_STAGE_PROGRESS_BRIDGE = {
   sync: hardSyncStageProgressFromClears,
   repairAfterClear: forceStageClearUnlockAfterBattle,
@@ -9881,7 +10268,9 @@ resizeStarfield();
 refreshScreenStarfields();
 starField.last = performance.now();
 starField.raf = requestAnimationFrame(starLoop);
+try{ if(window.__PRD_SCREEN_STAR_RAF_V101_FINAL) cancelAnimationFrame(window.__PRD_SCREEN_STAR_RAF_V101_FINAL); }catch(_err){}
 screenStarRaf = requestAnimationFrame(screenStarLoop);
+try{ window.__PRD_SCREEN_STAR_RAF_V101_FINAL = screenStarRaf; }catch(_err){}
 loadOfflineMeta();
 reset();
 try { renderHangar(); } catch(err) { console.error('renderHangar failed during init', err); }
@@ -9912,6 +10301,9 @@ try { renderHangar(); } catch(err) { console.error('renderHangar failed during i
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? '').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
   const clampStage = value => Math.max(1, Math.min(12, Number(value) || 1));
+  function flowOwnsMapEvents(){
+    return !!((window.PRD_STAGE_FLOW_OWNS_MAP_EVENTS && window.PRD_STAGE_FLOW_OWNS_MAP_EVENTS()) || window.PRD_STAGE_FLOW_CONTROLLER_ACTIVE || window.PRD_DISABLE_LEGACY_FLOW_HANDLERS || window.PRD_STAGE_FLOW);
+  }
   function selectedStage(){
     const map = $('stageMap');
     const active = document.querySelector('#stageMap .stageNode.active');
@@ -9966,6 +10358,12 @@ try { renderHangar(); } catch(err) { console.error('renderHangar failed during i
     }
   }
   function applyFromEvent(e){
+    if(flowOwnsMapEvents()){
+      setTimeout(() => {
+        if(window.PRD_STAGE_FLOW && typeof window.PRD_STAGE_FLOW.renderModeLabel === 'function') window.PRD_STAGE_FLOW.renderModeLabel();
+      }, 0);
+      return;
+    }
     const node = e?.target?.closest && e.target.closest('#stageMap .stageNode');
     const jump = e?.target?.closest && e.target.closest('#stageMap [data-constellation-jump]');
     const stageNo = node?.dataset?.stage || jump?.dataset?.constellationJump || selectedStage();
@@ -9978,7 +10376,27 @@ try { renderHangar(); } catch(err) { console.error('renderHangar failed during i
   try{
     const map = $('stageMap');
     if(map){
-      new MutationObserver(() => setTimeout(() => applyStageDescription(), 0)).observe(map, {attributes:true, attributeFilter:['data-selected','data-unlocked','class']});
+      if(window.PRD_CLEAN_RUNTIME_V38 && window.PRD_CLEAN_RUNTIME_V38.observeStageMapState){
+        window.PRD_CLEAN_RUNTIME_V38.observeStageMapState('core-stage-description', () => {
+          if(flowOwnsMapEvents()){
+            setTimeout(() => {
+              if(window.PRD_STAGE_FLOW && typeof window.PRD_STAGE_FLOW.renderModeLabel === 'function') window.PRD_STAGE_FLOW.renderModeLabel();
+            }, 0);
+            return;
+          }
+          setTimeout(() => applyStageDescription(), 0);
+        });
+      }else{
+        new MutationObserver(() => {
+          if(flowOwnsMapEvents()){
+            setTimeout(() => {
+              if(window.PRD_STAGE_FLOW && typeof window.PRD_STAGE_FLOW.renderModeLabel === 'function') window.PRD_STAGE_FLOW.renderModeLabel();
+            }, 0);
+            return;
+          }
+          setTimeout(() => applyStageDescription(), 0);
+        }).observe(map, {attributes:true, attributeFilter:['data-selected','data-unlocked','class']});
+      }
     }
   }catch(err){}
   document.addEventListener('DOMContentLoaded', () => {
@@ -9986,10 +10404,18 @@ try { renderHangar(); } catch(err) { console.error('renderHangar failed during i
     setTimeout(() => applyStageDescription(), 100);
     setTimeout(() => applyStageDescription(), 500);
   });
-  setInterval(() => {
-    const map = $('stageMap');
-    if(map && getComputedStyle(map).display !== 'none') applyStageDescription();
-  }, 900);
+  if(window.PRD_CLEAN_RUNTIME_V38 && window.PRD_CLEAN_RUNTIME_V38.observeScreenState){
+    window.PRD_CLEAN_RUNTIME_V38.observeScreenState('core-stage-description-visible', () => {
+      const map = $('stageMap');
+      if(map && getComputedStyle(map).display !== 'none'){
+        if(flowOwnsMapEvents()){
+          if(window.PRD_STAGE_FLOW && typeof window.PRD_STAGE_FLOW.renderModeLabel === 'function') window.PRD_STAGE_FLOW.renderModeLabel();
+          return;
+        }
+        applyStageDescription();
+      }
+    });
+  }
 })();
 
 

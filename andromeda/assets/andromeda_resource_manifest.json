@@ -1,0 +1,66 @@
+{
+  "note": "임시 구현에서는 CSS 행성 노드를 사용합니다. 아래 경로에 이미지를 추가하면 추후 렌더러에서 연결할 수 있습니다.",
+  "stage_node_images": {
+    "1": "assets/images/stage_nodes/andromeda_node_01.webp",
+    "2": "assets/images/stage_nodes/andromeda_node_02.webp",
+    "3": "assets/images/stage_nodes/andromeda_node_03.webp",
+    "4": "assets/images/stage_nodes/andromeda_node_04.webp",
+    "5": "assets/images/stage_nodes/andromeda_node_05.webp",
+    "6": "assets/images/stage_nodes/andromeda_node_06.webp",
+    "7": "assets/images/stage_nodes/andromeda_node_07.webp",
+    "8": "assets/images/stage_nodes/andromeda_node_08.webp",
+    "9": "assets/images/stage_nodes/andromeda_node_09.webp",
+    "10": "assets/images/stage_nodes/andromeda_node_10.webp",
+    "11": "assets/images/stage_nodes/andromeda_node_11.webp",
+    "12": "assets/images/stage_nodes/andromeda_node_12.webp",
+    "13": "assets/images/stage_nodes/andromeda_node_13.webp",
+    "14": "assets/images/stage_nodes/andromeda_node_14.webp",
+    "15": "assets/images/stage_nodes/andromeda_node_15.webp"
+  },
+  "backgrounds": {
+    "outer": "assets/images/backgrounds/bg_andromeda_outer.webp",
+    "gravity": "assets/images/backgrounds/bg_andromeda_gravity.webp",
+    "core": "assets/images/backgrounds/bg_andromeda_core.webp"
+  },
+  "scenario_v5_placeholders": {
+    "monsters": {
+      "M03": "assets/images/enemies/andromeda_m03_phase.webp",
+      "M08": "assets/images/enemies/andromeda_m08_echo.webp",
+      "M08_illusion": "assets/images/enemies/andromeda_m08_echo_illusion.webp",
+      "M09": "assets/images/enemies/andromeda_m09_tractor.webp"
+    }
+  },
+  "scenario_v6_placeholders": {
+    "towers": {
+      "T01_resonance": "assets/images/thumbs/resonance_lv1.webp",
+      "T02_gravity_lens": "assets/images/thumbs/gravity_lens_lv1.webp",
+      "T03_stigma_prism": "assets/images/thumbs/stigma_prism_lv1.webp",
+      "note": "임시 렌더링은 기존 crystal/void/laser 썸네일을 alias로 사용합니다. 실제 이미지가 준비되면 위 경로에 추가하고 PLACEHOLDER_PLANET_THUMB_ALIAS를 제거하면 됩니다."
+    }
+  },
+  "ui_overrides": {
+    "v7_stage_map_combat_polish": {
+      "css": "src/styles/patches.runtime.css",
+      "script": "src/scripts/patches.runtime.js",
+      "notes": "Andromeda stage-map route segmentation, node-type visual polish, and combat field/HUD atmosphere overlay."
+    }
+  },
+  "route_variants_v11": {
+    "scope": "Andromeda stages only. Milky Way / legacy routes fall back to the original route template.",
+    "stage_1_2": "single lane intro route",
+    "stage_3_4": "one gate, split into two lanes, then merge into one core lane",
+    "stage_5_9": "two starting gates, then converge into a shared corridor",
+    "stage_10_14": "dimensional jump routes with instant teleport segment and portal rings",
+    "stage_15": "final boss spiral route into the core; center key tile is the only open central placement cell"
+  },
+  "routeVariants": {
+    "stage15WideCoreSpiralV14": {
+      "stage": 15,
+      "scope": "andromeda only",
+      "summary": "Stage 15 uses a wider board-scale spiral route into the center core; core visual ring is enlarged.",
+      "imagePlaceholders": [
+        "assets/images/routes/andromeda_stage15_wide_spiral.webp"
+      ]
+    }
+  }
+}

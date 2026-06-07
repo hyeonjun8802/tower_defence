@@ -100,7 +100,11 @@
 
   // Some runtime HUD/tick updates rebuild the detail DOM while the popup is open.
   // Preserve scroll unless the user explicitly selected another tower/research/tab.
-  new MutationObserver(restore).observe(detail, {childList:true, subtree:false});
+  if(window.PRD_CLEAN_RUNTIME_V38 && window.PRD_CLEAN_RUNTIME_V38.observeArmoryDetail){
+    window.PRD_CLEAN_RUNTIME_V38.observeArmoryDetail('v97-scroll-restore', restore);
+  }else{
+    new MutationObserver(restore).observe(detail, {childList:true, subtree:false});
+  }
 
   // Expose a safe reset API for explicit open/selection flows only.
   window.__armoryResetDetailScroll = function(){ explicitSwitch = true; restore(); };
@@ -1183,6 +1187,10 @@
 /* ===== v128-canonical-manifest-unlock-finalizer ===== */
 (function(){
   'use strict';
+  if(window.PRD_STAGE_FLOW_CONTROLLER_ACTIVE || window.PRD_DISABLE_LEGACY_FLOW_HANDLERS){
+    window.PRD_MANIFEST_UNLOCK_V128 = window.PRD_MANIFEST_UNLOCK_V128 || {disabledBy:'v46'};
+    return;
+  }
   function safe(fn){ try{return fn();}catch(e){console.warn('[v128 manifest unlock]', e);} }
   function apply(){ safe(function(){ if(typeof applyCanonicalProgressToState === 'function') applyCanonicalProgressToState({keepSelected:true, allowLockedPreview:true, save:true}); }); }
   function rerender(){ safe(function(){ if(typeof renderStageMap === 'function' && document.getElementById('stageMap')?.style.display !== 'none') renderStageMap(); }); safe(function(){ if(typeof renderHangar === 'function') renderHangar(); }); }
@@ -1519,6 +1527,10 @@
 /* ===== v127-test-and-progress-unlock-hardening ===== */
 (function(){
   'use strict';
+  if(window.PRD_STAGE_FLOW_CONTROLLER_ACTIVE || window.PRD_DISABLE_LEGACY_FLOW_HANDLERS){
+    window.PRD_UNLOCK_HARDENING_V127 = window.PRD_UNLOCK_HARDENING_V127 || {disabledBy:'v46'};
+    return;
+  }
   function safe(fn, fallback){ try{ return fn(); }catch(err){ console.warn('[v127 unlock hardening]', err); return fallback; } }
   function maxStage(){ return safe(function(){ return Array.isArray(STAGE_MAP_DEFS) ? STAGE_MAP_DEFS.length : 12; }, 12); }
   function clampStage(n){
@@ -2321,11 +2333,19 @@
   function watchPopupState(){
     var popup = getPopup();
     if(!popup || popup.__armoryLayoutObserverV242) return;
-    var observer = new MutationObserver(function(){
-      if(popup.classList.contains('open')) applyArmoryLayoutMode();
-    });
-    observer.observe(popup, {attributes:true, attributeFilter:['class']});
-    popup.__armoryLayoutObserverV242 = observer;
+    if(window.PRD_CLEAN_RUNTIME_V38 && window.PRD_CLEAN_RUNTIME_V38.observeElement){
+      window.PRD_CLEAN_RUNTIME_V38.observeElement('armory-layout-popup-v242', getPopup, {attributes:true, attributeFilter:['class']}, function(){
+        var p = getPopup();
+        if(p && p.classList.contains('open')) applyArmoryLayoutMode();
+      }, 72);
+      popup.__armoryLayoutObserverV242 = 'clean-runtime-v38';
+    }else{
+      var observer = new MutationObserver(function(){
+        if(popup.classList.contains('open')) applyArmoryLayoutMode();
+      });
+      observer.observe(popup, {attributes:true, attributeFilter:['class']});
+      popup.__armoryLayoutObserverV242 = observer;
+    }
     if(popup.classList.contains('open')) applyArmoryLayoutMode();
   }
   if(document.readyState === 'loading'){
@@ -2382,9 +2402,14 @@
   function attachObserver(){
     var detail=document.getElementById('towerPopupDetail');
     if(!detail || detail.__v253ScrollResetObserver) return;
-    var mo=new MutationObserver(scheduleReset);
-    mo.observe(detail,{childList:true});
-    detail.__v253ScrollResetObserver=mo;
+    if(window.PRD_CLEAN_RUNTIME_V38 && window.PRD_CLEAN_RUNTIME_V38.observeArmoryDetail){
+      window.PRD_CLEAN_RUNTIME_V38.observeArmoryDetail('v253-horizontal-reset', scheduleReset);
+      detail.__v253ScrollResetObserver='clean-runtime-v38';
+    }else{
+      var mo=new MutationObserver(scheduleReset);
+      mo.observe(detail,{childList:true});
+      detail.__v253ScrollResetObserver=mo;
+    }
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',attachObserver,{once:true}); else attachObserver();
   window.addEventListener('resize',scheduleReset,{passive:true});
@@ -2451,7 +2476,7 @@
     return '<div class="armoryLockedShell hiddenPlanetLockShell"><div class="armoryLockOverlay hiddenUnlockOverlay" style="position:relative;min-height:260px"><div class="armoryLockBox hiddenPlanetLockBox hiddenPlanetLockBox--clear"><div class="armoryLockIcon">🔒</div><b>히든 행성 잠금</b><div class="hiddenUnlockMeter"><strong>'+esc(done)+'</strong><span>/</span><strong>'+esc(total)+'</strong></div><span>'+esc((t&&t.unlockText)||'기본 행성 전체 Lv.6 누적 달성')+'</span></div><div class="hiddenMissingBox"><small>아직 부족한 행성</small><div class="hiddenMissingChips">'+missing+'</div></div><div class="hiddenUnlockTip">왼쪽 목록의 □ 표시는 미달성, ✓ 표시는 달성입니다.</div><div class="hiddenUnlockPanel"><div class="hiddenUnlockHeader"><small>HIDDEN UNLOCK</small><b>조건 현황 '+esc(done)+' / '+esc(total)+'</b></div><p>아래 항목 중 <b>부족</b>으로 표시된 기본 행성을 Lv.6까지 한 번 달성하면 체크로 바뀝니다.</p><div class="hiddenUnlockList">'+rows+'</div></div></div></div>';
   }
 
-  renderCommonDetail=function(key){
+  var renderCommonDetail=function(key){
     var e=els(); var api=window.TowerDefenseGrowth; var ups=api&&api.getUpgrades?api.getUpgrades():[]; var u=ups.find(function(x){return x.key===key;})||ups[0];
     if(!u){ e.detail.innerHTML='<div class="towerPopupEmpty">공통 연구 데이터가 없습니다.</div>'; return; }
     selectedCommonKey=u.key;
@@ -2471,7 +2496,7 @@
     rerenderAfterUpdate();
   };
 
-  renderTowerDetail=function(type){
+  var renderTowerDetail=function(type){
     var e=els(); var towers=getTowers(); var t=towers.find(function(x){return Number(x.type)===Number(type);})||towers.find(function(x){return x.unlocked;})||towers[0];
     if(!t){e.detail.innerHTML='<div class="towerPopupEmpty">타워 데이터를 불러오지 못했습니다.</div>';return;}
     selectedTowerType=Number(t.type);
@@ -2492,7 +2517,7 @@
     rerenderAfterUpdate();
   };
 
-  renderPlateDetail=function(key){
+  var renderPlateDetail=function(key){
     var e=els(); var p=plates[key]||plates.amp; selectedPlateKey=p.key;
     e.list.querySelectorAll('[data-v164-plate]').forEach(function(b){ b.classList.toggle('active', b.dataset.v164Plate===selectedPlateKey); });
     var resonance=p.resonance||'같은 색상/계열 배치 시 피해 +12% · 공속 +4%';
@@ -2512,6 +2537,9 @@
       +'<div class="armoryStackPanel"><div class="armoryComboPanel"><div class="armoryPanelTitle">'+esc(matchingTitle)+'</div><div class="armoryDenseList">'+infoRow(matchingLabel,matching,matchingDesc)+'</div></div><div class="armoryComboPanel"><div class="armoryPanelTitle">'+esc(ruleTitle)+'</div><div class="armoryDenseList">'+infoRow(ruleLabel,rule,ruleDesc)+'</div></div></div>';
     rerenderAfterUpdate();
   };
+  window.renderCommonDetail = renderCommonDetail;
+  window.renderTowerDetail = renderTowerDetail;
+  window.renderPlateDetail = renderPlateDetail;
 })();
 
 /* ===== v266-armory-landscape-resolution-adaptive-fix-script ===== */
@@ -2815,7 +2843,9 @@
     setTimeout(ensureDocks, 400);
     setTimeout(ensureDocks, 1000);
   }
-  document.addEventListener('click', delegatedClick, true);
+  if(!window.PRD_DISABLE_LEGACY_FLOW_HANDLERS && !window.PRD_STAGE_FLOW_CONTROLLER_ACTIVE){
+    document.addEventListener('click', delegatedClick, true);
+  }
   // v85: dock activation must happen on click only. Pointerup fired too early and raced combat HUD mounting.
   // document.addEventListener('pointerup', delegatedClick, true);
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot, {once:true});
@@ -2829,6 +2859,10 @@
 /* ===== v76-stage-unlock-manifest-fix ===== */
 (function(){
   'use strict';
+  if(window.PRD_STAGE_FLOW_CONTROLLER_ACTIVE || window.PRD_DISABLE_LEGACY_FLOW_HANDLERS){
+    window.PRD_STAGE_UNLOCK_MANIFEST_V76 = window.PRD_STAGE_UNLOCK_MANIFEST_V76 || {disabledBy:'v46'};
+    return;
+  }
   var PROD_MANIFEST = {
     id:'planet-rift-runtime',
     version:'v76',
@@ -3159,6 +3193,10 @@
 /* ===== v78-stage-unlock-and-enter-label-final-fix ===== */
 (function(){
   'use strict';
+  if(window.PRD_STAGE_FLOW_CONTROLLER_ACTIVE){
+    window.PRD_STAGE_UNLOCK_V78 = window.PRD_STAGE_UNLOCK_V78 || {disabledBy:'v46'};
+    return;
+  }
   var META_KEY='planetRiftOfflineMetaV2';
   var PROGRESS_KEY='planetRiftStageProgressV3';
   var lastRepair=0;
@@ -3365,15 +3403,24 @@
   document.addEventListener('pointerup', function(e){
     if(e.target && e.target.closest && e.target.closest('#stageMap .stageNode')) scheduleLabelSync();
   }, true);
-  var observer=safe(function(){ return new MutationObserver(function(){
-    var now=Date.now();
-    if(now-lastRepair<80) return;
-    lastRepair=now;
-    scheduleLabelSync();
-  }); }, null);
-  if(observer){
-    var target=byId('stageMap') || document.body;
-    observer.observe(target,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-selected','data-unlocked','style']});
+  if(window.PRD_CLEAN_RUNTIME_V38 && window.PRD_CLEAN_RUNTIME_V38.observeStageMapState){
+    window.PRD_CLEAN_RUNTIME_V38.observeStageMapState('v78-enter-label-sync', function(){
+      var now=Date.now();
+      if(now-lastRepair<80) return;
+      lastRepair=now;
+      scheduleLabelSync();
+    });
+  }else{
+    var observer=safe(function(){ return new MutationObserver(function(){
+      var now=Date.now();
+      if(now-lastRepair<80) return;
+      lastRepair=now;
+      scheduleLabelSync();
+    }); }, null);
+    if(observer){
+      var target=byId('stageMap') || document.body;
+      observer.observe(target,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-selected','data-unlocked','style']});
+    }
   }
   window.PRD_STAGE_UNLOCK_V78={repairAfterClear:repairAfterClear, updateVisibleEnterLabel:updateVisibleEnterLabel, applyDomUnlock:applyDomUnlock};
   scheduleLabelSync();
@@ -3772,6 +3819,10 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
    layer instead of to the button node itself. */
 (function(){
   'use strict';
+  if(window.PRD_STAGE_FLOW_CONTROLLER_ACTIVE){
+    window.PRD_MENU_BUTTON_AUDIT_V97 = window.PRD_MENU_BUTTON_AUDIT_V97 || function(){ return {disabledBy:'v46'}; };
+    return;
+  }
   var lastAction = '';
   var lastAt = 0;
   function byId(id){ return document.getElementById(id); }
@@ -3884,7 +3935,10 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
   function boot(){ bindDirect(); }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, {once:true}); else boot();
   window.addEventListener('load', boot, {once:true});
-  setTimeout(boot, 80); setTimeout(boot, 500); setInterval(function(){ if(!document.hidden && menuActive()) boot(); }, 3000);
+  setTimeout(boot, 80); setTimeout(boot, 500);
+  if(window.PRD_CLEAN_RUNTIME_V38 && window.PRD_CLEAN_RUNTIME_V38.observeScreenState){
+    window.PRD_CLEAN_RUNTIME_V38.observeScreenState('v97-menu-buttons', function(){ if(!document.hidden && menuActive()) boot(); });
+  }
   ['pointerup','touchend','click'].forEach(function(type){
     window.addEventListener(type, capture, {capture:true, passive:false});
   });
@@ -4455,19 +4509,23 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock
   document.addEventListener('click', function(ev){
     if(ev && ev.target && ev.target.closest && ev.target.closest('#towerPopup, #towerMenuBtn, #stageTowerManageBtn')) scheduleSync();
   }, true);
-  var retry = 0;
-  var timer = setInterval(function(){
+  function attachWalletObserver(){
     var wallet = document.getElementById('towerPopupWallet');
-    if(wallet && !wallet.__armoryWalletAmountObserverV184){
-      wallet.__armoryWalletAmountObserverV184 = true;
-      try{
+    if(!wallet || wallet.__armoryWalletAmountObserverV184) return;
+    wallet.__armoryWalletAmountObserverV184 = true;
+    try{
+      if(window.PRD_CLEAN_RUNTIME_V38 && window.PRD_CLEAN_RUNTIME_V38.observeElement){
+        window.PRD_CLEAN_RUNTIME_V38.observeElement('armory-wallet-amount-v184', wallet, {childList:true, subtree:true, characterData:true}, scheduleSync, 72);
+      }else{
         new MutationObserver(scheduleSync).observe(wallet, {childList:true, subtree:true, characterData:true});
-      }catch(err){}
-      scheduleSync();
-      clearInterval(timer);
-    }
-    if(++retry > 40) clearInterval(timer);
-  }, 120);
+      }
+    }catch(err){}
+    scheduleSync();
+  }
+  attachWalletObserver();
+  if(window.PRD_CLEAN_RUNTIME_V38 && window.PRD_CLEAN_RUNTIME_V38.observeScreenState){
+    window.PRD_CLEAN_RUNTIME_V38.observeScreenState('v184-armory-wallet-attach', attachWalletObserver);
+  }
 })();
 
 /* ===== v185-orientation-transition-blackout-mask =====
@@ -4631,4 +4689,297 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsPortraitDock
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
   else install();
+})();
+
+/* ===== v101-command-ui-visibility-restore =====
+   Fix after v46 flow refactor: the real command buttons are moved into
+   #combatHudCommands, but the older v37 hitbox guard can keep max-size/z-index/
+   visibility values on that subtree.  This patch only applies while the battle
+   screen is active and map UI is not active. */
+(function(){
+  'use strict';
+  if(window.PRD_V101_COMMAND_UI_VISIBILITY_RESTORE) return;
+  window.PRD_V101_COMMAND_UI_VISIBILITY_RESTORE = true;
+
+  var STYLE_ID = 'v101-command-ui-visibility-restore-css';
+  var COMMAND_IDS = ['summonBtn','mergeBtn','speedBtn','pauseBtn'];
+
+  function byId(id){ return document.getElementById(id); }
+  function activeCombat(){
+    var body = document.body;
+    return !!(body && body.classList && body.classList.contains('prd-combat-ui-active') && !body.classList.contains('prd-map-ui-active'));
+  }
+  function installStyle(){
+    var head = document.head || document.documentElement;
+    if(!head) return;
+    var st = byId(STYLE_ID);
+    if(!st){
+      st = document.createElement('style');
+      st.id = STYLE_ID;
+      st.textContent = `
+/* v101: restore real battle command buttons after v37 stale-hitbox CSS. */
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions .row,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions .row3,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn{
+  visibility:visible!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+  clip-path:none!important;
+  filter:none!important;
+  z-index:auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
+  display:block!important;
+  position:fixed!important;
+  left:auto!important;
+  top:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:auto!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+  transform:none!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  contain:none!important;
+  z-index:2147483200!important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+  display:grid!important;
+  position:relative!important;
+  left:auto!important;
+  top:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  overflow:visible!important;
+  transform:none!important;
+  background:linear-gradient(180deg,rgba(8,18,34,.78),rgba(3,8,20,.72))!important;
+  border:1px solid rgba(103,232,249,.16)!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.06)!important;
+  backdrop-filter:blur(8px)!important;
+  -webkit-backdrop-filter:blur(8px)!important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions .row,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions .row3{
+  display:contents!important;
+  position:static!important;
+  width:auto!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+  transform:none!important;
+}
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn{
+  display:flex!important;
+  position:relative!important;
+  left:auto!important;
+  top:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0 13px!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  transform:none!important;
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:rgba(103,232,249,.18)!important;
+}
+@media (orientation:portrait){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
+  body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
+    left:clamp(10px,2.4vw,16px)!important;
+    right:clamp(10px,2.4vw,16px)!important;
+    bottom:clamp(8px,1.2vh,16px)!important;
+    top:auto!important;
+    width:auto!important;
+    transform:none!important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:9px!important;
+    padding:11px 11px calc(11px + env(safe-area-inset-bottom,0px))!important;
+    border-radius:24px!important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
+    height:50px!important;
+    min-height:50px!important;
+    max-height:50px!important;
+    font-size:12px!important;
+  }
+}
+@media (orientation:portrait) and (max-width:520px){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+    gap:8px!important;
+    padding:10px 10px calc(10px + env(safe-area-inset-bottom,0px))!important;
+    border-radius:22px!important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-portrait.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
+    height:47px!important;
+    min-height:47px!important;
+    max-height:47px!important;
+    font-size:11px!important;
+  }
+}
+@media (orientation:landscape){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
+    left:auto!important;
+    top:auto!important;
+    right:calc(10px + env(safe-area-inset-right,0px))!important;
+    bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
+    width:clamp(136px,12vw,154px)!important;
+    transform:none!important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+    padding:12px!important;
+    border-radius:26px!important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
+    height:52px!important;
+    min-height:52px!important;
+    max-height:52px!important;
+    font-size:12px!important;
+  }
+}
+body:not(.prd-combat-ui-active) #combatHudCommands,
+body.prd-map-ui-active #combatHudCommands{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+`;
+    }
+    // Move to the end so it wins over older runtime style tags such as v37.
+    head.appendChild(st);
+  }
+
+  function ensureCommandDom(){
+    var field = byId('field');
+    var commands = byId('combatHudCommands');
+    var actions = document.querySelector('#combatHudCommands .battleActions') || document.querySelector('.battleActions');
+    if(field && commands && commands.parentElement !== field){
+      field.appendChild(commands);
+    }
+    if(commands && actions && actions.parentElement !== commands){
+      commands.appendChild(actions);
+    }
+    COMMAND_IDS.forEach(function(id){
+      var btn = byId(id);
+      if(!btn) return;
+      btn.style.removeProperty('visibility');
+      btn.style.removeProperty('opacity');
+      btn.style.removeProperty('display');
+      btn.style.removeProperty('pointer-events');
+    });
+  }
+
+  function sync(){
+    installStyle();
+    if(activeCombat()) ensureCommandDom();
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sync, {once:true});
+  else sync();
+  window.addEventListener('load', function(){ sync(); setTimeout(sync, 120); setTimeout(sync, 700); setTimeout(sync, 1200); }, {once:true});
+  ['resize','orientationchange','pageshow','prd-command-sync'].forEach(function(type){
+    window.addEventListener(type, function(){ sync(); setTimeout(sync, 180); }, {passive:true});
+  });
+  document.addEventListener('click', function(){ setTimeout(sync, 0); setTimeout(sync, 120); }, true);
+  setInterval(function(){ if(!document.hidden && activeCombat()) sync(); }, 1000);
+
+  window.PRD_COMMAND_UI_RESTORE_V101 = { sync: sync };
+})();
+
+
+
+/* ===== v116-core-result-stage-map-button-capture ===== */
+(function(){
+  'use strict';
+  if(window.PRD_RESULT_STAGE_MAP_BUTTON_CAPTURE_V116) return;
+  window.PRD_RESULT_STAGE_MAP_BUTTON_CAPTURE_V116 = true;
+  function mapButton(target){
+    if(!target || !target.closest) return null;
+    var btn = target.closest('#stageResultMapBtn,[data-result-action="stage-map"],[data-stage-result-map-btn="1"]');
+    if(btn) return btn;
+    btn = target.closest('.stageResultOverlay button,#stageClearOverlay button,#gameOverOverlay button');
+    if(btn && /스테이지\s*(맵|이동)|stage\s*map/i.test(btn.textContent || '')) return btn;
+    return null;
+  }
+  function stageFrom(btn){
+    try{
+      var overlay = btn && btn.closest ? btn.closest('.stageResultOverlay,#stageClearOverlay,#gameOverOverlay') : null;
+      var stat = overlay && overlay.querySelector ? overlay.querySelector('.stageResultStat b') : null;
+      var m = String((stat && stat.textContent) || '').match(/(\d+)/);
+      var stage = Number((m && m[1]) || (window.S && S.stageNo) || (window.StageMapState && (StageMapState.current || StageMapState.selected)) || 1) || 1;
+      if(overlay && overlay.classList && overlay.classList.contains('stageResultOverlay--main-clear')){
+        var max = Array.isArray(window.STAGE_MAP_DEFS) ? window.STAGE_MAP_DEFS.length : stage;
+        stage = Math.min(max || stage, stage + 1);
+      }
+      return stage;
+    }catch(_err){ return 1; }
+  }
+  function handle(ev){
+    var btn = mapButton(ev.target);
+    if(!btn || typeof window.PRD_RESULT_STAGE_MAP_NAVIGATE_V116 !== 'function') return;
+    window.PRD_RESULT_STAGE_MAP_NAVIGATE_V116(ev, stageFrom(btn));
+  }
+  ['pointerup','touchend','click'].forEach(function(type){
+    document.addEventListener(type, handle, {capture:true, passive:false});
+  });
+  function decorate(){
+    try{ if(typeof window.PRD_ENSURE_RESULT_STAGE_MAP_DIRECT_STYLE_V116 === 'function') window.PRD_ENSURE_RESULT_STAGE_MAP_DIRECT_STYLE_V116(); }catch(_err){}
+    document.querySelectorAll('#stageResultMapBtn,.stageResultOverlay button').forEach(function(btn){
+      if(btn.id === 'stageResultMapBtn' || /스테이지\s*(맵|이동)|stage\s*map/i.test(btn.textContent || '')){
+        btn.dataset.stageResultMapBtn = '1';
+        btn.dataset.resultAction = 'stage-map';
+        btn.style.setProperty('touch-action','manipulation','important');
+      }
+    });
+  }
+  try{ new MutationObserver(decorate).observe(document.documentElement, {subtree:true, childList:true}); }catch(_err){}
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', decorate, {once:true}); else decorate();
 })();

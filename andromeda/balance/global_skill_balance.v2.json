@@ -1,0 +1,36 @@
+{
+    "skills": {
+        "fireBlast": {
+            "base_damage": 200,
+            "damage_growth": 0.1,
+            "cooldown": 15,
+            "cooldown_reduction_per_level": 1
+        },
+        "iceStorm": {
+            "base_damage": 150,
+            "damage_growth": 0.12,
+            "slow_pct": 0.5,
+            "duration": 6,
+            "cooldown": 20,
+            "cooldown_reduction_per_level": 1
+        },
+        "summonGuardian": {
+            "base_damage": 50,
+            "damage_growth": 0.08,
+            "duration": 10,
+            "cooldown": 25,
+            "cooldown_reduction_per_level": 1
+        },
+        "shockWave": {
+            "base_damage": 100,
+            "damage_growth": 0.15,
+            "area_radius": 2.5,
+            "cooldown": 18,
+            "cooldown_reduction_per_level": 1
+        }
+    },
+    "level_scaling": {
+        "damage_increase_pct_per_level": 0.2,
+        "cooldown_reduction_per_level": 0.05
+    }
+}

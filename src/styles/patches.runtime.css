@@ -21605,3 +21605,34 @@ select,
     width:5px !important;
   }
 }
+
+/* v31: canonical galaxy map bridge. Keep original icons, add fog only as visual state. */
+#galaxyMap .galaxyNode.fogPreview:not(.unlocked) .galaxyNodeCore{
+  filter:saturate(.42) brightness(.58) blur(1.4px) !important;
+  opacity:.46 !important;
+}
+#galaxyMap .galaxyNode.fogDeep:not(.unlocked) .galaxyNodeCore{
+  filter:saturate(.18) brightness(.28) blur(2.6px) !important;
+  opacity:.18 !important;
+}
+#galaxyMap .galaxyNode.fogPreview:not(.unlocked)::after,
+#galaxyMap .galaxyNode.fogDeep:not(.unlocked)::after{
+  content:"";
+  position:absolute;
+  inset:-46px;
+  border-radius:999px;
+  pointer-events:none;
+  z-index:4;
+}
+#galaxyMap .galaxyNode.fogPreview:not(.unlocked)::after{
+  background:radial-gradient(circle, rgba(2,6,23,.18) 0%, rgba(2,6,23,.46) 54%, rgba(2,6,23,.72) 100%);
+  box-shadow:0 0 38px rgba(2,6,23,.70);
+}
+#galaxyMap .galaxyNode.fogDeep:not(.unlocked)::after{
+  background:radial-gradient(circle, rgba(2,6,23,.62) 0%, rgba(2,6,23,.88) 58%, rgba(0,0,0,.96) 100%);
+  box-shadow:0 0 62px rgba(0,0,0,.88);
+}
+#galaxyMap.prd-galaxy-test-all-open-v31 .galaxyNode .galaxyLockMark{display:none!important;}
+#galaxyMap.prd-galaxy-test-all-open-v31 .galaxyNode .galaxyNodeCore{filter:none!important;opacity:1!important;}
+#galaxyMap.prd-galaxy-test-all-open-v31 .galaxyNode::after{display:none!important;}
+#galaxyEnterBtn.locked{opacity:.42!important;filter:saturate(.35) brightness(.55)!important;pointer-events:none!important;}

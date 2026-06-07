@@ -7,6 +7,7 @@
   window.PRD_MAP_HUD_RECOVERY_V83 = true;
 
   function byId(id){ return document.getElementById(id); }
+  function flowActive(){ return !!(window.PRD_STAGE_FLOW_CONTROLLER_ACTIVE || window.PRD_DISABLE_LEGACY_FLOW_HANDLERS || window.PRD_STAGE_FLOW); }
   function isLandscape(){
     try{
       return (window.matchMedia && window.matchMedia('(orientation: landscape)').matches) || window.innerWidth >= window.innerHeight;
@@ -80,7 +81,7 @@
 
   function ensureOverlay(){
     var overlay = byId('v274MapInfoOverlay');
-    if(overlay) return overlay;
+    if(overlay){ bindOverlayControls(overlay); return overlay; }
     overlay = document.createElement('div');
     overlay.id = 'v274MapInfoOverlay';
     overlay.setAttribute('aria-hidden','true');
@@ -100,12 +101,29 @@
     overlay.addEventListener('click', function(e){
       if(e.target === overlay || (e.target.closest && e.target.closest('[data-v274-close]'))) closeInfo();
     });
-    byId('v274MapInfoEnterBtn').addEventListener('click', function(){
-      var kind = overlay.dataset.kind || 'stage';
-      closeInfo();
-      setTimeout(function(){ kind === 'galaxy' ? enterGalaxy() : enterStage(); }, 0);
-    });
+    bindOverlayControls(overlay);
     return overlay;
+  }
+  function bindOverlayControls(overlay){
+    if(!overlay || overlay.dataset.v83FlowBound) return;
+    var enter = byId('v274MapInfoEnterBtn');
+    if(!enter) return;
+    overlay.dataset.v83FlowBound = '1';
+    enter.addEventListener('click', function(e){
+      var kind = overlay.dataset.kind || 'stage';
+      if(flowActive()){
+        e.preventDefault();
+        e.stopPropagation();
+        if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+      }
+      closeInfo();
+      if(flowActive() && window.PRD_STAGE_FLOW){
+        if(kind === 'galaxy' && typeof window.PRD_STAGE_FLOW.enterSelectedGalaxy === 'function') window.PRD_STAGE_FLOW.enterSelectedGalaxy();
+        else if(kind === 'stage' && typeof window.PRD_STAGE_FLOW.enterCurrentStageBattle === 'function') window.PRD_STAGE_FLOW.enterCurrentStageBattle();
+        return;
+      }
+      setTimeout(function(){ kind === 'galaxy' ? enterGalaxy() : enterStage(); }, 0);
+    }, true);
   }
   function closeInfo(){
     var overlay = byId('v274MapInfoOverlay');
@@ -114,7 +132,7 @@
     overlay.setAttribute('aria-hidden','true');
   }
   function openInfo(kind){
-    if(window.PRD_MAP_HUD_V274 && typeof window.PRD_MAP_HUD_V274.openInfo === 'function'){
+    if(!flowActive() && window.PRD_MAP_HUD_V274 && typeof window.PRD_MAP_HUD_V274.openInfo === 'function'){
       try{ window.PRD_MAP_HUD_V274.openInfo(kind); return; }catch(_){ }
     }
     var source = kind === 'galaxy' ? byId('galaxyInfoPanel') : byId('stageInfoPanel');
@@ -143,6 +161,10 @@
     overlay.setAttribute('aria-hidden','false');
   }
   function enterGalaxy(){
+    if(flowActive() && window.PRD_STAGE_FLOW && typeof window.PRD_STAGE_FLOW.enterSelectedGalaxy === 'function'){
+      window.PRD_STAGE_FLOW.enterSelectedGalaxy();
+      return;
+    }
     if(window.PRD_MAP_HUD_V274 && typeof window.PRD_MAP_HUD_V274.showStage === 'function'){
       try{ window.PRD_MAP_HUD_V274.showStage(); return; }catch(_){ }
     }
@@ -176,6 +198,10 @@
   }
   var v85RecoveryEnterLock = false;
   function enterStage(){
+    if(flowActive() && window.PRD_STAGE_FLOW && typeof window.PRD_STAGE_FLOW.enterCurrentStageBattle === 'function'){
+      window.PRD_STAGE_FLOW.enterCurrentStageBattle();
+      return;
+    }
     if(v85RecoveryEnterLock) return;
     if(!canStartStageFromMap()){
       window.PRD_STAGE_ENTERING = false;
@@ -211,6 +237,7 @@
   function syncSoon(){
     if(v86SyncTimer) clearTimeout(v86SyncTimer);
     ensureDocks();
+    if(flowActive()) return;
     if(window.requestAnimationFrame){
       requestAnimationFrame(function(){ ensureDocks(); requestAnimationFrame(ensureDocks); });
     }
@@ -223,6 +250,7 @@
     var start = Date.now();
     function tick(){
       ensureDocks();
+      if(flowActive()) return;
       if(Date.now() - start < ms) setTimeout(tick, 180);
     }
     tick();
@@ -230,12 +258,23 @@
   function installV86VisibilityWatch(){
     if(window.PRD_MAP_HUD_RECOVERY_V86_WATCH) return;
     window.PRD_MAP_HUD_RECOVERY_V86_WATCH = true;
-    var nodes = [document.body, byId('galaxyMap'), byId('stageMap'), byId('menu'), byId('game')].filter(Boolean);
-    if(window.MutationObserver){
-      var observer = new MutationObserver(function(){ syncSoon(); });
-      nodes.forEach(function(node){
-        try{ observer.observe(node, {attributes:true, attributeFilter:['class','style','hidden','aria-hidden']}); }catch(_){ }
-      });
+    if(flowActive()){
+      document.addEventListener('visibilitychange', ensureDocks, {passive:true});
+      window.addEventListener('focus', ensureDocks, {passive:true});
+      window.addEventListener('pageshow', ensureDocks, {passive:true});
+      ensureDocks();
+      return;
+    }
+    if(window.PRD_CLEAN_RUNTIME_V38 && window.PRD_CLEAN_RUNTIME_V38.observeScreenState){
+      window.PRD_CLEAN_RUNTIME_V38.observeScreenState('map-hud-recovery-v86', syncSoon);
+    }else{
+      var nodes = [byId('galaxyMap'), byId('stageMap'), byId('menu'), byId('game')].filter(Boolean);
+      if(window.MutationObserver){
+        var observer = new MutationObserver(function(){ syncSoon(); });
+        nodes.forEach(function(node){
+          try{ observer.observe(node, {attributes:true, attributeFilter:['class','style','hidden','aria-hidden']}); }catch(_){ }
+        });
+      }
     }
     document.addEventListener('visibilitychange', syncSoon, {passive:true});
     window.addEventListener('focus', syncSoon, {passive:true});
@@ -258,6 +297,7 @@
       else if(target.id === 'v274StageEnterBtn') enterStage();
       return;
     }
+    if(flowActive()) return;
     var stageNode = e.target && e.target.closest ? e.target.closest('#stageMap .stageNode[data-stage]') : null;
     if(stageNode && isLandscape()) setTimeout(function(){ openInfo('stage'); syncSoon(); }, 100);
   }, true);
