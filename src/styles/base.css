@@ -12276,3 +12276,130 @@ html, body{overflow-x:hidden !important;}
   .stageResultActions button { min-height: 46px; }
   .stageResultMastery { grid-template-columns: 1fr; }
 }
+
+/* V118 ANDROMEDA STAGE PLANET ART
+   - New Andromeda-only planet resources.
+   - Scoped to Andromeda stage map so Milky Rift planet art remains unchanged.
+   - Stage progression: 1-3 silent entry, 4-7 resonant shard, 8-10 gravity lens,
+     11-13 rift matrix, 14-15 final core. */
+#stageMap.andromedaTraceMap .stageNode[data-stage="1"],
+#stageMap.andromedaTraceMap .stageNode[data-stage="2"],
+#stageMap.andromedaTraceMap .stageNode[data-stage="3"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="1"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="2"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="3"]{
+  --planetArt:url('../../assets/images/planets/andromeda_stage_planet_01_silent.webp') !important;
+}
+#stageMap.andromedaTraceMap .stageNode[data-stage="4"],
+#stageMap.andromedaTraceMap .stageNode[data-stage="5"],
+#stageMap.andromedaTraceMap .stageNode[data-stage="6"],
+#stageMap.andromedaTraceMap .stageNode[data-stage="7"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="4"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="5"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="6"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="7"]{
+  --planetArt:url('../../assets/images/planets/andromeda_stage_planet_02_resonant.webp') !important;
+}
+#stageMap.andromedaTraceMap .stageNode[data-stage="8"],
+#stageMap.andromedaTraceMap .stageNode[data-stage="9"],
+#stageMap.andromedaTraceMap .stageNode[data-stage="10"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="8"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="9"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="10"]{
+  --planetArt:url('../../assets/images/planets/andromeda_stage_planet_03_gravity.webp') !important;
+}
+#stageMap.andromedaTraceMap .stageNode[data-stage="11"],
+#stageMap.andromedaTraceMap .stageNode[data-stage="12"],
+#stageMap.andromedaTraceMap .stageNode[data-stage="13"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="11"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="12"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="13"]{
+  --planetArt:url('../../assets/images/planets/andromeda_stage_planet_04_rift.webp') !important;
+}
+#stageMap.andromedaTraceMap .stageNode[data-stage="14"],
+#stageMap.andromedaTraceMap .stageNode[data-stage="15"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="14"],
+body.prd-andromeda-standalone #stageMap .stageNode[data-stage="15"]{
+  --planetArt:url('../../assets/images/planets/andromeda_stage_planet_05_core.webp') !important;
+}
+
+
+
+/* V120 ANDROMEDA PLANET ART VISIBILITY FIX
+   - Force Andromeda stage nodes to use the new planet image assets directly.
+   - Keep this scoped so Milky Rift nodes remain unchanged.
+   - Earlier rules only changed --planetArt; later node/glass patches could still make
+     the nodes look like plain colored orbs. These final rules put the image itself
+     on .nodePlanet with higher specificity. */
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode .nodePlanet{
+  border-radius:50% !important;
+  border:none !important;
+  background-color:transparent !important;
+  background-repeat:no-repeat !important;
+  background-position:center center !important;
+  background-size:108% 108% !important;
+  box-shadow:none !important;
+  filter:brightness(1.08) saturate(1.18) drop-shadow(0 0 15px color-mix(in srgb, var(--nodeColor) 42%, transparent)) !important;
+}
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="1"] .nodePlanet,
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="2"] .nodePlanet,
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="3"] .nodePlanet{
+  background-image:url('../../assets/images/planets/andromeda_stage_planet_01_silent.webp') !important;
+}
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="4"] .nodePlanet,
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="5"] .nodePlanet,
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="6"] .nodePlanet,
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="7"] .nodePlanet{
+  background-image:url('../../assets/images/planets/andromeda_stage_planet_02_resonant.webp') !important;
+}
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="8"] .nodePlanet,
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="9"] .nodePlanet,
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="10"] .nodePlanet{
+  background-image:url('../../assets/images/planets/andromeda_stage_planet_03_gravity.webp') !important;
+}
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="11"] .nodePlanet,
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="12"] .nodePlanet,
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="13"] .nodePlanet{
+  background-image:url('../../assets/images/planets/andromeda_stage_planet_04_rift.webp') !important;
+}
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="14"] .nodePlanet,
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode[data-stage="15"] .nodePlanet{
+  background-image:url('../../assets/images/planets/andromeda_stage_planet_05_core.webp') !important;
+}
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode .nodePlanet::before{
+  inset:-8px !important;
+  border-color:color-mix(in srgb, var(--nodeColor) 42%, transparent) !important;
+  background:radial-gradient(circle, transparent 56%, rgba(2,6,23,.58) 73%, transparent 76%) !important;
+  box-shadow:0 0 16px color-mix(in srgb, var(--nodeColor) 22%, transparent) !important;
+}
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode .nodePlanet::after{
+  opacity:.28 !important;
+}
+:is(#stageMap.andromedaTraceMap, body.prd-andromeda-standalone #stageMap) .stageNode .nodeNo{
+  color:rgba(248,250,252,.96) !important;
+  text-shadow:0 2px 7px rgba(0,0,0,.96), 0 0 10px rgba(0,0,0,.78), 0 0 16px color-mix(in srgb, var(--nodeColor) 46%, transparent) !important;
+}
+
+
+/* V120 ANDROMEDA STATIC BODY FALLBACK */
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="1"] .nodePlanet,
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="2"] .nodePlanet,
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="3"] .nodePlanet{background-image:url('../../assets/images/planets/andromeda_stage_planet_01_silent.webp') !important;}
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="4"] .nodePlanet,
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="5"] .nodePlanet,
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="6"] .nodePlanet,
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="7"] .nodePlanet{background-image:url('../../assets/images/planets/andromeda_stage_planet_02_resonant.webp') !important;}
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="8"] .nodePlanet,
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="9"] .nodePlanet,
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="10"] .nodePlanet{background-image:url('../../assets/images/planets/andromeda_stage_planet_03_gravity.webp') !important;}
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="11"] .nodePlanet,
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="12"] .nodePlanet,
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="13"] .nodePlanet{background-image:url('../../assets/images/planets/andromeda_stage_planet_04_rift.webp') !important;}
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="14"] .nodePlanet,
+body[data-campaign="andromeda"] #stageMap .stageNode[data-stage="15"] .nodePlanet{background-image:url('../../assets/images/planets/andromeda_stage_planet_05_core.webp') !important;}
+body[data-campaign="andromeda"] #stageMap .stageNode .nodePlanet{
+  background-repeat:no-repeat !important;
+  background-position:center center !important;
+  background-size:108% 108% !important;
+  background-color:transparent !important;
+}

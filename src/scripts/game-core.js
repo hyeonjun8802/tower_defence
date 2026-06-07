@@ -5086,6 +5086,33 @@ function confineEnemyToRoute(enemy, maxOffset=12){
   // segment 진행은 Enemy.update()에서만 바뀌어야 코너에서 멈춤/왕복 현상이 없다.
 }
 
+
+function prewarmPlanetSpriteCacheV120(){
+  // Decode/cache the level-1 tower sprites before the player taps summon.
+  // This avoids a first-use offscreen-canvas render during gameplay.
+  try{
+    const sizes = [PLANET_BASE_SIZE, IS_MOBILE_BOARD ? 46 : 39, 52];
+    const maxType = Math.min(BASE_PLANET_COUNT, Array.isArray(PLANETS) ? PLANETS.length : BASE_PLANET_COUNT);
+    for(let type=0; type<maxType; type++){
+      for(let i=0;i<sizes.length;i++) getCachedPlanetSprite(type, sizes[i], 1);
+    }
+  }catch(_err){}
+}
+function schedulePlanetSpritePrewarmV120(attempt=0){
+  const run = function(){
+    prewarmPlanetSpriteCacheV120();
+    if(attempt < 5 && PLANET_SPRITE_RENDER_CACHE.size < Math.min(BASE_PLANET_COUNT, 9)){
+      setTimeout(function(){ schedulePlanetSpritePrewarmV120(attempt + 1); }, 520);
+    }
+  };
+  if(window.requestIdleCallback) window.requestIdleCallback(run, {timeout:1200});
+  else setTimeout(run, 240);
+}
+try{
+  if(document.readyState === 'complete') schedulePlanetSpritePrewarmV120();
+  else window.addEventListener('load', function(){ schedulePlanetSpritePrewarmV120(); }, {once:true});
+}catch(_err){}
+
 function drawPlanetSprite(type, x, y, size, frameIndex, level=1){
   const cachedSprite = getCachedPlanetSprite(type, size, level);
   if(cachedSprite){
@@ -7103,6 +7130,18 @@ function updateTacticalCooldowns(dt){
 
 let summonLastFxAt = 0;
 const SUMMON_RAPID_FX_GAP_MS = 260;
+const V120_SUMMON_UI_REFRESH_DELAY_MS = 42;
+let v120SummonUiRefreshTimer = 0;
+function requestSummonUiRefreshV120(){
+  // Keep summon input responsive. updateSelected()/updateUI() can touch DOM, hangar
+  // state and live thumbnails; doing it inside the pointer/click event can block
+  // the next battle RAF frame, which looks like the star layer freezes briefly.
+  if(v120SummonUiRefreshTimer) return;
+  v120SummonUiRefreshTimer = setTimeout(function(){
+    v120SummonUiRefreshTimer = 0;
+    requestMergeUiRefresh(false);
+  }, V120_SUMMON_UI_REFRESH_DELAY_MS);
+}
 function summon(typeOverride=null){
   if(S.gameOver) return false;
   const pool = availableSummonTypes();
@@ -7141,11 +7180,11 @@ function summon(typeOverride=null){
   const now = nowForMergeMs();
   const rapid = now - summonLastFxAt < SUMMON_RAPID_FX_GAP_MS;
   summonLastFxAt = now;
-  burst(p.x,p.y,PLANETS[type].color,rapid ? 14 : 24,rapid ? 30 : 42);
-  toast(`랜덤 소환 — ${PLANETS[type].name} 착지 완료`);
+  burst(p.x,p.y,PLANETS[type].color,rapid ? 7 : 12,rapid ? 22 : 30);
+  if(!rapid) toast(`랜덤 소환 — ${PLANETS[type].name} 착지 완료`);
   // v-summon-audio-off: tower creation can happen rapidly on hold-repeat.
   // Keep the visual feedback/toast, but skip the summon SFX to reduce WebView audio overhead.
-  requestMergeUiRefresh(false);
+  requestSummonUiRefreshV120();
   return true;
 }
 const MERGE_TERRAIN_PRIORITY = {

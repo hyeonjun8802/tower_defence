@@ -20,7 +20,12 @@
   "backgrounds": {
     "outer": "assets/images/backgrounds/bg_andromeda_outer.webp",
     "gravity": "assets/images/backgrounds/bg_andromeda_gravity.webp",
-    "core": "assets/images/backgrounds/bg_andromeda_core.webp"
+    "core": "assets/images/backgrounds/bg_andromeda_core.webp",
+    "andromeda_silent": "assets/images/backgrounds/bg_andromeda_01_silent.webp",
+    "andromeda_resonant": "assets/images/backgrounds/bg_andromeda_02_resonant.webp",
+    "andromeda_gravity": "assets/images/backgrounds/bg_andromeda_03_gravity.webp",
+    "andromeda_rift": "assets/images/backgrounds/bg_andromeda_04_rift.webp",
+    "andromeda_core": "assets/images/backgrounds/bg_andromeda_05_core.webp"
   },
   "scenario_v5_placeholders": {
     "monsters": {
