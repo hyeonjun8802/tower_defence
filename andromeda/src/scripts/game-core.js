@@ -10732,9 +10732,10 @@ try { renderHangar(); } catch(err) { console.error('renderHangar failed during i
 
 /* V18 Stage node caption sync: keep map captions short and non-overlapping. */
 const STAGE_NODE_SHORT_LABELS_V18 = {
-  1:'COSMIC', 2:'FROST', 3:'LAVA', 4:'JUNGLE',
-  5:'SMOG', 6:'CRYSTAL', 7:'MACHINE', 8:'GRAVITY',
-  9:'THUNDER', 10:'TIME', 11:'SILENT', 12:'RIFT'
+  1:'SILENT', 2:'ECHO', 3:'RESONANT', 4:'MARKED',
+  5:'OUTER', 6:'TWISTED', 7:'GRAVITY', 8:'SLOWED',
+  9:'RIFT', 10:'GRAVITY', 11:'RUINED', 12:'PRISM',
+  13:'CORRUPTED', 14:'WARDEN', 15:'ANDROMEDA'
 };
 function syncStageNodeCaptionsV18(){
   document.querySelectorAll('#stageMap .stageNode').forEach(node => {
