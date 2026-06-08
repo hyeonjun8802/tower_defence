@@ -2127,6 +2127,59 @@
   }
 }
 
+/* V140 MOBILE COMBAT SAFE CONTROLS
+   Compact the landscape command stack and shift utility buttons away from the
+   iPhone landscape notch so neither layer covers the core/playfield. */
+@media (orientation:landscape) and (max-height:520px){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
+    right:calc(6px + env(safe-area-inset-right,0px)) !important;
+    bottom:calc(24px + env(safe-area-inset-bottom,0px)) !important;
+    width:var(--v34-command-width,82px) !important;
+    min-width:0 !important;
+    max-width:var(--v34-command-width,82px) !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+    gap:4px !important;
+    padding:5px !important;
+    border-radius:13px !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
+    height:var(--v34-command-button-height,28px) !important;
+    min-height:var(--v34-command-button-height,28px) !important;
+    max-height:var(--v34-command-button-height,28px) !important;
+    padding:0 4px !important;
+    font-size:8.5px !important;
+    letter-spacing:0 !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #field .fieldTopControls,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay .fieldTopControls,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls{
+    right:calc(62px + var(--v34-command-safe,0px) + env(safe-area-inset-right,0px)) !important;
+    top:calc(6px + var(--prd-status-top-offset,0px)) !important;
+    gap:7px !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #field .fieldTopControls .fieldIconBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #field .fieldTopControls #towerMenuBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #field .fieldTopControls #audioBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay .fieldTopControls .fieldIconBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay .fieldTopControls #towerMenuBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay .fieldTopControls #audioBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls .fieldIconBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls #towerMenuBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls #audioBtn{
+    width:42px !important;
+    height:42px !important;
+    min-width:42px !important;
+    min-height:42px !important;
+  }
+}
+
 /* ===== v196-close-wallet-refine ===== */
 /* v196: make the close button read clearly as a close action and give the shard currency more presence. */
 #towerPopup .towerPopupClose{
@@ -22187,5 +22240,56 @@ body[data-campaign="andromeda"] #stageMap .stageNode.active .nodePlanet::after{
     max-height:var(--v34-command-button-height,32px) !important;
     padding:0 6px !important;
     font-size:9px !important;
+  }
+}
+
+/* V140 MOBILE COMBAT SAFE CONTROLS - final order guard */
+@media (orientation:landscape) and (max-height:520px){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
+    right:calc(6px + env(safe-area-inset-right,0px)) !important;
+    bottom:calc(24px + env(safe-area-inset-bottom,0px)) !important;
+    width:var(--v34-command-width,82px) !important;
+    min-width:0 !important;
+    max-width:var(--v34-command-width,82px) !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+    gap:4px !important;
+    padding:5px !important;
+    border-radius:13px !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
+    height:var(--v34-command-button-height,28px) !important;
+    min-height:var(--v34-command-button-height,28px) !important;
+    max-height:var(--v34-command-button-height,28px) !important;
+    padding:0 4px !important;
+    font-size:8.5px !important;
+    letter-spacing:0 !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #field .fieldTopControls,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay .fieldTopControls,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls{
+    right:calc(62px + var(--v34-command-safe,0px) + env(safe-area-inset-right,0px)) !important;
+    top:calc(6px + var(--prd-status-top-offset,0px)) !important;
+    gap:7px !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #field .fieldTopControls .fieldIconBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #field .fieldTopControls #towerMenuBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #field .fieldTopControls #audioBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay .fieldTopControls .fieldIconBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay .fieldTopControls #towerMenuBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay .fieldTopControls #audioBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls .fieldIconBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls #towerMenuBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudTopLine .fieldTopControls #audioBtn{
+    width:42px !important;
+    height:42px !important;
+    min-width:42px !important;
+    min-height:42px !important;
   }
 }

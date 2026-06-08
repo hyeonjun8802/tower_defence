@@ -1222,6 +1222,10 @@ function getOfflineStoryLog(stageNo, phase='intro'){
   const st = OFFLINE_CHAPTERS[Number(stageNo)] || OFFLINE_CHAPTERS[1];
   return st[phase] || st.intro || '';
 }
+const STORY_EVENT_TEXT = {
+  boss:'보스 경보',
+  clearBody:'성역 정화 완료'
+};
 function markOfflineStory(stageNo, phase){
   META.story[`${stageNo}_${phase}`] = true;
   saveOfflineMeta();
@@ -2267,15 +2271,16 @@ function completeStageFromBattle(){
   window.PRD_STAGE_RESULT_PENDING = true;
   window.PRD_STAGE_RESULT_PENDING_AT = Date.now();
   window.PRD_STAGE_ENTERING = false;
-  if(document.body) document.body.classList.remove('prd-stage-entering');
+  if(document.body) document.body.classList.remove('prd-stage-entering','monster-intro-open');
+  try{ document.getElementById('monsterIntroPopup')?.remove(); }catch(_err){}
   const cleared = clamp(Number(S.stageNo || StageMapState.current || 1), 1, STAGE_MAP_DEFS.length);
   const finalSelected = Math.min(STAGE_MAP_DEFS.length, cleared + 1);
   const nextDef = getStageDef(finalSelected);
 
   cancelAnimationFrame(raf);
   syncNonBattleChrome();
-  $('game').style.display = 'none';
-  $('stageMap').style.display = 'block';
+  $('game').style.setProperty('display', 'none', 'important');
+  $('stageMap').style.setProperty('display', 'block', 'important');
   stopStageBgm();
 
   const beforeShards = Number(META?.shards || 0);
@@ -2307,21 +2312,51 @@ function completeStageFromBattle(){
   reset();
   resetBattleUnitsForStageMap();
 
-  setTimeout(() => {
-    forceStageClearUnlockAfterBattle(cleared, {
-      recordClear:false,
-      selectStage:finalSelected,
-      currentStage:finalSelected
-    });
-    renderStageMap();
-    const hint = $('stageHint');
-    if(hint){
-      hint.textContent = cleared >= STAGE_MAP_DEFS.length
-        ? `모든 성역 클리어! 원하는 성역을 다시 선택해 재도전할 수 있습니다.`
-        : `${nextDef.stage}. ${nextDef.name} / ${nextDef.ko} 해금 — ENTER로 진입하세요. 다음 보상: ${stageTowerRewardText(finalSelected)}`;
+  let stageClearOverlayShown = false;
+  const showStageClearResultOnce = (reason='primary') => {
+    if(stageClearOverlayShown || $('stageClearOverlay')){
+      stageClearOverlayShown = true;
+      return;
     }
-    showStageClearOverlay(clearSummary);
-  }, 90);
+    let repairedAgain = null;
+    try{
+      const gameEl = $('game');
+      const stageEl = $('stageMap');
+      if(gameEl) gameEl.style.setProperty('display', 'none', 'important');
+      if(stageEl) stageEl.style.setProperty('display', 'block', 'important');
+      if(document.body){
+        document.body.classList.remove('prd-combat-ui-active','prd-battle-active','prd-combat-screen-active','monster-intro-open','prd-andromeda-combat-v7');
+        document.body.classList.add('prd-map-ui-active');
+      }
+      const fieldEl = $('field');
+      if(fieldEl) fieldEl.classList.remove('andromedaBattleField','andromedaBattleOuter','andromedaBattleGravity','andromedaBattleCore');
+      document.getElementById('monsterIntroPopup')?.remove();
+    }catch(err){ console.warn('[v140 stage clear] screen restore failed', err); }
+    try{
+      repairedAgain = forceStageClearUnlockAfterBattle(cleared, {
+        recordClear:false,
+        selectStage:finalSelected,
+        currentStage:finalSelected
+      });
+    }catch(err){ console.warn('[v140 stage clear] unlock repair failed', err); }
+    try{ renderStageMap(); }catch(err){ console.warn('[v140 stage clear] map render failed', err); }
+    try{
+      const hint = $('stageHint');
+      if(hint){
+        hint.textContent = cleared >= STAGE_MAP_DEFS.length
+          ? `모든 성역 클리어! 원하는 성역을 다시 선택해 재도전할 수 있습니다.`
+          : `${nextDef.stage}. ${nextDef.name} / ${nextDef.ko} 해금 — ENTER로 진입하세요. 다음 보상: ${stageTowerRewardText(finalSelected)}`;
+      }
+    }catch(err){ console.warn('[v140 stage clear] hint update failed', err); }
+    try{
+      const overlay = showStageClearOverlay(clearSummary);
+      if(overlay){
+        stageClearOverlayShown = true;
+        window.PRD_LAST_STAGE_CLEAR_V140 = Object.assign({ts:Date.now(), reason}, repairedAgain || repaired, clearSummary);
+      }
+    }catch(err){ console.error('[v140 stage clear] overlay failed', err); }
+  };
+  [90, 240, 720].forEach(delay => setTimeout(() => showStageClearResultOnce(`delay-${delay}`), delay));
 }
 
 const STAGE_BGS = THEMES.map(t => {
@@ -6297,6 +6332,13 @@ function monsterPoolSummary(stageNo, waveNo){
   return pool.slice(0, 4).map(([id]) => monsterDef(id).displayName || id).join(' / ');
 }
 
+function scaledEnemyVisualSize(size, boss=false, splitChild=false){
+  const raw = Math.max(1, Number(size || 13));
+  const scale = boss ? .78 : (splitChild ? .82 : .84);
+  const minSize = splitChild ? 7 : 8;
+  return Math.max(minSize, Math.round(raw * scale * 10) / 10);
+}
+
 class Enemy{
   constructor(entry){
     if(entry !== undefined) this.init(entry);
@@ -6351,6 +6393,7 @@ class Enemy{
     const lateStageWavePressure = lateStagePostFirstWavePressure(S.stageNo || StageMapState.current || 1, S.ogge || 1, !!(base.boss || this.stageBoss));
     armor += Number(waveDefense.armor || 0) + Number(lateStageWavePressure.armor || 0);
     this.lateStageSpeedMul = Number(lateStageWavePressure.speedMul || 1);
+    size = scaledEnemyVisualSize(size, !!(base.boss || this.stageBoss), this.splitChild);
     this.spd=spd;this.size=size;this.color=color;this.reward=reward;this.exp=exp;this.armor=armor;
     this.x=route[0].x;this.y=route[0].y;this.seg=0;this.progress=0;
     if(payload && Number.isFinite(payload.x) && Number.isFinite(payload.y)){
@@ -6485,7 +6528,7 @@ class Enemy{
     S.hp-=coreHit;
     S.leakedEnemies = (S.leakedEnemies || 0) + 1;
     S.coreDamageTaken = (S.coreDamageTaken || 0) + coreHit;
-    shake=24;flash=.25;
+    shake=Math.max(shake,6);flash=.14;
     burst(CORE.x,CORE.y,'#fb7185',34,52);
     sound('hit');
     if(S.hp<=0){
@@ -6804,7 +6847,6 @@ class Bullet{
       spawnImpactMist(this.target.x, this.target.y, 'rgba(156,171,98,.30)', 10);
       if(reversed){
         impactLabel(this.target.x, this.target.y - this.target.size - 22, '역류', '#fde68a', 16, 70);
-        shake = Math.max(shake, 5);
       }else if(signatureChance(this.tower,.11,.012)){
         impactLabel(this.target.x, this.target.y - this.target.size - 18, '정화 장막', '#d9f99d', 14, 62);
       }
@@ -6826,7 +6868,6 @@ class Bullet{
         burst(this.target.x, this.target.y, '#fff8dc', 56, 76);
         ring(this.target.x, this.target.y, this.tower.def.explodeRadius || 126, '#fff8dc');
         impactLabel(this.target.x, this.target.y - this.target.size - 24, this.target.stageBoss ? '보스 폭발' : '성흔 폭발', '#fff7cc', 20, 88);
-        shake = Math.max(shake, 18);
         flash = Math.max(flash, .16);
       }
     }else{
@@ -6854,7 +6895,6 @@ function fireBeam(tower,target,st){
   if(overcharge){
     impactLabel(target.x,target.y-target.size-18,'OVERCHARGE',color,18,78);
     ring(target.x,target.y,72,color);
-    shake=Math.max(shake,6);
     flash=Math.max(flash,.06);
   }
   playTowerSfx('laser', overcharge ? 1.08 : 1);
@@ -7038,7 +7078,6 @@ function triggerBossSkill(enemy){
     enemy.armor = Math.min(armorCap, Math.max(0, enemy.armor || 0));
   }
   sound('boss', { intensity: enemy.bossTier === 'final' ? 1.08 : .9 });
-  shake = Math.max(shake, enemy.bossTier === 'final' ? 3.2 : 2.4);
 }
 
 function blackholePulse(tower,target,st){
@@ -7502,7 +7541,6 @@ function spawn(entry){
     impactLabel(enemy.x + 56, enemy.y - 26, enemy.bossTier === 'final' ? 'FINAL BOSS' : 'MID BOSS', enemy.auraColor || enemy.color, 16, 120);
     toast(`${enemy.bossKo || enemy.bossName} 출현`, 'important');
     log(`보스 출현: ${enemy.bossKo || enemy.bossName} / ${bossSkillKo(enemy.abilityName)}`);
-    shake = Math.max(shake, 7);
   }
   S.spawned++;
 }
@@ -8590,7 +8628,16 @@ function toast(t, priority='normal'){
   layer.appendChild(div);
   setTimeout(()=>div.remove(),2200);
 }
-function floatText(x,y,text,color,size=12,life=54){pushFloat(x,y,(typeof text === 'number' ? fmt2(text) : String(text)),color,size,life,-.52)}
+function shouldShowCoreCombatLabel(text){
+  const label = String(text || '').trim();
+  if(!label) return false;
+  return /(FINAL BOSS|MID BOSS|\+\s*\d+(?:\.\d+)?\s*(CRYSTAL|SHARD)|SHIELD\s*-|BARRIER\s*\+|CORE|최종 보스|중간 보스|코어)/i.test(label);
+}
+function floatText(x,y,text,color,size=12,life=54){
+  const label = typeof text === 'number' ? fmt2(text) : String(text);
+  if(!shouldShowCoreCombatLabel(label)) return;
+  pushFloat(x,y,label,color,size,life,-.52);
+}
 function burst(x,y,color,count,force){
   for(let i=0;i<count;i++){
     const a=Math.random()*TAU,s=rand(.5,force/22);
@@ -8600,8 +8647,10 @@ function burst(x,y,color,count,force){
 function ring(x,y,r,color){pushParticle(x,y,0,0,2,26,26,color,'burst',{ring:true,max:r})}
 
 function impactLabel(x,y,text,color='#fff',size=18,life=76){
+  const label = typeof text === 'number' ? fmt2(text) : String(text);
+  if(!shouldShowCoreCombatLabel(label)) return;
   const adjustedLife = Math.round(life*.86);
-  pushFloat(x,y,(typeof text === 'number' ? fmt2(text) : String(text)),color,Math.round(size*.92),adjustedLife,-.48);
+  pushFloat(x,y,label,color,Math.round(size*.92),adjustedLife,-.48);
 }
 function terrainSpecialChanceMultiplier(tower){
   if(!tower || !terrain) return 1;
@@ -8669,7 +8718,6 @@ function triggerMergeImpact(idx,color,level){
       log(`병합 콤보: x${fmt2(combo)} / 보상 없음`);
     }
   }
-  shake=Math.max(shake,6 + Math.min(10,visualCombo*2));
   flash=Math.max(flash,.045);
   const now = nowForMergeMs();
   if(now - mergeLastSoundAt >= MERGE_SOUND_INTERVAL_MS){
@@ -8681,7 +8729,6 @@ function triggerTreasureImpact(enemy){
   burst(enemy.x,enemy.y,'#facc15',30,42);
   ring(enemy.x,enemy.y,62,'#fde68a');
   impactLabel(enemy.x,enemy.y-enemy.size-18,'TREASURE','#fde68a',17,68);
-  shake=Math.max(shake,9);
   flash=Math.max(flash,.08);
 }
 function triggerSolarNova(tower,target,st,dmg){
@@ -8690,7 +8737,6 @@ function triggerSolarNova(tower,target,st,dmg){
   burst(target.x,target.y,'#fb923c',9,18);
   spawnImpactSparks(target.x,target.y,'#fdba74',10,1.15);
   impactLabel(target.x,target.y-target.size-16,'NOVA SPLASH','#fed7aa',15,62);
-  shake=Math.max(shake,6);
 }
 function triggerFrostShatter(tower,target,st,dmg){
   areaDamage(target.x,target.y,42+tower.level*2.0,dmg*.42,'frost_shatter','#bfdbfe',st.gold);
@@ -8703,7 +8749,6 @@ function triggerStormOverload(tower,target,st,dmg,chainCount){
   ring(target.x,target.y,34+tower.level*1.0,tower.def.color);
   spawnImpactSparks(target.x,target.y,'#fde047',11,1.1);
   impactLabel(target.x,target.y-target.size-16,'OVERLOAD','#fde047',14,60);
-  shake=Math.max(shake,5);
 }
 function triggerSporeCloud(tower,target,st,dmg){
   const r=68+tower.level*1.6;
@@ -8727,7 +8772,6 @@ function triggerVoidCollapse(tower,x,y,st){
   burst(x,y,tower.def.color,18,34);
   ring(x,y,r,tower.def.color);
   impactLabel(x,y-18,'COLLAPSE','#d8b4fe',14,62);
-  shake=Math.max(shake,8);
 }
 
 function pos(e){
@@ -9583,6 +9627,7 @@ window.PRD_GAME_COMMANDS_V96 = {
   merge(){ return autoMerge(false, null); },
   speed(){ S.speed = S.speed === 1 ? 2 : S.speed === 2 ? 3 : 1; updateUI(); return S.speed; },
   pause(ev){ return showNativePauseDialog(ev || null); },
+  debugForceStageClear(){ completeStageFromBattle(); return true; },
   relayout(reason='v96-direct-relayout'){
     try{ configureBattleBoardForCurrentLayout(reason); }catch(err){ console.warn('v96 configure failed', err); }
     try{ makeRoute(); makeTerrain(); relocateInvalidPlanets(); buildFieldStars(); }catch(err){ console.warn('v96 route relayout failed', err); }
