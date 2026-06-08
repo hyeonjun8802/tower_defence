@@ -4236,8 +4236,8 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
     st.textContent = `
 :root{
   --v34-command-safe:48px;
-  --v34-command-width:106px;
-  --v34-command-button-height:44px;
+  --v34-command-width:94px;
+  --v34-command-button-height:32px;
 }
 @media (orientation:landscape){
   body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
@@ -4246,11 +4246,11 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
   body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommandsLandscapeDock{
     left:auto!important;
     top:auto!important;
-    right:calc(8px + env(safe-area-inset-right,0px) + var(--v34-command-safe,48px))!important;
+    right:calc(8px + env(safe-area-inset-right,0px))!important;
     bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
-    width:var(--v34-command-width,106px)!important;
+    width:var(--v34-command-width,94px)!important;
     min-width:0!important;
-    max-width:var(--v34-command-width,106px)!important;
+    max-width:var(--v34-command-width,94px)!important;
     transform:none!important;
     box-sizing:border-box!important;
   }
@@ -4274,11 +4274,11 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
     width:100%!important;
     min-width:0!important;
     max-width:none!important;
-    height:var(--v34-command-button-height,44px)!important;
-    min-height:var(--v34-command-button-height,44px)!important;
-    max-height:var(--v34-command-button-height,44px)!important;
-    padding:0 7px!important;
-    font-size:10px!important;
+    height:var(--v34-command-button-height,32px)!important;
+    min-height:var(--v34-command-button-height,32px)!important;
+    max-height:var(--v34-command-button-height,32px)!important;
+    padding:0 6px!important;
+    font-size:9px!important;
     line-height:1.05!important;
     text-align:center!important;
     justify-content:center!important;
@@ -4351,8 +4351,8 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudOverlay{position:abs
     var fallback=phoneLike ? 48 : 0;
     var clearance=Math.ceil(Math.max(envRight, visualRight, fallback));
     clearance=Math.max(0, Math.min(76, clearance));
-    var width=Math.max(96, Math.min(126, 154 - clearance));
-    var height=(vh<=430) ? 40 : 44;
+    var width=Math.max(92, Math.min(112, 142 - clearance));
+    var height=(vh<=430) ? 32 : 36;
 
     root.style.setProperty('--v34-command-safe', clearance + 'px');
     root.style.setProperty('--v34-command-width', width + 'px');
@@ -4856,34 +4856,37 @@ body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn{
     font-size:11px!important;
   }
 }
-@media (orientation:landscape){
-  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
-  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
-    left:auto!important;
-    top:auto!important;
-    right:calc(10px + env(safe-area-inset-right,0px))!important;
-    bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
-    width:clamp(136px,12vw,154px)!important;
-    transform:none!important;
-  }
-  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
-  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
-    grid-template-columns:1fr!important;
-    gap:10px!important;
-    padding:12px!important;
-    border-radius:26px!important;
-  }
-  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
-  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
-  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
-  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
-  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
-    height:52px!important;
-    min-height:52px!important;
-    max-height:52px!important;
-    font-size:12px!important;
-  }
-}
+	@media (orientation:landscape){
+	  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
+	  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
+	    left:auto!important;
+	    top:auto!important;
+	    right:calc(8px + env(safe-area-inset-right,0px))!important;
+	    bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;
+	    width:var(--v34-command-width,94px)!important;
+	    min-width:0!important;
+	    max-width:var(--v34-command-width,94px)!important;
+	    transform:none!important;
+	  }
+	  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+	  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+	    grid-template-columns:1fr!important;
+	    gap:4px!important;
+	    padding:6px!important;
+	    border-radius:15px!important;
+	  }
+	  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+	  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+	  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+	  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+	  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
+	    height:var(--v34-command-button-height,32px)!important;
+	    min-height:var(--v34-command-button-height,32px)!important;
+	    max-height:var(--v34-command-button-height,32px)!important;
+	    padding:0 6px!important;
+	    font-size:9px!important;
+	  }
+	}
 body:not(.prd-combat-ui-active) #combatHudCommands,
 body.prd-map-ui-active #combatHudCommands{
   display:none!important;

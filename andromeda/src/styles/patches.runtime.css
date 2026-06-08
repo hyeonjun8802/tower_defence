@@ -22518,3 +22518,34 @@ body[data-campaign="andromeda"] #stageMap .stageNode.active .nodePlanet::after{
     z-index:1600 !important;
   }
 }
+
+/* V136 PHONE LANDSCAPE COMMAND FOOTPRINT
+   Keep combat commands tappable but small enough to avoid covering the field core
+   on phone landscape screens. Runtime JS mirrors this for late-injected styles. */
+@media (orientation:landscape) and (max-height:520px){
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands{
+    right:calc(8px + env(safe-area-inset-right,0px)) !important;
+    bottom:calc(8px + env(safe-area-inset-bottom,0px)) !important;
+    width:var(--v34-command-width,94px) !important;
+    min-width:0 !important;
+    max-width:var(--v34-command-width,94px) !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands .battleActions{
+    gap:4px !important;
+    padding:6px !important;
+    border-radius:15px !important;
+  }
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #summonBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #mergeBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #speedBtn,
+  body.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands #pauseBtn,
+  body.prd-vp-landscape.prd-combat-ui-active:not(.prd-map-ui-active) #combatHudCommands button{
+    height:var(--v34-command-button-height,32px) !important;
+    min-height:var(--v34-command-button-height,32px) !important;
+    max-height:var(--v34-command-button-height,32px) !important;
+    padding:0 6px !important;
+    font-size:9px !important;
+  }
+}
