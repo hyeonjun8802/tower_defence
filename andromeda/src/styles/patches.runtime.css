@@ -22979,3 +22979,457 @@ body[data-campaign="andromeda"] #stageMap .stageNode.active .nodePlanet::after{
   #towerPopup[data-active-tab="common"] .commonLevelStep,
   #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonLevelStep{min-height:31px !important;}
 }
+
+/* ===== V146 COMMON RESEARCH LANDSCAPE EXTRA COMPACT + SHARD FONT REDUCE =====
+   Scope: upgrade/armory popup, landscape only.
+   - Make the Common Research detail cards, text, and action area smaller than v145.
+   - Reduce the shard currency label/number size in the landscape armory header.
+   Portrait rules remain untouched. */
+@media (orientation:landscape){
+  /* Header shard currency: reduce the number and label so it matches the compact tab density. */
+  #towerPopup.armory-layout-landscape .towerPopupWallet,
+  #towerPopup.armory-layout-landscape #towerPopupWallet{
+    gap:6px !important;
+    padding-bottom:2px !important;
+  }
+  #towerPopup.armory-layout-landscape .towerPopupWallet > span,
+  #towerPopup.armory-layout-landscape #towerPopupWallet > span,
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard span,
+  #towerPopup.armory-layout-landscape #towerPopupWallet .towerWalletItem.shard span{
+    font-size:10px !important;
+    line-height:1 !important;
+    letter-spacing:-.02em !important;
+  }
+  #towerPopup.armory-layout-landscape .towerPopupWallet > b,
+  #towerPopup.armory-layout-landscape #towerPopupWallet > b,
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup.armory-layout-landscape #towerPopupWallet .towerWalletItem.shard b{
+    font-size:23px !important;
+    line-height:.94 !important;
+    letter-spacing:-.04em !important;
+  }
+  #towerPopup.armory-layout-landscape .towerPopupWallet::before,
+  #towerPopup.armory-layout-landscape #towerPopupWallet::before,
+  #towerPopup.armory-layout-landscape .towerWalletItem.shard::before{
+    width:12px !important;
+    height:12px !important;
+    min-width:12px !important;
+    flex-basis:12px !important;
+  }
+
+  /* Common Research: final landscape density guard for the current 3-column detail layout. */
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail{
+    grid-template-columns:226px 296px 218px !important;
+    grid-template-rows:minmax(82px,auto) minmax(100px,auto) !important;
+    column-gap:7px !important;
+    row-gap:7px !important;
+    padding:6px 8px !important;
+    align-content:start !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .lockedResearchHero{
+    grid-template-columns:58px minmax(0,1fr) !important;
+    gap:8px !important;
+    min-width:226px !important;
+    min-height:82px !important;
+    padding:8px !important;
+    border-radius:13px !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchIcon,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .lockedResearchIconWrap{
+    width:52px !important;
+    height:52px !important;
+    min-width:52px !important;
+    min-height:52px !important;
+    border-radius:14px !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchIcon img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .lockedResearchIconWrap img{
+    width:30px !important;
+    height:30px !important;
+    min-width:30px !important;
+    min-height:30px !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchTitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .lockedResearchTitle{
+    font-size:12.5px !important;
+    line-height:1.1 !important;
+    margin:0 !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonSubtitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchSubtitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .lockedResearchDesc{
+    margin-top:3px !important;
+    font-size:8px !important;
+    line-height:1.22 !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryTags{
+    gap:4px !important;
+    margin-top:4px !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryTags .tag,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryTags span{
+    font-size:7px !important;
+    padding:3px 5px !important;
+    border-radius:8px !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock{
+    grid-template-columns:minmax(0,1fr) 68px !important;
+    min-width:296px !important;
+    min-height:82px !important;
+    gap:7px !important;
+    padding:8px 10px !important;
+    border-radius:13px !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock small{
+    font-size:7.5px !important;
+    line-height:1.05 !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock b{
+    margin-top:3px !important;
+    font-size:10.5px !important;
+    line-height:1.18 !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryUpgradeDock span{
+    margin-top:3px !important;
+    font-size:7.5px !important;
+    line-height:1.25 !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchBuy{
+    width:68px !important;
+    min-width:68px !important;
+    height:34px !important;
+    min-height:34px !important;
+    padding:0 5px !important;
+    font-size:9.5px !important;
+    line-height:1 !important;
+    border-radius:10px !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryQuickGrid.v164InfoGrid,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonInfoPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .lockedResearchInfoGrid{
+    min-width:218px !important;
+    max-width:218px !important;
+    grid-auto-rows:minmax(50px,auto) !important;
+    gap:6px !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryQuickGrid.v164InfoGrid .armoryQuickCard,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonInfoItem{
+    min-height:50px !important;
+    padding:7px 8px !important;
+    border-radius:11px !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryQuickGrid.v164InfoGrid small,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonInfoItem small{
+    font-size:7.5px !important;
+    line-height:1.05 !important;
+    margin-bottom:3px !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryQuickGrid.v164InfoGrid b,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonInfoItem b{
+    font-size:9.5px !important;
+    line-height:1.18 !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryQuickGrid.v164InfoGrid .highlight b,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonInfoItem.highlight b{
+    font-size:12.5px !important;
+    line-height:1.05 !important;
+  }
+
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail > .v164Section:last-child,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail > .armorySection:last-child{
+    min-width:529px !important;
+    min-height:100px !important;
+    padding:8px 10px !important;
+    border-radius:13px !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail > .v164Section:last-child h3,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail > .armorySection:last-child h3{
+    font-size:10.5px !important;
+    line-height:1.12 !important;
+    margin:0 0 4px !important;
+  }
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail > .v164Section:last-child p,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail > .armorySection:last-child p{
+    font-size:8.5px !important;
+    line-height:1.32 !important;
+  }
+
+  /* CompactCombined fallback used by some runtime-rendered common research panels. */
+  #towerPopup[data-active-tab="common"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail.compactCombined{
+    grid-template-columns:clamp(176px, 22vw, 206px) clamp(252px, 33vw, 304px) !important;
+    gap:6px !important;
+    padding:6px 7px 8px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryHeroPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryHeroPanel,
+  #towerPopup[data-active-tab="common"] .commonLevelListPanel,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonLevelListPanel{
+    padding:8px 9px !important;
+    border-radius:14px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryHeroHeader,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryHeroHeader{
+    grid-template-columns:56px minmax(0,1fr) !important;
+    gap:7px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryPanelTitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryPanelTitle,
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelHeader small,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonSimpleLevelHeader small{
+    font-size:8.5px !important;
+    margin:0 0 5px !important;
+    letter-spacing:.06em !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonTitle{
+    gap:5px !important;
+    font-size:13px !important;
+    line-height:1.08 !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle .armoryTitleLevel,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonTitle .armoryTitleLevel{
+    min-height:16px !important;
+    padding:1px 6px !important;
+    font-size:8.5px !important;
+    border-radius:6px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonSubtitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonSubtitle{
+    margin-top:3px !important;
+    font-size:8px !important;
+    line-height:1.22 !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonSimpleDesc,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonSimpleDesc{
+    margin-top:5px !important;
+    font-size:7.5px !important;
+    line-height:1.24 !important;
+    max-height:34px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelHeader,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonSimpleLevelHeader{
+    margin-bottom:5px !important;
+    padding-bottom:5px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelHeader b,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonSimpleLevelHeader b{
+    font-size:11px !important;
+    line-height:1.1 !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonSimpleLevelList,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonSimpleLevelList{
+    gap:4px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonLevelStep,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonLevelStep{
+    grid-template-columns:34px minmax(0,1fr) 44px !important;
+    min-height:27px !important;
+    padding:0 6px !important;
+    gap:5px !important;
+    border-radius:9px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonLevelStep b,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonLevelStep b{
+    font-size:8.5px !important;
+    line-height:1.05 !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonLevelStep span,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonLevelStep span{
+    font-size:7.5px !important;
+    line-height:1.12 !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonLevelStep em,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonLevelStep em{
+    font-size:7px !important;
+    line-height:1 !important;
+  }
+}
+
+@media (orientation:landscape) and (max-height:460px){
+  #towerPopup[data-active-tab="common"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail.compactCombined{
+    grid-template-columns:clamp(166px, 22vw, 194px) clamp(238px, 32vw, 286px) !important;
+    padding:5px 6px 7px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup[data-active-tab="common"] .commonResearchIcon,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchIcon{
+    width:46px !important;
+    height:46px !important;
+    min-width:46px !important;
+    min-height:46px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon img,
+  #towerPopup[data-active-tab="common"] .commonResearchIcon img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchIcon img{
+    width:27px !important;
+    height:27px !important;
+    min-width:27px !important;
+    min-height:27px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryHeroHeader,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryHeroHeader{
+    grid-template-columns:50px minmax(0,1fr) !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonTitle,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonTitle{
+    font-size:12px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonSimpleDesc,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonSimpleDesc{
+    max-height:28px !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonLevelStep,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonLevelStep{
+    min-height:25px !important;
+  }
+  #towerPopup.armory-layout-landscape .towerPopupWallet .towerWalletItem.shard b,
+  #towerPopup.armory-layout-landscape #towerPopupWallet .towerWalletItem.shard b{
+    font-size:21px !important;
+  }
+}
+
+/* ===== V148 COMMON RESEARCH ICON SIZE MATCH TOWER TAB =====
+   Base: v146. Do not inherit the v147 icon-only downsizing.
+   Scope: armory popup, landscape only.
+   Goal: make Common Research icons use the same sizing rule as the Tower tab:
+   - left rail icon follows tower rail thumb size
+   - detail hero icon follows towerDenseHero thumb size
+   - object-fit/overflow rules prevent SVG clipping inside the frame
+*/
+@media (orientation:landscape){
+  /* Left rail: match Tower tab item visual size. Tower rail uses 82 item / 68 thumb / 66 image. */
+  #towerPopup[data-active-tab="common"] .commonResearchItem,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchItem{
+    overflow:hidden !important;
+  }
+  #towerPopup[data-active-tab="common"] .commonResearchItem img.commonResearchImg,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchItem img.commonResearchImg{
+    width:66px !important;
+    height:66px !important;
+    min-width:66px !important;
+    min-height:66px !important;
+    max-width:66px !important;
+    max-height:66px !important;
+    display:block !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+    position:relative !important;
+    z-index:1 !important;
+    transform:none !important;
+  }
+
+  /* Detail hero: copy the Tower tab dense hero icon sizing pattern. */
+  #towerPopup[data-active-tab="common"] .towerPopupDetail.compactCombined .armoryHeroHeader,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail.compactCombined .armoryHeroHeader,
+  #towerPopup[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonHero,
+  #towerPopup[data-active-tab="common"] .lockedResearchHero,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .lockedResearchHero{
+    grid-template-columns:78px minmax(0,1fr) !important;
+    gap:10px !important;
+    align-items:center !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup[data-active-tab="common"] .commonResearchIcon,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchIcon,
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .lockedResearchIconWrap{
+    width:72px !important;
+    height:72px !important;
+    min-width:72px !important;
+    min-height:72px !important;
+    display:grid !important;
+    place-items:center !important;
+    overflow:visible !important;
+    border-radius:18px !important;
+    box-sizing:border-box !important;
+  }
+
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon img,
+  #towerPopup[data-active-tab="common"] .commonResearchIcon img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchIcon img,
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .lockedResearchIconWrap img{
+    width:62px !important;
+    height:62px !important;
+    min-width:62px !important;
+    min-height:62px !important;
+    max-width:62px !important;
+    max-height:62px !important;
+    display:block !important;
+    object-fit:contain !important;
+    object-position:center center !important;
+    position:relative !important;
+    z-index:1 !important;
+    transform:none !important;
+  }
+
+  /* The common layout width was tuned around a smaller 56px icon column in v146.
+     Expand only the first detail column enough to keep the tower-style 72px icon from pressing text. */
+  #towerPopup[data-active-tab="common"] .towerPopupDetail.compactCombined,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .towerPopupDetail.compactCombined{
+    grid-template-columns:clamp(196px, 23vw, 226px) clamp(252px, 33vw, 304px) !important;
+  }
+}
+
+@media (orientation:landscape) and (max-width:900px){
+  #towerPopup[data-active-tab="common"] .commonResearchItem img.commonResearchImg,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchItem img.commonResearchImg{
+    width:60px !important;
+    height:60px !important;
+    min-width:60px !important;
+    min-height:60px !important;
+    max-width:60px !important;
+    max-height:60px !important;
+  }
+}
+
+@media (orientation:landscape) and (max-width:620px){
+  #towerPopup[data-active-tab="common"] .commonResearchItem img.commonResearchImg,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchItem img.commonResearchImg{
+    width:54px !important;
+    height:54px !important;
+    min-width:54px !important;
+    min-height:54px !important;
+    max-width:54px !important;
+    max-height:54px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon,
+  #towerPopup[data-active-tab="common"] .commonResearchIcon,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchIcon,
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .lockedResearchIconWrap{
+    width:56px !important;
+    height:56px !important;
+    min-width:56px !important;
+    min-height:56px !important;
+  }
+  #towerPopup[data-active-tab="common"] .armoryCommonIcon img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .armoryCommonIcon img,
+  #towerPopup[data-active-tab="common"] .commonResearchIcon img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .commonResearchIcon img,
+  #towerPopup[data-active-tab="common"] .lockedResearchIconWrap img,
+  #towerPopup.armory-layout-landscape[data-active-tab="common"] .lockedResearchIconWrap img{
+    width:48px !important;
+    height:48px !important;
+    min-width:48px !important;
+    min-height:48px !important;
+    max-width:48px !important;
+    max-height:48px !important;
+  }
+}
