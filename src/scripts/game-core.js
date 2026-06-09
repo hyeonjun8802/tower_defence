@@ -7183,7 +7183,11 @@ function requestSummonUiRefreshV120(){
 }
 function summon(typeOverride=null){
   if(S.gameOver) return false;
+  const cost = currentSummonCost();
+  if(S.gold<cost){ toast('수정이 부족합니다'); return false; }
+
   const pool = availableSummonTypes();
+  if(!pool.length){ toast('소환 가능한 행성이 없습니다'); return false; }
   // v117: Only honor an explicit tower override. The summon button calls
   // summon() with no argument, and Number(null) becomes 0, which made every
   // normal random summon turn into type 0 (Solar) once Solar was unlocked.
@@ -7192,8 +7196,6 @@ function summon(typeOverride=null){
   const type = (hasExplicitTypeOverride && Number.isFinite(preferred) && pool.includes(preferred))
     ? preferred
     : pool[Math.floor(Math.random()*pool.length)];
-  const cost = currentSummonCost();
-  if(S.gold<cost){ toast('수정이 부족합니다'); return false; }
 
   // v23: rapid tapping the summon button used to allocate a temporary `free[]`
   // array and immediately refresh the side UI every tap.  Pick a random free
@@ -8603,6 +8605,9 @@ function log(t){
 }
 let lastToastAt = 0;
 let lastToastText = '';
+const TOAST_ACTIVE_MS = 2200;
+const TOAST_MIN_GAP_MS = 950;
+const toastActiveUntil = new Map();
 function compactNoticeText(t){
   let text = String(t || '').trim();
   if(!text) return '';
@@ -8612,21 +8617,42 @@ function compactNoticeText(t){
   text = text.replace(/HP/g, '체력');
   return text.length > 34 ? `${text.slice(0, 33)}…` : text;
 }
+function toastClock(){
+  return (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+}
+function toastDedupeKey(text){
+  return /소환|랜덤\s*소환/i.test(text) ? 'summon' : text;
+}
+function pruneToastRegistry(now){
+  toastActiveUntil.forEach((until, key) => {
+    if(until <= now) toastActiveUntil.delete(key);
+  });
+}
 function toast(t, priority='normal'){
   const layer = $('toastLayer');
   if(!layer) return;
-  const now = performance.now();
+  const now = toastClock();
   const text = compactNoticeText(t);
   if(!text) return;
-  if(priority !== 'important' && (now - lastToastAt < 950 || text === lastToastText)) return;
+  pruneToastRegistry(now);
+  const key = toastDedupeKey(text);
+  if(priority !== 'important'){
+    if((toastActiveUntil.get(key) || 0) > now) return;
+    if(now - lastToastAt < TOAST_MIN_GAP_MS) return;
+  }
   lastToastAt = now;
   lastToastText = text;
+  toastActiveUntil.set(key, now + TOAST_ACTIVE_MS);
   while(layer.firstChild) layer.firstChild.remove();
   const div=document.createElement('div');
   div.className='toast';
+  div.dataset.toastKey=key;
   div.textContent=text;
   layer.appendChild(div);
-  setTimeout(()=>div.remove(),2200);
+  setTimeout(()=>{
+    div.remove();
+    if((toastActiveUntil.get(key) || 0) <= toastClock()) toastActiveUntil.delete(key);
+  }, TOAST_ACTIVE_MS);
 }
 function shouldShowCoreCombatLabel(text){
   const label = String(text || '').trim();
