@@ -1893,31 +1893,63 @@ window.__closeStageResultArmoryStack = function(){
 
 function openUpgradeFromResult(stageNo){
   const targetStage = clamp(Number(stageNo || StageMapState.selected || 1), 1, STAGE_MAP_DEFS.length);
-  const resultOverlay = getActiveStageResultOverlay();
+  const hasResultOverlay = !!getActiveStageResultOverlay();
+  const hint = '성흔 조각으로 공통 연구를 강화한 뒤 다시 도전하세요.';
 
-  if(resultOverlay && typeof window.openTowerArmoryPopup === 'function'){
-    StageMapState.selected = targetStage;
-    StageMapState.current = targetStage;
-    window.__stageResultArmoryStackActive = true;
-    setStageResultArmoryStack(true);
-    requestAnimationFrame(() => {
-      try{
+  const clearArmoryStackState = () => {
+    window.__stageResultArmoryStackActive = false;
+    if(document.body) document.body.classList.remove('stage-result-armory-stack-open');
+    const overlay = getActiveStageResultOverlay();
+    if(overlay){
+      overlay.classList.remove('stageResultOverlay--underArmory');
+      overlay.removeAttribute('aria-hidden');
+    }
+  };
+
+  const openArmory = () => {
+    try{
+      clearArmoryStackState();
+      StageMapState.selected = targetStage;
+      StageMapState.current = targetStage;
+      if(typeof saveStageMapProgress === 'function') saveStageMapProgress();
+      if(typeof window.openTowerArmoryPopup === 'function'){
         window.openTowerArmoryPopup('common');
-      }catch(err){
-        console.warn('upgrade popup open failed', err);
-        window.__closeStageResultArmoryStack && window.__closeStageResultArmoryStack();
+      }else{
+        $('stageTowerManageBtn')?.click();
       }
-    });
-    return;
+    }catch(err){
+      console.warn('upgrade popup open failed', err);
+    }
+  };
+
+  try{ stopStageClearAutoContinueTimer(); }catch(_err){}
+  clearArmoryStackState();
+
+  if(hasResultOverlay){
+    /*
+      Result overlay + armory stacking is expensive on mobile landscape because
+      two full-screen blurred/backdrop layers and the battle canvas repaint in
+      the same frame. Move to the stage-map lifecycle first, then open Armory.
+    */
+    try{
+      goStageMapFromResult(targetStage, hint);
+    }catch(err){
+      console.warn('result upgrade stage-map handoff failed', err);
+      try{ clearStageResultPendingFlag(); }catch(_err){}
+      try{ removeStageResultOverlay(); }catch(_err){}
+      try{ resetBattleUnitsForStageMap(); }catch(_err){}
+      try{ if(S){ S.active = false; S.paused = true; S.skillModalOpen = false; S.queue = []; S.runEnded = true; } }catch(_err){}
+    }
+    setTimeout(openArmory, 160);
+    setTimeout(() => {
+      const popup = $('towerPopup');
+      if(!popup || !popup.classList.contains('open')) openArmory();
+    }, 420);
+    return false;
   }
 
-  goStageMapFromResult(targetStage, '성흔 조각으로 공통 연구를 강화한 뒤 다시 도전하세요.');
-  setTimeout(() => {
-    try{
-      if(typeof window.openTowerArmoryPopup === 'function') window.openTowerArmoryPopup('common');
-      else $('stageTowerManageBtn')?.click();
-    }catch(err){ console.warn('upgrade popup open failed', err); }
-  }, 80);
+  setTimeout(openArmory, 0);
+  return false;
 }
 
 
